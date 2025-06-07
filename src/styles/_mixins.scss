@@ -1,0 +1,259 @@
+@use "sass:map";
+@use "variables" as vars;
+
+// Mixins
+@mixin flex(
+  $direction: row,
+  $justify: flex-start,
+  $align: stretch,
+  $wrap: nowrap
+) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $justify;
+  align-items: $align;
+  flex-wrap: $wrap;
+}
+
+@function get-scaled-heading($variant, $breakpoint) {
+  @if $variant == "hs" {
+    @if $breakpoint == "mob-s" {
+      @return vars.$fz-hs-m-s;
+    } @else if $breakpoint == "mob-m" {
+      @return vars.$fz-hs-m-m;
+    } @else if $breakpoint == "mob-l" {
+      @return vars.$fz-hs-m-l;
+    } @else if $breakpoint == "tab" {
+      @return vars.$fz-hs-t;
+    } @else if $breakpoint == "lap-s" {
+      @return vars.$fz-hs-l-s;
+    } @else if $breakpoint == "lap-m" {
+      @return vars.$fz-hs-l-m;
+    } @else if $breakpoint == "lap-l" {
+      @return vars.$fz-hs-l-l;
+    } @else {
+      @warn "Unknown heading variant: #{$variant}. Returning default font size.";
+      @return vars.$fz-hs-t;
+    }
+  } @else if $variant == "hm" {
+    @if $breakpoint == "mob-s" {
+      @return vars.$fz-hm-m-s;
+    } @else if $breakpoint == "mob-m" {
+      @return vars.$fz-hm-m-m;
+    } @else if $breakpoint == "mob-l" {
+      @return vars.$fz-hm-m-l;
+    } @else if $breakpoint == "tab" {
+      @return vars.$fz-hm-t;
+    } @else if $breakpoint == "lap-s" {
+      @return vars.$fz-hm-l-s;
+    } @else if $breakpoint == "lap-m" {
+      @return vars.$fz-hm-l-m;
+    } @else if $breakpoint == "lap-l" {
+      @return vars.$fz-hm-l-l;
+    } @else {
+      @warn "Unknown heading variant: #{$variant}. Returning default font size.";
+      @return vars.$fz-hm-t;
+    }
+  } @else if $variant == "hl" {
+    @if $breakpoint == "mob-s" {
+      @return vars.$fz-hl-m-s;
+    } @else if $breakpoint == "mob-m" {
+      @return vars.$fz-hl-m-m;
+    } @else if $breakpoint == "mob-l" {
+      @return vars.$fz-hl-m-l;
+    } @else if $breakpoint == "tab" {
+      @return vars.$fz-hl-t;
+    } @else if $breakpoint == "lap-s" {
+      @return vars.$fz-hl-l-s;
+    } @else if $breakpoint == "lap-m" {
+      @return vars.$fz-hl-l-m;
+    } @else if $breakpoint == "lap-l" {
+      @return vars.$fz-hl-l-l;
+    } @else {
+      @warn "Unknown heading variant: #{$variant}. Returning default font size.";
+      @return vars.$fz-hl-t;
+    }
+  } @else {
+    @warn "Unknown heading variant: #{$variant}. Returning default font size.";
+    @return vars.$fz-t;
+  }
+}
+
+@function get-scaled-font($scale, $breakpoint) {
+  $base: map.get(vars.$fz-scale-base, $scale);
+  $mult: map.get(vars.$fz-scale-multiplier, $breakpoint);
+
+  @if $base and $mult {
+    @return calc(#{$base} * #{$mult});
+  } @else {
+    @warn "Missing scale or multiplier for #{$scale} at #{$breakpoint}";
+    @return null;
+  }
+}
+
+@mixin media-range($breakpoint) {
+  @if $breakpoint ==mob-s {
+    @media (width <= vars.$breakpoint-mob-s) {
+      @content;
+    }
+  } @else if $breakpoint ==mob-m {
+    @media (width >= (vars.$breakpoint-mob-s )) and (width <= vars.$breakpoint-mob-m) {
+      @content;
+    }
+  } @else if $breakpoint ==mob-l {
+    @media (width >= (vars.$breakpoint-mob-m )) and (width <= vars.$breakpoint-mob-l) {
+      @content;
+    }
+  } @else if $breakpoint ==tab {
+    @media (width >= (vars.$breakpoint-mob-l )) and (width <= vars.$breakpoint-tab) {
+      @content;
+    }
+  } @else if $breakpoint ==lap-s {
+    @media (width >= (vars.$breakpoint-tab )) and (width <= vars.$breakpoint-lap-s) {
+      @content;
+    }
+  } @else if $breakpoint ==lap-m {
+    @media (width >= (vars.$breakpoint-lap-s )) and (width <= vars.$breakpoint-lap-m) {
+      @content;
+    }
+  } @else if $breakpoint ==lap-l {
+    @media (width >= (vars.$breakpoint-lap-m )) {
+      @content;
+    }
+  }
+}
+
+@mixin switch-media(
+  $breakpoint,
+  $p,
+  $m,
+  $s-val,
+  $br,
+  $br-val,
+  $fz,
+  $fz-val,
+  $scale: false
+) {
+  @include media-range($breakpoint) {
+    @if $fz {
+      @if $scale !=false {
+        font-weight: bold;
+        font-size: get-scaled-heading($scale, $breakpoint);
+      } @else {
+        font-size: $fz-val !important;
+      }
+    }
+
+    @if $p {
+      padding: $s-val;
+    }
+
+    @if $m {
+      margin: $s-val;
+    }
+
+    @if $br {
+      border-radius: $br-val;
+    }
+  }
+}
+
+@mixin responsive-ui(
+  $p: false,
+  $m: false,
+  $br: false,
+  $fz: false,
+  $scale: false
+) {
+  @include switch-media(
+    mob-s,
+    $p,
+    $m,
+    vars.$spacing-m-s,
+    $br,
+    vars.$br-m-s,
+    $fz,
+    vars.$fz-m-s,
+    $scale
+  );
+  @include switch-media(
+    mob-m,
+    $p,
+    $m,
+    vars.$spacing-m-m,
+    $br,
+    vars.$br-m-m,
+    $fz,
+    vars.$fz-m-m,
+    $scale
+  );
+  @include switch-media(
+    mob-l,
+    $p,
+    $m,
+    vars.$spacing-m-l,
+    $br,
+    vars.$br-m-l,
+    $fz,
+    vars.$fz-m-l,
+    $scale
+  );
+  @include switch-media(
+    tab,
+    $p,
+    $m,
+    vars.$spacing-t,
+    $br,
+    vars.$br-t,
+    $fz,
+    vars.$fz-t,
+    $scale
+  );
+  @include switch-media(
+    lap-s,
+    $p,
+    $m,
+    vars.$spacing-l-s,
+    $br,
+    vars.$br-l-s,
+    $fz,
+    vars.$fz-l-s,
+    $scale
+  );
+  @include switch-media(
+    lap-m,
+    $p,
+    $m,
+    vars.$spacing-l-m,
+    $br,
+    vars.$br-l-m,
+    $fz,
+    vars.$fz-l-m,
+    $scale
+  );
+  @include switch-media(
+    lap-l,
+    $p,
+    $m,
+    vars.$spacing-l-l,
+    $br,
+    vars.$br-l-l,
+    $fz,
+    vars.$fz-l-l,
+    $scale
+  );
+}
+
+@mixin transition($properties: all, $duration: 0.3s, $timing: ease) {
+  transition-property: $properties;
+  transition-duration: $duration;
+  transition-timing-function: $timing;
+}
+
+@mixin text-truncate($lines: 1) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

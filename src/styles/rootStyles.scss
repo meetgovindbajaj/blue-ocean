@@ -1,0 +1,102 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as mix;
+@use "sass:color";
+
+.main {
+  @include mix.responsive-ui(
+    $p: false,
+    $m: false,
+    $br: false,
+    $fz: true,
+    $scale: false
+  );
+  .h1 {
+    @include mix.responsive-ui(
+      $p: false,
+      $m: false,
+      $br: false,
+      $fz: true,
+      $scale: hl
+    );
+  }
+  .h2 {
+    @include mix.responsive-ui(
+      $p: false,
+      $m: false,
+      $br: false,
+      $fz: true,
+      $scale: hm
+    );
+  }
+
+  .h3 {
+    @include mix.responsive-ui(
+      $p: false,
+      $m: false,
+      $br: false,
+      $fz: true,
+      $scale: hs
+    );
+  }
+  .iconContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px;
+    height: 24px;
+    padding: $spacing-t;
+    border-radius: $br-t;
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+    &,
+    &::selection,
+    &:focus,
+    &:active,
+    &:focus *,
+    &:active *,
+    &:visited * {
+      -webkit-tap-highlight-color: transparent;
+      background-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+    }
+    svg {
+      fill: $primary-color !important;
+      &.disabled {
+        fill: $primary-color-disabled !important;
+      }
+    }
+    @media screen and (hover: hover) {
+      &.hover:hover {
+        background-color: color.adjust($light-gray, $lightness: -5%);
+      }
+    }
+    &.active:active {
+      background-color: color.adjust($light-gray, $lightness: -10%);
+    }
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+  .user,
+  .alert__container {
+    height: auto;
+    min-height: calc(100dvh - $navbar-height);
+    width: 100%;
+    @include mix.responsive-ui(
+      $p: true,
+      $m: false,
+      $br: false,
+      $fz: true,
+      $scale: false
+    );
+  }
+}
+
+.ant-splitter-bar-collapse-bar {
+  background-color: $primary-color !important;
+  color: white !important;
+}
