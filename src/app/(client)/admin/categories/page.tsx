@@ -2,6 +2,8 @@
 import AddCategories from "@/components/admin/categories/add";
 import ViewCategories from "@/components/admin/categories/view";
 import { getAllData } from "@/lib/api";
+import { useWindowWidth } from "@/lib/hooks";
+import properties from "@/lib/properties";
 import { Alert, Segmented, Space, Spin, Typography } from "antd";
 import Search, { SearchProps } from "antd/es/input/Search";
 import Fuse from "fuse.js";
@@ -16,6 +18,7 @@ const items: { key: string; label: string; value: string }[] = [
 
 const AdminCategoryPage = () => {
   const searchParams = useSearchParams();
+  const windowSize = useWindowWidth();
   const router = useRouter();
   const [tab, setTab] = useState<(typeof items)[number]["label"]>("Edit");
   const [searchQuery, setSearchQuery] = useState<string | null>(
@@ -139,7 +142,7 @@ const AdminCategoryPage = () => {
               allowClear
               onSearch={onSearch}
               size={"large"}
-              autoFocus
+              autoFocus={windowSize >= properties.breakpoints.laptop.small}
               autoComplete="off"
               defaultValue={searchQuery || ""}
             />
@@ -165,7 +168,11 @@ const AdminCategoryPage = () => {
             />
           )}
           {tab === "Add" && (
-            <AddCategories categories={categoriesList} loading={loading} />
+            <AddCategories
+              categories={categoriesList}
+              loading={loading}
+              setCategoriesList={setCategoriesList}
+            />
           )}
         </Space>
       ) : (

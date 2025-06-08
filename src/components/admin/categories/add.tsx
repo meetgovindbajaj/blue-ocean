@@ -9,7 +9,7 @@ import properties from "@/lib/properties";
 import { Button, Form, Image, Input, Radio, Select, Space } from "antd";
 import Search from "antd/es/input/Search";
 import TextArea from "antd/es/input/TextArea";
-import { ChangeEvent, useId, useState } from "react";
+import { ChangeEvent, Dispatch, SetStateAction, useId, useState } from "react";
 
 interface IForm {
   name: string;
@@ -23,6 +23,7 @@ interface IForm {
 const AddCategories = ({
   categories,
   loading,
+  setCategoriesList,
 }: {
   categories: ICategory[];
   loading: {
@@ -31,6 +32,7 @@ const AddCategories = ({
     categoriesLoaded: boolean;
     productsLoaded: boolean;
   };
+  setCategoriesList: Dispatch<SetStateAction<ICategory[]>>;
 }) => {
   const [form] = Form.useForm();
   const uniqueId = useId();
@@ -157,9 +159,9 @@ const AddCategories = ({
       if (!response.ok) {
         throw new Error("Failed to add category");
       }
-      const data = await response.json();
+      const data: ICategory = await response.json();
       handleReset();
-      console.log("Category added successfully:", data);
+      setCategoriesList((prevCategories) => [...prevCategories, data]);
     } catch (error) {
       console.error("Error adding category:", error);
       form.setFields([
@@ -194,7 +196,7 @@ const AddCategories = ({
           autoComplete="off"
           placeholder="type category name..."
           allowClear
-          autoFocus
+          autoFocus={windowSize >= properties.breakpoints.laptop.small}
           onChange={handleNameChange}
         />
       </Form.Item>
@@ -216,7 +218,7 @@ const AddCategories = ({
       </Form.Item>
       <Form.Item name="parent" label="Parent Category">
         <Select
-          loading={loading.categoriesLoaded}
+          loading={!loading.categoriesLoaded}
           showSearch
           placeholder="Choose parent category..."
           options={categories.map((category: ICategory) => ({
