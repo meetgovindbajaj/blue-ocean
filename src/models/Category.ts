@@ -18,6 +18,7 @@ interface ICategory extends Document {
     width: number;
     height: number;
   };
+  isActive: true | false;
   children: Types.ObjectId[];
 }
 
@@ -76,6 +77,10 @@ const CategorySchema = new Schema<ICategory>(
       type: Schema.Types.ObjectId,
       ref: "Category",
       default: null,
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
     },
     children: [{ type: Schema.Types.ObjectId, ref: "Category" }],
   },

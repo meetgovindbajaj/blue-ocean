@@ -52,4 +52,14 @@
       $scale: false
     );
   }
+  .categories__container {
+    .categories__image {
+      border: 2px solid color.adjust($light-gray, $lightness: -5%);
+      border-radius: 10px;
+      width: 200;
+      height: 200px;
+      overflow: hidden;
+      margin-inline: 10px;
+    }
+  }
 }

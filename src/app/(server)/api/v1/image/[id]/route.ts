@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import fs from "fs-extra";
 import path from "path";
 import sharp from "sharp";
+import { google } from "googleapis";
 
 // This route handles image processing requests, allowing for transformations like resizing, blurring, and format conversion.
 // It supports both local file system images and images hosted on Google Drive.
@@ -21,6 +22,7 @@ export async function GET(
     ? parseInt(searchParams.get("q")!, 10)
     : null;
   const isBlurred = searchParams.get("blur") === "1";
+  const isInfo = searchParams.get("i") === "1"; // Not used in this route, but can be extended for metadata
   const isThumbnail = searchParams.get("t") === "1";
   const grayscale = searchParams.get("grayscale") === "1";
   const format = isThumbnail ? "webp" : searchParams.get("format") || ""; // jpeg, png, webp
@@ -38,11 +40,30 @@ export async function GET(
     if (useDrive) {
       // 🔗 Google Drive image fetch
       const imageUrl = `https://drive.google.com/uc?export=view&id=${imageId}`;
-      const res = await fetch(imageUrl);
+      if (isInfo) {
+        const auth = process.env.GOOGLE_API_KEY_2;
 
-      if (!res.ok) throw new Error("Failed to fetch from Google Drive");
-      const arrayBuffer = await res.arrayBuffer();
-      imageBuffer = Buffer.from(arrayBuffer);
+        const drive = google.drive({ version: "v3", auth });
+        const response = await drive.files.get({
+          fileId: imageId,
+          fields:
+            "id, name, mimeType, webContentLink, imageMediaMetadata, webViewLink, thumbnailLink, size",
+        });
+        if (!response.data) {
+          return new Response("Image not found in Google Drive", {
+            status: 404,
+          });
+        }
+        return new Response(JSON.stringify(response.data), {
+          headers: { "Content-Type": "application/json" },
+        });
+      } else {
+        const res = await fetch(imageUrl);
+
+        if (!res.ok) throw new Error("Failed to fetch from Google Drive");
+        const arrayBuffer = await res.arrayBuffer();
+        imageBuffer = Buffer.from(arrayBuffer);
+      }
     } else {
       // 📁 Local file system fetch
       const localPath = path.join(process.cwd(), "public", "images", imageId);
@@ -100,11 +121,11 @@ export async function GET(
       transformer = transformer.resize({
         width: width || undefined,
         height: height || undefined,
-        withoutEnlargement: true, // Prevents enlarging smaller images
+        // withoutEnlargement: true, // Prevents enlarging smaller images
         kernel: sharp.kernel.lanczos3, // Use Lanczos3 for better quality
         position: "center", // Center the image if resizing
         background: { r: 255, g: 255, b: 255, alpha: 0 }, // Transparent background for PNG/WebP
-        fit: isThumbnail ? "cover" : "inside", // Use cover for thumbnails, inside for others
+        fit: "cover", // Use cover for thumbnails, inside for others
       });
     }
 

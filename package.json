@@ -10,12 +10,14 @@
     "update": "npx npm-check-updates -u && npm install"
   },
   "dependencies": {
-    "@clerk/nextjs": "^6.20.2",
+    "@ant-design/icons": "^6.0.0",
+    "@clerk/nextjs": "^6.21.0",
     "@reduxjs/toolkit": "^2.8.2",
     "antd": "^5.25.4",
     "classnames": "^2.5.1",
     "fs-extra": "^11.3.0",
-    "googleapis": "^149.0.0",
+    "fuse.js": "^7.1.0",
+    "googleapis": "^150.0.1",
     "mongoose": "^8.15.1",
     "next": "15.3.3",
     "path": "^0.12.7",

@@ -27,3 +27,40 @@ export const formatPrice = (price: number): string => {
     currency: "INR",
   }).format(price);
 };
+
+export function createSlug(text: string | undefined): string {
+  if (!text) return "";
+
+  return text
+    .toString() // Ensure input is a string
+    .toLowerCase() // 1. Convert to lowercase
+    .replace(/[^a-z0-9\s-]/g, "") // 2. Remove unwanted characters (anything not letter, number, space, hyphen)
+    .trim() // Remove leading/trailing whitespace (before replacing spaces)
+    .replace(/\s+/g, "-") // 3. Replace spaces with hyphens
+    .replace(/-+/g, "-") // 4. Replace multiple hyphens with single hyphens
+    .replace(/^-+/, "") // 5. Remove leading hyphens (optional if trim() and replacements handle it)
+    .replace(/-+$/, ""); // 6. Remove trailing hyphens (optional if trim() and replacements handle it)
+}
+
+export function extractFolderIdFromUrl(url: string) {
+  try {
+    // For links like "https://drive.google.com/drive/folders/1qJ7Mb1tAtAeCGHf0xAMg3u7jrA7RIRvO?usp=drive_link"
+    const regex = /\/folders\/([a-zA-Z0-9_-]+)/;
+    const match = url.match(regex);
+    return match ? match[1] : extractFileIdFromUrl(url); // Return the folder ID or the original URL if no match
+  } catch (error) {
+    console.error("Error extracting folder ID:", error);
+    return "";
+  }
+}
+
+export function extractFileIdFromUrl(url: string) {
+  try {
+    const regex = /\/file\/d\/([a-zA-Z0-9_-]+)/;
+    const match = url.match(regex);
+    return match ? match[1] : url;
+  } catch (error) {
+    console.error("Error extracting file ID:", error);
+    return ""; // Return the original URL in case of error
+  }
+}

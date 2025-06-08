@@ -3,6 +3,39 @@
 @use "sass:color";
 
 .main {
+  * {
+    &::-webkit-scrollbar {
+      width: 0.5rem !important;
+      background-color: transparent !important;
+    }
+    &:has(.navbarMenu.open) {
+      &::-webkit-scrollbar {
+        display: none !important;
+      }
+    }
+
+    &::-webkit-scrollbar-button {
+      display: none !important;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: $primary-color !important;
+      transition: background-color 0.3s ease-in-out;
+    }
+
+    @media screen and (hover: hover) {
+      &::-webkit-scrollbar-thumb:hover {
+        background-color: color.adjust(
+          $primary-color,
+          $lightness: -15%
+        ) !important;
+      }
+    }
+
+    &::-webkit-scrollbar-track {
+      background-color: transparent !important;
+    }
+  }
   @include mix.responsive-ui(
     $p: false,
     $m: false,
