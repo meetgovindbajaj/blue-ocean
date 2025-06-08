@@ -1,5 +1,5 @@
 import { MetadataRoute } from "next";
-import { getAllData } from "@/lib/api";
+// import { getAllData } from "@/lib/api";
 import { formatDateToWords } from "@/lib/functions";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -23,22 +23,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // },
   ];
 
-  let productRoutes: MetadataRoute.Sitemap = [];
-  try {
-    const { products } = await getAllData(); // Fetch all products
+  // let productRoutes: MetadataRoute.Sitemap = [];
+  // try {
+  //   const { products } = await getAllData(); // Fetch all products
 
-    if (!products || !Array.isArray(products))
-      console.error("No products found or products is not an array.");
-    productRoutes = (
-      products as Array<{ slug: string; updatedAt: string }>
-    ).map((product) => ({
-      url: `${baseUrl}/product/${product.slug}`,
-      lastModified: formatDateToWords(product.updatedAt ?? new Date()),
-      changeFrequency: "weekly" as const,
-      priority: 0.9,
-    }));
-  } catch (error) {
-    console.error("Error fetching products for sitemap:", error);
-  }
-  return [...staticRoutes, ...productRoutes];
+  //   if (!products || !Array.isArray(products))
+  //     console.error("No products found or products is not an array.");
+  //   productRoutes = (
+  //     products as Array<{ slug: string; updatedAt: string }>
+  //   ).map((product) => ({
+  //     url: `${baseUrl}/product/${product.slug}`,
+  //     lastModified: formatDateToWords(product.updatedAt ?? new Date()),
+  //     changeFrequency: "weekly" as const,
+  //     priority: 0.9,
+  //   }));
+  // } catch (_error) {
+  //   console.error("Error fetching products for sitemap");
+  // }
+  return [...staticRoutes];
 }

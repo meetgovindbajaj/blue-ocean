@@ -1,7 +1,7 @@
 "use client";
-import { Splitter } from "antd";
+import { Spin, Splitter } from "antd";
 import { AdminSidebar } from "@/components/admin/sidebar";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import ResizeAlert from "@/components/admin/resizeAlert";
 
 export default function AdminLayout({
@@ -27,7 +27,13 @@ export default function AdminLayout({
         <AdminSidebar width={sidebarWidth} />
       </Splitter.Panel>
       <Splitter.Panel>
-        {mainWidth < 250 ? <ResizeAlert /> : children}
+        {mainWidth < 250 ? (
+          <ResizeAlert />
+        ) : (
+          <Suspense fallback={<Spin fullscreen spinning size="large" />}>
+            {children}
+          </Suspense>
+        )}
       </Splitter.Panel>
     </Splitter>
   );

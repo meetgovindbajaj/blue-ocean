@@ -159,7 +159,7 @@ const ProductSchema = new Schema<IProduct>(
     toJSON: {
       virtuals: true,
       versionKey: false,
-      transform(doc, ret) {
+      transform(_doc, ret) {
         delete ret._id;
         return ret;
       },
