@@ -51,13 +51,18 @@ export async function GET(
             "id, name, mimeType, webContentLink, imageMediaMetadata, webViewLink, thumbnailLink, size",
         });
         if (!response.data) {
-          return new Response("Image not found in Google Drive", {
-            status: 404,
-          });
+          return new Response("Image not found", { status: 404 });
         }
-        return new Response(JSON.stringify(response.data), {
-          headers: { "Content-Type": "application/json" },
-        });
+        if (
+          response.data?.mimeType &&
+          response.data?.mimeType.startsWith("image/")
+        ) {
+          return new Response(JSON.stringify(response.data), {
+            headers: { "Content-Type": "application/json" },
+          });
+        } else {
+          return new Response("Not an image file", { status: 400 });
+        }
       } else {
         const res = await fetch(imageUrl);
 

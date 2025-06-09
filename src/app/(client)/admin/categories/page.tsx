@@ -4,7 +4,7 @@ import ViewCategories from "@/components/admin/categories/view";
 import { getAllData } from "@/lib/api";
 import { useWindowWidth } from "@/lib/hooks";
 import properties from "@/lib/properties";
-import { Alert, Segmented, Space, Spin, Typography } from "antd";
+import { Segmented, Space, Spin, Typography } from "antd";
 import Search, { SearchProps } from "antd/es/input/Search";
 import Fuse from "fuse.js";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -122,7 +122,7 @@ const AdminCategoryPage = () => {
     <div className="categories__container" ref={containerRef}>
       {loading.pageLoaded ? (
         <Space direction="vertical" style={{ width: "100%" }}>
-          <Alert
+          {/* <Alert
             message="Admin Categories"
             description={
               <>
@@ -138,7 +138,7 @@ const AdminCategoryPage = () => {
               </>
             }
             type="warning"
-          />
+          /> */}
           <Typography.Title level={3}>Categories</Typography.Title>
           <Segmented
             value={tab}

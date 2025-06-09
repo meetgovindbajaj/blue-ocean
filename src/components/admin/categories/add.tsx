@@ -84,12 +84,15 @@ const AddCategories = ({
     const urlType = imageUrlType === "image" ? "Image" : "Folder";
     if (value.trim() === "") {
       form.setFields([
-        { name: "imageUrl", errors: [`${urlType} URL cannot be empty!`] },
+        { name: "imageUrlFetch", errors: [`${urlType} URL cannot be empty!`] },
       ]);
       return;
     } else if (!value.startsWith("https://")) {
       form.setFields([
-        { name: "imageUrl", errors: [`Please enter a valid ${urlType} URL!`] },
+        {
+          name: "imageUrlFetch",
+          errors: [`Please enter a valid ${urlType} URL!`],
+        },
       ]);
       return;
     }
@@ -105,7 +108,7 @@ const AddCategories = ({
         } else {
           form.setFields([
             {
-              name: "imageUrl",
+              name: "imageUrlFetch",
               errors: undefined,
             },
           ]);
@@ -123,7 +126,7 @@ const AddCategories = ({
         } else {
           form.setFields([
             {
-              name: "imageUrl",
+              name: "imageUrlFetch",
               errors: undefined,
             },
           ]);
@@ -135,7 +138,7 @@ const AddCategories = ({
       console.error("Error checking image URL:", error);
       form.setFields([
         {
-          name: "imageUrl",
+          name: "imageUrlFetch",
           errors: [`Invalid ${imageUrlType} URL! Please try again.`],
         },
       ]);
