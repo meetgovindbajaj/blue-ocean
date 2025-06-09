@@ -1,4 +1,5 @@
 "use client";
+import { popupMessage } from "@/app/(client)/admin/layout";
 import {
   createSlug,
   extractFileIdFromUrl,
@@ -9,7 +10,16 @@ import properties from "@/lib/properties";
 import { Button, Form, Image, Input, Radio, Select, Space } from "antd";
 import Search from "antd/es/input/Search";
 import TextArea from "antd/es/input/TextArea";
-import { ChangeEvent, Dispatch, SetStateAction, useId, useState } from "react";
+import Fuse from "fuse.js";
+import { ReadonlyURLSearchParams, useRouter } from "next/navigation";
+import {
+  ChangeEvent,
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useId,
+  useState,
+} from "react";
 
 interface IForm {
   name: string;
@@ -20,11 +30,7 @@ interface IForm {
   imageUrl: string;
 }
 
-const AddCategories = ({
-  categories,
-  loading,
-  setCategoriesList,
-}: {
+interface IProps {
   categories: ICategory[];
   loading: {
     status: boolean;
@@ -33,7 +39,30 @@ const AddCategories = ({
     productsLoaded: boolean;
   };
   setCategoriesList: Dispatch<SetStateAction<ICategory[]>>;
-}) => {
+  fuse: Fuse<ICategory>;
+  fuseById: Fuse<ICategory>;
+  searchParams: ReadonlyURLSearchParams;
+  editMode: boolean;
+  setEditMode: Dispatch<SetStateAction<boolean>>;
+}
+
+const AddCategories = ({
+  categories,
+  loading,
+  setCategoriesList,
+  fuse,
+  fuseById,
+  editMode,
+  setEditMode,
+  searchParams,
+}: IProps) => {
+  const [actionType, setActionType] = useState<"edit" | null>(
+    searchParams.get("type") === "edit" ? "edit" : null
+  );
+  const [actionId, setActionId] = useState<string | null>(
+    searchParams.get("id") || null
+  );
+  const router = useRouter();
   const [form] = Form.useForm();
   const uniqueId = useId();
   const windowSize = useWindowWidth();
@@ -47,7 +76,6 @@ const AddCategories = ({
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     const slug = createSlug(value);
-
     form.setFieldsValue({ slug });
   };
 
@@ -149,8 +177,14 @@ const AddCategories = ({
       image: image || null,
     };
     try {
-      const response = await fetch("/api/v1/category/create", {
-        method: "POST",
+      let url = "/api/v1/category/create";
+      let method = "POST";
+      if (actionType === "edit" && actionId && editMode) {
+        url = `/api/v1/category/update/${actionId}`;
+        method = "PATCH";
+      }
+      const response = await fetch(url, {
+        method,
         headers: {
           "Content-Type": "application/json",
         },
@@ -161,7 +195,26 @@ const AddCategories = ({
       }
       const data: ICategory = await response.json();
       handleReset();
-      setCategoriesList((prevCategories) => [...prevCategories, data]);
+      if (actionType === "edit" && actionId && editMode) {
+        popupMessage?.open({
+          type: "success",
+          content: "Category updated successfully!",
+        });
+        setCategoriesList((prevCategories) =>
+          prevCategories.map((category) =>
+            category.id === data.id ? data : category
+          )
+        );
+        const params = new URLSearchParams();
+        params.set("action", "view");
+        router.replace(`?${params.toString()}`);
+      } else {
+        popupMessage?.open({
+          type: "success",
+          content: "Category added successfully!",
+        });
+        setCategoriesList((prevCategories) => [...prevCategories, data]);
+      }
     } catch (error) {
       console.error("Error adding category:", error);
       form.setFields([
@@ -179,6 +232,51 @@ const AddCategories = ({
     setImageUrlSearching(false);
     setImageUrlType("image");
   };
+
+  useEffect(() => {
+    if (actionType === "edit" && actionId && categories.length > 0) {
+      setEditMode(true);
+      const category = fuseById.search(actionId)[0]?.item;
+      if (category) {
+        form.setFieldsValue({
+          name: category.name,
+          slug: category.slug,
+          description: category.description,
+          parent: category.parent ? category.parent.id : undefined,
+          imageUrlFetch: "",
+          imageUrl: category.image?.id,
+        });
+        setImageList(
+          category.image
+            ? [
+                {
+                  id: category.image.id,
+                  name: category.image.name,
+                  webViewLink: category.image.url,
+                  thumbnailLink: category.image.thumbnailUrl,
+                  webContentLink: category.image.downloadUrl,
+                  imageMediaMetadata: {
+                    width: category.image.width,
+                    height: category.image.height,
+                    rotation: 0,
+                  },
+                  size: category.image.size.toString(),
+                  mimeType: "image/webp", // Assuming JPEG, adjust as needed
+                },
+              ]
+            : []
+        );
+      } else {
+        const params = new URLSearchParams();
+        params.set("action", "add");
+        router.replace(`?${params.toString()}`);
+        setEditMode(false);
+        setActionType(null);
+        setActionId(null);
+        handleReset();
+      }
+    }
+  }, [categories, actionId, actionType]);
 
   return (
     <Form
@@ -219,19 +317,26 @@ const AddCategories = ({
       <Form.Item name="parent" label="Parent Category">
         <Select
           loading={!loading.categoriesLoaded}
-          showSearch
           placeholder="Choose parent category..."
           options={categories.map((category: ICategory) => ({
             label: category.name,
             value: category.id,
             key: category.slug + uniqueId,
           }))}
+          allowClear
+          showSearch
+          filterOption={(input, option) => {
+            const result = fuse
+              .search(input)
+              .some((category) => category.item.id === option?.value);
+            return result;
+          }}
         />
       </Form.Item>
       <Form.Item
         label="Cover Image Url"
         name="imageUrlFetch"
-        rules={getRules("cover image url")}
+        rules={editMode ? undefined : getRules("cover image url")}
       >
         <Search
           disabled={imageUrlSearching}
@@ -260,7 +365,7 @@ const AddCategories = ({
           rules={[{ required: true, message: "Please select a cover image!" }]}
         >
           <Radio.Group
-            block
+            // block
             options={imageList.map((image: IGoogleImageResponse) => ({
               value: image.id,
               key: uniqueId,
@@ -295,7 +400,7 @@ const AddCategories = ({
       <Form.Item>
         <Space>
           <Button type="primary" htmlType="submit">
-            Add
+            {actionType ? "Update" : "Add"}
           </Button>
           <Button htmlType="reset">reset</Button>
         </Space>

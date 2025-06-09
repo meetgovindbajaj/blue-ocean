@@ -61,5 +61,10 @@
       overflow: hidden;
       margin-inline: 10px;
     }
+    .ant-card-meta-description {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 }

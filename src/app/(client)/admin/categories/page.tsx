@@ -10,9 +10,7 @@ import Fuse from "fuse.js";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 const items: { key: string; label: string; value: string }[] = [
-  { key: "admin__category-edit", label: "Edit", value: "edit" },
-  { key: "admin__category-preview", label: "Preview", value: "preview" },
-  { key: "admin__category-delete", label: "Delete", value: "delete" },
+  { key: "admin__category-view", label: "View", value: "view" },
   { key: "admin__category-add", label: "Add", value: "add" },
 ] as const;
 
@@ -20,10 +18,9 @@ const AdminCategoryPage = () => {
   const searchParams = useSearchParams();
   const windowSize = useWindowWidth();
   const router = useRouter();
-  const [tab, setTab] = useState<(typeof items)[number]["label"]>("Edit");
-  const [searchQuery, setSearchQuery] = useState<string | null>(
-    searchParams.get("q")
-  );
+  const [tab, setTab] = useState<(typeof items)[number]["label"]>("View");
+  const [editMode, setEditMode] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string | null>(null);
   const containerRef = useRef(null);
   const [categoriesList, setCategoriesList] = useState<ICategory[]>([]);
   const [loading, setLoading] = useState({
@@ -33,13 +30,21 @@ const AdminCategoryPage = () => {
     productsLoaded: false,
   });
 
-  const fuse = new Fuse(categoriesList, {
-    keys: ["name", "slug", "description"],
+  const fuse: Fuse<ICategory> = new Fuse(categoriesList, {
+    keys: ["name", "slug"],
     threshold: 0.4,
     includeScore: true,
     ignoreLocation: true,
     useExtendedSearch: true,
   });
+  const fuseById: Fuse<ICategory> = new Fuse(categoriesList, {
+    keys: ["id"],
+    minMatchCharLength: 24,
+    threshold: 0,
+  });
+  const filteredCategories: ICategory[] = searchQuery
+    ? fuse.search(searchQuery).map((result) => result.item || [])
+    : categoriesList;
 
   const handleTabChange = (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -48,27 +53,26 @@ const AdminCategoryPage = () => {
   };
   const onSearch: SearchProps["onSearch"] = (value, _e, info) => {
     if (info?.source && info.source === "input") {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set("q", value);
-      router.replace(`?${params.toString()}`);
+      setSearchQuery(() => value);
     } else if (info?.source && info.source === "clear") {
-      const params = new URLSearchParams(searchParams.toString());
-      params.delete("q");
-      router.replace(`?${params.toString()}`);
+      setSearchQuery(() => null);
     }
   };
 
   useEffect(() => {
-    if (!searchParams.get("action")) router.replace("?action=edit");
-    else
-      setTab(
-        items.find((item) => item.value === searchParams.get("action"))
-          ?.label || "Edit"
-      );
-
-    if (searchParams.get("q")) setSearchQuery(searchParams.get("q"));
-    else setSearchQuery(null);
-
+    if (!searchParams.get("action")) router.replace("?action=view");
+    else {
+      const newTab = items.find(
+        (item) => item.value === searchParams.get("action")
+      )?.label;
+      if (newTab) {
+        setTab(newTab);
+      } else {
+        const params = new URLSearchParams(searchParams.toString());
+        params.set("action", "view");
+        router.replace(`?${params.toString()}`);
+      }
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
@@ -136,18 +140,6 @@ const AdminCategoryPage = () => {
             type="warning"
           />
           <Typography.Title level={3}>Categories</Typography.Title>
-          {tab !== "Add" && (
-            <Search
-              placeholder="search categories..."
-              allowClear
-              onSearch={onSearch}
-              size={"large"}
-              autoFocus={windowSize >= properties.breakpoints.laptop.small}
-              autoComplete="off"
-              defaultValue={searchQuery || ""}
-            />
-          )}
-
           <Segmented
             value={tab}
             onChange={handleTabChange}
@@ -156,22 +148,35 @@ const AdminCategoryPage = () => {
             defaultValue={tab}
             block
           />
-          {(tab === "Edit" || tab === "Preview" || tab === "Delete") && (
-            <ViewCategories
-              action={tab}
-              loading={loading}
-              categories={
-                !searchQuery
-                  ? categoriesList
-                  : fuse.search(searchQuery).map((result) => result.item || [])
-              }
-            />
+          {tab === "View" && (
+            <>
+              <Search
+                placeholder="search categories..."
+                onSearch={onSearch}
+                size={"middle"}
+                autoFocus={windowSize >= properties.breakpoints.laptop.small}
+                autoComplete="off"
+                value={searchQuery || ""}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                allowClear
+              />
+              <ViewCategories
+                loading={loading}
+                categories={filteredCategories}
+                setCategoriesList={setCategoriesList}
+              />
+            </>
           )}
           {tab === "Add" && (
             <AddCategories
               categories={categoriesList}
               loading={loading}
               setCategoriesList={setCategoriesList}
+              fuse={fuse}
+              editMode={editMode}
+              setEditMode={setEditMode}
+              fuseById={fuseById}
+              searchParams={searchParams}
             />
           )}
         </Space>

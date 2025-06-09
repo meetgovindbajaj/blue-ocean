@@ -12,7 +12,7 @@ export async function PATCH(
     const data = await req.json();
     const updated = await Category.findByIdAndUpdate(id, data, {
       new: true,
-    });
+    }).populate("parent", "id name slug");
     return NextResponse.json(updated);
   } catch (error: unknown) {
     let errorMessage = "Unknown error";
