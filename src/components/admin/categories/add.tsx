@@ -72,6 +72,7 @@ const AddCategories = ({
   const [imageSize] = useState<number>(
     windowSize < properties.breakpoints.tablet.default ? 100 : 200
   );
+  const [sending, setSending] = useState(false);
 
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -177,6 +178,7 @@ const AddCategories = ({
       image: image || null,
     };
     try {
+      setSending(true);
       let url = "/api/v1/category/create";
       let method = "POST";
       if (actionType === "edit" && actionId && editMode) {
@@ -223,6 +225,8 @@ const AddCategories = ({
           errors: ["Failed to add category. Please try again."],
         },
       ]);
+    } finally {
+      setSending(false);
     }
   };
 
@@ -276,6 +280,7 @@ const AddCategories = ({
         handleReset();
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categories, actionId, actionType]);
 
   return (
@@ -399,8 +404,14 @@ const AddCategories = ({
       )}
       <Form.Item>
         <Space>
-          <Button type="primary" htmlType="submit">
-            {actionType ? "Update" : "Add"}
+          <Button type="primary" htmlType="submit" loading={sending}>
+            {actionType
+              ? sending
+                ? "Updating..."
+                : "Update"
+              : sending
+              ? "Adding..."
+              : "Add"}
           </Button>
           <Button htmlType="reset">reset</Button>
         </Space>

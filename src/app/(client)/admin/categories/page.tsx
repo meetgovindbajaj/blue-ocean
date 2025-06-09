@@ -47,7 +47,7 @@ const AdminCategoryPage = () => {
     : categoriesList;
 
   const handleTabChange = (value: string) => {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams();
     params.set("action", value.toLocaleLowerCase());
     router.replace(`?${params.toString()}`);
   };
