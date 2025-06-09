@@ -1,12 +1,7 @@
 import { popupMessage } from "@/app/(client)/admin/layout";
-import {
-  DeleteOutlined,
-  EditOutlined,
-  ExportOutlined,
-} from "@ant-design/icons";
-import { Card, List, Popconfirm, Spin } from "antd";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { Card, List, Popconfirm, Spin, Image } from "antd";
 import Meta from "antd/es/card/Meta";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
 
@@ -65,53 +60,65 @@ const ViewCategories = ({ categories, loading, setCategoriesList }: IProps) => {
     }
   };
   return loading.categoriesLoaded ? (
-    <List
-      grid={{
-        gutter: [16, 16],
-        xs: 1,
-        sm: 2,
-        md: 3,
-        lg: 4,
-        xl: 5,
-        xxl: 6,
-      }}
-      style={{ width: "100%" }}
-      dataSource={categories}
-      renderItem={(item: ICategory) => (
-        <List.Item>
-          <Card
-            key={item.id}
-            style={{ width: "100%" }}
-            cover={
-              <Image
-                src={`/api/v1/image/${item.image?.id}?&w=200&h=100&format=webp&q=50`}
-                alt={item.image?.name || ""}
-                width={200}
-                height={100}
-                style={{ objectFit: "cover" }}
-                placeholder="blur"
-                blurDataURL={`/api/v1/image/${item.image?.id}?w=200&h=100&format=webp&q=10&t=1&grayscale=1`}
-              />
-            }
-            actions={[
-              <EditOutlined key="edit" onClick={() => handleEdit(item)} />,
-              <ExportOutlined key="preview" />,
-              <Popconfirm
-                key="delete"
-                title="Delete the category!"
-                description="Are you sure to delete this category?"
-                onConfirm={() => handleDelete(item)}
-                okText="Delete"
-              >
-                <DeleteOutlined type="danger" />,
-              </Popconfirm>,
-            ]}
-          >
-            <Meta title={item.name} description={item.description} />
-          </Card>
-        </List.Item>
-      )}
-    />
+    <>
+      <List
+        grid={{
+          gutter: [16, 16],
+          xs: 1,
+          sm: 2,
+          md: 3,
+          lg: 4,
+          xl: 5,
+          xxl: 6,
+        }}
+        style={{ width: "100%" }}
+        dataSource={categories}
+        renderItem={(item: ICategory) => (
+          <List.Item>
+            <Card
+              key={item.id}
+              style={{ width: "100%", overflow: "hidden" }}
+              cover={
+                <Image
+                  src={`/api/v1/image/${item.image?.id}?&w=200&h=100&format=webp&q=30`}
+                  alt={item.image?.name || ""}
+                  width={"100%"}
+                  height={100}
+                  style={{ objectFit: "cover" }}
+                  preview={{
+                    src: `/api/v1/image/${item.image?.id}?&w=500&h=500&format=webp&q=90&o=1`,
+                    mask: "Preview Image",
+                  }}
+                  placeholder={
+                    <Image
+                      src={`/api/v1/image/${item.image?.id}?&w=200&h=100&format=webp&q=10&t=1&grayscale=1`}
+                      alt={item.image?.name || ""}
+                      width={200}
+                      height={100}
+                      preview={false}
+                    />
+                  }
+                />
+              }
+              actions={[
+                <EditOutlined key="edit" onClick={() => handleEdit(item)} />,
+                <Popconfirm
+                  key="delete"
+                  title="Delete the category"
+                  description="Are you sure to delete this category?"
+                  onConfirm={() => handleDelete(item)}
+                  okText="Delete"
+                >
+                  <DeleteOutlined type="danger" />
+                </Popconfirm>,
+              ]}
+            >
+              <Meta title={item.name} description={item.description} />
+            </Card>
+          </List.Item>
+        )}
+      />
+    </>
   ) : (
     <Spin fullscreen spinning percent={"auto"} />
   );

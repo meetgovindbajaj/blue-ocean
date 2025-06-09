@@ -21,6 +21,7 @@ export async function GET(
   const requestedQuality = searchParams.get("q")
     ? parseInt(searchParams.get("q")!, 10)
     : null;
+  const isOriginal = searchParams.get("o") === "1"; // Not used in this route, but can be extended for cover images
   const isBlurred = searchParams.get("blur") === "1";
   const isInfo = searchParams.get("i") === "1"; // Not used in this route, but can be extended for metadata
   const isThumbnail = searchParams.get("t") === "1";
@@ -125,7 +126,7 @@ export async function GET(
         kernel: sharp.kernel.lanczos3, // Use Lanczos3 for better quality
         position: "center", // Center the image if resizing
         background: { r: 255, g: 255, b: 255, alpha: 0 }, // Transparent background for PNG/WebP
-        fit: "cover", // Use cover for thumbnails, inside for others
+        fit: isOriginal ? "inside" : "cover", // Use cover for thumbnails, inside for others
       });
     }
 
