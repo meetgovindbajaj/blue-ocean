@@ -232,9 +232,13 @@ const AddCategories = ({
 
   const handleReset = () => {
     form.resetFields();
+    setEditMode(false);
+    setActionType(null);
+    setActionId(null);
     setImageList([]);
     setImageUrlSearching(false);
     setImageUrlType("image");
+    router.replace("?action=add");
   };
 
   useEffect(() => {
@@ -247,7 +251,7 @@ const AddCategories = ({
           slug: category.slug,
           description: category.description,
           parent: category.parent ? category.parent.id : undefined,
-          imageUrlFetch: "",
+          imageUrlFetch: category.image?.url || "",
           imageUrl: category.image?.id,
         });
         setImageList(
@@ -301,6 +305,7 @@ const AddCategories = ({
           allowClear
           autoFocus={windowSize >= properties.breakpoints.laptop.small}
           onChange={handleNameChange}
+          disabled={sending}
         />
       </Form.Item>
       <Form.Item name="slug" label="slug" hidden>
@@ -317,13 +322,18 @@ const AddCategories = ({
           allowClear
           showCount
           maxLength={200}
+          disabled={sending}
         />
       </Form.Item>
       <Form.Item name="parent" label="Parent Category">
         <Select
+          disabled={sending}
           loading={!loading.categoriesLoaded}
           placeholder="Choose parent category..."
-          options={categories.map((category: ICategory) => ({
+          options={(actionType && actionId
+            ? categories.filter((cat) => cat.id !== actionId)
+            : categories
+          ).map((category: ICategory) => ({
             label: category.name,
             value: category.id,
             key: category.slug + uniqueId,
@@ -344,7 +354,7 @@ const AddCategories = ({
         rules={editMode ? undefined : getRules("cover image url")}
       >
         <Search
-          disabled={imageUrlSearching}
+          disabled={imageUrlSearching || sending}
           enterButton={imageUrlSearching ? "Checking..." : "Check"}
           placeholder={`type google drive ${imageUrlType} url...`}
           addonBefore={
@@ -371,6 +381,7 @@ const AddCategories = ({
         >
           <Radio.Group
             // block
+            disabled={sending || imageUrlSearching}
             options={imageList.map((image: IGoogleImageResponse) => ({
               value: image.id,
               key: uniqueId,
