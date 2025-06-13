@@ -84,7 +84,7 @@ export default async function RootLayout({
           >
             dummy navbar
           </header> */}
-          <Header categories={categories as ICategory[]} />
+          <Header _categories={categories as ICategory[]} />
           <div className="main">{children}</div>
           <footer
             style={{
