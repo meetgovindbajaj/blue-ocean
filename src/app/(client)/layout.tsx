@@ -11,8 +11,8 @@ import {
 } from "@clerk/nextjs";
 import "./globals.css";
 import "@/styles/rootStyles.scss";
-import "@/styles/admin.scss";
-// import { getAllData } from "@/lib/api";
+import { getAllData } from "@/lib/api";
+import Header from "@/components/header";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
@@ -62,7 +62,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // const { categories } = await getAllData();
+  const { categories } = await getAllData();
 
   return (
     <ClerkProvider>
@@ -79,12 +79,12 @@ export default async function RootLayout({
               {/* <UserProfile /> */}
             </SignedIn>
           </header>
-          <header
+          {/* <header
             style={{ height: "3rem", backgroundColor: "black", color: "white" }}
           >
             dummy navbar
-          </header>
-          {/* <Header categories={categories as ICategory[]} /> */}
+          </header> */}
+          <Header categories={categories as ICategory[]} />
           <div className="main">{children}</div>
           <footer
             style={{

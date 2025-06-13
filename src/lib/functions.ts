@@ -1,3 +1,5 @@
+import { PopulateOptions } from "mongoose";
+
 export const formatDate = (date: Date | string): string => {
   const d = new Date(date);
   return d.toISOString().split("T")[0]; // Returns date in YYYY-MM-DD format
@@ -64,3 +66,19 @@ export function extractFileIdFromUrl(url: string) {
     return ""; // Return the original URL in case of error
   }
 }
+
+export const buildPopulate = (depth = 10): PopulateOptions => {
+  const populate: PopulateOptions = {
+    path: "parent",
+    select: "id name slug parent",
+  };
+  let current: PopulateOptions = populate;
+  for (let i = 1; i < depth; i++) {
+    current.populate = {
+      path: "parent",
+      select: "id name slug parent",
+    };
+    current = current.populate as PopulateOptions;
+  }
+  return populate;
+};

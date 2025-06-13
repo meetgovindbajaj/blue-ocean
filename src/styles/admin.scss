@@ -53,6 +53,8 @@
     );
   }
   .categories__container {
+    overflow-y: auto;
+    height: 100%;
     .categories__image {
       border: 2px solid color.adjust($light-gray, $lightness: -5%);
       border-radius: 10px;
@@ -61,10 +63,25 @@
       overflow: hidden;
       margin-inline: 10px;
     }
+    .badge-status {
+      margin-inline-start: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      text-transform: uppercase;
+      backdrop-filter: blur(10px);
+      .ant-badge-status-text {
+        font-size: 0.7rem !important;
+      }
+    }
     .ant-card-meta-description {
-      white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      display: -webkit-box;
+      line-clamp: 3; /* Limit to 3 lines */
+      -webkit-line-clamp: 3; /* Limit to 3 lines */
+      -webkit-box-orient: vertical;
     }
   }
 }

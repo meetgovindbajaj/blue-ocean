@@ -15,10 +15,10 @@ export default function AdminLayout({
   children: React.ReactNode;
 }>) {
   const windowWidth = useWindowWidth();
-  const [sidebarWidth, setSidebarWidth] = useState<number>(60);
+  const [sidebarWidth, setSidebarWidth] = useState<number>(50);
   const [messageApi, contextHolder] = message.useMessage();
   const handleResize = (sizes: number[]) => {
-    setSidebarWidth(sizes[0] ?? 60);
+    setSidebarWidth(sizes[0] ?? 50);
   };
   popupMessage = messageApi;
   const showResizeAlert =
@@ -32,9 +32,9 @@ export default function AdminLayout({
       {contextHolder}
       <Splitter className="admin" onResize={handleResize}>
         <Splitter.Panel
-          defaultSize={60}
+          defaultSize={50}
           max={200}
-          min={60}
+          min={50}
           collapsible
           style={{ overflow: "hidden auto" }}
         >

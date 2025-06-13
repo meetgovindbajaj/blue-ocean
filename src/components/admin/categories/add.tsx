@@ -7,10 +7,11 @@ import {
 } from "@/lib/functions";
 import { useWindowWidth } from "@/lib/hooks";
 import properties from "@/lib/properties";
-import { Button, Form, Image, Input, Radio, Select, Space } from "antd";
+import { Button, Form, Input, Radio, Select, Space } from "antd";
 import Search from "antd/es/input/Search";
 import TextArea from "antd/es/input/TextArea";
 import Fuse from "fuse.js";
+import Image from "next/image";
 import { ReadonlyURLSearchParams, useRouter } from "next/navigation";
 import {
   ChangeEvent,
@@ -99,6 +100,7 @@ const AddCategories = ({
     setImageUrlSearching(true);
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL;
     try {
+      let firstImage: IGoogleImageResponse | null = null;
       if (imageUrlType === "image") {
         const imageId = extractFileIdFromUrl(value);
         // Simulate an API call to check the image URL
@@ -114,7 +116,8 @@ const AddCategories = ({
           ]);
         }
         const data: IGoogleImageResponse = await response.json();
-        setImageList([data]);
+        setImageList(() => [data]);
+        firstImage = data;
       } else {
         const folderId = extractFolderIdFromUrl(value);
         // Simulate an API call to check the image URL
@@ -132,8 +135,12 @@ const AddCategories = ({
           ]);
         }
         const data: IGoogleImageResponse[] = await response.json();
-        setImageList(data);
+        setImageList(() => data);
+        firstImage = data[0] || null;
       }
+      form.setFieldsValue({
+        imageUrl: firstImage?.id || "",
+      });
     } catch (error) {
       console.error("Error checking image URL:", error);
       form.setFields([
@@ -304,7 +311,7 @@ const AddCategories = ({
       <Form.Item name="name" label="Name" rules={getRules("category name")}>
         <Input
           autoComplete="off"
-          placeholder="type category name..."
+          placeholder="Table, Chair..."
           allowClear
           autoFocus={windowSize >= properties.breakpoints.laptop.small}
           onChange={handleNameChange}
@@ -321,10 +328,10 @@ const AddCategories = ({
       >
         <TextArea
           rows={3}
-          placeholder="type category description..."
+          placeholder="Made from high-quality, durable wood..."
           allowClear
           showCount
-          maxLength={200}
+          maxLength={1000}
           disabled={sending}
         />
       </Form.Item>
@@ -354,12 +361,14 @@ const AddCategories = ({
       <Form.Item
         label="Cover Image Url"
         name="imageUrlFetch"
-        rules={editMode ? undefined : getRules("cover image url")}
+        rules={getRules("cover image url")}
       >
         <Search
           disabled={imageUrlSearching || sending}
           enterButton={imageUrlSearching ? "Checking..." : "Check"}
-          placeholder={`type google drive ${imageUrlType} url...`}
+          placeholder={`https://drive.google.com/drive/${
+            imageUrlType === "folder" ? "folders/1EHAK" : "file/d/18rJd"
+          }...`}
           addonBefore={
             <Select
               defaultValue={imageUrlType}
@@ -392,24 +401,13 @@ const AddCategories = ({
                 <Image
                   key={image.id}
                   src={`/api/v1/image/${image.id}?w=${imageSize}&h=${imageSize}&format=webp&q=50`}
-                  preview={{
-                    src: `/api/v1/image/${image.id}?format=webp`,
-                    mask: image.name,
-                  }}
-                  placeholder={
-                    <Image
-                      preview={false}
-                      src={`/api/v1/image/${image.id}?w=${imageSize}&h=${imageSize}&format=webp&t=1&q=10`}
-                      width={imageSize}
-                      height={imageSize}
-                      alt="Loading..."
-                    />
-                  }
+                  priority
                   alt={image.name}
                   width={imageSize}
                   height={imageSize}
-                  rootClassName="categories__image"
-                  fallback="/api/v1/image/fallback.webp?d=0&w=${imageSize}&h=${imageSize}&grayscale=1&q=50"
+                  className="categories__image"
+                  placeholder="blur"
+                  blurDataURL={`/api/v1/image/${image.id}?w=${imageSize}&h=${imageSize}&format=webp&q=10&t=1&grayscale=1`}
                 />
               ),
             }))}
@@ -418,7 +416,12 @@ const AddCategories = ({
       )}
       <Form.Item>
         <Space>
-          <Button type="primary" htmlType="submit" loading={sending}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={sending}
+            disabled={sending}
+          >
             {actionType
               ? sending
                 ? "Updating..."

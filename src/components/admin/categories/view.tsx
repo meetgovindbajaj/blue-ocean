@@ -1,7 +1,22 @@
 import { popupMessage } from "@/app/(client)/admin/layout";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Card, List, Popconfirm, Spin, Image } from "antd";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  EllipsisOutlined,
+} from "@ant-design/icons";
+import {
+  Card,
+  List,
+  Popconfirm,
+  Spin,
+  Image,
+  Badge,
+  Popover,
+  Dropdown,
+  Menu,
+} from "antd";
 import Meta from "antd/es/card/Meta";
+import NextImage from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
 
@@ -59,6 +74,44 @@ const ViewCategories = ({ categories, loading, setCategoriesList }: IProps) => {
       });
     }
   };
+  const handleStatus = async (category: ICategory) => {
+    if (!category || !category.id) return;
+    try {
+      const payload = {
+        isActive: !category.isActive,
+      };
+      const response = await fetch(`/api/v1/category/update/${category.id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+      if (response.ok) {
+        popupMessage?.open({
+          type: "success",
+          content: "Category status updated successfully.",
+        });
+        setCategoriesList((prevCategories) =>
+          prevCategories.map((cat) =>
+            cat.id === category.id ? { ...cat, isActive: !cat.isActive } : cat
+          )
+        );
+      } else {
+        const errorData = await response.json();
+        popupMessage?.open({
+          type: "error",
+          content: errorData.message || "Failed to update category.",
+        });
+      }
+    } catch (error) {
+      console.error("Error updating category:", error);
+      popupMessage?.open({
+        type: "error",
+        content: "Failed to update category. Please try again.",
+      });
+    }
+  };
   return loading.categoriesLoaded ? (
     <>
       <List
@@ -77,31 +130,48 @@ const ViewCategories = ({ categories, loading, setCategoriesList }: IProps) => {
           <List.Item>
             <Card
               key={item.id}
+              title={<Popover content={item.name}>{item.name}</Popover>}
               style={{ width: "100%", overflow: "hidden" }}
               cover={
                 <Image
-                  src={`/api/v1/image/${item.image?.id}?&w=200&h=100&format=webp&q=30`}
+                  src={`/api/v1/image/${item.image?.id}?&w=200&h=200&format=webp&q=30`}
                   alt={item.image?.name || ""}
                   width={"100%"}
-                  height={100}
+                  height={200}
                   style={{ objectFit: "cover" }}
+                  loading="lazy"
                   preview={{
-                    src: `/api/v1/image/${item.image?.id}?&w=500&h=500&format=webp&q=90&o=1`,
+                    src: `/api/v1/image/${item.image?.id}?&format=webp&q=90&o=1`,
                     mask: "Preview Image",
                   }}
                   placeholder={
-                    <Image
-                      src={`/api/v1/image/${item.image?.id}?&w=200&h=100&format=webp&q=10&t=1&grayscale=1`}
+                    <NextImage
+                      src={`/api/v1/image/${item.image?.id}?&w=300&h=200&format=webp&q=10&t=1&grayscale=1`}
                       alt={item.image?.name || ""}
-                      width={200}
-                      height={100}
-                      preview={false}
+                      width={300}
+                      height={200}
+                      style={{ objectFit: "cover" }}
+                      priority
                     />
                   }
                 />
               }
+              extra={
+                <Badge
+                  status="processing"
+                  text={item.isActive ? "Active" : "Inactive"}
+                  style={{ color: item.isActive ? "green" : "red" }}
+                  color={item.isActive ? "green" : "red"}
+                  data-status={item.isActive ? "active" : "inactive"}
+                  rootClassName="badge-status"
+                />
+              }
               actions={[
-                <EditOutlined key="edit" onClick={() => handleEdit(item)} />,
+                <EditOutlined
+                  key="edit"
+                  onClick={() => handleEdit(item)}
+                  style={{ color: "#0097a7" }}
+                />,
                 <Popconfirm
                   key="delete"
                   title="Delete the category"
@@ -109,11 +179,41 @@ const ViewCategories = ({ categories, loading, setCategoriesList }: IProps) => {
                   onConfirm={() => handleDelete(item)}
                   okText="Delete"
                 >
-                  <DeleteOutlined type="danger" />
+                  <DeleteOutlined style={{ color: "red" }} />
                 </Popconfirm>,
+                <Dropdown
+                  key="more"
+                  popupRender={() => {
+                    return (
+                      <Menu>
+                        <Menu.Item
+                          key="view"
+                          onClick={() =>
+                            window.open(
+                              `/admin/categories/${item.slug}`,
+                              "_blank"
+                            )
+                          }
+                        >
+                          View
+                        </Menu.Item>
+                        <Menu.Item
+                          key="status"
+                          onClick={() => handleStatus(item)}
+                          style={{ color: item.isActive ? "red" : "green" }}
+                        >
+                          {item.isActive ? "Inactivate" : "Activate"}
+                        </Menu.Item>
+                      </Menu>
+                    );
+                  }}
+                  trigger={["click"]}
+                >
+                  <EllipsisOutlined />
+                </Dropdown>,
               ]}
             >
-              <Meta title={item.name} description={item.description} />
+              <Meta description={item.description} />
             </Card>
           </List.Item>
         )}

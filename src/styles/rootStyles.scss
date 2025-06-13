@@ -1,41 +1,39 @@
 @use "@/styles/variables" as *;
 @use "@/styles/mixins" as mix;
+@use "@/styles/admin";
+@use "@/styles/header";
 @use "sass:color";
 
-.main {
-  * {
-    &::-webkit-scrollbar {
-      width: 0.5rem !important;
-      background-color: transparent !important;
-    }
-    &:has(.navbarMenu.open) {
-      &::-webkit-scrollbar {
-        display: none !important;
-      }
-    }
+.ant-splitter-panel {
+  max-height: 100dvh !important;
+  overflow: hidden !important;
+}
 
-    &::-webkit-scrollbar-button {
-      display: none !important;
-    }
+::-webkit-scrollbar {
+  width: 0.5rem !important;
+  background-color: transparent !important;
+}
 
-    &::-webkit-scrollbar-thumb {
-      background-color: $primary-color !important;
-      transition: background-color 0.3s ease-in-out;
-    }
+::-webkit-scrollbar-button {
+  display: none !important;
+}
 
-    @media screen and (hover: hover) {
-      &::-webkit-scrollbar-thumb:hover {
-        background-color: color.adjust(
-          $primary-color,
-          $lightness: -15%
-        ) !important;
-      }
-    }
+::-webkit-scrollbar-thumb {
+  background-color: #0097a7 !important;
+  transition: background-color 0.3s ease-in-out;
+}
 
-    &::-webkit-scrollbar-track {
-      background-color: transparent !important;
-    }
+@media screen and (hover: hover) {
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #005f6a !important;
   }
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent !important;
+}
+
+.main {
   @include mix.responsive-ui(
     $p: false,
     $m: false,
@@ -77,7 +75,7 @@
     align-items: center;
     width: 24px;
     height: 24px;
-    padding: $spacing-t;
+    padding: $spacing-m-l;
     border-radius: $br-t;
     transition: all 0.3s ease-in-out;
     cursor: pointer;

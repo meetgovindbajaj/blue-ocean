@@ -32,6 +32,7 @@ declare global {
     description: string;
     image: IGoogleImage | null;
     id: string;
+    isActive: boolean;
     parent: {
       name: string;
       slug: string;

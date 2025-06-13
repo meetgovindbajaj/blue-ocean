@@ -31,7 +31,7 @@ export const AdminSidebar = ({ width }: { width: number }) => {
         })}
       >
         <IconContainer>
-          <Image src={DashboardIcon} width={24} height={24} alt="" />
+          <Image src={DashboardIcon} width={16} height={16} alt="" />
         </IconContainer>
         {!!isTextVisible && <span className="sidebar__text">Dashboard</span>}
       </Link>
@@ -42,7 +42,7 @@ export const AdminSidebar = ({ width }: { width: number }) => {
         })}
       >
         <IconContainer>
-          <Image src={CategoryIcon} width={24} height={24} alt="" />
+          <Image src={CategoryIcon} width={16} height={16} alt="" />
         </IconContainer>
         {!!isTextVisible && <span className="sidebar__text">Categories</span>}
       </Link>
@@ -53,7 +53,7 @@ export const AdminSidebar = ({ width }: { width: number }) => {
         })}
       >
         <IconContainer>
-          <Image src={ProductIcon} width={24} height={24} alt="" />
+          <Image src={ProductIcon} width={16} height={16} alt="" />
         </IconContainer>
         {!!isTextVisible && <span className="sidebar__text">Products</span>}
       </Link>
@@ -64,7 +64,7 @@ export const AdminSidebar = ({ width }: { width: number }) => {
         })}
       >
         <IconContainer>
-          <Image src={OrderIcon} width={24} height={24} alt="" />
+          <Image src={OrderIcon} width={16} height={16} alt="" />
         </IconContainer>
         {!!isTextVisible && <span className="sidebar__text">Orders</span>}
       </Link>
@@ -75,7 +75,7 @@ export const AdminSidebar = ({ width }: { width: number }) => {
         })}
       >
         <IconContainer>
-          <Image src={UserIcon} width={24} height={24} alt="" />
+          <Image src={UserIcon} width={16} height={16} alt="" />
         </IconContainer>
         {!!isTextVisible && <span className="sidebar__text">Users</span>}
       </Link>

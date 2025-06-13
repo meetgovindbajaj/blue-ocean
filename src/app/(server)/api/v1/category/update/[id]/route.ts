@@ -1,4 +1,5 @@
 import dbConnect from "@/lib/db";
+import { buildPopulate } from "@/lib/functions";
 import Category from "@/models/Category";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -12,7 +13,9 @@ export async function PATCH(
     const data = await req.json();
     const updated = await Category.findByIdAndUpdate(id, data, {
       new: true,
-    }).populate("parent", "id name slug");
+    })
+      .populate(buildPopulate())
+      .populate("children", "id name slug");
     return NextResponse.json(updated);
   } catch (error: unknown) {
     let errorMessage = "Unknown error";
