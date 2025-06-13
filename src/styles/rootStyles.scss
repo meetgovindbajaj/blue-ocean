@@ -4,25 +4,6 @@
 @use "@/styles/header";
 @use "sass:color";
 
-.ant-splitter-panel {
-  max-height: 100dvh !important;
-  overflow: hidden !important;
-}
-
-::-webkit-scrollbar {
-  width: 0.5rem !important;
-  background-color: transparent !important;
-}
-
-::-webkit-scrollbar-button {
-  display: none !important;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: #0097a7 !important;
-  transition: background-color 0.3s ease-in-out;
-}
-
 @media screen and (hover: hover) {
   ::-webkit-scrollbar-thumb:hover {
     background-color: #005f6a !important;
@@ -126,7 +107,9 @@
     );
   }
 }
-
+.ant-popover {
+  max-width: min(300px, 96%);
+}
 .ant-splitter-bar-collapse-bar {
   background-color: $primary-color !important;
   color: white !important;

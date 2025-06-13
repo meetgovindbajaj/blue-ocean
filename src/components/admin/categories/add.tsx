@@ -70,9 +70,6 @@ const AddCategories = ({
   const [imageUrlType, setImageUrlType] = useState<"image" | "folder">("image");
   const [imageUrlSearching, setImageUrlSearching] = useState<boolean>(false);
   const [imageList, setImageList] = useState<IGoogleImageResponse[]>([]);
-  const [imageSize] = useState<number>(
-    windowSize < properties.breakpoints.tablet.default ? 100 : 200
-  );
   const [sending, setSending] = useState(false);
 
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -400,14 +397,15 @@ const AddCategories = ({
               label: (
                 <Image
                   key={image.id}
-                  src={`/api/v1/image/${image.id}?w=${imageSize}&h=${imageSize}&format=webp&q=50`}
+                  src={image.webContentLink}
                   priority
                   alt={image.name}
-                  width={imageSize}
-                  height={imageSize}
+                  width={100}
+                  height={100}
                   className="categories__image"
                   placeholder="blur"
-                  blurDataURL={`/api/v1/image/${image.id}?w=${imageSize}&h=${imageSize}&format=webp&q=10&t=1&grayscale=1`}
+                  blurDataURL={image.thumbnailLink}
+                  rel="noreferrer noopener"
                 />
               ),
             }))}

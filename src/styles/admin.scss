@@ -53,8 +53,6 @@
     );
   }
   .categories__container {
-    overflow-y: auto;
-    height: 100%;
     .categories__image {
       border: 2px solid color.adjust($light-gray, $lightness: -5%);
       border-radius: 10px;
@@ -79,8 +77,8 @@
       overflow: hidden;
       text-overflow: ellipsis;
       display: -webkit-box;
-      line-clamp: 3; /* Limit to 3 lines */
-      -webkit-line-clamp: 3; /* Limit to 3 lines */
+      line-clamp: 2; /* Limit to 2 lines */
+      -webkit-line-clamp: 2; /* Limit to 2 lines */
       -webkit-box-orient: vertical;
     }
   }

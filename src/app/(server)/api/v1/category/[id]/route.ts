@@ -9,7 +9,7 @@ export async function GET(
 ) {
   const { id } = await params;
   await dbConnect();
-  const category = await Category.findById(id)
+  const category = await Category.findOne({ slug: id })
     .populate(buildPopulate())
     .populate("children", "id name slug");
   if (!category)

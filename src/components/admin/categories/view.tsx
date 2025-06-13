@@ -1,8 +1,11 @@
 import { popupMessage } from "@/app/(client)/admin/layout";
 import {
+  CheckOutlined,
   DeleteOutlined,
   EditOutlined,
   EllipsisOutlined,
+  ExportOutlined,
+  StopOutlined,
 } from "@ant-design/icons";
 import {
   Card,
@@ -14,6 +17,8 @@ import {
   Popover,
   Dropdown,
   Menu,
+  Button,
+  MenuProps,
 } from "antd";
 import Meta from "antd/es/card/Meta";
 import NextImage from "next/image";
@@ -178,21 +183,39 @@ const ViewCategories = ({ categories, loading, setCategoriesList }: IProps) => {
                   description="Are you sure to delete this category?"
                   onConfirm={() => handleDelete(item)}
                   okText="Delete"
+                  okType="danger"
                 >
                   <DeleteOutlined style={{ color: "red" }} />
                 </Popconfirm>,
                 <Dropdown
                   key="more"
                   popupRender={() => {
+                    const items: MenuProps["items"] = [
+                      {
+                        label: "View",
+                        icon: <ExportOutlined />,
+                        key: "view",
+                        onClick: () =>
+                          window.open(`/category/${item.slug}`, "_blank"),
+                      },
+                      {
+                        label: item.isActive ? "Deactivate" : "Activate",
+                        icon: item.isActive ? (
+                          <StopOutlined />
+                        ) : (
+                          <CheckOutlined />
+                        ),
+                        key: "status",
+                        style: { color: item.isActive ? "red" : "green" },
+                        onClick: () => handleStatus(item),
+                      },
+                    ];
                     return (
-                      <Menu>
-                        <Menu.Item
+                      <Menu items={items}>
+                        {/* <Menu.Item
                           key="view"
                           onClick={() =>
-                            window.open(
-                              `/admin/categories/${item.slug}`,
-                              "_blank"
-                            )
+                            window.open(`/category/${item.slug}`, "_blank")
                           }
                         >
                           View
@@ -202,8 +225,8 @@ const ViewCategories = ({ categories, loading, setCategoriesList }: IProps) => {
                           onClick={() => handleStatus(item)}
                           style={{ color: item.isActive ? "red" : "green" }}
                         >
-                          {item.isActive ? "Inactivate" : "Activate"}
-                        </Menu.Item>
+                          {item.isActive ? "Deactivate" : "Activate"}
+                        </Menu.Item> */}
                       </Menu>
                     );
                   }}
@@ -213,7 +236,27 @@ const ViewCategories = ({ categories, loading, setCategoriesList }: IProps) => {
                 </Dropdown>,
               ]}
             >
-              <Meta description={item.description} />
+              <Popover
+                content={item.description}
+                title={item.name}
+                trigger="click"
+              >
+                <Meta description={item.description} />
+
+                <Button
+                  type="link"
+                  style={{
+                    marginTop: "8px",
+                    padding: "0",
+                    fontSize: "12px",
+                  }}
+                  size="small"
+                  onClick={() => {}}
+                  variant="link"
+                >
+                  View more
+                </Button>
+              </Popover>
             </Card>
           </List.Item>
         )}
