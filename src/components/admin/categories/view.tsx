@@ -79,6 +79,7 @@ const ViewCategories = ({ categories, loading, setCategoriesList }: IProps) => {
       });
     }
   };
+
   const handleStatus = async (category: ICategory) => {
     if (!category || !category.id) return;
     try {
@@ -117,6 +118,7 @@ const ViewCategories = ({ categories, loading, setCategoriesList }: IProps) => {
       });
     }
   };
+
   return loading.categoriesLoaded ? (
     <>
       <List
@@ -137,26 +139,24 @@ const ViewCategories = ({ categories, loading, setCategoriesList }: IProps) => {
               key={item.id}
               title={<Popover content={item.name}>{item.name}</Popover>}
               style={{ width: "100%", overflow: "hidden" }}
+              size="small"
               cover={
                 <Image
-                  src={`/api/v1/image/${item.image?.id}?&w=200&h=200&format=webp&q=30`}
+                  src={`/api/v1/image/${item.image?.id}?w=200&h=150&format=webp&q=30`}
                   alt={item.image?.name || ""}
                   width={"100%"}
-                  height={200}
+                  height={150}
                   style={{ objectFit: "cover" }}
-                  loading="lazy"
                   preview={{
-                    src: `/api/v1/image/${item.image?.id}?&format=webp&q=90&o=1`,
-                    mask: "Preview Image",
+                    src: `/api/v1/image/${item.image?.id}?format=webp&q=90`,
+                    mask: "Preview",
                   }}
                   placeholder={
                     <NextImage
-                      src={`/api/v1/image/${item.image?.id}?&w=300&h=200&format=webp&q=10&t=1&grayscale=1`}
+                      src={`/api/v1/image/${item.image?.id}?h=150&format=webp&q=10&t=1&grayscale=1`}
                       alt={item.image?.name || ""}
-                      width={300}
-                      height={200}
-                      style={{ objectFit: "cover" }}
                       priority
+                      fill
                     />
                   }
                 />
@@ -210,25 +210,7 @@ const ViewCategories = ({ categories, loading, setCategoriesList }: IProps) => {
                         onClick: () => handleStatus(item),
                       },
                     ];
-                    return (
-                      <Menu items={items}>
-                        {/* <Menu.Item
-                          key="view"
-                          onClick={() =>
-                            window.open(`/category/${item.slug}`, "_blank")
-                          }
-                        >
-                          View
-                        </Menu.Item>
-                        <Menu.Item
-                          key="status"
-                          onClick={() => handleStatus(item)}
-                          style={{ color: item.isActive ? "red" : "green" }}
-                        >
-                          {item.isActive ? "Deactivate" : "Activate"}
-                        </Menu.Item> */}
-                      </Menu>
-                    );
+                    return <Menu items={items} />;
                   }}
                   trigger={["click"]}
                 >
@@ -236,25 +218,25 @@ const ViewCategories = ({ categories, loading, setCategoriesList }: IProps) => {
                 </Dropdown>,
               ]}
             >
+              <Meta description={item.description} />
               <Popover
                 content={item.description}
                 title={item.name}
                 trigger="click"
               >
-                <Meta description={item.description} />
-
                 <Button
                   type="link"
                   style={{
                     marginTop: "8px",
                     padding: "0",
-                    fontSize: "12px",
+                    fontSize: "10px",
+                    color: "#0097a7",
                   }}
                   size="small"
                   onClick={() => {}}
                   variant="link"
                 >
-                  View more
+                  Read more
                 </Button>
               </Popover>
             </Card>

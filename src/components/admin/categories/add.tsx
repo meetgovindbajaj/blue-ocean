@@ -41,10 +41,8 @@ interface IProps {
   };
   setCategoriesList: Dispatch<SetStateAction<ICategory[]>>;
   fuse: Fuse<ICategory>;
-  fuseById: Fuse<ICategory>;
+  findById: (id: string) => ICategory | null;
   searchParams: ReadonlyURLSearchParams;
-  editMode: boolean;
-  setEditMode: Dispatch<SetStateAction<boolean>>;
 }
 
 const AddCategories = ({
@@ -52,17 +50,15 @@ const AddCategories = ({
   loading,
   setCategoriesList,
   fuse,
-  fuseById,
-  editMode,
-  setEditMode,
+  findById,
   searchParams,
 }: IProps) => {
-  const [actionType, setActionType] = useState<"edit" | null>(
-    searchParams.get("type") === "edit" ? "edit" : null
+  const actionId = searchParams.get("id") || null;
+  const actionType = searchParams.get("type") || null;
+  const [editMode, setEditMode] = useState<boolean>(
+    searchParams.get("action") === "add" ? false : true
   );
-  const [actionId, setActionId] = useState<string | null>(
-    searchParams.get("id") || null
-  );
+  const [isReset, setIsReset] = useState<boolean>(false);
   const router = useRouter();
   const [form] = Form.useForm();
   const uniqueId = useId();
@@ -160,6 +156,39 @@ const AddCategories = ({
     ];
   };
 
+  const populateFormWithCategory = (category: ICategory) => {
+    setIsReset(false);
+    form.setFieldsValue({
+      name: category.name,
+      slug: category.slug,
+      description: category.description,
+      parent: category.parent?.id ?? undefined,
+      imageUrlFetch: category.image?.url || "",
+      imageUrl: category.image?.id,
+    });
+
+    setImageList(
+      category.image
+        ? [
+            {
+              id: category.image.id,
+              name: category.image.name,
+              webViewLink: category.image.url,
+              thumbnailLink: category.image.thumbnailUrl,
+              webContentLink: category.image.downloadUrl,
+              imageMediaMetadata: {
+                width: category.image.width,
+                height: category.image.height,
+                rotation: 0,
+              },
+              size: category.image.size?.toString() ?? "0",
+              mimeType: "image/webp",
+            },
+          ]
+        : []
+    );
+  };
+
   const handleSubmit = async (values: IForm) => {
     const imageData = imageList.find(
       (image: IGoogleImageResponse) => image.id === values.imageUrl
@@ -188,7 +217,7 @@ const AddCategories = ({
       setSending(true);
       let url = "/api/v1/category/create";
       let method = "POST";
-      if (actionType === "edit" && actionId && editMode) {
+      if (editMode) {
         url = `/api/v1/category/update/${actionId}`;
         method = "PATCH";
       }
@@ -204,7 +233,7 @@ const AddCategories = ({
       }
       const data: ICategory = await response.json();
       handleReset();
-      if (actionType === "edit" && actionId && editMode) {
+      if (editMode) {
         popupMessage?.open({
           type: "success",
           content: "Category updated successfully!",
@@ -237,62 +266,82 @@ const AddCategories = ({
     }
   };
 
-  const handleReset = () => {
+  const handleClearFields = () => {
+    router.replace("?action=add");
     form.resetFields();
-    setEditMode(false);
-    setActionType(null);
-    setActionId(null);
     setImageList([]);
     setImageUrlSearching(false);
     setImageUrlType("image");
-    router.replace("?action=add");
+    setEditMode(false);
+  };
+
+  const handleReset = () => {
+    const category =
+      findById(actionId || "") ??
+      categories.find((cat) => cat.id === actionId) ??
+      null;
+
+    if (editMode) {
+      if (isReset) {
+        handleClearFields();
+        return;
+      }
+
+      if (category && Object.keys(category).length > 0) {
+        populateFormWithCategory(category);
+      } else {
+        popupMessage?.open({
+          type: "error",
+          content: "Category not found!",
+        });
+        setEditMode(false);
+      }
+    } else {
+      handleClearFields();
+    }
   };
 
   useEffect(() => {
-    if (actionType === "edit" && actionId && categories.length > 0) {
-      setEditMode(true);
-      const category = fuseById.search(actionId)[0]?.item;
-      if (category) {
-        form.setFieldsValue({
-          name: category.name,
-          slug: category.slug,
-          description: category.description,
-          parent: category.parent ? category.parent.id : undefined,
-          imageUrlFetch: category.image?.url || "",
-          imageUrl: category.image?.id,
-        });
-        setImageList(
-          category.image
-            ? [
-                {
-                  id: category.image.id,
-                  name: category.image.name,
-                  webViewLink: category.image.url,
-                  thumbnailLink: category.image.thumbnailUrl,
-                  webContentLink: category.image.downloadUrl,
-                  imageMediaMetadata: {
-                    width: category.image.width,
-                    height: category.image.height,
-                    rotation: 0,
-                  },
-                  size: category.image.size.toString(),
-                  mimeType: "image/webp", // Assuming JPEG, adjust as needed
-                },
-              ]
-            : []
-        );
-      } else {
-        const params = new URLSearchParams();
-        params.set("action", "add");
-        router.replace(`?${params.toString()}`);
-        setEditMode(false);
-        setActionType(null);
-        setActionId(null);
-        handleReset();
+    if (categories.length > 0) {
+      const category =
+        findById(actionId || "") ??
+        categories.find((cat) => cat.id === actionId) ??
+        null;
+      console.log({ actionId, category, categories });
+
+      if (editMode && !isReset) {
+        console.log("here 1");
+
+        if (category && Object.keys(category).length > 0) {
+          populateFormWithCategory(category);
+        } else {
+          popupMessage?.open({
+            type: "error",
+            content: "Category not found!",
+          });
+          setEditMode(false);
+        }
+      } else if (!editMode && actionType === "edit" && !isReset) {
+        console.log("here 2");
+
+        if (!category || Object.keys(category).length === 0) {
+          popupMessage?.open({
+            type: "error",
+            content: "Category not found!",
+          });
+          handleReset(); // Reset instead of loading
+        } else {
+          setEditMode(true); // trigger re-render to load form
+        }
+      }
+      if (isReset) {
+        console.log("here 3");
+        handleClearFields(); // when switching away from edit
       }
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categories, actionId, actionType]);
+  }, [editMode, isReset, categories]);
 
   return (
     <Form
@@ -337,7 +386,7 @@ const AddCategories = ({
           disabled={sending}
           loading={!loading.categoriesLoaded}
           placeholder="Choose parent category..."
-          options={(actionType && actionId
+          options={(editMode && actionId
             ? categories.filter((cat) => cat.id !== actionId)
             : categories
           ).map((category: ICategory) => ({
@@ -397,14 +446,14 @@ const AddCategories = ({
               label: (
                 <Image
                   key={image.id}
-                  src={image.webContentLink}
+                  src={`/api/v1/image/${image.id}?w=100&h=100`}
                   priority
                   alt={image.name}
                   width={100}
                   height={100}
                   className="categories__image"
                   placeholder="blur"
-                  blurDataURL={image.thumbnailLink}
+                  blurDataURL={`/api/v1/image/${image.id}?w=100&h=100&t=1&grayscale=1`}
                   rel="noreferrer noopener"
                 />
               ),
@@ -420,7 +469,7 @@ const AddCategories = ({
             loading={sending}
             disabled={sending}
           >
-            {actionType
+            {editMode
               ? sending
                 ? "Updating..."
                 : "Update"
@@ -428,7 +477,19 @@ const AddCategories = ({
               ? "Adding..."
               : "Add"}
           </Button>
-          <Button htmlType="reset">reset</Button>
+          <Button htmlType="reset" onClick={handleReset}>
+            reset
+          </Button>
+          {editMode && (
+            <Button
+              type="default"
+              onClick={() => {
+                setIsReset(true);
+              }}
+            >
+              Cancel
+            </Button>
+          )}
         </Space>
       </Form.Item>
     </Form>

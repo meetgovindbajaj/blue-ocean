@@ -19,7 +19,6 @@ const AdminCategoryPage = () => {
   const windowSize = useWindowWidth();
   const router = useRouter();
   const [tab, setTab] = useState<(typeof items)[number]["label"]>("View");
-  const [editMode, setEditMode] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string | null>(null);
   const containerRef = useRef(null);
   const [categoriesList, setCategoriesList] = useState<ICategory[]>([]);
@@ -42,6 +41,7 @@ const AdminCategoryPage = () => {
     minMatchCharLength: 24,
     threshold: 0,
   });
+
   const filteredCategories: ICategory[] = searchQuery
     ? fuse.search(searchQuery).map((result) => result.item || [])
     : categoriesList;
@@ -51,12 +51,18 @@ const AdminCategoryPage = () => {
     params.set("action", value.toLocaleLowerCase());
     router.replace(`?${params.toString()}`);
   };
+
   const onSearch: SearchProps["onSearch"] = (value, _e, info) => {
     if (info?.source && info.source === "input") {
       setSearchQuery(() => value);
     } else if (info?.source && info.source === "clear") {
       setSearchQuery(() => null);
     }
+  };
+
+  const findById = (id: string): ICategory | null => {
+    const result = fuseById.search(id);
+    return result.length > 0 ? result[0].item : null;
   };
 
   useEffect(() => {
@@ -144,7 +150,7 @@ const AdminCategoryPage = () => {
             value={tab}
             onChange={handleTabChange}
             options={items.map((item) => item.label)}
-            size={"large"}
+            size={"middle"}
             defaultValue={tab}
             block
           />
@@ -173,9 +179,7 @@ const AdminCategoryPage = () => {
               loading={loading}
               setCategoriesList={setCategoriesList}
               fuse={fuse}
-              editMode={editMode}
-              setEditMode={setEditMode}
-              fuseById={fuseById}
+              findById={findById}
               searchParams={searchParams}
             />
           )}
