@@ -1,5 +1,5 @@
 import { formatDateToWords } from "@/lib/functions";
-import { Badge, Button, Popconfirm, Table, TableProps } from "antd";
+import { Badge, Button, Image, Popconfirm, Table, TableProps } from "antd";
 import {
   ColumnsType,
   ExpandableConfig,
@@ -7,7 +7,7 @@ import {
 } from "antd/es/table/interface";
 import React, { useEffect, useState } from "react";
 import { useAdminContext } from "../../AdminHOC";
-import Image from "next/image";
+import NextImage from "next/image";
 import {
   CheckOutlined,
   DeleteOutlined,
@@ -38,32 +38,47 @@ interface DataType {
 
 const defaultExpandable: ExpandableConfig<DataType> = {
   expandedRowRender: (record: DataType) => (
-    <>
+    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
       <Image
-        src={
-          process.env.NEXT_PUBLIC_SITE_URL +
-          "/api/v1/image/" +
-          record.image.id +
-          "?width=250&height=150"
-        }
-        alt={""}
-        width={250}
+        src={`/api/v1/image/${record.image?.id}?w=200&h=150&format=webp`}
+        alt={record.image?.name || ""}
+        width={200}
         height={150}
         style={{
           objectFit: "cover",
           borderRadius: "10px",
           border: "4px solid #ddd",
-          maxWidth: "100%",
         }}
         loading="lazy"
+        preview={{
+          mask: "Preview",
+          scaleStep: 1,
+        }}
+        placeholder={
+          <NextImage
+            src={`/api/v1/image/${record.image?.id}?h=150&format=webp&q=10&t=1&grayscale=1`}
+            alt={record.image?.name || ""}
+            loading="lazy"
+            fill
+          />
+        }
       />
 
-      <p>Title: {record.title}</p>
-      <p>Description: {record.description}</p>
-      <p>Image:</p>
-      <p>Created At: {formatDateToWords(record.createdAt)}</p>
-      <p>Updated At: {formatDateToWords(record.updatedAt)}</p>
-    </>
+      <h3>{record.title}</h3>
+      <p style={{ fontSize: "14px" }}>{record.description}</p>
+      <h5>
+        Created At:{" "}
+        <span style={{ color: "gray", fontWeight: "normal" }}>
+          {formatDateToWords(record.createdAt)}
+        </span>
+      </h5>
+      <h5>
+        Updated At:{" "}
+        <span style={{ color: "gray", fontWeight: "normal" }}>
+          {formatDateToWords(record.updatedAt)}
+        </span>
+      </h5>
+    </div>
   ),
 };
 
