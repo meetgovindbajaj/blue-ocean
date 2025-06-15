@@ -18,13 +18,9 @@ export async function DELETE(
     await category.deleteOne();
     return NextResponse.json({ message: "Deleted" });
   } catch (error: unknown) {
-    let errorMessage = "Unknown error";
-    if (error instanceof Error) {
-      errorMessage = error.message;
-      console.error("Delete Category Error:", error.message);
-    } else {
-      console.error("Delete Category Error:", error);
-    }
-    return NextResponse.json({ message: errorMessage }, { status: 500 });
+    const message =
+      error instanceof Error ? error.message : "Unknown server error";
+    console.error("Delete Category Error:", error);
+    return NextResponse.json({ message }, { status: 500 });
   }
 }

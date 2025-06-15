@@ -69,5 +69,8 @@ declare global {
         default: number;
       };
     };
+    MAX_IMAGE_SIZE: number;
+    MAX_IMAGE_WIDTH: number;
+    MAX_IMAGE_HEIGHT: number;
   }
 }

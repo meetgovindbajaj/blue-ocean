@@ -10,17 +10,10 @@ import properties from "@/lib/properties";
 import { Button, Form, Input, Radio, Select, Space } from "antd";
 import Search from "antd/es/input/Search";
 import TextArea from "antd/es/input/TextArea";
-import Fuse from "fuse.js";
 import Image from "next/image";
-import { ReadonlyURLSearchParams, useRouter } from "next/navigation";
-import {
-  ChangeEvent,
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useId,
-  useState,
-} from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { ChangeEvent, useEffect, useId, useState } from "react";
+import { useAdminContext } from "../AdminHOC";
 
 interface IForm {
   name: string;
@@ -31,28 +24,10 @@ interface IForm {
   imageUrl: string;
 }
 
-interface IProps {
-  categories: ICategory[];
-  loading: {
-    status: boolean;
-    pageLoaded: boolean;
-    categoriesLoaded: boolean;
-    productsLoaded: boolean;
-  };
-  setCategoriesList: Dispatch<SetStateAction<ICategory[]>>;
-  fuse: Fuse<ICategory>;
-  findById: (id: string) => ICategory | null;
-  searchParams: ReadonlyURLSearchParams;
-}
-
-const AddCategories = ({
-  categories,
-  loading,
-  setCategoriesList,
-  fuse,
-  findById,
-  searchParams,
-}: IProps) => {
+const AddCategories = () => {
+  const { categories, setCategoriesList, loading, findById, fuse } =
+    useAdminContext();
+  const searchParams = useSearchParams();
   const actionId = searchParams.get("id") || null;
   const actionType = searchParams.get("type") || null;
   const [editMode, setEditMode] = useState<boolean>(
@@ -307,11 +282,7 @@ const AddCategories = ({
         findById(actionId || "") ??
         categories.find((cat) => cat.id === actionId) ??
         null;
-      console.log({ actionId, category, categories });
-
       if (editMode && !isReset) {
-        console.log("here 1");
-
         if (category && Object.keys(category).length > 0) {
           populateFormWithCategory(category);
         } else {
@@ -322,8 +293,6 @@ const AddCategories = ({
           setEditMode(false);
         }
       } else if (!editMode && actionType === "edit" && !isReset) {
-        console.log("here 2");
-
         if (!category || Object.keys(category).length === 0) {
           popupMessage?.open({
             type: "error",
@@ -335,7 +304,6 @@ const AddCategories = ({
         }
       }
       if (isReset) {
-        console.log("here 3");
         handleClearFields(); // when switching away from edit
       }
     }
@@ -397,10 +365,10 @@ const AddCategories = ({
           allowClear
           showSearch
           filterOption={(input, option) => {
-            const result = fuse
+            if (!fuse || !option) return false;
+            return fuse
               .search(input)
-              .some((category) => category.item.id === option?.value);
-            return result;
+              .some((category) => category.item.id === option.value);
           }}
         />
       </Form.Item>
@@ -447,7 +415,7 @@ const AddCategories = ({
                 <Image
                   key={image.id}
                   src={`/api/v1/image/${image.id}?w=100&h=100`}
-                  priority
+                  loading="lazy"
                   alt={image.name}
                   width={100}
                   height={100}

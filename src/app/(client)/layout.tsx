@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
-import {
-  ClerkProvider,
-  SignInButton,
-  SignOutButton,
-  SignUpButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from "@clerk/nextjs";
+// import {
+//   ClerkProvider,
+//   SignInButton,
+//   SignOutButton,
+//   SignUpButton,
+//   SignedIn,
+//   SignedOut,
+//   UserButton,
+// } from "@clerk/nextjs";
 import "./globals.css";
 import "@/styles/rootStyles.scss";
 import { getAllData } from "@/lib/api";
@@ -65,10 +65,10 @@ export default async function RootLayout({
   const { categories } = await getAllData();
 
   return (
-    <ClerkProvider>
-      <html lang="en">
-        <body className={`${roboto.variable}`}>
-          <header className="flex justify-end items-center p-4 gap-4 h-16 hidden">
+    // <ClerkProvider>
+    <html lang="en">
+      <body className={`${roboto.variable}`}>
+        {/* <header className="flex justify-end items-center p-4 gap-4 h-16 hidden">
             <SignedOut>
               <SignInButton />
               <SignUpButton />
@@ -76,27 +76,20 @@ export default async function RootLayout({
             <SignedIn>
               <UserButton />
               <SignOutButton />
-              {/* <UserProfile /> */}
             </SignedIn>
-          </header>
-          {/* <header
-            style={{ height: "3rem", backgroundColor: "black", color: "white" }}
-          >
-            dummy navbar
           </header> */}
-          <Header _categories={categories as ICategory[]} />
-          <div className="main">{children}</div>
-          <footer
-            style={{
-              height: "500px",
-              backgroundColor: "black",
-              color: "white",
-            }}
-          >
-            dummy footer
-          </footer>
-        </body>
-      </html>
-    </ClerkProvider>
+        <Header _categories={categories as ICategory[]} />
+        <div className="main">{children}</div>
+        <footer
+          style={{
+            height: "500px",
+            backgroundColor: "black",
+            color: "white",
+          }}
+        >
+          dummy footer
+        </footer>
+      </body>
+    </html>
   );
 }

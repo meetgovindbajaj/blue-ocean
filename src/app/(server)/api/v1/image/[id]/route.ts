@@ -3,6 +3,7 @@ import fs from "fs-extra";
 import path from "path";
 import sharp from "sharp";
 import { google } from "googleapis";
+import properties from "@/lib/properties";
 
 // This route handles image processing requests, allowing for transformations like resizing, blurring, and format conversion.
 // It supports both local file system images and images hosted on Google Drive.
@@ -120,10 +121,20 @@ export async function GET(
       });
     }
 
+    const isTooLargeBySize = imageBuffer.length > properties.MAX_IMAGE_SIZE; // 5MB limit
+    // 📏 Optional: check pixel dimensions
+    const metadata = await sharp(imageBuffer).metadata();
+    const isTooLargeByDimensions =
+      (metadata.width || 0) > properties.MAX_IMAGE_WIDTH ||
+      (metadata.height || 0) > properties.MAX_IMAGE_HEIGHT;
+
+    // 🚫 Block transformations if too large
+    const skipTransformations = isTooLargeBySize || isTooLargeByDimensions;
+
     // 🛠️ Apply image transformations
     let transformer = sharp(imageBuffer);
 
-    if (width || height) {
+    if (!skipTransformations && (width || height)) {
       transformer = transformer.resize({
         width: width || undefined,
         height: height || undefined,
@@ -172,12 +183,41 @@ export async function GET(
 
     const outputBuffer = await transformer.toBuffer();
 
+    const ResponseHeaders = new Headers();
+    ResponseHeaders.set("Content-Type", contentType);
+    ResponseHeaders.set(
+      "Cache-Control",
+      "public, max-age=2592000, s-maxage=2592000, stale-while-revalidate=86400, immutable"
+    ); // Cache for 30 days with revalidation
+    if (width) {
+      ResponseHeaders.set("X-Image-Width", width.toString());
+    }
+    if (height) {
+      ResponseHeaders.set("X-Image-Height", height.toString());
+    }
+    if (isBlurred) {
+      ResponseHeaders.set("X-Image-Blurred", "true");
+    }
+    if (grayscale) {
+      ResponseHeaders.set("X-Image-Grayscale", "true");
+    }
+    if (isThumbnail) {
+      ResponseHeaders.set("X-Image-Thumbnail", "true");
+    }
+    if (isOriginal) {
+      ResponseHeaders.set("X-Image-Original", "true");
+    }
+    if (isInfo) {
+      ResponseHeaders.set("X-Image-Info", "true");
+    }
+    if (requestedQuality) {
+      ResponseHeaders.set("X-Image-Quality", requestedQuality.toString());
+    }
+    if (format) {
+      ResponseHeaders.set("X-Image-Format", format);
+    }
     return new Response(new Uint8Array(outputBuffer), {
-      headers: {
-        "Content-Type": contentType,
-        "Cache-Control":
-          "public, max-age=2592000, s-maxage=2592000, stale-while-revalidate=86400, immutable", // Cache for 30 days with revalidation
-      },
+      headers: ResponseHeaders,
     });
   } catch (error: unknown) {
     if (error instanceof Error) {

@@ -1,4 +1,3 @@
-import { popupMessage } from "@/app/(client)/admin/layout";
 import {
   CheckOutlined,
   DeleteOutlined,
@@ -8,118 +7,29 @@ import {
   StopOutlined,
 } from "@ant-design/icons";
 import {
-  Card,
-  List,
-  Popconfirm,
-  Spin,
-  Image,
   Badge,
-  Popover,
-  Dropdown,
-  Menu,
   Button,
+  Card,
+  Dropdown,
+  Image,
+  List,
+  Menu,
   MenuProps,
+  Popconfirm,
+  Popover,
 } from "antd";
 import Meta from "antd/es/card/Meta";
 import NextImage from "next/image";
-import { useRouter } from "next/navigation";
 import React from "react";
-
+import { useAdminContext } from "../../AdminHOC";
 interface IProps {
-  categories: ICategory[];
-  setCategoriesList: React.Dispatch<React.SetStateAction<ICategory[]>>;
-  loading: {
-    status: boolean;
-    pageLoaded: boolean;
-    categoriesLoaded: boolean;
-    productsLoaded: boolean;
-  };
+  handleEdit: (category: ICategory) => void;
+  handleDelete: (category: ICategory) => Promise<void>;
+  handleStatus: (category: ICategory) => Promise<void>;
 }
-
-const ViewCategories = ({ categories, loading, setCategoriesList }: IProps) => {
-  const router = useRouter();
-  const handleEdit = (category: ICategory) => {
-    if (!category || !category.id) return;
-    const params = new URLSearchParams(window.location.search);
-    params.set("action", "add");
-    params.set("type", "edit");
-    params.set("id", category.id);
-    router.replace(`?${params.toString()}`);
-  };
-
-  const handleDelete = async (category: ICategory) => {
-    if (!category || !category.id) return;
-    try {
-      const response = await fetch(`/api/v1/category/delete/${category.id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (response.ok) {
-        popupMessage?.open({
-          type: "success",
-          content: "Category deleted successfully.",
-        });
-        setCategoriesList((prevCategories) =>
-          prevCategories.filter((cat) => cat.id !== category.id)
-        );
-      } else {
-        const errorData = await response.json();
-        popupMessage?.open({
-          type: "error",
-          content: errorData.message || "Failed to delete category.",
-        });
-      }
-    } catch (error) {
-      console.error("Error deleting category:", error);
-      popupMessage?.open({
-        type: "error",
-        content: "Failed to delete category. Please try again.",
-      });
-    }
-  };
-
-  const handleStatus = async (category: ICategory) => {
-    if (!category || !category.id) return;
-    try {
-      const payload = {
-        isActive: !category.isActive,
-      };
-      const response = await fetch(`/api/v1/category/update/${category.id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-      if (response.ok) {
-        popupMessage?.open({
-          type: "success",
-          content: "Category status updated successfully.",
-        });
-        setCategoriesList((prevCategories) =>
-          prevCategories.map((cat) =>
-            cat.id === category.id ? { ...cat, isActive: !cat.isActive } : cat
-          )
-        );
-      } else {
-        const errorData = await response.json();
-        popupMessage?.open({
-          type: "error",
-          content: errorData.message || "Failed to update category.",
-        });
-      }
-    } catch (error) {
-      console.error("Error updating category:", error);
-      popupMessage?.open({
-        type: "error",
-        content: "Failed to update category. Please try again.",
-      });
-    }
-  };
-
-  return loading.categoriesLoaded ? (
+const GridView = ({ handleEdit, handleDelete, handleStatus }: IProps) => {
+  const { categories, loading } = useAdminContext();
+  return (
     <>
       <List
         grid={{
@@ -142,20 +52,21 @@ const ViewCategories = ({ categories, loading, setCategoriesList }: IProps) => {
               size="small"
               cover={
                 <Image
-                  src={`/api/v1/image/${item.image?.id}?w=200&h=150&format=webp&q=30`}
+                  src={`/api/v1/image/${item.image?.id}?w=200&h=150&format=webp`}
                   alt={item.image?.name || ""}
                   width={"100%"}
                   height={150}
                   style={{ objectFit: "cover" }}
+                  loading="lazy"
                   preview={{
-                    src: `/api/v1/image/${item.image?.id}?format=webp&q=90`,
                     mask: "Preview",
+                    scaleStep: 1,
                   }}
                   placeholder={
                     <NextImage
                       src={`/api/v1/image/${item.image?.id}?h=150&format=webp&q=10&t=1&grayscale=1`}
                       alt={item.image?.name || ""}
-                      priority
+                      loading="lazy"
                       fill
                     />
                   }
@@ -242,11 +153,10 @@ const ViewCategories = ({ categories, loading, setCategoriesList }: IProps) => {
             </Card>
           </List.Item>
         )}
+        loading={!loading.categoriesLoaded}
       />
     </>
-  ) : (
-    <Spin fullscreen spinning percent={"auto"} />
   );
 };
 
-export default ViewCategories;
+export default GridView;
