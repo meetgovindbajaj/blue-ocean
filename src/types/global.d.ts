@@ -1,4 +1,4 @@
-import { Document as MongodbDoc } from "mongoose";
+import { Document as MongodbDoc, Types } from "mongoose";
 
 export {};
 
@@ -47,9 +47,10 @@ declare global {
 
   interface IViewLog extends MongodbDoc {
     type: "product" | "category";
-    refId: string; // ID of the product or category
+    refId: Types.ObjectId; // ID of the product or category
     viewedAt: Date;
     ip: string;
+    count: number;
   }
 
   interface IGetData {

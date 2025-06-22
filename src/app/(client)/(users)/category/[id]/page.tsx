@@ -32,10 +32,25 @@ const CategoryPage = async ({ params }: IProps) => {
     if (!categoryData) {
       throw new Error("Category data is empty or undefined");
     }
-    await fetch(`http://localhost:3000/api/v1/stats/log`, {
+    await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/v1/stats`, {
       method: "POST",
       body: JSON.stringify({ type: "category", refId: categoryData.id }),
     });
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_SITE_URL}/api/v1/stats?type=category`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (!res.ok) {
+      throw new Error("Failed to fetch category stats");
+    }
+    const statsData = await res.json();
+    console.log("Category Stats Data:", statsData);
+
     return (
       <div>
         <Breadcrumb
