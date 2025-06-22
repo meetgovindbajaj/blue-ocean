@@ -17,7 +17,7 @@ const actionTypes: {
   { key: "grid", label: "Grid", value: "Grid", icon: <AppstoreOutlined /> },
   { key: "list", label: "List", value: "List", icon: <BarsOutlined /> },
 ] as const;
-const ViewAdminCategories = () => {
+const ViewCategories = () => {
   const AdminContext = useAdminContext();
   const { setCategoriesList, loading, setLoading } = AdminContext;
 
@@ -247,4 +247,4 @@ const ViewAdminCategories = () => {
   );
 };
 
-export default ViewAdminCategories;
+export default ViewCategories;

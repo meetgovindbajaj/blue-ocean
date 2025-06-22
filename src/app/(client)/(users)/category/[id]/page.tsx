@@ -21,7 +21,6 @@ interface IProps {
 const CategoryPage = async ({ params }: IProps) => {
   try {
     const { id } = await params;
-
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_SITE_URL}/api/v1/category/${id}`
     );
@@ -33,6 +32,10 @@ const CategoryPage = async ({ params }: IProps) => {
     if (!categoryData) {
       throw new Error("Category data is empty or undefined");
     }
+    await fetch(`http://localhost:3000/api/v1/stats/log`, {
+      method: "POST",
+      body: JSON.stringify({ type: "category", refId: categoryData.id }),
+    });
     return (
       <div>
         <Breadcrumb

@@ -13,6 +13,7 @@ import "./globals.css";
 import "@/styles/rootStyles.scss";
 import { getAllData } from "@/lib/api";
 import Header from "@/components/header";
+import { AntdRegistry } from "@ant-design/nextjs-registry";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
@@ -79,7 +80,9 @@ export default async function RootLayout({
             </SignedIn>
           </header> */}
         <Header _categories={categories as ICategory[]} />
-        <div className="main">{children}</div>
+        <AntdRegistry>
+          <div className="main">{children}</div>
+        </AntdRegistry>
         <footer
           style={{
             height: "500px",

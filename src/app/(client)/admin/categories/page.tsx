@@ -1,11 +1,12 @@
 "use client";
 import { useAdminContext } from "@/components/admin/AdminHOC";
 import AddCategories from "@/components/admin/categories/add";
-import ViewAdminCategories from "@/components/admin/categories/view/index";
+import ViewCategories from "@/components/admin/categories/view/index";
 import { useWindowWidth } from "@/lib/hooks";
 import properties from "@/lib/properties";
-import { Segmented, Space, Spin, Typography } from "antd";
+import { Segmented, Space, Spin } from "antd";
 import Search from "antd/es/input/Search";
+import Title from "antd/es/typography/Title";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -61,7 +62,7 @@ const AdminCategoryPage = () => {
     <div className="categories__container" ref={containerRef}>
       {loading?.pageLoaded ? (
         <Space direction="vertical" style={{ width: "100%" }}>
-          <Typography.Title level={3}>Categories</Typography.Title>
+          <Title level={3}>Categories</Title>
           <Segmented
             value={tab}
             onChange={handleTabChange}
@@ -82,7 +83,7 @@ const AdminCategoryPage = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 allowClear
               />
-              <ViewAdminCategories />
+              <ViewCategories />
             </>
           )}
           {tab === "Add" && <AddCategories />}

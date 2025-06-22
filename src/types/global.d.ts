@@ -1,3 +1,5 @@
+import { Document as MongodbDoc } from "mongoose";
+
 export {};
 
 declare global {
@@ -41,6 +43,13 @@ declare global {
     children: ICategory[];
     updatedAt: string;
     createdAt: string;
+  }
+
+  interface IViewLog extends MongodbDoc {
+    type: "product" | "category";
+    refId: string; // ID of the product or category
+    viewedAt: Date;
+    ip: string;
   }
 
   interface IGetData {

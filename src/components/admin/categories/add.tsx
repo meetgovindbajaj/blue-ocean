@@ -7,13 +7,15 @@ import {
 } from "@/lib/functions";
 import { useWindowWidth } from "@/lib/hooks";
 import properties from "@/lib/properties";
-import { Button, Form, Input, Radio, Select, Space } from "antd";
+import { Button, Form, Input, Select, Space } from "antd";
 import Search from "antd/es/input/Search";
 import TextArea from "antd/es/input/TextArea";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ChangeEvent, useEffect, useId, useState } from "react";
 import { useAdminContext } from "../AdminHOC";
+import FormItem from "antd/es/form/FormItem";
+import { Group } from "antd/es/radio";
 
 interface IForm {
   name: string;
@@ -322,7 +324,7 @@ const AddCategories = () => {
       onFinish={handleSubmit}
       onReset={handleReset}
     >
-      <Form.Item name="name" label="Name" rules={getRules("category name")}>
+      <FormItem name="name" label="Name" rules={getRules("category name")}>
         <Input
           autoComplete="off"
           placeholder="Table, Chair..."
@@ -331,11 +333,11 @@ const AddCategories = () => {
           onChange={handleNameChange}
           disabled={sending}
         />
-      </Form.Item>
-      <Form.Item name="slug" label="slug" hidden>
+      </FormItem>
+      <FormItem name="slug" label="slug" hidden>
         <Input />
-      </Form.Item>
-      <Form.Item
+      </FormItem>
+      <FormItem
         name="description"
         label="Description"
         rules={getRules("category description")}
@@ -348,8 +350,8 @@ const AddCategories = () => {
           maxLength={1000}
           disabled={sending}
         />
-      </Form.Item>
-      <Form.Item name="parent" label="Parent Category">
+      </FormItem>
+      <FormItem name="parent" label="Parent Category">
         <Select
           disabled={sending}
           loading={!loading.categoriesLoaded}
@@ -371,8 +373,8 @@ const AddCategories = () => {
               .some((category) => category.item.id === option.value);
           }}
         />
-      </Form.Item>
-      <Form.Item
+      </FormItem>
+      <FormItem
         label="Cover Image Url"
         name="imageUrlFetch"
         rules={getRules("cover image url")}
@@ -398,14 +400,14 @@ const AddCategories = () => {
           allowClear
           loading={imageUrlSearching}
         />
-      </Form.Item>
+      </FormItem>
       {imageList.length > 0 && (
-        <Form.Item
+        <FormItem
           label="Cover Image Options (Choose one)"
           name="imageUrl"
           rules={[{ required: true, message: "Please select a cover image!" }]}
         >
-          <Radio.Group
+          <Group
             // block
             disabled={sending || imageUrlSearching}
             options={imageList.map((image: IGoogleImageResponse) => ({
@@ -427,9 +429,9 @@ const AddCategories = () => {
               ),
             }))}
           />
-        </Form.Item>
+        </FormItem>
       )}
-      <Form.Item>
+      <FormItem>
         <Space>
           <Button
             type="primary"
@@ -459,7 +461,7 @@ const AddCategories = () => {
             </Button>
           )}
         </Space>
-      </Form.Item>
+      </FormItem>
     </Form>
   );
 };

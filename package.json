@@ -11,10 +11,12 @@
   },
   "dependencies": {
     "@ant-design/icons": "^6.0.0",
+    "@ant-design/nextjs-registry": "^1.0.2",
     "@clerk/nextjs": "^6.21.0",
     "@reduxjs/toolkit": "^2.8.2",
     "antd": "^5.25.4",
     "classnames": "^2.5.1",
+    "date-fns": "^4.1.0",
     "fs-extra": "^11.3.0",
     "fuse.js": "^7.1.0",
     "googleapis": "^150.0.1",
