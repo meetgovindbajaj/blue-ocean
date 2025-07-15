@@ -27,8 +27,13 @@ interface IForm {
 }
 
 const AddCategories = () => {
-  const { categories, setCategoriesList, loading, findById, fuse } =
-    useAdminContext();
+  const {
+    categories,
+    categoryFuse,
+    findCategoryById,
+    setCategoriesList,
+    loading,
+  } = useAdminContext();
   const searchParams = useSearchParams();
   const actionId = searchParams.get("id") || null;
   const actionType = searchParams.get("type") || null;
@@ -254,7 +259,7 @@ const AddCategories = () => {
 
   const handleReset = () => {
     const category =
-      findById(actionId || "") ??
+      findCategoryById(actionId || "") ??
       categories.find((cat) => cat.id === actionId) ??
       null;
 
@@ -281,7 +286,7 @@ const AddCategories = () => {
   useEffect(() => {
     if (categories.length > 0) {
       const category =
-        findById(actionId || "") ??
+        findCategoryById(actionId || "") ??
         categories.find((cat) => cat.id === actionId) ??
         null;
       if (editMode && !isReset) {
@@ -367,8 +372,8 @@ const AddCategories = () => {
           allowClear
           showSearch
           filterOption={(input, option) => {
-            if (!fuse || !option) return false;
-            return fuse
+            if (!categoryFuse || !option) return false;
+            return categoryFuse
               .search(input)
               .some((category) => category.item.id === option.value);
           }}

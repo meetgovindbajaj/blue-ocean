@@ -1,4 +1,5 @@
 import dbConnect from "@/lib/db";
+import { getDateRange } from "@/lib/functions";
 import ViewStats from "@/models/ViewStats";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -20,7 +21,6 @@ export async function POST(req: NextRequest) {
       await existing.save();
       return NextResponse.json({ updated: true });
     }
-    console.log("Skipping view log update due to recent view");
 
     return NextResponse.json({ skipped: true });
   }
@@ -33,19 +33,11 @@ export async function GET(req: NextRequest) {
   await dbConnect();
   const { searchParams } = new URL(req.url);
   const type = searchParams.get("type");
-  const range = searchParams.get("range") || "daily";
+  const range = searchParams.get("range") || "weekly";
 
   if (!type || !["product", "category"].includes(type)) {
     return NextResponse.json({ error: "Invalid type" }, { status: 400 });
   }
-
-  const groupFormat = {
-    daily: { $dateToString: { format: "%Y-%m-%d", date: "$viewedAt" } },
-    weekly: { $isoWeek: "$viewedAt" },
-    monthly: { $dateToString: { format: "%Y-%m", date: "$viewedAt" } },
-    yearly: { $dateToString: { format: "%Y", date: "$viewedAt" } },
-  }[range];
-  console.log(type, range, groupFormat);
 
   const result = await ViewStats.aggregate([
     { $match: { type } },
@@ -53,9 +45,36 @@ export async function GET(req: NextRequest) {
       $group: {
         _id: {
           refId: "$refId",
-          period: groupFormat,
+          ip: "$ip",
+          date: {
+            $dateTrunc: {
+              date: "$viewedAt",
+              unit:
+                range === "daily"
+                  ? "day"
+                  : range === "weekly"
+                  ? "week"
+                  : range === "monthly"
+                  ? "month"
+                  : range === "yearly"
+                  ? "year"
+                  : "day",
+            },
+          },
+        },
+        count: { $sum: "$count" },
+        firstView: { $min: "$viewedAt" },
+      },
+    },
+    {
+      $group: {
+        _id: {
+          refId: "$_id.refId",
+          date: "$_id.date",
         },
         totalViews: { $sum: "$count" },
+        ipAddresses: { $addToSet: "$_id.ip" },
+        firstView: { $min: "$firstView" },
       },
     },
     {
@@ -71,12 +90,24 @@ export async function GET(req: NextRequest) {
       $project: {
         name: "$refInfo.name",
         totalViews: 1,
-        period: "$_id.period",
+        ipAddresses: 1,
+        firstView: 1,
+        type: { $literal: type },
       },
     },
-    { $sort: { period: 1 } },
   ]);
-  console.log("Stats Result:", result);
 
-  return NextResponse.json(result);
+  const response = result.map((r) => {
+    const { start, end } = getDateRange(range, r.firstView);
+    return {
+      name: r.name,
+      totalViews: r.totalViews,
+      type: r.type,
+      ipAddresses: r.ipAddresses.filter(Boolean),
+      startDate: start,
+      endDate: end,
+    };
+  });
+
+  return NextResponse.json(response);
 }

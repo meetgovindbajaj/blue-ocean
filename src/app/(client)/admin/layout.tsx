@@ -20,6 +20,7 @@ export default function AdminLayout({
   const [sidebarWidth, setSidebarWidth] = useState<number>(50);
   const [messageApi, contextHolder] = message.useMessage();
   const [categoriesList, setCategoriesList] = useState<ICategory[]>([]);
+  const [productList, setProductList] = useState<IProduct[]>([]);
   const [loading, setLoading] = useState({
     status: true,
     pageLoaded: false,
@@ -50,8 +51,12 @@ export default function AdminLayout({
         if (response.status !== 200) {
           console.error("Failed to fetch categories:", response.error);
           return;
-        } else if (response.categories && response.categories.length > 0) {
+        }
+        if (response.categories && response.categories.length > 0) {
           setCategoriesList(response.categories);
+        }
+        if (response.products && response.products.length > 0) {
+          setProductList(response.products);
         }
       } catch (error) {
         err = true;
@@ -88,6 +93,8 @@ export default function AdminLayout({
               <AdminDataProvider
                 categories={categoriesList}
                 setCategoriesList={setCategoriesList}
+                products={productList}
+                setProductsList={setProductList}
                 loading={loading}
                 setLoading={setLoading}
               >

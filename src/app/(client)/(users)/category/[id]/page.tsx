@@ -48,8 +48,8 @@ const CategoryPage = async ({ params }: IProps) => {
     if (!res.ok) {
       throw new Error("Failed to fetch category stats");
     }
-    const statsData = await res.json();
-    console.log("Category Stats Data:", statsData);
+    const _statsData = await res.json();
+    // console.log("Category Stats Data:", statsData);
 
     return (
       <div>

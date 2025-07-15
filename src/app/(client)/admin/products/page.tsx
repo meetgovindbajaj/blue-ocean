@@ -1,5 +1,7 @@
 "use client";
+import AddItems from "@/components/admin/add";
 import { useAdminContext } from "@/components/admin/AdminHOC";
+import ViewProducts from "@/components/admin/products/view";
 import { useWindowWidth } from "@/lib/hooks";
 import properties from "@/lib/properties";
 import { Segmented, Space, Spin } from "antd";
@@ -13,8 +15,7 @@ const items: { key: string; label: string; value: string }[] = [
 ] as const;
 const AdminProductPage = () => {
   const AdminContext = useAdminContext();
-  const { loading, setLoading, searchQuery, setSearchQuery, onSearch } =
-    AdminContext;
+  const { loading, setLoading, searchQuery, onChange, onSearch } = AdminContext;
   const searchParams = useSearchParams();
   const windowSize = useWindowWidth();
   const router = useRouter();
@@ -54,7 +55,7 @@ const AdminProductPage = () => {
   }, [tab, setLoading]);
 
   return (
-    <div className="products__container">
+    <div className="products__container" ref={containerRef}>
       {loading?.pageLoaded ? (
         <Space direction="vertical" style={{ width: "100%" }}>
           <Title level={3}>Products</Title>
@@ -69,19 +70,20 @@ const AdminProductPage = () => {
           {tab === "View" && (
             <>
               <Search
-                placeholder="search categories..."
+                name="products__search__input"
+                placeholder="search products..."
                 onSearch={onSearch}
                 size={"middle"}
                 autoFocus={windowSize >= properties.breakpoints.laptop.small}
                 autoComplete="off"
-                value={searchQuery || ""}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                value={searchQuery.products__search__input.value || ""}
+                onChange={onChange}
                 allowClear
               />
-              {/* <ViewAdminCategories /> */}
+              <ViewProducts />
             </>
           )}
-          {/* {tab === "Add" && <AddCategories />} */}
+          {tab === "Add" && <AddItems page="product" />}
         </Space>
       ) : (
         <Spin fullscreen spinning />

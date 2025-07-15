@@ -57,23 +57,25 @@ export const AdminSidebar = ({ width }: { width: number }) => {
   const activePath: string = adminPaths[pathname] || "";
 
   return (
-    <div className="sidebar__container">
-      {sideLinks.map((link) => (
-        <Link
-          key={link.key}
-          href={link.href}
-          className={classNames("sidebar__link", {
-            active: activePath === link.text,
-          })}
-        >
-          <IconContainer>
-            <Image src={link.icon} width={16} height={16} alt="" />
-          </IconContainer>
-          {!!isTextVisible && (
-            <span className="sidebar__text">{link.text}</span>
-          )}
-        </Link>
-      ))}
+    <div style={{ display: "contents", height: "100%", position: "relative" }}>
+      <div className="sidebar__container">
+        {sideLinks.map((link) => (
+          <Link
+            key={link.key}
+            href={link.href}
+            className={classNames("sidebar__link", {
+              active: activePath === link.text,
+            })}
+          >
+            <IconContainer>
+              <Image src={link.icon} width={16} height={16} alt="" priority />
+            </IconContainer>
+            {!!isTextVisible && (
+              <span className="sidebar__text">{link.text}</span>
+            )}
+          </Link>
+        ))}
+      </div>
     </div>
   );
 };

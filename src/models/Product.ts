@@ -30,7 +30,7 @@ interface IProduct extends Document {
     height: number;
   }[];
   breadcrumbs: { id: string; name: string; slug: string }[];
-  isActive: boolean;
+  isActive: true | false;
 }
 const ProductSchema = new Schema<IProduct>(
   {

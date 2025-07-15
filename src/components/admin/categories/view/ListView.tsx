@@ -106,10 +106,9 @@ const ListView = ({
     size: "large",
     expandable: defaultExpandable,
     scroll,
-    onRow(record, rowIndex) {
+    onRow(record) {
       return {
-        onDoubleClick: (event) => {
-          console.log("Row double clicked:", record, rowIndex, event);
+        onDoubleClick: () => {
           const cat = {
             id: record.catId,
             name: record.title,

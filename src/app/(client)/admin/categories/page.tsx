@@ -1,6 +1,6 @@
 "use client";
 import { useAdminContext } from "@/components/admin/AdminHOC";
-import AddCategories from "@/components/admin/categories/add";
+import AddCategories from "@/components/admin/add";
 import ViewCategories from "@/components/admin/categories/view/index";
 import { useWindowWidth } from "@/lib/hooks";
 import properties from "@/lib/properties";
@@ -17,8 +17,7 @@ const items: { key: string; label: string; value: string }[] = [
 
 const AdminCategoryPage = () => {
   const AdminContext = useAdminContext();
-  const { loading, setLoading, searchQuery, setSearchQuery, onSearch } =
-    AdminContext;
+  const { loading, setLoading, searchQuery, onSearch, onChange } = AdminContext;
   const searchParams = useSearchParams();
   const windowSize = useWindowWidth();
   const router = useRouter();
@@ -74,19 +73,21 @@ const AdminCategoryPage = () => {
           {tab === "View" && (
             <>
               <Search
+                name="categories__search__input"
                 placeholder="search categories..."
                 onSearch={onSearch}
                 size={"middle"}
                 autoFocus={windowSize >= properties.breakpoints.laptop.small}
                 autoComplete="off"
-                value={searchQuery || ""}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                value={searchQuery["categories__search__input"].value || ""}
+                onChange={onChange}
                 allowClear
               />
               <ViewCategories />
             </>
           )}
-          {tab === "Add" && <AddCategories />}
+          {/* {tab === "Add" && <AddCategories />} */}
+          {tab === "Add" && <AddCategories page="category" />}
         </Space>
       ) : (
         <Spin fullscreen spinning />

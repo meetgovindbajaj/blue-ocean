@@ -45,6 +45,31 @@ declare global {
     createdAt: string;
   }
 
+  interface IProduct {
+    id: string;
+    name: string;
+    slug: string;
+    description: string;
+    prices: {
+      wholesale: number;
+      retail: number;
+      discount: number;
+    };
+    size: {
+      length: number;
+      width: number;
+      height: number;
+      fixedSize: boolean;
+      unit: "cm" | "mm" | "in" | "ft";
+    };
+    category: ICategory;
+    images: IGoogleImage[];
+    breadcrumbs: { id: string; name: string; slug: string }[];
+    isActive: true | false;
+    updatedAt: string;
+    createdAt: string;
+  }
+
   interface IViewLog extends MongodbDoc {
     type: "product" | "category";
     refId: Types.ObjectId; // ID of the product or category
