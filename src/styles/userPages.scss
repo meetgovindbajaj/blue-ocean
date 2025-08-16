@@ -1,0 +1,518 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as mix;
+@use "sass:color";
+
+// Products Page Styles
+.products-page {
+  min-height: calc(100vh - $navbar-height);
+  padding: 2rem 0;
+
+  &__loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
+    gap: 1rem;
+
+    p {
+      color: $text-color;
+      font-size: 1.1rem;
+    }
+  }
+
+  &__header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 0 1rem;
+
+    .products-page__title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: $foreground-color;
+      margin-bottom: 0.5rem;
+
+      @media (max-width: $breakpoint-tab) {
+        font-size: 2rem;
+      }
+    }
+
+    .products-page__subtitle {
+      font-size: 1.2rem;
+      color: color.adjust($foreground-color, $lightness: 20%);
+      margin: 0;
+    }
+  }
+
+  &__filters {
+    margin-bottom: 2rem;
+    padding: 0 1rem;
+
+    .ant-input-search {
+      .ant-input-group-addon {
+        .ant-btn {
+          background-color: $primary-color;
+          border-color: $primary-color;
+
+          &:hover {
+            background-color: color.adjust($primary-color, $lightness: -10%);
+            border-color: color.adjust($primary-color, $lightness: -10%);
+          }
+        }
+      }
+    }
+
+    .ant-select {
+      .ant-select-selector {
+        border-radius: $br-t;
+      }
+    }
+  }
+
+  &__grid {
+    padding: 0 1rem;
+  }
+
+  &__empty {
+    text-align: center;
+    padding: 4rem 1rem;
+    color: color.adjust($foreground-color, $lightness: 30%);
+
+    h3 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      font-size: 1rem;
+    }
+  }
+
+  &__pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 3rem;
+    padding: 0 1rem;
+
+    .ant-pagination {
+      .ant-pagination-item-active {
+        border-color: $primary-color;
+
+        a {
+          color: $primary-color;
+        }
+      }
+
+      .ant-pagination-item:hover {
+        border-color: $primary-color;
+
+        a {
+          color: $primary-color;
+        }
+      }
+
+      .ant-pagination-next:hover,
+      .ant-pagination-prev:hover {
+        .ant-pagination-item-link {
+          color: $primary-color;
+          border-color: $primary-color;
+        }
+      }
+    }
+  }
+}
+
+// Product Card Styles
+.product-card {
+  height: 100%;
+  border-radius: $br-l-m;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid $border-color;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  &__image-container {
+    position: relative;
+    overflow: hidden;
+    height: 250px;
+    background-color: $card-color;
+  }
+
+  &__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+
+  &__no-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background-color: $muted-color;
+    color: $muted-foreground-color;
+    font-size: 1rem;
+  }
+
+  &__title {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.5rem;
+
+    h3 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: $foreground-color;
+      line-height: 1.3;
+    }
+
+    .ant-badge {
+      .ant-badge-count {
+        font-size: 0.7rem;
+        padding: 0 6px;
+        height: 18px;
+        line-height: 18px;
+      }
+    }
+  }
+
+  &__details {
+    margin-top: 0.5rem;
+  }
+
+  &__description {
+    color: color.adjust($foreground-color, $lightness: 20%);
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-bottom: 1rem;
+  }
+
+  &__price {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+
+    &--current {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: $primary-color;
+    }
+
+    &--discounted {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: $destructive-color;
+    }
+
+    &--original {
+      font-size: 1rem;
+      color: color.adjust($foreground-color, $lightness: 40%);
+      text-decoration: line-through;
+    }
+  }
+
+  &__dimensions {
+    font-size: 0.8rem;
+    color: color.adjust($foreground-color, $lightness: 30%);
+    background-color: $accent-color;
+    padding: 0.25rem 0.5rem;
+    border-radius: $br-sm;
+    display: inline-block;
+  }
+
+  .ant-card-body {
+    padding: 1rem;
+  }
+
+  .ant-card-actions {
+    border-top: 1px solid $border-color;
+    background-color: $card-color;
+
+    li {
+      margin: 0.5rem 0;
+
+      .ant-btn {
+        border-radius: $br-t;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+// Categories Page Styles
+.categories-page {
+  min-height: calc(100vh - $navbar-height);
+  padding: 2rem 0;
+
+  &__loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
+    gap: 1rem;
+
+    p {
+      color: $text-color;
+      font-size: 1.1rem;
+    }
+  }
+
+  &__header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 0 1rem;
+
+    .categories-page__title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: $foreground-color;
+      margin-bottom: 0.5rem;
+
+      @media (max-width: $breakpoint-tab) {
+        font-size: 2rem;
+      }
+    }
+
+    .categories-page__subtitle {
+      font-size: 1.2rem;
+      color: color.adjust($foreground-color, $lightness: 20%);
+      margin: 0;
+    }
+  }
+
+  &__grid {
+    padding: 0 1rem;
+  }
+
+  &__empty {
+    text-align: center;
+    padding: 4rem 1rem;
+    color: color.adjust($foreground-color, $lightness: 30%);
+
+    h3 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      font-size: 1rem;
+    }
+  }
+}
+
+// Category Card Styles
+.category-card {
+  height: 100%;
+  border-radius: $br-l-m;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid $border-color;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  &__image-container {
+    position: relative;
+    overflow: hidden;
+    height: 200px;
+    background-color: $card-color;
+  }
+
+  &__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+
+  &__no-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background-color: $muted-color;
+    color: $muted-foreground-color;
+    font-size: 1rem;
+  }
+
+  &__title {
+    h3 {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: $foreground-color;
+      line-height: 1.3;
+    }
+  }
+
+  &__description {
+    color: color.adjust($foreground-color, $lightness: 20%);
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-top: 0.5rem;
+  }
+
+  .ant-card-body {
+    padding: 1rem;
+  }
+
+  .ant-card-actions {
+    border-top: 1px solid $border-color;
+    background-color: $card-color;
+
+    li {
+      margin: 0.5rem 0;
+
+      .ant-btn {
+        border-radius: $br-t;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+// Profile Page Styles
+.profile-page {
+  min-height: calc(100vh - $navbar-height);
+  padding: 2rem 0;
+
+  &__container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  &__header {
+    text-align: center;
+    margin-bottom: 2rem;
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: $foreground-color;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      color: color.adjust($foreground-color, $lightness: 20%);
+      font-size: 1rem;
+    }
+  }
+
+  &__content {
+    .ant-card {
+      border-radius: $br-l-m;
+      border: 1px solid $border-color;
+      margin-bottom: 1.5rem;
+
+      .ant-card-head {
+        border-bottom: 1px solid $border-color;
+
+        .ant-card-head-title {
+          font-weight: 600;
+          color: $foreground-color;
+        }
+      }
+    }
+  }
+
+  &__avatar-section {
+    text-align: center;
+    margin-bottom: 2rem;
+
+    .ant-avatar {
+      margin-bottom: 1rem;
+    }
+
+    .ant-upload {
+      .ant-btn {
+        border-radius: $br-t;
+      }
+    }
+  }
+
+  &__form {
+    .ant-form-item-label > label {
+      font-weight: 500;
+      color: $foreground-color;
+    }
+
+    .ant-input,
+    .ant-input-password {
+      border-radius: $br-t;
+    }
+
+    .ant-btn {
+      border-radius: $br-t;
+      font-weight: 500;
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: $breakpoint-tab) {
+  .products-page,
+  .categories-page {
+    &__filters {
+      .ant-row {
+        .ant-col {
+          margin-bottom: 0.5rem;
+        }
+      }
+    }
+  }
+
+  .product-card,
+  .category-card {
+    &__image-container {
+      height: 200px;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-mob-l) {
+  .products-page,
+  .categories-page {
+    padding: 1rem 0;
+
+    &__header {
+      margin-bottom: 2rem;
+
+      .products-page__title,
+      .categories-page__title {
+        font-size: 1.8rem;
+      }
+
+      .products-page__subtitle,
+      .categories-page__subtitle {
+        font-size: 1rem;
+      }
+    }
+  }
+
+  .product-card,
+  .category-card {
+    &__image-container {
+      height: 180px;
+    }
+  }
+}
