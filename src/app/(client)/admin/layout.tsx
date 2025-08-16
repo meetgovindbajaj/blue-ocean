@@ -5,11 +5,9 @@ import { Suspense, useEffect, useState } from "react";
 import ResizeAlert from "@/components/admin/resizeAlert";
 import properties from "@/lib/properties";
 import { useWindowWidth } from "@/lib/hooks";
-import { MessageInstance } from "antd/es/message/interface";
 import { getAllData } from "@/lib/api";
 import AdminDataProvider from "@/components/admin/AdminHOC";
-
-export let popupMessage: MessageInstance | undefined = undefined;
+import { setPopupMessage } from "@/lib/messageUtils";
 
 export default function AdminLayout({
   children,
@@ -30,7 +28,7 @@ export default function AdminLayout({
   const handleResize = (sizes: number[]) => {
     setSidebarWidth(sizes[0] ?? 50);
   };
-  popupMessage = messageApi;
+  setPopupMessage(messageApi);
   const showResizeAlert =
     (windowWidth < properties.breakpoints.mobile.medium && sidebarWidth > 70) ||
     (windowWidth >= properties.breakpoints.mobile.medium &&

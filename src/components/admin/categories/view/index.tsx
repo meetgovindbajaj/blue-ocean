@@ -4,7 +4,7 @@ import { Divider, Segmented, Spin } from "antd";
 import React, { useState } from "react";
 import ListView from "./ListView";
 import GridView from "./GridView";
-import { popupMessage } from "@/app/(client)/admin/layout";
+import { popupMessage } from "@/lib/messageUtils";
 import { useRouter } from "next/navigation";
 import { useAdminContext } from "../../AdminHOC";
 

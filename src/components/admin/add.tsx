@@ -1,5 +1,5 @@
 "use client";
-import { popupMessage } from "@/app/(client)/admin/layout";
+import { popupMessage } from "@/lib/messageUtils";
 import {
   createSlug,
   extractFileIdFromUrl,

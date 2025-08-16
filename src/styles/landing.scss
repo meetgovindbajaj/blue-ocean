@@ -1,0 +1,778 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as mix;
+
+// Container utility
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 $spacing-l-m;
+
+  @media (max-width: $breakpoint-mob-l) {
+    padding: 0 $spacing-m-l;
+  }
+}
+
+// Hero Section
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+
+  &__background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+  }
+
+  &__gradient {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      135deg,
+      rgba($primary-color, 0.1) 0%,
+      rgba($primary-color, 0.05) 50%,
+      transparent 100%
+    );
+  }
+
+  &__content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    max-width: 800px;
+    padding: $spacing-l-l;
+  }
+
+  &__title {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: $font-weight-bold;
+    color: $foreground-color;
+    margin-bottom: $spacing-m-l;
+    line-height: 1.2;
+  }
+
+  &__title-accent {
+    color: $primary-color;
+    background: linear-gradient(135deg, $primary-color, $primary-color-dark);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  &__subtitle {
+    font-size: clamp(1.1rem, 2vw, 1.3rem);
+    color: $muted-foreground-color;
+    margin-bottom: $spacing-l-m;
+    line-height: 1.6;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  &__actions {
+    display: flex;
+    gap: $spacing-m-l;
+    justify-content: center;
+    margin-bottom: $spacing-l-l;
+    flex-wrap: wrap;
+  }
+
+  &__cta {
+    height: 48px;
+    padding: 0 $spacing-l-m;
+    font-size: 1.1rem;
+    border-radius: $br-lg;
+    box-shadow: $shadow-lg;
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: $shadow-xl;
+    }
+  }
+
+  &__secondary {
+    height: 48px;
+    padding: 0 $spacing-l-m;
+    font-size: 1.1rem;
+    border-radius: $br-lg;
+    border: 2px solid $border-color;
+    transition: all 0.3s ease;
+
+    &:hover {
+      border-color: $primary-color;
+      color: $primary-color;
+      transform: translateY(-2px);
+    }
+  }
+
+  &__stats {
+    display: flex;
+    justify-content: center;
+    gap: $spacing-l-m;
+    flex-wrap: wrap;
+  }
+
+  &__stat {
+    text-align: center;
+    min-width: 120px;
+  }
+
+  &__stat-number {
+    display: block;
+    font-size: 2rem;
+    font-weight: $font-weight-bold;
+    color: $primary-color;
+    line-height: 1;
+  }
+
+  &__stat-label {
+    display: block;
+    font-size: 0.9rem;
+    color: $muted-foreground-color;
+    margin-top: $spacing-m-s;
+  }
+}
+
+// Featured Products Section
+.featured-products {
+  padding: $spacing-l-l 0;
+  background: $background-color;
+
+  &__header {
+    text-align: center;
+    margin-bottom: $spacing-l-l;
+  }
+
+  &__title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: $font-weight-bold;
+    color: $foreground-color;
+    margin-bottom: $spacing-m-l;
+  }
+
+  &__subtitle {
+    font-size: 1.2rem;
+    color: $muted-foreground-color;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: $spacing-l-m;
+    margin-bottom: $spacing-l-m;
+  }
+
+  &__footer {
+    text-align: center;
+  }
+
+  &__view-all {
+    height: 48px;
+    padding: 0 $spacing-l-m;
+    font-size: 1.1rem;
+    border-radius: $br-lg;
+  }
+}
+
+// Product Card
+.product-card {
+  border-radius: $br-lg;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid $border-color;
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: $shadow-xl;
+  }
+
+  &__image-container {
+    position: relative;
+    overflow: hidden;
+  }
+
+  &__image {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  &__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover &__overlay {
+    opacity: 1;
+  }
+
+  &:hover &__image {
+    transform: scale(1.1);
+  }
+
+  &__action {
+    border-radius: $br-md;
+  }
+
+  &__badges {
+    position: absolute;
+    top: $spacing-m-l;
+    left: $spacing-m-l;
+    z-index: 2;
+  }
+
+  &__badge {
+    margin-right: $spacing-m-s;
+  }
+
+  &__wishlist {
+    position: absolute;
+    top: $spacing-m-l;
+    right: $spacing-m-l;
+    z-index: 2;
+  }
+
+  &__wishlist-btn {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__info {
+    margin-bottom: $spacing-m-s;
+  }
+
+  &__name {
+    font-size: 1.1rem;
+    font-weight: $font-weight-medium;
+    color: $foreground-color;
+    margin: 0 0 $spacing-m-s 0;
+  }
+
+  &__category {
+    color: $muted-foreground-color;
+    font-size: 0.9rem;
+    margin: 0;
+  }
+
+  &__pricing {
+    display: flex;
+    align-items: center;
+    gap: $spacing-m-s;
+  }
+
+  &__price {
+    font-size: 1.2rem;
+    font-weight: $font-weight-bold;
+    color: $primary-color;
+  }
+
+  &__original-price {
+    font-size: 1rem;
+    color: $muted-foreground-color;
+    text-decoration: line-through;
+  }
+
+  &__cart-btn {
+    border-radius: $br-md;
+  }
+}
+
+// About Us Section
+.about-us {
+  padding: $spacing-l-l 0;
+  background: $card-color;
+
+  &__header {
+    text-align: center;
+    margin-bottom: $spacing-l-l;
+  }
+
+  &__title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: $font-weight-bold;
+    color: $foreground-color;
+    margin-bottom: $spacing-m-s;
+  }
+
+  &__subtitle {
+    font-size: 1.2rem;
+    color: $primary-color;
+    font-weight: $font-weight-medium;
+  }
+
+  &__grid {
+    margin-bottom: $spacing-l-l;
+  }
+
+  &__story {
+    padding-right: $spacing-l-m;
+
+    @media (max-width: $breakpoint-tab) {
+      padding-right: 0;
+      margin-bottom: $spacing-l-m;
+    }
+  }
+
+  &__story-title {
+    font-size: 1.5rem;
+    font-weight: $font-weight-bold;
+    color: $foreground-color;
+    margin-bottom: $spacing-m-l;
+  }
+
+  &__story-text {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: $muted-foreground-color;
+    margin-bottom: $spacing-m-l;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__stats {
+    background: $background-color;
+    padding: $spacing-l-m;
+    border-radius: $br-lg;
+    box-shadow: $shadow-sm;
+  }
+}
+
+// Feature Card
+.feature-card {
+  text-align: center;
+  padding: $spacing-l-m;
+  border-radius: $br-lg;
+  height: 100%;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-lg;
+  }
+
+  &__icon {
+    font-size: 2.5rem;
+    color: $primary-color;
+    margin-bottom: $spacing-m-l;
+  }
+
+  &__title {
+    font-size: 1.2rem;
+    font-weight: $font-weight-bold;
+    color: $foreground-color;
+    margin-bottom: $spacing-m-l;
+  }
+
+  &__description {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: $muted-foreground-color;
+    margin: 0;
+  }
+}
+
+// Stat Item
+.stat-item {
+  text-align: center;
+
+  &__number {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: $font-weight-bold;
+    color: $primary-color;
+    line-height: 1;
+  }
+
+  &__label {
+    display: block;
+    font-size: 0.9rem;
+    color: $muted-foreground-color;
+    margin-top: $spacing-m-s;
+  }
+}
+
+// Services Section
+.services {
+  padding: $spacing-l-l 0;
+  background: $background-color;
+
+  &__header {
+    text-align: center;
+    margin-bottom: $spacing-l-l;
+  }
+
+  &__title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: $font-weight-bold;
+    color: $foreground-color;
+    margin-bottom: $spacing-m-l;
+  }
+
+  &__subtitle {
+    font-size: 1.2rem;
+    color: $muted-foreground-color;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  &__grid {
+    margin-bottom: $spacing-l-l;
+  }
+
+  &__cta {
+    background: linear-gradient(135deg, $primary-color, $primary-color-dark);
+    padding: $spacing-l-l;
+    border-radius: $br-xl;
+    text-align: center;
+    color: white;
+  }
+
+  &__cta-content {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  &__cta-title {
+    font-size: 2rem;
+    font-weight: $font-weight-bold;
+    margin-bottom: $spacing-m-l;
+    color: white;
+  }
+
+  &__cta-description {
+    font-size: 1.1rem;
+    margin-bottom: $spacing-l-m;
+    opacity: 0.9;
+  }
+
+  &__cta-actions {
+    display: flex;
+    gap: $spacing-m-l;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+
+// Service Card
+.service-card {
+  text-align: center;
+  padding: $spacing-l-m;
+  border-radius: $br-lg;
+  height: 100%;
+  transition: all 0.3s ease;
+  border: 1px solid $border-color;
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: $shadow-xl;
+    border-color: $primary-color;
+  }
+
+  &__icon {
+    font-size: 3rem;
+    color: $primary-color;
+    margin-bottom: $spacing-m-l;
+  }
+
+  &__title {
+    font-size: 1.3rem;
+    font-weight: $font-weight-bold;
+    color: $foreground-color;
+    margin-bottom: $spacing-m-l;
+  }
+
+  &__description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: $muted-foreground-color;
+    margin-bottom: $spacing-m-l;
+  }
+
+  &__features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 $spacing-m-l 0;
+  }
+
+  &__feature {
+    font-size: 0.9rem;
+    color: $muted-foreground-color;
+    margin-bottom: $spacing-m-s;
+    position: relative;
+    padding-left: $spacing-m-l;
+
+    &::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: $primary-color;
+      font-weight: $font-weight-bold;
+    }
+  }
+
+  &__link {
+    color: $primary-color;
+    font-weight: $font-weight-medium;
+  }
+}
+
+// Contact CTA Section
+.contact-cta {
+  padding: $spacing-l-l 0;
+  background: $card-color;
+
+  &__header {
+    text-align: center;
+    margin-bottom: $spacing-l-l;
+  }
+
+  &__title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: $font-weight-bold;
+    color: $foreground-color;
+    margin-bottom: $spacing-m-l;
+  }
+
+  &__subtitle {
+    font-size: 1.2rem;
+    color: $muted-foreground-color;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  &__grid {
+    margin-bottom: $spacing-l-l;
+  }
+
+  &__newsletter {
+    margin-top: $spacing-l-l;
+  }
+}
+
+// Contact Info
+.contact-info {
+  &__title {
+    font-size: 1.5rem;
+    font-weight: $font-weight-bold;
+    color: $foreground-color;
+    margin-bottom: $spacing-l-m;
+  }
+
+  &__items {
+    margin-bottom: $spacing-l-m;
+  }
+
+  &__item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: $spacing-l-m;
+    padding: $spacing-m-l;
+    background: $background-color;
+    border-radius: $br-lg;
+    transition: all 0.3s ease;
+
+    &:hover {
+      box-shadow: $shadow-md;
+    }
+  }
+
+  &__icon {
+    font-size: 1.5rem;
+    color: $primary-color;
+    margin-right: $spacing-m-l;
+    margin-top: $spacing-m-s;
+  }
+
+  &__details {
+    flex: 1;
+  }
+
+  &__item-title {
+    font-size: 1.1rem;
+    font-weight: $font-weight-bold;
+    color: $foreground-color;
+    margin: 0 0 $spacing-m-s 0;
+  }
+
+  &__content {
+    font-size: 1rem;
+    color: $foreground-color;
+    margin: 0 0 $spacing-m-s 0;
+  }
+
+  &__subtitle {
+    font-size: 0.9rem;
+    color: $muted-foreground-color;
+  }
+
+  &__social-title {
+    font-size: 1.2rem;
+    font-weight: $font-weight-bold;
+    color: $foreground-color;
+    margin-bottom: $spacing-m-l;
+  }
+
+  &__social-links {
+    display: flex;
+    gap: $spacing-m-s;
+  }
+
+  &__social-link {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: $background-color;
+    border: 1px solid $border-color;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: $primary-color;
+      border-color: $primary-color;
+      color: white;
+      transform: translateY(-2px);
+    }
+  }
+}
+
+// Contact Form
+.contact-form-card {
+  border-radius: $br-lg;
+  box-shadow: $shadow-lg;
+}
+
+.contact-form {
+  &__title {
+    font-size: 1.5rem;
+    font-weight: $font-weight-bold;
+    color: $foreground-color;
+    margin-bottom: $spacing-l-m;
+  }
+
+  &__submit {
+    height: 48px;
+    border-radius: $br-lg;
+    font-size: 1.1rem;
+  }
+}
+
+// Newsletter Card
+.newsletter-card {
+  background: linear-gradient(135deg, $primary-color, $primary-color-dark);
+  border-radius: $br-xl;
+  color: white;
+
+  &__title {
+    font-size: 1.5rem;
+    font-weight: $font-weight-bold;
+    margin-bottom: $spacing-m-s;
+    color: white;
+  }
+
+  &__description {
+    font-size: 1rem;
+    opacity: 0.9;
+    margin: 0;
+  }
+
+  &__form {
+    .ant-input-group {
+      .ant-input {
+        border-radius: $br-lg 0 0 $br-lg;
+        height: 48px;
+      }
+
+      .ant-btn {
+        border-radius: 0 $br-lg $br-lg 0;
+        height: 48px;
+        background: white;
+        color: $primary-color;
+        border-color: white;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.9);
+          border-color: rgba(255, 255, 255, 0.9);
+        }
+      }
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: $breakpoint-tab) {
+  .hero {
+    &__actions {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    &__cta,
+    &__secondary {
+      width: 100%;
+      max-width: 300px;
+    }
+
+    &__stats {
+      gap: $spacing-m-l;
+    }
+  }
+
+  .featured-products__grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: $spacing-m-l;
+  }
+
+  .services__cta-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .newsletter-card__form {
+    .ant-input-group {
+      display: flex;
+      flex-direction: column;
+
+      .ant-input {
+        border-radius: $br-lg;
+        margin-bottom: $spacing-m-s;
+      }
+
+      .ant-btn {
+        border-radius: $br-lg;
+        width: 100%;
+      }
+    }
+  }
+}

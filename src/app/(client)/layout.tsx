@@ -16,6 +16,7 @@ import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { AuthProvider } from "@/contexts/AuthContext";
+import LenisProvider from "@/components/providers/LenisProvider";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
@@ -82,11 +83,13 @@ export default async function RootLayout({
             </SignedIn>
           </header> */}
         <AuthProvider>
-          <Header _categories={categories as ICategory[]} />
-          <AntdRegistry>
-            <div className="main">{children}</div>
-          </AntdRegistry>
-          <Footer />
+          <LenisProvider>
+            <Header _categories={categories as ICategory[]} />
+            <AntdRegistry>
+              <div className="main">{children}</div>
+            </AntdRegistry>
+            <Footer />
+          </LenisProvider>
         </AuthProvider>
       </body>
     </html>
