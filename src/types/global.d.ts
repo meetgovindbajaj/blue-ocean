@@ -1,3 +1,4 @@
+import { AuthType, TokenType, UserRole, UserStatus } from "@/lib/properties";
 import { Document as MongodbDoc, Types } from "mongoose";
 
 export {};
@@ -85,6 +86,11 @@ declare global {
     error?: string;
     message: string;
   }
+
+  type IAuthType = `${AuthType}`;
+  type IUserRole = `${UserRole}`;
+  type IUserStatus = `${UserStatus}`;
+  type ITokenType = `${TokenType}`;
 
   interface IProperties {
     breakpoints: {

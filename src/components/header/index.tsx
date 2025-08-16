@@ -1,9 +1,12 @@
 "use client";
 
+import Navbar from "./Navbar";
+import "@/styles/header.scss";
+
 export default function Header({ _categories }: { _categories: ICategory[] }) {
   return (
     <>
-      <header className="navbar__container"></header>
+      <Navbar categories={_categories} />
     </>
   );
 }

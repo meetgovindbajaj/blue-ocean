@@ -74,7 +74,7 @@ export async function GET(
     } else {
       // 📁 Local file system fetch
       const localPath = path.join(process.cwd(), "public", "images", imageId);
-
+      
       if (!(await fs.pathExists(localPath)))
         throw new Error("Image not found locally");
 

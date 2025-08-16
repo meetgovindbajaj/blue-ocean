@@ -1,0 +1,479 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as mix;
+@use "sass:color";
+
+.navbar {
+  &__container {
+    height: $navbar-height;
+    width: 100%;
+    @include mix.flex(row, space-between, center, nowrap);
+    padding: 0 1rem;
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid $border-color;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    @include mix.transition(all, 0.3s, ease);
+
+    @include mix.media-range(lap-s) {
+      padding: 0 2rem;
+    }
+  }
+
+  &__brand {
+    @include mix.flex(row, space-between, center, nowrap);
+    gap: $gap-sm;
+    text-decoration: none;
+    color: $primary-color;
+    font-weight: $font-weight-bold;
+    font-size: 1.5rem;
+    @include mix.transition(color, 0.3s, ease);
+    flex-shrink: 0;
+
+    &:hover {
+      color: $primary-color-dark;
+    }
+
+    &-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: $border-radius-sm;
+    }
+
+    &-text {
+      @include mix.media-range(mob-s) {
+        font-size: 1rem;
+      }
+      @include mix.media-range(mob-m) {
+        font-size: 1.1rem;
+      }
+      @include mix.media-range(mob-l) {
+        font-size: 1.2rem;
+      }
+    }
+  }
+
+  &__nav {
+    @include mix.flex(row, center, center, nowrap);
+    gap: $gap-lg;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    @include mix.media-range(mob-s) {
+      display: none;
+    }
+    @include mix.media-range(mob-m) {
+      display: none;
+    }
+    @include mix.media-range(mob-l) {
+      display: none;
+    }
+
+    &-item {
+      position: relative;
+
+      &-link {
+        text-decoration: none;
+        color: $text-color;
+        font-weight: $font-weight-medium;
+        padding: $gap-sm $gap-md;
+        border-radius: $border-radius-md;
+        @include mix.transition(all, 0.3s, ease);
+
+        &:hover {
+          color: $primary-color;
+          background-color: $accent-color;
+        }
+
+        &.active {
+          color: $primary-color;
+          background-color: $accent-color;
+        }
+      }
+    }
+  }
+
+  &__dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: $background-color;
+    border: 1px solid $border-color;
+    border-radius: $border-radius-md;
+    box-shadow: $shadow-lg;
+    min-width: 200px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    @include mix.transition(all, 0.3s, ease);
+    z-index: 1001;
+
+    &.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    &-item {
+      padding: $gap-sm $gap-md;
+      border-bottom: 1px solid $border-color;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &-link {
+        text-decoration: none;
+        color: $text-color;
+        display: block;
+        @include mix.transition(color, 0.3s, ease);
+
+        &:hover {
+          color: $primary-color;
+        }
+      }
+    }
+  }
+
+  &__actions {
+    @include mix.flex(row, center, flex-end, nowrap);
+    gap: $gap-md;
+
+    &-auth {
+      @include mix.flex(row, center, center, nowrap);
+      gap: $gap-sm;
+
+      @include mix.media-range(mob-s) {
+        display: none;
+      }
+      @include mix.media-range(mob-m) {
+        display: none;
+      }
+      @include mix.media-range(mob-l) {
+        display: none;
+      }
+    }
+
+    &-button {
+      padding: $gap-sm $gap-md;
+      border: none;
+      border-radius: $border-radius-md;
+      font-weight: $font-weight-medium;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+      @include mix.transition(all, 0.3s, ease);
+
+      &--primary {
+        background-color: $primary-color;
+        color: $primary-foreground-color;
+
+        &:hover {
+          background-color: $primary-color-dark;
+        }
+      }
+
+      &--secondary {
+        background-color: transparent;
+        color: $primary-color;
+        border: 1px solid $primary-color;
+
+        &:hover {
+          background-color: $primary-color;
+          color: $primary-foreground-color;
+        }
+      }
+    }
+
+    &-cart {
+      position: relative;
+      padding: $gap-sm;
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      color: $text-color;
+      @include mix.transition(color, 0.3s, ease);
+
+      &:hover {
+        color: $primary-color;
+      }
+
+      &-badge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background-color: $destructive-color;
+        color: $destructive-foreground-color;
+        border-radius: 50%;
+        width: 18px;
+        height: 18px;
+        font-size: 0.75rem;
+        @include mix.flex(row, center, center, nowrap);
+      }
+    }
+  }
+
+  &__mobile {
+    &-toggle {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: $gap-sm;
+      color: $text-color;
+
+      @include mix.media-range(mob-s) {
+        display: block;
+      }
+      @include mix.media-range(mob-m) {
+        display: block;
+      }
+      @include mix.media-range(mob-l) {
+        display: block;
+      }
+    }
+
+    &-menu {
+      position: fixed;
+      top: $navbar-height;
+      left: 0;
+      width: 100%;
+      height: calc(100vh - #{$navbar-height});
+      background-color: $background-color;
+      border-top: 1px solid $border-color;
+      transform: translateX(-100%);
+      @include mix.transition(transform, 0.3s, ease);
+      z-index: 999;
+      overflow-y: auto;
+
+      &.open {
+        transform: translateX(0);
+      }
+
+      &-content {
+        padding: $gap-lg;
+      }
+
+      &-nav {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        margin-bottom: $gap-lg;
+
+        &-item {
+          margin-bottom: $gap-sm;
+
+          &-link {
+            display: block;
+            padding: $gap-md;
+            text-decoration: none;
+            color: $text-color;
+            font-weight: $font-weight-medium;
+            border-radius: $border-radius-md;
+            @include mix.transition(all, 0.3s, ease);
+
+            &:hover {
+              background-color: $accent-color;
+              color: $primary-color;
+            }
+          }
+        }
+      }
+
+      &-search {
+        margin-bottom: $gap-lg;
+
+        &-input {
+          width: 100%;
+          padding: $gap-md;
+          border: 1px solid $border-color;
+          border-radius: $border-radius-md;
+          background-color: $input-color;
+          color: $text-color;
+          font-size: 1rem;
+
+          &:focus {
+            outline: none;
+            border-color: $primary-color;
+            box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
+          }
+        }
+      }
+
+      &-auth {
+        @include mix.flex(column, stretch, stretch, nowrap);
+        gap: $gap-sm;
+      }
+
+      &-user {
+        padding: $gap-md;
+        background-color: $accent-color;
+        border-radius: $border-radius-md;
+        margin-bottom: $gap-md;
+
+        &-name {
+          font-weight: $font-weight-medium;
+          color: $primary-color;
+        }
+      }
+    }
+  }
+}
+
+// User dropdown styles
+.navbar__user {
+  position: relative;
+
+  &-button {
+    @include mix.flex(row, center, center, nowrap);
+    gap: $gap-sm;
+    padding: $gap-sm $gap-md;
+    background: transparent;
+    border: 1px solid $border-color;
+    border-radius: $border-radius-md;
+    cursor: pointer;
+    font-weight: $font-weight-medium;
+    color: $text-color;
+    @include mix.transition(all, 0.3s, ease);
+
+    &:hover {
+      border-color: $primary-color;
+      color: $primary-color;
+    }
+  }
+
+  &-name {
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.navbar__dropdown--user {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 200px;
+  background-color: $background-color;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-md;
+  box-shadow: $shadow-lg;
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  z-index: 1001;
+}
+
+// Category dropdown hover effect
+.navbar__nav-item:hover .navbar__dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+// Search toggle button
+.navbar__search-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: $gap-sm;
+  color: $text-color;
+  @include mix.transition(color, 0.3s, ease);
+
+  &:hover {
+    color: $primary-color;
+  }
+}
+
+// Search overlay
+.navbar__search-overlay {
+  position: fixed;
+  top: $navbar-height;
+  left: 0;
+  right: 0;
+  background-color: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid $border-color;
+  padding: $gap-md;
+  z-index: 1002;
+  animation: slideDown 0.3s ease;
+
+  @keyframes slideDown {
+    from {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+}
+
+.navbar__search-form {
+  max-width: 600px;
+  margin: 0 auto;
+  @include mix.flex(row, center, center, nowrap);
+  gap: $gap-sm;
+  position: relative;
+}
+
+.navbar__search-input {
+  flex: 1;
+  padding: $gap-md;
+  border: 2px solid $border-color;
+  border-radius: $border-radius-md;
+  background-color: $input-color;
+  color: $text-color;
+  font-size: 1rem;
+  @include mix.transition(all, 0.3s, ease);
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+  }
+
+  &::placeholder {
+    color: $muted-foreground-color;
+  }
+}
+
+.navbar__search-submit {
+  padding: $gap-md;
+  background-color: $primary-color;
+  color: $primary-foreground-color;
+  border: none;
+  border-radius: $border-radius-md;
+  cursor: pointer;
+  @include mix.transition(background-color, 0.3s, ease);
+
+  &:hover {
+    background-color: $primary-color-dark;
+  }
+}
+
+.navbar__search-close {
+  position: absolute;
+  right: -40px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: $gap-sm;
+  color: $text-color;
+  @include mix.transition(color, 0.3s, ease);
+
+  &:hover {
+    color: $primary-color;
+  }
+
+  @include mix.media-range(mob-s) {
+    right: -30px;
+  }
+}

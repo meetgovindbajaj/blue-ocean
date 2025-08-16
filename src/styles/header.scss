@@ -2,15 +2,15 @@
 @use "@/styles/mixins" as mix;
 @use "sass:color";
 
-.navbar__container {
-  height: $navbar-height;
-  width: 100%;
-  @include mix.flex(row, center, space-between, nowrap);
-  padding: 0 1rem;
-  background-color: #fefefe7b;
-  backdrop-filter: blur(10px);
-  border-bottom: 2px solid #eaeaea;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
+// .navbar__container {
+//   height: $navbar-height;
+//   width: 100%;
+//   @include mix.flex(row, center, space-between, nowrap);
+//   padding: 0 1rem;
+//   background-color: #fefefe7b;
+//   backdrop-filter: blur(10px);
+//   border-bottom: 2px solid #eaeaea;
+//   position: sticky;
+//   top: 0;
+//   z-index: 1000;
+// }

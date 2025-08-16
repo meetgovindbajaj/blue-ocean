@@ -1,9 +1,9 @@
 import dbConnect from "@/lib/db";
 import { buildPopulate } from "@/lib/functions";
 import Category from "@/models/Category";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(_req: NextRequest) {
   await dbConnect();
   const categories = await Category.find()
     .populate(buildPopulate())

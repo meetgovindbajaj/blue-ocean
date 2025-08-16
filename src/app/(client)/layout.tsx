@@ -13,7 +13,9 @@ import "./globals.css";
 import "@/styles/rootStyles.scss";
 import { getAllData } from "@/lib/api";
 import Header from "@/components/header";
+import Footer from "@/components/footer";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
@@ -79,19 +81,13 @@ export default async function RootLayout({
               <SignOutButton />
             </SignedIn>
           </header> */}
-        <Header _categories={categories as ICategory[]} />
-        <AntdRegistry>
-          <div className="main">{children}</div>
-        </AntdRegistry>
-        <footer
-          style={{
-            height: "500px",
-            backgroundColor: "black",
-            color: "white",
-          }}
-        >
-          dummy footer
-        </footer>
+        <AuthProvider>
+          <Header _categories={categories as ICategory[]} />
+          <AntdRegistry>
+            <div className="main">{children}</div>
+          </AntdRegistry>
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );
