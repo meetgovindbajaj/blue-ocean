@@ -99,6 +99,7 @@ export async function GET(request: NextRequest) {
           authType: user.authType,
           createdAt: user.createdAt,
           lastLogin: user.lastLogin,
+          updatedAt: user.updatedAt,
         },
       },
       { status: 200 }

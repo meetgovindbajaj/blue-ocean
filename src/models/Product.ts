@@ -207,4 +207,7 @@ ProductSchema.virtual("breadcrumbs").get(async function (this: IProduct) {
   return breadcrumbs;
 });
 
+// Add this line to define the text index
+ProductSchema.index({ name: "text", description: "text", tags: "text" });
+
 export default models.Product || model<IProduct>("Product", ProductSchema);

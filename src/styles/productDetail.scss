@@ -80,9 +80,10 @@
   }
 
   &__images {
+    min-width: min(300px, 100%);
+    width: 500px;
     .main-image {
       position: relative;
-      width: 100%;
       height: 500px;
       border-radius: $br-l-m;
       overflow: hidden;
@@ -90,48 +91,44 @@
       margin-bottom: $spacing-l-s;
 
       .ant-carousel {
-        height: 100%;
-
         .slick-slide {
           height: 500px;
         }
 
-        .slick-prev,
-        .slick-next {
-          z-index: 2;
-          width: 40px;
-          height: 40px;
-          background: rgba(white, 0.9);
-          border-radius: 50%;
-          display: flex !important;
-          align-items: center;
-          justify-content: center;
-          box-shadow: 0 2px 8px rgba(black, 0.1);
+        // .slick-prev,
+        // .slick-next {
+        //   z-index: 2;
+        //   width: 40px;
+        //   height: 40px;
+        //   background: rgba(white, 0.9);
+        //   border-radius: 50%;
+        //   display: flex !important;
+        //   align-items: center;
+        //   justify-content: center;
+        //   box-shadow: 0 2px 8px rgba(black, 0.1);
+        //   &:before {
+        //     color: black;
+        //     font-size: 16px;
+        //   }
 
-          &:before {
-            color: $foreground-color;
-            font-size: 16px;
-          }
+        //   &:hover {
+        //     background: white;
+        //     box-shadow: 0 4px 12px rgba(black, 0.15);
+        //   }
+        // }
 
-          &:hover {
-            background: white;
-            box-shadow: 0 4px 12px rgba(black, 0.15);
-          }
-        }
+        // .slick-prev {
+        //   left: 15px;
+        // }
 
-        .slick-prev {
-          left: 15px;
-        }
-
-        .slick-next {
-          right: 15px;
-        }
+        // .slick-next {
+        //   right: 15px;
+        // }
       }
 
       .image-slide,
       .no-image {
         position: relative;
-        width: 100%;
         height: 500px;
       }
 
@@ -145,6 +142,7 @@
       display: flex;
       gap: $spacing-m-m;
       overflow-x: auto;
+      width: min(500px, 100%);
       padding: $spacing-m-s 0;
 
       .thumbnail {
@@ -505,6 +503,7 @@
 @media (max-width: $breakpoint-tab) {
   .product-detail {
     &__images {
+      width: 400px;
       .main-image {
         height: 400px;
 
@@ -519,6 +518,7 @@
       }
 
       .thumbnail-images {
+        width: min(400px, 100%);
         .thumbnail {
           width: 60px;
           height: 60px;
@@ -543,6 +543,7 @@
     }
 
     &__images {
+      width: 300px;
       .main-image {
         height: 300px;
         margin-bottom: $spacing-m-l;
@@ -550,7 +551,6 @@
         .image-slide,
         .no-image {
           height: 300px;
-          // width: 500px;
         }
 
         .ant-carousel .slick-slide {
@@ -560,7 +560,7 @@
 
       .thumbnail-images {
         gap: $spacing-m-s;
-
+        width: min(300px, 100%);
         .thumbnail {
           width: 50px;
           height: 50px;

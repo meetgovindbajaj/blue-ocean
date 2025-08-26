@@ -201,9 +201,9 @@ export default function ProductDetailPage() {
                   }
                 >
                   {product.images.map((image, index) => (
-                    <div key={index} className="image-slide">
+                    <div key={"image_" + image.id} className="image-slide">
                       <Image
-                        src={`/api/v1/image/${image.id}?h=300&format=webp`}
+                        src={`/api/v1/image/${image.id}?w=500&h=300&format=webp`}
                         alt={`${product.name} - Image ${index + 1}`}
                         fill
                         className="product-image"
@@ -241,7 +241,7 @@ export default function ProductDetailPage() {
                     }
                   >
                     <Image
-                      src={image.thumbnailUrl || image.url}
+                      src={`/api/v1/image/${image.id}?h=300&format=webp`}
                       alt={`${product.name} thumbnail ${index + 1}`}
                       fill
                       className="thumbnail-image"

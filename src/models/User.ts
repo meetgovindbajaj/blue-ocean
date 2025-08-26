@@ -103,7 +103,7 @@ const UserSchema = new Schema<IUser>(
     toObject: { virtuals: true },
   }
 );
-UserSchema.index({ role: 1, status: 1 }, { unique: true });
+
 // ✅ Pre-save: assign _id to id if not set
 UserSchema.pre("save", async function (this: IUser, next) {
   const id = (this._id as Types.ObjectId).toString();

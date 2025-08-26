@@ -216,4 +216,6 @@ CategorySchema.pre<ICategory>(
   }
 );
 
+CategorySchema.index({ name: "text", description: "text" });
+
 export default models.Category || model<ICategory>("Category", CategorySchema);

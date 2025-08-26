@@ -80,7 +80,7 @@ export default function ProfilePage() {
 
       if (response.ok) {
         const data = await response.json();
-        setProfile(data);
+        setProfile(data.user);
         form.setFieldsValue({
           name: data.name,
           email: data.email,
@@ -222,6 +222,7 @@ export default function ProfilePage() {
       </div>
     );
   }
+  console.log({ profile });
 
   return (
     <div className="profile-page">
