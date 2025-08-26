@@ -1,0 +1,517 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as mix;
+@use "sass:color";
+
+// Wishlist Page Styles
+.wishlist-page {
+  min-height: 100vh;
+  padding: $spacing-l-s 0;
+
+  &__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 $spacing-l-s;
+
+    @media (max-width: $breakpoint-mob-l) {
+      padding: 0 $spacing-m-l;
+    }
+  }
+
+  // Header Section
+  &__header {
+    margin-bottom: $spacing-l-l;
+
+    @media (max-width: $breakpoint-tab) {
+      margin-bottom: $spacing-l-m;
+    }
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: $spacing-m-l;
+      margin-bottom: $spacing-l-s;
+
+      @media (max-width: $breakpoint-mob-l) {
+        flex-direction: column;
+        text-align: center;
+        gap: $spacing-m-m;
+      }
+
+      .wishlist-icon {
+        font-size: 1.5rem;
+        color: $destructive-color;
+
+        @media (max-width: $breakpoint-mob-l) {
+          font-size: 2rem;
+        }
+      }
+
+      .ant-typography {
+        margin: 0;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: $foreground-color;
+
+        @media (max-width: $breakpoint-tab) {
+          font-size: 2rem;
+        }
+
+        @media (max-width: $breakpoint-mob-l) {
+          font-size: 1.75rem;
+        }
+      }
+    }
+
+    .header-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: $spacing-m-l;
+
+      @media (max-width: $breakpoint-tab) {
+        flex-direction: column;
+        align-items: stretch;
+        gap: $spacing-m-m;
+      }
+
+      .item-count {
+        font-size: 1rem;
+        color: $muted-foreground-color;
+
+        @media (max-width: $breakpoint-tab) {
+          text-align: center;
+        }
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: $spacing-m-l;
+
+        @media (max-width: $breakpoint-mob-l) {
+          flex-direction: column;
+          width: 100%;
+
+          .ant-btn {
+            width: 100%;
+          }
+        }
+
+        .add-all-btn {
+          background: linear-gradient(
+            135deg,
+            $primary-color,
+            color.adjust($primary-color, $hue: 20deg)
+          );
+          border: none;
+          box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+          font-weight: 600;
+
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba($primary-color, 0.4);
+          }
+
+          &:disabled {
+            opacity: 0.6;
+            transform: none;
+            box-shadow: 0 4px 12px rgba($primary-color, 0.2);
+          }
+        }
+
+        .clear-wishlist-btn {
+          border-color: $destructive-color;
+          color: $destructive-color;
+          font-weight: 600;
+
+          &:hover {
+            background: color.adjust($destructive-color, $lightness: 45%);
+            border-color: $destructive-color;
+            color: $destructive-color;
+          }
+
+          &:disabled {
+            opacity: 0.6;
+          }
+        }
+      }
+    }
+  }
+
+  // Wishlist Items Grid
+  &__items {
+    .ant-row {
+      margin-bottom: $spacing-l-m;
+
+      .ant-col {
+        margin-bottom: $spacing-l-s;
+
+        @media (max-width: $breakpoint-tab) {
+          margin-bottom: $spacing-m-l;
+        }
+      }
+    }
+
+    .wishlist-item {
+      position: relative;
+      height: 100%;
+
+      .product-card {
+        height: 100%;
+        transition: all 0.3s ease;
+
+        &:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 8px 24px rgba(black, 0.12);
+        }
+      }
+
+      .quick-remove-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        z-index: 10;
+        background: rgba(white, 0.95);
+        border: 1px solid $border-color;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: $destructive-color;
+        box-shadow: 0 2px 8px rgba(black, 0.1);
+        transition: all 0.3s ease;
+
+        &:hover {
+          background: $destructive-color;
+          color: white;
+          border-color: $destructive-color;
+          transform: scale(1.1);
+          box-shadow: 0 4px 12px rgba($destructive-color, 0.3);
+        }
+
+        @media (max-width: $breakpoint-mob-l) {
+          width: 36px;
+          height: 36px;
+          top: 12px;
+          right: 12px;
+        }
+      }
+    }
+  }
+
+  // Empty Wishlist
+  &__empty {
+    text-align: center;
+    padding: $spacing-l-l * 2 $spacing-l-s;
+
+    @media (max-width: $breakpoint-mob-l) {
+      padding: $spacing-l-l $spacing-m-l;
+    }
+
+    .ant-empty {
+      .ant-empty-description {
+        margin-top: $spacing-l-s;
+
+        .empty-title {
+          font-size: 1.5rem;
+          font-weight: 600;
+          color: $foreground-color;
+          margin-bottom: $spacing-m-m;
+
+          @media (max-width: $breakpoint-mob-l) {
+            font-size: 1.25rem;
+          }
+        }
+
+        .empty-description {
+          font-size: 1rem;
+          color: $muted-foreground-color;
+          line-height: 1.6;
+        }
+      }
+    }
+
+    .start-shopping-btn {
+      margin-top: $spacing-l-s;
+      height: 48px;
+      padding: 0 $spacing-l-m;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: $br-t;
+      background: linear-gradient(
+        135deg,
+        $primary-color,
+        color.adjust($primary-color, $hue: 20deg)
+      );
+      border: none;
+      box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba($primary-color, 0.4);
+      }
+
+      @media (max-width: $breakpoint-mob-l) {
+        width: 100%;
+        max-width: 300px;
+      }
+    }
+  }
+
+  // Recommendations Section
+  &__recommendations {
+    margin-top: $spacing-l-l * 2;
+
+    @media (max-width: $breakpoint-tab) {
+      margin-top: $spacing-l-l;
+    }
+
+    .recommendations-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: $foreground-color;
+      text-align: center;
+      margin-bottom: $spacing-l-m;
+
+      @media (max-width: $breakpoint-tab) {
+        font-size: 1.75rem;
+      }
+
+      @media (max-width: $breakpoint-mob-l) {
+        font-size: 1.5rem;
+      }
+    }
+
+    .recommendations-card {
+      border-radius: $br-l-m;
+      box-shadow: 0 4px 12px rgba(black, 0.08);
+      border: 1px solid $border-color;
+      text-align: center;
+      padding: $spacing-l-l $spacing-l-s;
+
+      @media (max-width: $breakpoint-mob-l) {
+        padding: $spacing-l-s $spacing-m-l;
+      }
+
+      .recommendations-icon {
+        font-size: 3rem;
+        color: $primary-color;
+        margin-bottom: $spacing-l-s;
+
+        @media (max-width: $breakpoint-mob-l) {
+          font-size: 2.5rem;
+        }
+      }
+
+      .recommendations-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: $foreground-color;
+        margin-bottom: $spacing-m-l;
+
+        @media (max-width: $breakpoint-mob-l) {
+          font-size: 1.25rem;
+        }
+      }
+
+      .recommendations-description {
+        font-size: 1rem;
+        color: $muted-foreground-color;
+        line-height: 1.6;
+        margin-bottom: $spacing-l-s;
+        display: block;
+      }
+
+      .recommendations-actions {
+        .ant-space {
+          @media (max-width: $breakpoint-mob-l) {
+            width: 100%;
+            flex-direction: column;
+
+            .ant-space-item {
+              width: 100%;
+
+              .ant-btn {
+                width: 100%;
+              }
+            }
+          }
+        }
+
+        .ant-btn {
+          height: 48px;
+          padding: 0 $spacing-l-m;
+          font-size: 1rem;
+          font-weight: 600;
+          border-radius: $br-t;
+
+          &.ant-btn-primary {
+            background: linear-gradient(
+              135deg,
+              $primary-color,
+              color.adjust($primary-color, $hue: 20deg)
+            );
+            border: none;
+            box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+
+            &:hover {
+              transform: translateY(-2px);
+              box-shadow: 0 6px 20px rgba($primary-color, 0.4);
+            }
+          }
+
+          &:not(.ant-btn-primary) {
+            border: 2px solid $border-color;
+            background: $background-color;
+            color: $foreground-color;
+
+            &:hover {
+              border-color: $primary-color;
+              color: $primary-color;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Product Card Enhancements for Wishlist
+.wishlist-page {
+  .product-card {
+    .product-card__container {
+      border-radius: $br-l-m;
+      overflow: hidden;
+      transition: all 0.3s ease;
+
+      &:hover {
+        box-shadow: 0 8px 24px rgba(black, 0.12);
+      }
+    }
+
+    .product-card__image-container {
+      position: relative;
+      overflow: hidden;
+
+      .product-card__image {
+        transition: transform 0.5s ease;
+      }
+
+      &:hover .product-card__image {
+        transform: scale(1.05);
+      }
+    }
+
+    .product-card__wishlist-btn {
+      background: rgba($destructive-color, 0.1);
+      border: 1px solid $destructive-color;
+      color: $destructive-color;
+
+      &:hover {
+        background: $destructive-color;
+        color: white;
+      }
+
+      .wishlist-icon.filled {
+        color: $destructive-color;
+      }
+    }
+
+    .product-card__overlay {
+      background: linear-gradient(
+        to top,
+        rgba(black, 0.8),
+        rgba(black, 0.4),
+        transparent
+      );
+      opacity: 0;
+      transition: opacity 0.3s ease;
+
+      .product-card__actions {
+        transform: translateY(20px);
+        transition: transform 0.3s ease;
+      }
+    }
+
+    &:hover .product-card__overlay {
+      opacity: 1;
+
+      .product-card__actions {
+        transform: translateY(0);
+      }
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: $breakpoint-tab) {
+  .wishlist-page {
+    &__items {
+      .ant-row {
+        .ant-col {
+          // Adjust grid for tablets
+          &[class*="lg-6"] {
+            flex: 0 0 50%;
+            max-width: 50%;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: $breakpoint-mob-l) {
+  .wishlist-page {
+    padding: $spacing-m-l 0;
+
+    &__items {
+      .ant-row {
+        .ant-col {
+          // Single column on mobile
+          flex: 0 0 100%;
+          max-width: 100%;
+          margin-bottom: $spacing-m-l;
+        }
+      }
+    }
+  }
+}
+
+// Smooth Animations
+.wishlist-page {
+  * {
+    transition: all 0.3s ease;
+  }
+
+  .ant-btn {
+    transition: all 0.3s ease;
+  }
+
+  .product-card {
+    transition: all 0.3s ease;
+  }
+
+  .quick-remove-btn {
+    transition: all 0.3s ease;
+  }
+}
+
+// Loading States
+.wishlist-page {
+  .ant-spin-container {
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ant-spin {
+    .ant-spin-dot {
+      i {
+        background-color: $primary-color;
+      }
+    }
+  }
+}

@@ -1,21 +1,14 @@
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
-// import {
-//   ClerkProvider,
-//   SignInButton,
-//   SignOutButton,
-//   SignUpButton,
-//   SignedIn,
-//   SignedOut,
-//   UserButton,
-// } from "@clerk/nextjs";
 import "./globals.css";
 import "@/styles/rootStyles.scss";
 import { getAllData } from "@/lib/api";
-import Header from "@/components/header";
+import AntdHeader from "@/components/header/AntdHeader";
 import Footer from "@/components/footer";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { CartProvider } from "@/contexts/CartContext";
+import { WishlistProvider } from "@/contexts/WishlistContext";
 import LenisProvider from "@/components/providers/LenisProvider";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
@@ -69,27 +62,20 @@ export default async function RootLayout({
   const { categories } = await getAllData();
 
   return (
-    // <ClerkProvider>
     <html lang="en">
       <body className={`${roboto.variable}`}>
-        {/* <header className="flex justify-end items-center p-4 gap-4 h-16 hidden">
-            <SignedOut>
-              <SignInButton />
-              <SignUpButton />
-            </SignedOut>
-            <SignedIn>
-              <UserButton />
-              <SignOutButton />
-            </SignedIn>
-          </header> */}
         <AuthProvider>
-          <LenisProvider>
-            <Header _categories={categories as ICategory[]} />
-            <AntdRegistry>
-              <div className="main">{children}</div>
-            </AntdRegistry>
-            <Footer />
-          </LenisProvider>
+          <CartProvider>
+            <WishlistProvider>
+              <AntdRegistry>
+                <LenisProvider>
+                  <AntdHeader categories={categories as ICategory[]} />
+                  <div className="main">{children}</div>
+                  <Footer />
+                </LenisProvider>
+              </AntdRegistry>
+            </WishlistProvider>
+          </CartProvider>
         </AuthProvider>
       </body>
     </html>

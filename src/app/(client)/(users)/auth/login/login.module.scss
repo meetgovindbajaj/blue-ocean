@@ -1,87 +1,83 @@
-.loginContainer {
-  min-height: 100vh;
+// src/app/(client)/(users)/auth/login/login.module.scss
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as *;
+
+.authContainer {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 2rem;
+  min-height: 100vh;
+  background-color: #f7f8f8;
+  padding: 2rem 1rem;
 }
 
-.loginCard {
-  background: white;
-  padding: 3rem;
-  border-radius: 12px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+.authBox {
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
+  background-color: white;
+  padding: 2.5rem;
+  border-radius: 1.3rem;
+  box-shadow: $shadow-md;
+}
+
+.header {
   text-align: center;
-
-  .header {
-    margin-bottom: 2rem;
-
-    h1 {
-      font-size: 2rem;
-      color: var(--primary);
-      margin-bottom: 0.5rem;
-      cursor: pointer;
-    }
-
-    p {
-      color: var(--text-secondary);
-      margin: 0;
-    }
+  margin-bottom: 2rem;
+  h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: $color-text-dark;
   }
-
-  .loginForm {
-    text-align: left;
+  p {
+    margin-top: 0.5rem;
+    color: $color-text-secondary;
   }
+}
 
-  .loginOptions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-
-    a {
-      color: var(--primary);
-      text-decoration: none;
-      font-size: 0.9rem;
-
-      &:hover {
-        text-decoration: underline;
-      }
-    }
+.link {
+  color: $color-primary;
+  font-weight: 500;
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
   }
+}
 
-  .googleButton {
-    background: #4285f4;
-    border-color: #4285f4;
-    color: white;
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-    &:hover {
-      background: #357ae8;
-      border-color: #357ae8;
-    }
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  label {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: $color-text-primary;
   }
-
-  .footer {
-    margin-top: 2rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--border);
-
-    p {
-      margin: 0;
-      color: var(--text-secondary);
-
-      a {
-        color: var(--primary);
-        text-decoration: none;
-        font-weight: 500;
-
-        &:hover {
-          text-decoration: underline;
-        }
-      }
+  input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-md;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.2);
     }
   }
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  font-size: 0.875rem;
+}
+
+.submitButton {
+  @include button-primary;
+  width: 100%;
 }

@@ -38,15 +38,13 @@ export default async function HomePage() {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
-    const productsRes = await fetch(`${baseUrl}/api/v1/product`, {
+    const productsRes = await fetch(`${baseUrl}/api/v1/products?limit=8`, {
       cache: "no-store",
     });
 
     if (productsRes.ok) {
       const productsData = await productsRes.json();
-      products = productsData
-        .filter((product: Product) => product.isActive)
-        .slice(0, 8);
+      products = productsData.products || [];
     }
   } catch (error) {
     console.error("Error fetching data for landing page:", error);

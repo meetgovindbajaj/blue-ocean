@@ -46,6 +46,8 @@ export default function AdminLayout({
       let err = false;
       try {
         const response: IGetData = await getAllData();
+        console.log({ response });
+
         if (response.status !== 200) {
           console.error("Failed to fetch categories:", response.error);
           return;

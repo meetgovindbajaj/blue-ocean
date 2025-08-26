@@ -1,0 +1,371 @@
+@use "@/styles/variables" as *;
+@use "@/styles/mixins" as mix;
+@use "sass:color";
+
+// Authentication Pages Styles
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 2rem 1rem;
+
+  &__container {
+    width: 100%;
+    max-width: 450px;
+    background: $background-color;
+    border-radius: $br-l-l;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    position: relative;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(
+        90deg,
+        $primary-color,
+        color.adjust($primary-color, $hue: 30deg)
+      );
+    }
+  }
+
+  &__header {
+    padding: 3rem 2rem 1rem;
+    text-align: center;
+    background: linear-gradient(
+      135deg,
+      rgba($primary-color, 0.05) 0%,
+      rgba($primary-color, 0.02) 100%
+    );
+
+    .auth-page__logo {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1.5rem;
+      background: linear-gradient(
+        135deg,
+        $primary-color,
+        color.adjust($primary-color, $hue: 20deg)
+      );
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 2rem;
+      font-weight: 700;
+      box-shadow: 0 8px 20px rgba($primary-color, 0.3);
+    }
+
+    .auth-page__title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: $foreground-color;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    .auth-page__subtitle {
+      color: color.adjust($foreground-color, $lightness: 30%);
+      font-size: 1rem;
+      margin: 0;
+      line-height: 1.5;
+    }
+  }
+
+  &__form {
+    padding: 2rem;
+
+    .ant-form-item {
+      margin-bottom: 1.5rem;
+
+      .ant-form-item-label > label {
+        font-weight: 600;
+        color: $foreground-color;
+        font-size: 0.95rem;
+      }
+
+      .ant-input,
+      .ant-input-password {
+        border-radius: $br-t;
+        // border: 2px solid $border-color;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+
+        &:hover {
+          border-color: color.adjust($primary-color, $lightness: 20%);
+        }
+
+        &:focus,
+        &.ant-input-focused {
+          border-color: $primary-color;
+          box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+        }
+      }
+
+      .ant-input-prefix {
+        color: color.adjust($foreground-color, $lightness: 40%);
+        margin-right: 0.75rem;
+      }
+    }
+
+    .auth-form__submit {
+      width: 100%;
+      height: 48px;
+      border-radius: $br-t;
+      font-size: 1rem;
+      font-weight: 600;
+      background: linear-gradient(
+        135deg,
+        $primary-color,
+        color.adjust($primary-color, $hue: 20deg)
+      );
+      border: none;
+      box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba($primary-color, 0.4);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+
+    .auth-form__divider {
+      margin: 2rem 0;
+      text-align: center;
+      position: relative;
+
+      &::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: $border-color;
+      }
+
+      span {
+        background: $background-color;
+        padding: 0 1rem;
+        color: color.adjust($foreground-color, $lightness: 40%);
+        font-size: 0.9rem;
+      }
+    }
+
+    .auth-form__social {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+
+      .ant-btn {
+        flex: 1;
+        height: 48px;
+        border-radius: $br-t;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+
+        &.google-btn {
+          border-color: #db4437;
+          color: #db4437;
+
+          &:hover {
+            background: #db4437;
+            color: white;
+          }
+        }
+
+        &.facebook-btn {
+          border-color: #4267b2;
+          color: #4267b2;
+
+          &:hover {
+            background: #4267b2;
+            color: white;
+          }
+        }
+      }
+    }
+
+    .auth-form__forgot {
+      text-align: center;
+      margin-top: 1rem;
+
+      a {
+        color: $primary-color;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.9rem;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    .auth-form__terms {
+      font-size: 0.85rem;
+      color: color.adjust($foreground-color, $lightness: 30%);
+      text-align: center;
+      line-height: 1.4;
+      margin-top: 1rem;
+
+      a {
+        color: $primary-color;
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+
+  &__footer {
+    padding: 1.5rem 2rem;
+    background: color.adjust($background-color, $lightness: -2%);
+    text-align: center;
+    border-top: 1px solid $border-color;
+
+    p {
+      margin: 0;
+      color: color.adjust($foreground-color, $lightness: 30%);
+      font-size: 0.9rem;
+
+      a {
+        color: $primary-color;
+        text-decoration: none;
+        font-weight: 600;
+        margin-left: 0.5rem;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+
+  // Loading state
+  &__loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(white, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+  }
+
+  // Success message
+  &__success {
+    padding: 1rem;
+    background: color.adjust($chart-2, $lightness: 45%);
+    border: 1px solid $chart-2;
+    border-radius: $br-t;
+    margin-bottom: 1rem;
+    color: color.adjust($chart-2, $lightness: -20%);
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
+  // Error message
+  &__error {
+    padding: 1rem;
+    background: color.adjust($destructive-color, $lightness: 40%);
+    border: 1px solid $destructive-color;
+    border-radius: $br-t;
+    margin-bottom: 1rem;
+    color: color.adjust($destructive-color, $lightness: -10%);
+    font-size: 0.9rem;
+    text-align: center;
+  }
+}
+
+// Responsive Design
+@media (max-width: $breakpoint-tab) {
+  .auth-page {
+    padding: 1rem;
+
+    &__container {
+      max-width: 100%;
+    }
+
+    &__header {
+      padding: 2rem 1.5rem 1rem;
+
+      .auth-page__logo {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+      }
+
+      .auth-page__title {
+        font-size: 1.75rem;
+      }
+    }
+
+    &__form {
+      padding: 1.5rem;
+    }
+
+    &__footer {
+      padding: 1rem 1.5rem;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-mob-l) {
+  .auth-page {
+    &__header {
+      .auth-page__title {
+        font-size: 1.5rem;
+      }
+    }
+
+    &__form {
+      .auth-form__social {
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+    }
+  }
+}
+
+// Animation for form elements
+.auth-form-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.auth-form-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 0.3s ease;
+}
+
+.auth-form-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.auth-form-exit-active {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: all 0.3s ease;
+}

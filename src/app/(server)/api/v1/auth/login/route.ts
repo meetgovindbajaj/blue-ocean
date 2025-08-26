@@ -3,7 +3,7 @@ import { TokenType } from "@/lib/properties";
 import Token from "@/models/Token";
 import User from "@/models/User";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import { SignJWT } from "jose";
 import { NextRequest, NextResponse } from "next/server";
 const JWT_SECRET = process.env.JWT_SECRET as string;
 export async function POST(request: NextRequest) {
@@ -57,17 +57,18 @@ export async function POST(request: NextRequest) {
       await user.incrementLoginAttempts();
       return new NextResponse("Invalid password", { status: 401 });
     }
-    const authToken = jwt.sign(
-      {
-        id: user._id.toString(),
-        role: user.role,
-        permissions: user.permissions,
-      },
-      JWT_SECRET,
-      {
-        algorithm: "HS256",
-      }
-    );
+    const userObject = user.toObject();
+
+    const secret = new TextEncoder().encode(JWT_SECRET);
+    const authToken = await new SignJWT({
+      id: userObject._id.toString(),
+      role: userObject.role,
+      permissions: userObject.permissions, // Now a plain array
+    })
+      .setProtectedHeader({ alg: "HS256" })
+      .setIssuedAt()
+      .setExpirationTime("24h")
+      .sign(secret);
     let userToken = await Token.findOne({
       user: user._id,
       type: TokenType.AUTH,

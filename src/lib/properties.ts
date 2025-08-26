@@ -20,6 +20,7 @@ export enum AuthType {
 export enum TokenType {
   ACTIVATION = "activation",
   RESET_PASSWORD = "reset_password",
+  PASSWORD_RESET = "password_reset",
   EMAIL_VERIFICATION = "email_verification",
   PHONE_VERIFICATION = "phone_verification",
   AUTH = "auth",

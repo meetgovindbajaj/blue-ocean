@@ -7,7 +7,7 @@ export async function getAllData(): Promise<IGetData> {
   // if (isServerSide) {
   // Server-side logic
   try {
-    const productsApi = `${baseUrl}/api/v1/product`;
+    const productsApi = `${baseUrl}/api/v1/products`;
     const categoryApi = `${baseUrl}/api/v1/category`;
     const response = await Promise.allSettled([
       fetch(productsApi),
@@ -18,12 +18,13 @@ export async function getAllData(): Promise<IGetData> {
       productsResult.status === "fulfilled" &&
       categoryResult.status === "fulfilled"
     ) {
-      const products = await productsResult.value.json();
-      const categories = await categoryResult.value.json();
+      const productsData = await productsResult.value.json();
+      const categoriesData = await categoryResult.value.json();
+      console.log({ productsData, categoriesData });
 
       return {
-        products,
-        categories,
+        products: productsData.success ? productsData.products : [],
+        categories: categoriesData.success ? categoriesData.categories : [],
         status: 200,
         message: "Data fetched successfully",
         error: undefined,

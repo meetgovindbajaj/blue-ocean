@@ -1,281 +1,413 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useCallback, useMemo, useEffect, Suspense } from "react";
+import { Form, Input, Button, message, Spin, Checkbox, Alert } from "antd";
 import {
-  Form,
-  Input,
-  Button,
-  Divider,
-  message,
-  Checkbox,
-  Progress,
-  Alert,
-} from "antd";
-import {
+  LockOutlined,
+  MailOutlined,
   GoogleOutlined,
   EyeInvisibleOutlined,
   EyeTwoTone,
-  LoadingOutlined,
 } from "@ant-design/icons";
 import Link from "next/link";
-import styles from "./login.module.scss";
+import { useRouter, useSearchParams } from "next/navigation";
+import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
+import "@/styles/auth.scss";
 
-export default function EnhancedLoginPage() {
+interface LoginFormValues {
+  email: string;
+  password: string;
+  rememberMe: boolean;
+}
+
+interface ApiResponse {
+  success?: boolean;
+  message?: string;
+  error?: string;
+  token?: string;
+  requiresVerification?: boolean;
+}
+
+const LoginContent = React.memo(() => {
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const router = useRouter();
-  const { login: authLogin } = useAuth();
-  const [authWorkflow, setAuthWorkflow] = useState({
-    isLoading: false,
-    error: null as string | null,
-    success: null as string | null,
-  });
+  const searchParams = useSearchParams();
+  const { login, isAuthenticated } = useAuth();
 
-  const handleLogin = async (values: { email: string; password: string }) => {
-    setAuthWorkflow({ isLoading: true, error: null, success: null });
+  // Handle verification message from registration
+  useEffect(() => {
+    const messageParam = searchParams.get("message");
+    if (messageParam === "verify-email") {
+      setSuccess(
+        "Registration successful! Please check your email to verify your account before logging in."
+      );
+    }
+  }, [searchParams]);
 
-    try {
-      const res = await fetch("/api/v1/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push("/");
+    }
+  }, [isAuthenticated, router]);
 
-      const results = await res.json();
+  // Debounced form validation
+  const _validateForm = useCallback((values: Partial<LoginFormValues>) => {
+    const errors: string[] = [];
 
-      if (res.ok && results.token) {
-        // Use auth context to store token and user info
-        authLogin(results.token);
+    if (values.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
+      errors.push("Please enter a valid email address");
+    }
 
-        // Show success message
-        message.success(results.message || "Login successful!");
-        setAuthWorkflow({
-          isLoading: false,
-          error: null,
-          success: "Login successful!",
+    if (values.password && values.password.length < 8) {
+      errors.push("Password must be at least 8 characters");
+    }
+
+    return errors;
+  }, []);
+
+  const handleLogin = useCallback(
+    async (values: LoginFormValues) => {
+      try {
+        setLoading(true);
+        setError("");
+        setSuccess("");
+
+        const response = await fetch("/api/v1/auth/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: values.email,
+            password: values.password,
+          }),
         });
 
-        // Decode JWT to get user role (basic implementation)
-        try {
-          const tokenPayload = JSON.parse(atob(results.token.split(".")[1]));
+        const data: ApiResponse = await response.json();
 
-          // Redirect based on role
-          setTimeout(() => {
-            if (
-              tokenPayload.role === "super_admin" ||
-              tokenPayload.role === "admin"
-            ) {
-              router.push("/admin/dashboard");
-            } else {
-              router.push("/");
-            }
-          }, 1000);
-        } catch {
-          // Default redirect if token decode fails
-          setTimeout(() => router.push("/"), 1000);
-        }
-      } else {
-        // Handle errors
-        const errorMessage = results.error || results.message || "Login failed";
+        if (response.ok && data.token) {
+          // Store remember me preference
+          if (values.rememberMe) {
+            localStorage.setItem("rememberMe", "true");
+          } else {
+            localStorage.removeItem("rememberMe");
+          }
 
-        // Check for specific error types
-        if (res.status === 403 && results.requiresVerification) {
-          setAuthWorkflow({
-            isLoading: false,
-            error: errorMessage,
-            success: null,
-          });
-          message.warning(errorMessage);
-        } else if (res.status === 423) {
-          setAuthWorkflow({
-            isLoading: false,
-            error: "Account is locked. Please try again later.",
-            success: null,
-          });
-          message.error("Account is locked. Please try again later.");
+          await login(data.token);
+          message.success("Login successful! Welcome back.");
+
+          // Redirect to intended page or dashboard
+          const redirectTo = searchParams.get("redirect") || "/";
+          router.push(redirectTo);
         } else {
-          setAuthWorkflow({
-            isLoading: false,
-            error: errorMessage,
-            success: null,
-          });
+          const errorMessage =
+            data.error || data.message || "Login failed. Please try again.";
+          setError(errorMessage);
+
+          if (data.requiresVerification) {
+            setError(
+              "Please verify your email address before logging in. Check your inbox for the verification link."
+            );
+          }
+
           message.error(errorMessage);
         }
+      } catch (error) {
+        console.error("Login error:", error);
+        const errorMessage =
+          "Network error. Please check your connection and try again.";
+        setError(errorMessage);
+        message.error(errorMessage);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      setAuthWorkflow({
-        isLoading: false,
-        error: "Network error. Please check your connection.",
-        success: null,
-      });
-      message.error("Network error. Please check your connection.");
-      console.error("Login error:", error);
-    }
-  };
+    },
+    [login, router, searchParams]
+  );
 
-  const handleGoogleLogin = async () => {
-    setAuthWorkflow({ isLoading: true, error: null, success: null });
-
+  const handleGoogleAuth = useCallback(async () => {
     try {
-      // Get Google OAuth URL from backend
-      const res = await fetch("/api/v1/auth/google", {
+      setGoogleLoading(true);
+      setError("");
+
+      // Get Google OAuth URL
+      const response = await fetch("/api/v1/auth/google", {
         method: "GET",
       });
 
-      const data = await res.json();
+      if (!response.ok) {
+        throw new Error("Failed to get Google OAuth URL");
+      }
 
-      if (res.ok && data.url) {
+      const data = await response.json();
+
+      if (data.url) {
+        // Store current page for redirect after auth
+        const currentPath = window.location.pathname + window.location.search;
+        sessionStorage.setItem("authRedirect", currentPath);
+
         // Redirect to Google OAuth
         window.location.href = data.url;
       } else {
-        setAuthWorkflow({
-          isLoading: false,
-          error: "Failed to initiate Google login",
-          success: null,
-        });
-        message.error(data.error || "Failed to initiate Google login");
+        throw new Error("Invalid OAuth URL received");
       }
     } catch (error) {
-      setAuthWorkflow({
-        isLoading: false,
-        error: "Failed to connect to Google",
-        success: null,
-      });
-      message.error("Failed to connect to Google");
-      console.error("Google login error:", error);
+      console.error("Google OAuth error:", error);
+      const errorMessage = "Google authentication failed. Please try again.";
+      setError(errorMessage);
+      message.error(errorMessage);
+      setGoogleLoading(false);
     }
-  };
+  }, []);
+
+  const handleForgotPassword = useCallback(() => {
+    const email = form.getFieldValue("email");
+    if (email) {
+      router.push(`/auth/forgot-password?email=${encodeURIComponent(email)}`);
+    } else {
+      router.push("/auth/forgot-password");
+    }
+  }, [form, router]);
+
+  // Memoized validation rules
+  const validationRules = useMemo(
+    () => ({
+      email: [
+        { required: true, message: "Please enter your email address" },
+        {
+          type: "email" as const,
+          message: "Please enter a valid email address",
+        },
+      ],
+      password: [
+        { required: true, message: "Please enter your password" },
+        { min: 8, message: "Password must be at least 8 characters" },
+      ],
+    }),
+    []
+  );
+
+  // Memoized animation variants
+  const animationVariants = useMemo(
+    () => ({
+      container: {
+        initial: { opacity: 0, y: 20 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.6 },
+      },
+      error: {
+        initial: { opacity: 0, height: 0 },
+        animate: { opacity: 1, height: "auto" },
+        transition: { duration: 0.3 },
+      },
+      success: {
+        initial: { opacity: 0, height: 0 },
+        animate: { opacity: 1, height: "auto" },
+        transition: { duration: 0.3 },
+      },
+    }),
+    []
+  );
+
+  // Auto-fill remembered email
+  useEffect(() => {
+    const rememberedEmail = localStorage.getItem("rememberedEmail");
+    const rememberMe = localStorage.getItem("rememberMe") === "true";
+
+    if (rememberedEmail && rememberMe) {
+      form.setFieldsValue({
+        email: rememberedEmail,
+        rememberMe: true,
+      });
+    }
+  }, [form]);
 
   return (
-    <div className={styles.loginContainer}>
-      <div className={styles.loginCard}>
-        <div className={styles.header}>
-          <h1 className="logo">BlueOcean</h1>
-          <p>Welcome back to BlueOcean</p>
+    <div className="auth-page">
+      <motion.div
+        className="auth-page__container"
+        {...animationVariants.container}
+      >
+        {(loading || googleLoading) && (
+          <div className="auth-page__loading">
+            <Spin size="large" />
+          </div>
+        )}
+
+        <div className="auth-page__header">
+          <div className="auth-page__logo">BO</div>
+          <h1 className="auth-page__title">Welcome Back</h1>
+          <p className="auth-page__subtitle">
+            Sign in to your Blue Ocean Export account
+          </p>
         </div>
 
-        {/* Show progress during login */}
-        {authWorkflow.isLoading && (
-          <Alert
-            message="Logging you in..."
-            description={
-              <div style={{ marginTop: 8 }}>
-                <Progress percent={0} status="active" showInfo={false} />
-                <div style={{ marginTop: 4, fontSize: "12px", color: "#666" }}>
-                  Sequential loading: Auth → Profile → Cart
-                </div>
-              </div>
-            }
-            type="info"
-            showIcon
-            icon={<LoadingOutlined />}
-            style={{ marginBottom: 16 }}
-          />
-        )}
+        <div className="auth-page__form">
+          {error && (
+            <motion.div {...animationVariants.error}>
+              <Alert
+                message={error}
+                type="error"
+                showIcon
+                closable
+                onClose={() => setError("")}
+                style={{ marginBottom: "1rem" }}
+              />
+            </motion.div>
+          )}
 
-        {/* Show error if login fails */}
-        {authWorkflow.error && (
-          <Alert
-            message="Login Failed"
-            description={authWorkflow.error}
-            type="error"
-            showIcon
-            style={{ marginBottom: 16 }}
-          />
-        )}
+          {success && (
+            <motion.div {...animationVariants.success}>
+              <Alert
+                message={success}
+                type="success"
+                showIcon
+                closable
+                onClose={() => setSuccess("")}
+                style={{ marginBottom: "1rem" }}
+              />
+            </motion.div>
+          )}
 
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleLogin}
-          className={styles.loginForm}
-        >
-          <Form.Item
-            name="email"
-            label="Email"
-            rules={[
-              { required: true, message: "Please enter your email" },
-              { type: "email", message: "Please enter a valid email" },
-            ]}
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={handleLogin}
+            autoComplete="off"
+            size="large"
           >
-            <Input size="large" placeholder="Enter your email" />
-          </Form.Item>
-
-          <Form.Item
-            name="password"
-            label="Password"
-            rules={[{ required: true, message: "Please enter your password" }]}
-          >
-            <Input.Password
-              size="large"
-              placeholder="Enter your password"
-              iconRender={(visible) =>
-                visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
-              }
-            />
-          </Form.Item>
-
-          <Form.Item>
-            <div className={styles.loginOptions}>
-              <Checkbox>Remember me</Checkbox>
-              <Link href="/auth/forgot-password">Forgot password?</Link>
-            </div>
-          </Form.Item>
-
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={authWorkflow.isLoading}
-              size="large"
-              block
-              disabled={authWorkflow.isLoading}
+            <Form.Item
+              name="email"
+              label="Email Address"
+              rules={validationRules.email}
             >
-              {authWorkflow.isLoading ? "Signing In..." : "Sign In"}
-            </Button>
-          </Form.Item>
-        </Form>
+              <Input
+                prefix={<MailOutlined />}
+                placeholder="Enter your email address"
+                autoComplete="email"
+                onChange={(e) => {
+                  // Store email for remember me functionality
+                  if (e.target.value) {
+                    localStorage.setItem("rememberedEmail", e.target.value);
+                  }
+                }}
+              />
+            </Form.Item>
 
-        <Divider>Or continue with</Divider>
+            <Form.Item
+              name="password"
+              label="Password"
+              rules={validationRules.password}
+            >
+              <Input.Password
+                prefix={<LockOutlined />}
+                placeholder="Enter your password"
+                autoComplete="current-password"
+                iconRender={(visible) =>
+                  visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+                }
+              />
+            </Form.Item>
 
-        <Button
-          icon={<GoogleOutlined />}
-          onClick={handleGoogleLogin}
-          size="large"
-          block
-          className={styles.googleButton}
-          disabled={authWorkflow.isLoading}
-        >
-          Continue with Google
-        </Button>
-
-        <div className={styles.footer}>
-          <p>
-            Don&apos;t have an account?{" "}
-            <Link href="/auth/register">Sign up</Link>
-          </p>
-
-          {/* Development info */}
-          {process.env.NODE_ENV === "development" && (
             <div
               style={{
-                marginTop: 16,
-                padding: 8,
-                background: "#f5f5f5",
-                borderRadius: 4,
-                fontSize: "12px",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "1rem",
               }}
             >
-              <strong>Sequential API Demo:</strong> This login uses the
-              sequential workflow pattern. Auth calls execute first, then
-              profile and cart data load in parallel.
+              <Form.Item
+                name="rememberMe"
+                valuePropName="checked"
+                style={{ margin: 0 }}
+              >
+                <Checkbox>Remember me</Checkbox>
+              </Form.Item>
+
+              <Button
+                type="link"
+                onClick={handleForgotPassword}
+                style={{ padding: 0, color: "#1e9df1" }}
+              >
+                Forgot password?
+              </Button>
             </div>
-          )}
+
+            <Form.Item>
+              <Button
+                type="primary"
+                htmlType="submit"
+                className="auth-form__submit"
+                loading={loading}
+                disabled={loading || googleLoading}
+                block
+              >
+                Sign In
+              </Button>
+            </Form.Item>
+          </Form>
+
+          <div className="auth-form__divider">
+            <span>Or continue with</span>
+          </div>
+
+          <div className="auth-form__social">
+            <Button
+              className="google-btn"
+              onClick={handleGoogleAuth}
+              icon={<GoogleOutlined />}
+              loading={googleLoading}
+              disabled={loading || googleLoading}
+              block
+              size="large"
+            >
+              Continue with Google
+            </Button>
+          </div>
+
+          <div className="auth-form__terms">
+            By signing in, you agree to our{" "}
+            <Link href="/terms" style={{ color: "#1e9df1" }}>
+              Terms of Service
+            </Link>{" "}
+            and{" "}
+            <Link href="/privacy" style={{ color: "#1e9df1" }}>
+              Privacy Policy
+            </Link>
+          </div>
         </div>
-      </div>
+
+        <div className="auth-page__footer">
+          <p>
+            Don&apos;t have an account?{" "}
+            <Link
+              href="/auth/register"
+              style={{ color: "#1e9df1", fontWeight: 500 }}
+            >
+              Create one here
+            </Link>
+          </p>
+        </div>
+      </motion.div>
     </div>
   );
-}
+});
+
+LoginContent.displayName = "LoginContent";
+
+const LoginPage = () => {
+  return (
+    <Suspense fallback={<div className="login-container"><Spin size="large" /></div>}>
+      <LoginContent />
+    </Suspense>
+  );
+};
+
+export default LoginPage;

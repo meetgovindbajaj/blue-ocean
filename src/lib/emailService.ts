@@ -12,12 +12,20 @@ class EmailService {
 
   constructor() {
     this.transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || "smtp.gmail.com",
-      port: parseInt(process.env.SMTP_PORT || "587"),
-      secure: false, // true for 465, false for other ports
+      // host: process.env.SMTP_HOST || "smtp.gmail.com",
+      // port: parseInt(process.env.SMTP_PORT || "587"),
+      // secure: false, // true for 465, false for other ports
+      // auth: {
+      //   user: process.env.SMTP_USER,
+      //   pass: process.env.SMTP_PASS,
+      // },
+      service: "gmail",
       auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
+        type: "OAuth2",
+        user: "govindb277@gmail.com",
+        clientId: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
       },
     });
   }
@@ -222,4 +230,5 @@ class EmailService {
   }
 }
 
-export default new EmailService();
+const emailService = new EmailService();
+export default emailService;

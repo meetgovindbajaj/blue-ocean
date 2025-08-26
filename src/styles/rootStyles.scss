@@ -1,9 +1,12 @@
+@use "sass:color";
 @use "@/styles/variables" as *;
 @use "@/styles/mixins" as mix;
 @use "@/styles/admin";
 @use "@/styles/header";
 @use "@/styles/userPages";
-@use "sass:color";
+@use "@/styles/auth";
+@use "@/styles/productCard";
+@use "@/styles/productDetail";
 
 @media screen and (hover: hover) {
   ::-webkit-scrollbar-thumb:hover {

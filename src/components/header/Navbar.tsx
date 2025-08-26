@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback, memo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import "@/styles/navbar.scss";
@@ -10,7 +10,7 @@ interface NavbarProps {
   categories: ICategory[];
 }
 
-const Navbar: React.FC<NavbarProps> = ({ categories }) => {
+const Navbar: React.FC<NavbarProps> = memo(({ categories }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -21,57 +21,58 @@ const Navbar: React.FC<NavbarProps> = ({ categories }) => {
   const searchRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const { user, isAuthenticated, logout, isLoading } = useAuth();
-  console.log(user,isAuthenticated)
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
+  const toggleMobileMenu = useCallback(() => {
+    setIsMobileMenuOpen((prev) => !prev);
     setIsSearchOpen(false);
-  };
+  }, []);
 
-  const closeMobileMenu = () => {
+  const closeMobileMenu = useCallback(() => {
     setIsMobileMenuOpen(false);
-  };
+  }, []);
 
-  const toggleSearch = () => {
-    setIsSearchOpen(!isSearchOpen);
+  const toggleSearch = useCallback(() => {
+    setIsSearchOpen((prev) => !prev);
     setIsMobileMenuOpen(false);
-  };
+  }, []);
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
-      setSearchQuery("");
-      setIsSearchOpen(false);
+  const handleSearchSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      if (searchQuery.trim()) {
+        router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
+        setSearchQuery("");
+        setIsSearchOpen(false);
+        closeMobileMenu();
+      }
+    },
+    [searchQuery, router, closeMobileMenu]
+  );
+
+  const handleLogout = useCallback(async () => {
+    try {
+      await logout();
+      setShowUserDropdown(false);
       closeMobileMenu();
+    } catch (error) {
+      console.error("Logout failed:", error);
     }
-  };
+  }, [logout, closeMobileMenu]);
 
-  const handleLogout = async () => {
-    await logout();
-    setShowUserDropdown(false);
-    closeMobileMenu();
-  };
-
-  // Close dropdowns when clicking outside
+  // Close dropdowns when clicking outside - Optimized with useCallback
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        // Close category dropdown if needed
-      }
+      const target = event.target as Node;
 
       if (
         userDropdownRef.current &&
-        !userDropdownRef.current.contains(event.target as Node)
+        !userDropdownRef.current.contains(target)
       ) {
         setShowUserDropdown(false);
       }
 
       if (
         searchRef.current &&
-        !searchRef.current.contains(event.target as Node) &&
+        !searchRef.current.contains(target) &&
         !(event.target as HTMLElement).closest(".navbar__search-toggle")
       ) {
         setIsSearchOpen(false);
@@ -84,26 +85,42 @@ const Navbar: React.FC<NavbarProps> = ({ categories }) => {
     };
   }, []);
 
-  // Close mobile menu on window resize
+  // Close mobile menu on window resize - Optimized with debouncing
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
     const handleResize = () => {
-      if (window.innerWidth > 768) {
-        setIsMobileMenuOpen(false);
-      }
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        if (window.innerWidth > 768) {
+          setIsMobileMenuOpen(false);
+        }
+      }, 150);
     };
 
     window.addEventListener("resize", handleResize);
     return () => {
       window.removeEventListener("resize", handleResize);
+      clearTimeout(timeoutId);
     };
   }, []);
 
-  const navigationItems = [
-    { name: "Home", href: "/" },
-    { name: "Products", href: "/products" },
-    { name: "About", href: "/about" },
-    { name: "Contact", href: "/contact" },
-  ];
+  // Memoize navigation items to prevent unnecessary re-renders
+  const navigationItems = React.useMemo(
+    () => [
+      { name: "Home", href: "/" },
+      { name: "Products", href: "/products" },
+      { name: "About", href: "/about" },
+      { name: "Contact", href: "/contact" },
+    ],
+    []
+  );
+
+  // Memoize limited categories to prevent unnecessary re-renders
+  const limitedCategories = React.useMemo(
+    () => categories?.slice(0, 8) || [],
+    [categories]
+  );
 
   return (
     <nav className="navbar__container">
@@ -123,25 +140,27 @@ const Navbar: React.FC<NavbarProps> = ({ categories }) => {
         ))}
 
         {/* Categories Dropdown */}
-        {categories && categories.length > 0 && (
+        {limitedCategories.length > 0 && (
           <li className="navbar__nav-item">
             <span className="navbar__nav-item-link">Categories</span>
             <div className="navbar__dropdown" ref={dropdownRef}>
-              {categories.slice(0, 8).map((category) => (
+              {limitedCategories.map((category) => (
                 <div key={category.id} className="navbar__dropdown-item">
                   <Link
                     href={`/category/${category.slug}`}
                     className="navbar__dropdown-item-link"
+                    prefetch={false}
                   >
                     {category.name}
                   </Link>
                 </div>
               ))}
-              {categories.length > 8 && (
+              {categories && categories.length > 8 && (
                 <div className="navbar__dropdown-item">
                   <Link
                     href="/categories"
                     className="navbar__dropdown-item-link"
+                    prefetch={false}
                   >
                     View All Categories
                   </Link>
@@ -209,6 +228,7 @@ const Navbar: React.FC<NavbarProps> = ({ categories }) => {
                         href="/profile"
                         className="navbar__dropdown-item-link"
                         onClick={() => setShowUserDropdown(false)}
+                        prefetch={false}
                       >
                         My Profile
                       </Link>
@@ -218,6 +238,7 @@ const Navbar: React.FC<NavbarProps> = ({ categories }) => {
                         href="/orders"
                         className="navbar__dropdown-item-link"
                         onClick={() => setShowUserDropdown(false)}
+                        prefetch={false}
                       >
                         My Orders
                       </Link>
@@ -228,6 +249,7 @@ const Navbar: React.FC<NavbarProps> = ({ categories }) => {
                           href="/admin/dashboard"
                           className="navbar__dropdown-item-link"
                           onClick={() => setShowUserDropdown(false)}
+                          prefetch={false}
                         >
                           Admin Dashboard
                         </Link>
@@ -256,12 +278,14 @@ const Navbar: React.FC<NavbarProps> = ({ categories }) => {
                 <Link
                   href="/auth/login"
                   className="navbar__actions-button navbar__actions-button--secondary"
+                  prefetch={false}
                 >
                   Login
                 </Link>
                 <Link
                   href="/auth/register"
                   className="navbar__actions-button navbar__actions-button--primary"
+                  prefetch={false}
                 >
                   Register
                 </Link>
@@ -505,6 +529,8 @@ const Navbar: React.FC<NavbarProps> = ({ categories }) => {
       </div>
     </nav>
   );
-};
+});
+
+Navbar.displayName = "Navbar";
 
 export default Navbar;

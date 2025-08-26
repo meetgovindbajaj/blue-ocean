@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Card,
   Form,
@@ -63,15 +63,7 @@ export default function ProfilePage() {
   const [editing, setEditing] = useState(false);
   const [profile, setProfile] = useState<UserProfile | null>(null);
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.push("/auth/login");
-      return;
-    }
-    fetchProfile();
-  }, [isAuthenticated, router]);
-
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback(async () => {
     try {
       setLoading(true);
       const token = localStorage.getItem("auth-token");
@@ -108,7 +100,15 @@ export default function ProfilePage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [router, form]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/auth/login");
+      return;
+    }
+    fetchProfile();
+  }, [isAuthenticated, router, fetchProfile]);
 
   const handleSave = async (values: FormValues) => {
     try {
@@ -386,7 +386,8 @@ export default function ProfilePage() {
             >
               <div>
                 <strong>Account Type:</strong>{" "}
-                {profile.role.charAt(0).toUpperCase() + profile.role.slice(1)}
+                {profile.role?.charAt?.(0).toUpperCase?.() +
+                  profile?.role?.slice(1)}
               </div>
               <div>
                 <strong>Member Since:</strong>{" "}

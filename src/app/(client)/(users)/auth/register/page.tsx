@@ -1,217 +1,488 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Form, Input, Button, Divider, message, Alert } from "antd";
+import React, { useState, useCallback, useMemo } from "react";
+import { Form, Input, Button, message, Spin, Checkbox } from "antd";
 import {
+  UserOutlined,
+  LockOutlined,
+  MailOutlined,
   GoogleOutlined,
-  EyeInvisibleOutlined,
-  EyeTwoTone,
+  FacebookOutlined,
 } from "@ant-design/icons";
 import Link from "next/link";
-import styles from "../login/login.module.scss";
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import { debounce } from "@/lib/functions";
+import "@/styles/auth.scss";
 
-export default function RegisterPage() {
-  const [form] = Form.useForm();
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+interface RegisterFormValues {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  agreeToTerms: boolean;
+}
 
-  const handleRegister = async (values: {
-    name: string;
+interface ApiResponse {
+  success: boolean;
+  message?: string;
+  error?: string;
+  details?: string[];
+  user?: {
+    id: string;
     email: string;
-    password: string;
-    confirmPassword: string;
-  }) => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const res = await fetch("/api/v1/auth/register/manual", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: values.name,
-          email: values.email,
-          password: values.password,
-        }),
-      });
-
-      const results = await res.json();
-
-      if (res.ok) {
-        message.success(
-          results.message ||
-            "Registration successful! Please check your email to verify your account."
-        );
-        // Redirect to login page after successful registration
-        setTimeout(() => {
-          router.push("/auth/login");
-        }, 2000);
-      } else {
-        setError(results.error || results.message || "Registration failed");
-        message.error(
-          results.error || results.message || "Registration failed"
-        );
-      }
-    } catch (error) {
-      setError("Network error. Please check your connection.");
-      message.error("Network error. Please check your connection.");
-      console.error("Registration error:", error);
-    } finally {
-      setIsLoading(false);
-    }
+    name: string;
+    isVerified: boolean;
   };
+}
 
-  const handleGoogleRegister = async () => {
+const RegisterPage = React.memo(() => {
+  const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
+  const [_googleLoading, setGoogleLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [_emailChecking, setEmailChecking] = useState(false);
+  const router = useRouter();
+
+  // Debounced email availability check
+  const _checkEmailAvailability = useMemo(
+    () =>
+      debounce((...args: unknown[]) => {
+        const email = args[0] as string;
+        if (!email || !email.includes("@")) return;
+
+        const checkEmail = async () => {
+          try {
+            setEmailChecking(true);
+            const response = await fetch(
+              `/api/v1/auth/register?email=${encodeURIComponent(email)}`
+            );
+            const data = await response.json();
+
+            if (!data.available) {
+              form.setFields([
+                {
+                  name: "email",
+                  errors: ["This email is already registered"],
+                },
+              ]);
+            }
+          } catch (error) {
+            console.error("Email check error:", error);
+          } finally {
+            setEmailChecking(false);
+          }
+        };
+
+        checkEmail();
+      }, 500),
+    [form]
+  );
+
+  const handleRegister = useCallback(
+    async (values: RegisterFormValues) => {
+      try {
+        setLoading(true);
+        setError("");
+        setSuccess("");
+
+        const response = await fetch("/api/v1/auth/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            firstName: values.firstName,
+            lastName: values.lastName,
+            email: values.email,
+            password: values.password,
+          }),
+        });
+
+        const data: ApiResponse = await response.json();
+
+        if (response.ok && data.success) {
+          setSuccess(
+            data.message ||
+              "Registration successful! Please check your email to verify your account."
+          );
+          form.resetFields();
+          message.success(
+            "Registration successful! Check your email for verification."
+          );
+
+          // Redirect to login page after successful registration
+          setTimeout(() => {
+            router.push("/auth/login?message=verify-email");
+          }, 3000);
+        } else {
+          const errorMessage =
+            data.error || "Registration failed. Please try again.";
+          setError(errorMessage);
+
+          // Handle validation errors
+          if (data.details && Array.isArray(data.details)) {
+            message.error(data.details.join(", "));
+          } else {
+            message.error(errorMessage);
+          }
+        }
+      } catch (error) {
+        console.error("Registration error:", error);
+        const errorMessage =
+          "Network error. Please check your connection and try again.";
+        setError(errorMessage);
+        message.error(errorMessage);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [form, router]
+  );
+
+  const handleGoogleAuth = useCallback(async () => {
     try {
-      const res = await fetch("/api/v1/auth/google", {
+      setGoogleLoading(true);
+      setError("");
+
+      // Get Google OAuth URL
+      const response = await fetch("/api/v1/auth/google", {
         method: "GET",
       });
 
-      const data = await res.json();
+      if (!response.ok) {
+        throw new Error("Failed to get Google OAuth URL");
+      }
 
-      if (res.ok && data.url) {
+      const data = await response.json();
+
+      if (data.url) {
+        // Redirect to Google OAuth
         window.location.href = data.url;
       } else {
-        message.error(data.error || "Failed to initiate Google registration");
+        throw new Error("Invalid OAuth URL received");
       }
     } catch (error) {
-      message.error("Failed to connect to Google");
-      console.error("Google registration error:", error);
+      console.error("Google OAuth error:", error);
+      const errorMessage = "Google authentication failed. Please try again.";
+      setError(errorMessage);
+      message.error(errorMessage);
+      setGoogleLoading(false);
     }
-  };
+  }, []);
+
+  const handleSocialLogin = useCallback(
+    (provider: string) => {
+      if (provider === "Google") {
+        handleGoogleAuth();
+      } else {
+        message.info(`${provider} registration will be implemented soon`);
+      }
+    },
+    [handleGoogleAuth]
+  );
+
+  // Memoized form validation rules
+  const _validationRules = useMemo(
+    () => ({
+      firstName: [
+        { required: true, message: "Please enter your first name" },
+        { min: 2, message: "First name must be at least 2 characters" },
+        { max: 50, message: "First name must be less than 50 characters" },
+      ],
+      lastName: [
+        { required: true, message: "Please enter your last name" },
+        { min: 2, message: "Last name must be at least 2 characters" },
+        { max: 50, message: "Last name must be less than 50 characters" },
+      ],
+      email: [
+        { required: true, message: "Please enter your email" },
+        { type: "email" as const, message: "Please enter a valid email" },
+      ],
+      password: [
+        { required: true, message: "Please enter your password" },
+        { min: 8, message: "Password must be at least 8 characters" },
+        {
+          pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+          message:
+            "Password must contain at least one uppercase letter, one lowercase letter, and one number",
+        },
+      ],
+      confirmPassword: [
+        { required: true, message: "Please confirm your password" },
+        ({ getFieldValue }: { getFieldValue: (name: string) => string }) => ({
+          validator(_: unknown, value: string) {
+            if (!value || getFieldValue("password") === value) {
+              return Promise.resolve();
+            }
+            return Promise.reject(new Error("Passwords do not match"));
+          },
+        }),
+      ],
+      agreeToTerms: [
+        {
+          validator: (_: unknown, value: boolean) =>
+            value
+              ? Promise.resolve()
+              : Promise.reject(
+                  new Error("Please accept the terms and conditions")
+                ),
+        },
+      ],
+    }),
+    []
+  );
+
+  // Memoized animation variants
+  const _animationVariants = useMemo(
+    () => ({
+      container: {
+        initial: { opacity: 0, y: 20 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.6 },
+      },
+      error: {
+        initial: { opacity: 0, height: 0 },
+        animate: { opacity: 1, height: "auto" },
+        transition: { duration: 0.3 },
+      },
+      success: {
+        initial: { opacity: 0, height: 0 },
+        animate: { opacity: 1, height: "auto" },
+        transition: { duration: 0.3 },
+      },
+    }),
+    []
+  );
 
   return (
-    <div className={styles.loginContainer}>
-      <div className={styles.loginCard}>
-        <div className={styles.header}>
-          <h1 className="logo">BlueOcean</h1>
-          <p>Create your account</p>
-        </div>
-
-        {error && (
-          <Alert
-            message="Registration Failed"
-            description={error}
-            type="error"
-            showIcon
-            style={{ marginBottom: 16 }}
-            closable
-            onClose={() => setError(null)}
-          />
+    <div className="auth-page">
+      <motion.div
+        className="auth-page__container"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        {loading && (
+          <div className="auth-page__loading">
+            <Spin size="large" />
+          </div>
         )}
 
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleRegister}
-          className={styles.loginForm}
-        >
-          <Form.Item
-            name="name"
-            label="Full Name"
-            rules={[
-              { required: true, message: "Please enter your full name" },
-              { min: 2, message: "Name must be at least 2 characters" },
-            ]}
-          >
-            <Input size="large" placeholder="Enter your full name" />
-          </Form.Item>
-
-          <Form.Item
-            name="email"
-            label="Email"
-            rules={[
-              { required: true, message: "Please enter your email" },
-              { type: "email", message: "Please enter a valid email" },
-            ]}
-          >
-            <Input size="large" placeholder="Enter your email" />
-          </Form.Item>
-
-          <Form.Item
-            name="password"
-            label="Password"
-            rules={[
-              { required: true, message: "Please enter your password" },
-              { min: 8, message: "Password must be at least 8 characters" },
-              {
-                pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-                message:
-                  "Password must contain uppercase, lowercase, and number",
-              },
-            ]}
-          >
-            <Input.Password
-              size="large"
-              placeholder="Enter your password"
-              iconRender={(visible) =>
-                visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
-              }
-            />
-          </Form.Item>
-
-          <Form.Item
-            name="confirmPassword"
-            label="Confirm Password"
-            dependencies={["password"]}
-            rules={[
-              { required: true, message: "Please confirm your password" },
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  if (!value || getFieldValue("password") === value) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(new Error("Passwords do not match"));
-                },
-              }),
-            ]}
-          >
-            <Input.Password
-              size="large"
-              placeholder="Confirm your password"
-              iconRender={(visible) =>
-                visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
-              }
-            />
-          </Form.Item>
-
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={isLoading}
-              size="large"
-              block
-              disabled={isLoading}
-            >
-              {isLoading ? "Creating Account..." : "Create Account"}
-            </Button>
-          </Form.Item>
-        </Form>
-
-        <Divider>Or continue with</Divider>
-
-        <Button
-          icon={<GoogleOutlined />}
-          onClick={handleGoogleRegister}
-          size="large"
-          block
-          className={styles.googleButton}
-          disabled={isLoading}
-        >
-          Continue with Google
-        </Button>
-
-        <div className={styles.footer}>
-          <p>
-            Already have an account? <Link href="/auth/login">Sign in</Link>
+        <div className="auth-page__header">
+          <div className="auth-page__logo">BO</div>
+          <h1 className="auth-page__title">Create Account</h1>
+          <p className="auth-page__subtitle">
+            Join Blue Ocean Export for premium furniture
           </p>
         </div>
-      </div>
+
+        <div className="auth-page__form">
+          {error && (
+            <motion.div
+              className="auth-page__error"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              transition={{ duration: 0.3 }}
+            >
+              {error}
+            </motion.div>
+          )}
+
+          {success && (
+            <motion.div
+              className="auth-page__success"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              transition={{ duration: 0.3 }}
+            >
+              {success}
+            </motion.div>
+          )}
+
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={handleRegister}
+            autoComplete="off"
+          >
+            <div style={{ display: "flex", gap: "1rem" }}>
+              <Form.Item
+                name="firstName"
+                label="First Name"
+                style={{ flex: 1 }}
+                rules={[
+                  { required: true, message: "Please enter your first name" },
+                  {
+                    min: 2,
+                    message: "First name must be at least 2 characters",
+                  },
+                ]}
+              >
+                <Input
+                  prefix={<UserOutlined />}
+                  placeholder="First name"
+                  size="large"
+                />
+              </Form.Item>
+
+              <Form.Item
+                name="lastName"
+                label="Last Name"
+                style={{ flex: 1 }}
+                rules={[
+                  { required: true, message: "Please enter your last name" },
+                  {
+                    min: 2,
+                    message: "Last name must be at least 2 characters",
+                  },
+                ]}
+              >
+                <Input
+                  prefix={<UserOutlined />}
+                  placeholder="Last name"
+                  size="large"
+                />
+              </Form.Item>
+            </div>
+
+            <Form.Item
+              name="email"
+              label="Email Address"
+              rules={[
+                { required: true, message: "Please enter your email" },
+                { type: "email", message: "Please enter a valid email" },
+              ]}
+            >
+              <Input
+                prefix={<MailOutlined />}
+                placeholder="Enter your email address"
+                size="large"
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="password"
+              label="Password"
+              rules={[
+                { required: true, message: "Please enter your password" },
+                { min: 8, message: "Password must be at least 8 characters" },
+                {
+                  pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+                  message:
+                    "Password must contain at least one uppercase letter, one lowercase letter, and one number",
+                },
+              ]}
+            >
+              <Input.Password
+                prefix={<LockOutlined />}
+                placeholder="Create a strong password"
+                size="large"
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="confirmPassword"
+              label="Confirm Password"
+              dependencies={["password"]}
+              rules={[
+                { required: true, message: "Please confirm your password" },
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    if (!value || getFieldValue("password") === value) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(new Error("Passwords do not match"));
+                  },
+                }),
+              ]}
+            >
+              <Input.Password
+                prefix={<LockOutlined />}
+                placeholder="Confirm your password"
+                size="large"
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="agreeToTerms"
+              valuePropName="checked"
+              rules={[
+                {
+                  validator: (_, value) =>
+                    value
+                      ? Promise.resolve()
+                      : Promise.reject(
+                          new Error("Please accept the terms and conditions")
+                        ),
+                },
+              ]}
+            >
+              <Checkbox>
+                I agree to the{" "}
+                <Link href="/terms" style={{ color: "#1e9df1" }}>
+                  Terms of Service
+                </Link>{" "}
+                and{" "}
+                <Link href="/privacy" style={{ color: "#1e9df1" }}>
+                  Privacy Policy
+                </Link>
+              </Checkbox>
+            </Form.Item>
+
+            <Form.Item>
+              <Button
+                type="primary"
+                htmlType="submit"
+                className="auth-form__submit"
+                loading={loading}
+                disabled={loading}
+              >
+                Create Account
+              </Button>
+            </Form.Item>
+          </Form>
+
+          <div className="auth-form__divider">
+            <span>Or continue with</span>
+          </div>
+
+          <div className="auth-form__social">
+            <Button
+              className="google-btn"
+              onClick={() => handleSocialLogin("Google")}
+              icon={<GoogleOutlined />}
+            >
+              Google
+            </Button>
+            <Button
+              className="facebook-btn"
+              onClick={() => handleSocialLogin("Facebook")}
+              icon={<FacebookOutlined />}
+            >
+              Facebook
+            </Button>
+          </div>
+
+          <div className="auth-form__terms">
+            By creating an account, you agree to receive marketing emails from
+            Blue Ocean Export. You can unsubscribe at any time.
+          </div>
+        </div>
+
+        <div className="auth-page__footer">
+          <p>
+            Already have an account?
+            <Link href="/auth/login">Sign in here</Link>
+          </p>
+        </div>
+      </motion.div>
     </div>
   );
-}
+});
+
+RegisterPage.displayName = "RegisterPage";
+
+export default RegisterPage;

@@ -2,7 +2,7 @@ import dbConnect from "@/lib/db";
 import { AuthType, TokenType, UserStatus } from "@/lib/properties";
 import Token from "@/models/Token";
 import User from "@/models/User";
-import jwt from "jsonwebtoken";
+import { SignJWT } from "jose";
 import { NextRequest, NextResponse } from "next/server";
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
@@ -12,9 +12,13 @@ const GOOGLE_REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI as string;
 
 export async function POST(request: NextRequest) {
   try {
+    console.log("Google OAuth POST request received");
     await dbConnect();
+    console.log("Database connected successfully");
+
     const body = await request.json();
     const { code }: { code: string } = body;
+    console.log("Authorization code received:", code ? "Yes" : "No");
 
     if (!code) {
       return NextResponse.json(
@@ -63,9 +67,16 @@ export async function POST(request: NextRequest) {
     }
 
     const googleUser = await userResponse.json();
+    console.log("Google user data received:", {
+      hasId: !!googleUser.id,
+      hasEmail: !!googleUser.email,
+      hasName: !!googleUser.name,
+    });
+
     const { id: googleId, email, name, picture: _picture } = googleUser;
 
     if (!email || !googleId) {
+      console.error("Invalid user data from Google:", { email, googleId });
       return NextResponse.json(
         { error: "Invalid user data from Google" },
         { status: 400 }
@@ -73,18 +84,22 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user already exists
+    console.log("Checking for existing user with email:", email);
     let user = await User.findOne({
       $or: [{ email }, { googleId }],
     });
 
     if (user) {
+      console.log("Existing user found:", user._id);
       // User exists, update Google ID if needed
       if (!user.googleId) {
+        console.log("Updating existing user with Google ID");
         user.googleId = googleId;
         user.authType = AuthType.GOOGLE;
         await user.save();
       }
     } else {
+      console.log("Creating new user with Google data");
       // Create new user
       user = new User({
         email,
@@ -96,22 +111,29 @@ export async function POST(request: NextRequest) {
         status: UserStatus.ACTIVE,
       });
       await user.save();
+      console.log("New user created with ID:", user._id);
     }
 
     // Generate JWT token
-    const authToken = jwt.sign(
-      {
-        id: user._id.toString(),
-        role: user.role,
-        permissions: user.permissions,
-      },
-      JWT_SECRET,
-      {
-        algorithm: "HS256",
-      }
-    );
-
+    console.log("Generating JWT token for user:", user._id);
+    const userObject = user.toObject();
+    const secret = new TextEncoder().encode(JWT_SECRET);
+    const authToken = await new SignJWT({
+      userId: userObject._id.toString(),
+      id: userObject._id.toString(), // Keep for backward compatibility
+      email: userObject.email,
+      name: userObject.name,
+      role: userObject.role,
+      permissions: userObject.permissions,
+      emailVerified: userObject.isVerified,
+      isVerified: userObject.isVerified,
+    })
+      .setProtectedHeader({ alg: "HS256" })
+      .setIssuedAt()
+      .setExpirationTime("24h") // 1 hour expiry
+      .sign(secret);
     // Store auth token
+    console.log("Looking for existing auth token");
     let userToken = await Token.findOne({
       user: user._id,
       type: TokenType.AUTH,
@@ -120,6 +142,7 @@ export async function POST(request: NextRequest) {
     const expiresAt = 86400000; // 1 day in milliseconds
 
     if (!userToken) {
+      console.log("Creating new auth token");
       userToken = new Token({
         user: user._id,
         token: authToken,
@@ -127,7 +150,9 @@ export async function POST(request: NextRequest) {
         expiresAt: new Date(Date.now() + expiresAt),
       });
       await userToken.save();
+      console.log("New auth token created:", userToken._id);
     } else {
+      console.log("Updating existing auth token");
       // Update existing token
       userToken.token = authToken;
       userToken.expiresAt = new Date(Date.now() + expiresAt);
@@ -135,10 +160,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Update last login time
+    console.log("Updating last login time");
     await user.updateOne({
       $set: { lastLogin: new Date() },
     });
 
+    console.log("Google OAuth flow completed successfully");
     const res = NextResponse.json(
       {
         message: "Google login successful",
@@ -165,8 +192,20 @@ export async function POST(request: NextRequest) {
     return res;
   } catch (error) {
     console.error("Google OAuth error:", error);
+    console.error(
+      "Error stack:",
+      error instanceof Error ? error.stack : "No stack trace"
+    );
     return NextResponse.json(
-      { error: "Internal server error" },
+      {
+        error: "Internal server error",
+        details:
+          process.env.NODE_ENV === "development"
+            ? error instanceof Error
+              ? error.message
+              : String(error)
+            : undefined,
+      },
       { status: 500 }
     );
   }
@@ -195,7 +234,15 @@ export async function GET() {
   } catch (error) {
     console.error("Google OAuth URL generation error:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      {
+        error: "Internal server error",
+        details:
+          process.env.NODE_ENV === "development"
+            ? error instanceof Error
+              ? error.message
+              : String(error)
+            : undefined,
+      },
       { status: 500 }
     );
   }

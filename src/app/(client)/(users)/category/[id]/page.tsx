@@ -29,9 +29,16 @@ const CategoryPage = async ({ params }: IProps) => {
       throw new Error(errorData.error || "Failed to fetch category data");
     }
     const categoryData: ICategoryData = await response.json();
+    // console.log({ categoryData });
+
     if (!categoryData) {
       throw new Error("Category data is empty or undefined");
     }
+    const productsResponse = await fetch(
+      `${process.env.NEXT_PUBLIC_SITE_URL}/api/v1/products?category=${categoryData.id}`
+    );
+    const _productsData = await productsResponse.json();
+    // console.log({ productsData });
     await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/v1/stats`, {
       method: "POST",
       body: JSON.stringify({ type: "category", refId: categoryData.id }),
