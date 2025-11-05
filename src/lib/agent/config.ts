@@ -137,6 +137,25 @@ export const CONTEXT_SETTINGS = {
     "wholesale",
     "retail",
   ],
+  // Keyword extraction settings
+  minKeywordLength: 3,
+  maxKeywordsPerMessage: 5,
+};
+
+/**
+ * Search distribution ratios
+ */
+export const SEARCH_SETTINGS = {
+  productResultRatio: 0.5, // 50% of results
+  categoryResultRatio: 0.25, // 25% of results
+  documentationResultRatio: 0.25, // 25% of results
+};
+
+/**
+ * Display settings
+ */
+export const DISPLAY_SETTINGS = {
+  maxDescriptionLength: 100,
 };
 
 /**

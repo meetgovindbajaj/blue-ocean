@@ -4,6 +4,7 @@ import { SearchResult } from "@/types/agent";
 import dbConnect from "@/lib/db";
 import Product from "@/models/Product";
 import Category from "@/models/Category";
+import { SEARCH_SETTINGS } from "./config";
 
 interface SearchableItem {
   id: string;
@@ -125,19 +126,24 @@ export class SemanticSearchService {
 
     const results: SearchResult[] = [];
 
+    // Calculate result limits based on ratios
+    const productLimit = Math.ceil(limit * SEARCH_SETTINGS.productResultRatio);
+    const categoryLimit = Math.ceil(limit * SEARCH_SETTINGS.categoryResultRatio);
+    const docLimit = Math.ceil(limit * SEARCH_SETTINGS.documentationResultRatio);
+
     // Search products
     const productResults =
-      this.productIndex?.search(query, { limit: limit / 2 }) || [];
+      this.productIndex?.search(query, { limit: productLimit }) || [];
     results.push(...this.mapResults(productResults, "product"));
 
     // Search categories
     const categoryResults =
-      this.categoryIndex?.search(query, { limit: limit / 4 }) || [];
+      this.categoryIndex?.search(query, { limit: categoryLimit }) || [];
     results.push(...this.mapResults(categoryResults, "category"));
 
     // Search documentation
     const docResults =
-      this.documentationIndex?.search(query, { limit: limit / 4 }) || [];
+      this.documentationIndex?.search(query, { limit: docLimit }) || [];
     results.push(...this.mapResults(docResults, "documentation"));
 
     // Sort by score and limit

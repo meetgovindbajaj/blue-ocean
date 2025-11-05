@@ -7,7 +7,7 @@ import {
 import { contextManager } from "./contextManager";
 import { semanticSearchService } from "./semanticSearch";
 import { promptBuilder } from "./promptBuilder";
-import { DEFAULT_AGENT_CONFIG, ERROR_MESSAGES } from "./config";
+import { DEFAULT_AGENT_CONFIG, ERROR_MESSAGES, DISPLAY_SETTINGS } from "./config";
 import { v4 as uuidv4 } from "uuid";
 import Conversation, { IAgentMessage } from "@/models/Conversation";
 import dbConnect from "@/lib/db";
@@ -224,7 +224,7 @@ export class AgentService {
       const recommendations = products
         .map(
           (p, idx) =>
-            `${idx + 1}. **${p.name}** - ${p.description?.slice(0, 100)}... (Price: $${p.prices?.retail || "N/A"})`
+            `${idx + 1}. **${p.name}** - ${p.description?.slice(0, DISPLAY_SETTINGS.maxDescriptionLength)}... (Price: $${p.prices?.retail || "N/A"})`
         )
         .join("\n\n");
 

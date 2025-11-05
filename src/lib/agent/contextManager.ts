@@ -126,8 +126,8 @@ export class ContextManager {
     // Simple keyword extraction - split by spaces and filter
     const words = content.toLowerCase().split(/\s+/);
     return words
-      .filter((word) => word.length > 3 && !this.isStopWord(word))
-      .slice(0, 5);
+      .filter((word) => word.length > CONTEXT_SETTINGS.minKeywordLength && !this.isStopWord(word))
+      .slice(0, CONTEXT_SETTINGS.maxKeywordsPerMessage);
   }
 
   /**
