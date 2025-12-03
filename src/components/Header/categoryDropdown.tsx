@@ -72,8 +72,12 @@ const getImageUrl = (image: any): string => {
 
 const CategoryDropdown = ({ id }: { id: string }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
-  const [previewState, setPreviewState] = useState<PreviewState>({ type: "default" });
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null
+  );
+  const [previewState, setPreviewState] = useState<PreviewState>({
+    type: "default",
+  });
   const [carouselIndex, setCarouselIndex] = useState(0);
   const carouselRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -96,11 +100,9 @@ const CategoryDropdown = ({ id }: { id: string }) => {
             fetch("/api/hero-banners"),
           ]);
 
-          const [categoriesData, productsData, bannersData] = await Promise.all([
-            categoriesRes.json(),
-            productsRes.json(),
-            bannersRes.json(),
-          ]);
+          const [categoriesData, productsData, bannersData] = await Promise.all(
+            [categoriesRes.json(), productsRes.json(), bannersRes.json()]
+          );
 
           if (categoriesData.success) {
             setCategories(categoriesData.categories || []);
@@ -204,7 +206,9 @@ const CategoryDropdown = ({ id }: { id: string }) => {
             <li
               key={category.id}
               className={`${styles.categoryItem} ${
-                selectedCategory?.id === category.id ? styles.categoryItemActive : ""
+                selectedCategory?.id === category.id
+                  ? styles.categoryItemActive
+                  : ""
               }`}
               onMouseEnter={() => handleCategoryHover(category)}
             >
@@ -221,7 +225,10 @@ const CategoryDropdown = ({ id }: { id: string }) => {
                   </div>
                 )}
               </div>
-              <Link href={`/categories/${category.slug}` as any} className={styles.categoryLink}>
+              <Link
+                href={`/categories?slug=${category.slug}` as any}
+                className={styles.categoryLink}
+              >
                 {category.name}
               </Link>
             </li>
@@ -254,7 +261,10 @@ const CategoryDropdown = ({ id }: { id: string }) => {
                   className={styles.productItem}
                   onMouseEnter={() => handleProductHover(product)}
                 >
-                  <Link href={`/products/${product.slug}` as any} className={styles.productLink}>
+                  <Link
+                    href={`/products/${product.slug}` as any}
+                    className={styles.productLink}
+                  >
                     <div className={styles.productThumbWrapper}>
                       {product.images?.[0] ? (
                         <img
@@ -273,11 +283,15 @@ const CategoryDropdown = ({ id }: { id: string }) => {
                 </li>
               ))
             ) : (
-              <li className={styles.noProducts}>No products in this category</li>
+              <li className={styles.noProducts}>
+                No products in this category
+              </li>
             )}
             {categoryProducts.length > 6 && (
               <li className={styles.viewAll}>
-                <Link href={`/products?category=${selectedCategory.slug}` as any}>
+                <Link
+                  href={`/products?category=${selectedCategory.slug}` as any}
+                >
                   View all {categoryProducts.length} products →
                 </Link>
               </li>
@@ -298,7 +312,9 @@ const CategoryDropdown = ({ id }: { id: string }) => {
               <path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z" />
             </svg>
           </div>
-          <p className={styles.emptyText}>Hover over a collection to see products</p>
+          <p className={styles.emptyText}>
+            Hover over a collection to see products
+          </p>
         </div>
       )}
     </div>
@@ -316,10 +332,14 @@ const CategoryDropdown = ({ id }: { id: string }) => {
           <Link href={"/products?sort=newest" as any}>New Arrivals</Link>
         </li>
         <li className={styles.featuredItem}>
-          <Link href={"/products?sort=price-low" as any}>Price: Low to High</Link>
+          <Link href={"/products?sort=price-low" as any}>
+            Price: Low to High
+          </Link>
         </li>
         <li className={styles.featuredItem}>
-          <Link href={"/products?sort=price-high" as any}>Price: High to Low</Link>
+          <Link href={"/products?sort=price-high" as any}>
+            Price: High to Low
+          </Link>
         </li>
       </ul>
 
@@ -331,7 +351,9 @@ const CategoryDropdown = ({ id }: { id: string }) => {
           <ul className={styles.featuredList}>
             {categories.slice(0, 6).map((category) => (
               <li key={category.id} className={styles.featuredItem}>
-                <Link href={`/products?category=${category.slug}` as any}>{category.name}</Link>
+                <Link href={`/categories?slug=${category.slug}` as any}>
+                  {category.name}
+                </Link>
               </li>
             ))}
             {categories.length > 6 && (
@@ -370,9 +392,13 @@ const CategoryDropdown = ({ id }: { id: string }) => {
             <div className={styles.previewInfo}>
               <h4 className={styles.previewTitle}>{category.name}</h4>
               {category.description && (
-                <p className={styles.previewDescription}>{category.description}</p>
+                <p className={styles.previewDescription}>
+                  {category.description}
+                </p>
               )}
-              <p className={styles.previewMeta}>{category.productCount} products</p>
+              <p className={styles.previewMeta}>
+                {category.productCount} products
+              </p>
               <Link
                 href={`/categories/${category.slug}` as any}
                 className={styles.previewButton}
@@ -416,12 +442,14 @@ const CategoryDropdown = ({ id }: { id: string }) => {
                     {formatPrice(product.prices.retail)}
                   </span>
                 )}
-                <span className={styles.finalPrice}>{formatPrice(finalPrice)}</span>
+                <span className={styles.finalPrice}>
+                  {formatPrice(finalPrice)}
+                </span>
               </div>
               {product.size && (
                 <p className={styles.previewDimensions}>
-                  {product.size.length} × {product.size.width} × {product.size.height}{" "}
-                  {product.size.unit}
+                  {product.size.length} × {product.size.width} ×{" "}
+                  {product.size.height} {product.size.unit}
                 </p>
               )}
               <Link
@@ -480,7 +508,10 @@ const CategoryDropdown = ({ id }: { id: string }) => {
                 <p className={styles.offerSubtitle}>{currentBanner.subtitle}</p>
               )}
               {currentBanner.ctaText && currentBanner.ctaLink && (
-                <Link href={currentBanner.ctaLink as any} className={styles.offerButton}>
+                <Link
+                  href={currentBanner.ctaLink as any}
+                  className={styles.offerButton}
+                >
                   {currentBanner.ctaText}
                 </Link>
               )}
@@ -492,7 +523,9 @@ const CategoryDropdown = ({ id }: { id: string }) => {
                 <button
                   key={index}
                   className={`${styles.dot} ${
-                    index === carouselIndex % heroBanners.length ? styles.dotActive : ""
+                    index === carouselIndex % heroBanners.length
+                      ? styles.dotActive
+                      : ""
                   }`}
                   onClick={() => goToSlide(index)}
                   aria-label={`Go to slide ${index + 1}`}

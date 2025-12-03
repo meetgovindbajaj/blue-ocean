@@ -269,9 +269,10 @@
     }
 
     /* Touch screen devices - always show info section fully expanded */
-    @media (hover: none) and (pointer: coarse) {
+    @media ((width<=600px) or ((hover: none) and (pointer: coarse))) {
         .infoSection {
             transform: translateY(0);
+            ;
         }
 
         .hiddenContent {

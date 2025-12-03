@@ -5,6 +5,7 @@ import styles from "./FeaturedCategories.module.css";
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { Category } from "@/context/LandingDataContext";
+import Link from "next/link";
 
 interface FeaturedCategoriesProps {
   categories: Category[];
@@ -173,7 +174,9 @@ const FeaturedCategories = ({ categories }: FeaturedCategoriesProps) => {
                 backgroundImage: categories[activeIndex]?.image?.url
                   ? `url(${categories[activeIndex].image.url})`
                   : "none",
-                backgroundColor: categories[activeIndex]?.image?.url ? "transparent" : "#374151",
+                backgroundColor: categories[activeIndex]?.image?.url
+                  ? "transparent"
+                  : "#374151",
                 filter: "blur(40px)",
                 transform: "scale(1.1)",
                 position: "absolute",
@@ -238,25 +241,32 @@ const FeaturedCategories = ({ categories }: FeaturedCategoriesProps) => {
                       aspectRatio: isMobile ? "4/6" : isTablet ? "5/4" : "6/3",
                     }}
                   >
-                    {category.image?.url ? (
-                      <img
-                        src={category.image.url}
-                        alt={category.name}
-                        className={styles.cardImage}
-                      />
-                    ) : (
-                      <div className={styles.cardImage} style={{ backgroundColor: "#374151" }} />
-                    )}
-                    <div className={styles.cardGradient} />
-                    <div
-                      className={styles.cardContent}
-                      style={{
-                        padding: isMobile ? "0.75rem" : "1rem",
-                      }}
-                    >
-                      <h3 className={styles.cardTitle}>{category.name}</h3>
-                      <p className={styles.cardSubtitle}>{category.productCount || 0} products</p>
-                    </div>
+                    <Link href={`/categories?slug=${category.slug}`}>
+                      {category.image?.url ? (
+                        <img
+                          src={category.image.url}
+                          alt={category.name}
+                          className={styles.cardImage}
+                        />
+                      ) : (
+                        <div
+                          className={styles.cardImage}
+                          style={{ backgroundColor: "#374151" }}
+                        />
+                      )}
+                      <div className={styles.cardGradient} />
+                      <div
+                        className={styles.cardContent}
+                        style={{
+                          padding: isMobile ? "0.75rem" : "1rem",
+                        }}
+                      >
+                        <h3 className={styles.cardTitle}>{category.name}</h3>
+                        <p className={styles.cardSubtitle}>
+                          {category.productCount || 0} products
+                        </p>
+                      </div>
+                    </Link>
                   </motion.div>
                 </div>
               ))}
