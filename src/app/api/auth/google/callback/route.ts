@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db";
 import User from "@/models/User";
-import { getGoogleOAuthTokens, getGoogleUser, generateToken, setAuthCookie } from "@/lib/auth";
+import {
+  getGoogleOAuthTokens,
+  getGoogleUser,
+  generateToken,
+  setAuthCookie,
+} from "@/lib/auth";
 import { AuthType, UserStatus } from "@/lib/properties";
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+const APP_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
 export async function GET(request: NextRequest) {
   try {
@@ -27,11 +32,16 @@ export async function GET(request: NextRequest) {
 
     if (tokens.error) {
       console.error("Google tokens error:", tokens.error);
-      return NextResponse.redirect(`${APP_URL}/login?error=token_exchange_failed`);
+      return NextResponse.redirect(
+        `${APP_URL}/login?error=token_exchange_failed`
+      );
     }
 
     // Get user info from Google
-    const googleUser = await getGoogleUser(tokens.access_token, tokens.id_token);
+    const googleUser = await getGoogleUser(
+      tokens.access_token,
+      tokens.id_token
+    );
 
     if (!googleUser.email) {
       return NextResponse.redirect(`${APP_URL}/login?error=no_email`);
@@ -42,7 +52,9 @@ export async function GET(request: NextRequest) {
     const normalizedEmail = googleUser.email.toLowerCase().trim();
 
     // Check if user exists
-    let user = await User.findOne({ email: normalizedEmail }).select("+googleId");
+    let user = await User.findOne({ email: normalizedEmail }).select(
+      "+googleId"
+    );
 
     if (user) {
       // User exists - check if they used Google before

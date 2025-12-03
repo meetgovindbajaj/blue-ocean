@@ -13,9 +13,12 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+const APP_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 const FROM_EMAIL = process.env.GMAIL_ID || "noreply@furniture-store.com";
-const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL || process.env.GMAIL_ID || "support@furniture-store.com";
+const SUPPORT_EMAIL =
+  process.env.SUPPORT_EMAIL ||
+  process.env.GMAIL_ID ||
+  "support@furniture-store.com";
 
 interface EmailOptions {
   to: string;
@@ -37,7 +40,11 @@ export async function sendEmail(options: EmailOptions) {
   }
 }
 
-export async function sendVerificationEmail(email: string, token: string, name: string) {
+export async function sendVerificationEmail(
+  email: string,
+  token: string,
+  name: string
+) {
   const verificationUrl = `${APP_URL}/verify-email?token=${token}`;
 
   const html = `
@@ -115,7 +122,11 @@ export async function sendVerificationEmail(email: string, token: string, name: 
   });
 }
 
-export async function sendPasswordResetEmail(email: string, token: string, name: string) {
+export async function sendPasswordResetEmail(
+  email: string,
+  token: string,
+  name: string
+) {
   const resetUrl = `${APP_URL}/reset-password?token=${token}`;
 
   const html = `
@@ -234,10 +245,14 @@ export async function sendContactFormEmail(data: {
                         <strong style="color: #333;">Email:</strong>
                       </td>
                       <td style="padding: 10px 0; border-bottom: 1px solid #eee; color: #666;">
-                        <a href="mailto:${data.email}" style="color: #3b82f6;">${data.email}</a>
+                        <a href="mailto:${
+                          data.email
+                        }" style="color: #3b82f6;">${data.email}</a>
                       </td>
                     </tr>
-                    ${data.phone ? `
+                    ${
+                      data.phone
+                        ? `
                     <tr>
                       <td style="padding: 10px 0; border-bottom: 1px solid #eee;">
                         <strong style="color: #333;">Phone:</strong>
@@ -246,7 +261,9 @@ export async function sendContactFormEmail(data: {
                         ${data.phone}
                       </td>
                     </tr>
-                    ` : ""}
+                    `
+                        : ""
+                    }
                     <tr>
                       <td style="padding: 10px 0; border-bottom: 1px solid #eee;">
                         <strong style="color: #333;">Subject:</strong>
@@ -285,6 +302,10 @@ export async function sendContactFormEmail(data: {
     to: SUPPORT_EMAIL,
     subject: `Contact Form: ${data.subject}`,
     html,
-    text: `New contact form submission:\n\nName: ${data.name}\nEmail: ${data.email}\nPhone: ${data.phone || "N/A"}\nSubject: ${data.subject}\n\nMessage:\n${data.message}`,
+    text: `New contact form submission:\n\nName: ${data.name}\nEmail: ${
+      data.email
+    }\nPhone: ${data.phone || "N/A"}\nSubject: ${data.subject}\n\nMessage:\n${
+      data.message
+    }`,
   });
 }
