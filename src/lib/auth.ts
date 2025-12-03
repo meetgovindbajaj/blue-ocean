@@ -32,7 +32,9 @@ export async function comparePassword(
 }
 
 // Generate JWT token
-export async function generateToken(payload: Omit<JWTPayload, "iat" | "exp">): Promise<string> {
+export async function generateToken(
+  payload: Omit<JWTPayload, "iat" | "exp">
+): Promise<string> {
   return new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
@@ -90,7 +92,9 @@ export function generateVerificationToken(): string {
 export const googleOAuthConfig = {
   clientId: process.env.GOOGLE_CLIENT_ID || "",
   clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
-  redirectUri: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/auth/google/callback`,
+  redirectUri: `${
+    process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
+  }/api/auth/google/callback`,
 };
 
 // Generate Google OAuth URL
