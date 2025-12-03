@@ -1,0 +1,558 @@
+@layer component {
+  .page {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+    align-items: center;
+    font-family: var(--font-montserrat);
+    background-color: var(--background);
+    color: var(--text-primary);
+    padding: 2rem 1rem;
+  }
+
+  .loadingSkeleton {
+    padding: 2rem 0;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 1000px;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .hero {
+    text-align: center;
+    padding: 2rem 0;
+  }
+
+  .title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0 0 0.75rem 0;
+    color: var(--text-primary);
+  }
+
+  .subtitle {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  .infoSection {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--text-primary);
+  }
+
+  .contactCards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+
+  .contactCard {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.5rem;
+    background-color: var(--background-secondary);
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .contactCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  .contactCard.whatsapp {
+    background-color: #25d366;
+    color: white;
+  }
+
+  .contactCard.whatsapp .cardIcon {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+  }
+
+  .cardIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background-color: var(--primary);
+    color: white;
+    flex-shrink: 0;
+  }
+
+  .cardContent {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .cardContent h3 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.8;
+  }
+
+  .cardContent p {
+    font-size: 1rem;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .cardContent .secondary {
+    font-size: 0.875rem;
+    opacity: 0.7;
+  }
+
+  .businessHours {
+    margin-top: 1rem;
+    padding: 1.5rem;
+    background-color: var(--background-secondary);
+    border-radius: 12px;
+  }
+
+  .hoursTitle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin: 0 0 1rem 0;
+    color: var(--text-primary);
+  }
+
+  .hoursList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .hoursItem {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  .hoursItem:last-child {
+    border-bottom: none;
+  }
+
+  .day {
+    font-weight: 500;
+  }
+
+  .time {
+    color: var(--text-secondary);
+  }
+
+  .formSection {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 2rem;
+    background-color: var(--background-secondary);
+    border-radius: 16px;
+  }
+
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .formRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .required {
+    color: #ef4444;
+  }
+
+  .input,
+  .select,
+  .textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color, rgba(0, 0, 0, 0.1));
+    border-radius: 8px;
+    font-size: 0.938rem;
+    background-color: var(--background);
+    color: var(--text-primary);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: inherit;
+  }
+
+  .input::placeholder,
+  .textarea::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.7;
+  }
+
+  .input:focus,
+  .select:focus,
+  .textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb, 59, 130, 246), 0.1);
+  }
+
+  .input:disabled,
+  .select:disabled,
+  .textarea:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.75rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+  }
+
+  .textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+
+  .hint {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  .submitButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: fit-content;
+    padding: 0.875rem 2rem;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.938rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+  }
+
+  .submitButton:hover:not(:disabled) {
+    background-color: var(--primary-dark, var(--primary));
+    transform: translateY(-1px);
+  }
+
+  .submitButton:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  .spinner {
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .mapSection {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .mapContainer {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .mapContainer iframe {
+    display: block;
+  }
+
+  /* Product Select Styles */
+  .productSelectContainer {
+    position: relative;
+    width: 100%;
+  }
+
+  .selectedProduct {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--border-color, rgba(0, 0, 0, 0.1));
+    border-radius: 8px;
+    background-color: var(--background);
+  }
+
+  .selectedProductInfo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .selectedProductImage {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .selectedProductPlaceholder {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    background-color: var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+  }
+
+  .selectedProductName {
+    font-size: 0.938rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .clearProductButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 6px;
+    background-color: var(--muted);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    flex-shrink: 0;
+  }
+
+  .clearProductButton:hover:not(:disabled) {
+    background-color: #fecaca;
+    color: #dc2626;
+  }
+
+  .clearProductButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .productSearchWrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color, rgba(0, 0, 0, 0.1));
+    border-radius: 8px;
+    background-color: var(--background);
+    cursor: text;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .productSearchWrapper:focus-within {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb, 59, 130, 246), 0.1);
+  }
+
+  .productSearchIcon {
+    color: var(--text-secondary);
+    flex-shrink: 0;
+  }
+
+  .productSearchInput {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 0.938rem;
+    color: var(--text-primary);
+    font-family: inherit;
+  }
+
+  .productSearchInput::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.7;
+  }
+
+  .productSearchInput:disabled {
+    cursor: not-allowed;
+  }
+
+  .productSearchChevron {
+    color: var(--text-secondary);
+    flex-shrink: 0;
+  }
+
+  .productDropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    max-height: 280px;
+    overflow-y: auto;
+    background-color: var(--background);
+    border: 1px solid var(--border-color, rgba(0, 0, 0, 0.1));
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    z-index: 50;
+  }
+
+  .productDropdownLoading,
+  .productDropdownEmpty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1.5rem;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+  }
+
+  .productDropdownList {
+    padding: 0.5rem;
+  }
+
+  .productDropdownItem {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.625rem 0.75rem;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    cursor: pointer;
+    text-align: left;
+    transition: background-color 0.15s;
+  }
+
+  .productDropdownItem:hover {
+    background-color: var(--muted);
+  }
+
+  .productDropdownItemImage {
+    width: 36px;
+    height: 36px;
+    border-radius: 4px;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .productDropdownItemPlaceholder {
+    width: 36px;
+    height: 36px;
+    border-radius: 4px;
+    background-color: var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+  }
+
+  .productDropdownItemName {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  @media (max-width: 768px) {
+    .page {
+      padding: 1.5rem 1rem;
+    }
+
+    .title {
+      font-size: 2rem;
+    }
+
+    .subtitle {
+      font-size: 1rem;
+    }
+
+    .contactCards {
+      grid-template-columns: 1fr;
+    }
+
+    .sectionTitle {
+      font-size: 1.25rem;
+    }
+
+    .formSection {
+      padding: 1.5rem;
+    }
+
+    .formRow {
+      grid-template-columns: 1fr;
+    }
+
+    .submitButton {
+      width: 100%;
+    }
+  }
+}

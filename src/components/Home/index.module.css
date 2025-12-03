@@ -1,0 +1,19 @@
+@layer component {
+    .page {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        min-height: 100vh;
+        align-items: center;
+        justify-content: flex-start;
+        font-family: var(--font-montserrat);
+        background-color: var(--background);
+        color: var(--text-primary);
+    }
+
+    .loadingSkeleton {
+        width: 100%;
+        max-width: 1400px;
+        padding: 1rem;
+    }
+}

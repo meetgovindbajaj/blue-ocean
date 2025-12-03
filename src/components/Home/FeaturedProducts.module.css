@@ -1,0 +1,46 @@
+@layer utilities {
+    .page {
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--font-montserrat);
+        background-color: var(--background);
+        color: var(--text-primary);
+        padding: 32px
+    }
+
+    .body {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 32px;
+        place-items: center;
+        justify-content: center;
+        width: 100%;
+        margin-top: 48px;
+        padding: 5px;
+    }
+
+    @media screen and (width <=1000px) {
+        .page {
+            padding: 24px;
+        }
+
+        .body {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+    }
+
+    @media screen and (width <=600px) {
+        .page {
+            padding: 12px;
+        }
+
+        .body {
+            grid-template-columns: repeat(1, 1fr);
+            gap: 32px;
+        }
+    }
+}

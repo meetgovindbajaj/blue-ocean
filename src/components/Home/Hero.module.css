@@ -1,0 +1,392 @@
+@layer utilities {
+    .page {
+        background-color: black;
+        width: 100%;
+        aspect-ratio: 5 / 2.2;
+        position: relative;
+        overflow: hidden;
+        color: white !important;
+    }
+
+    @media screen and (width <=1000px) {
+        .page {
+            aspect-ratio: 1 / 0.6;
+        }
+    }
+
+    @media screen and (width <=600px) {
+        .page {
+            aspect-ratio: unset;
+            height: 70vh;
+        }
+    }
+
+    .hero {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .image {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+    .innerShadow {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        height: 100%;
+        width: 100%;
+        background: linear-gradient(90deg, rgba(0, 0, 0, 0.87) 0%, rgba(255, 255, 255, 0) 70%);
+    }
+
+    .content {
+        position: relative;
+        z-index: 2;
+        max-width: 620px;
+        padding-inline: clamp(1.5rem, 4vw, 3rem);
+        text-shadow: 0 2px 20px rgba(0, 0, 0, 0.6);
+        color: #ffffff;
+        margin-right: auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        height: 70%;
+        padding: 5rem;
+    }
+
+    .title {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 0.8rem;
+        color: #ffffff;
+    }
+
+    .subtitle {
+        font-size: 20px;
+        line-height: 1.4;
+        max-width: 40rem;
+        margin-bottom: 1.1rem;
+        color: #f0f0f0;
+    }
+
+    .description {
+        font-size: 18px;
+        line-height: 1.2;
+        max-width: 40rem;
+        margin-bottom: 1.1rem;
+        color: #f0f0f0;
+    }
+
+    /* Discount badge */
+    .discountBadge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background-color: #ff00008a;
+        color: white;
+        padding: 0.4rem 0.8rem;
+        border-radius: 100px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        width: fit-content;
+    }
+
+    .offerCode {
+        background-color: rgba(255, 255, 255, 0.2);
+        padding: 0.2rem 0.5rem;
+        border-radius: calc(100px - .8rem);
+        font-family: monospace;
+        font-size: 0.8rem;
+    }
+
+    .offerExpiry {
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 0.75rem;
+    }
+
+    /* Product/Category preview */
+    .linkedItem {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        background-color: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(8px);
+        padding: 0.5rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        width: fit-content;
+        max-width: 280px;
+        text-decoration: none;
+        color: white;
+        transition: background-color 150ms ease, transform 150ms ease;
+    }
+
+    .linkedItem:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+    }
+
+    .linkedItemImage {
+        width: 50px;
+        height: 50px;
+        border-radius: 6px;
+        object-fit: cover;
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .linkedItemInfo {
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+    }
+
+    .linkedItemName {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: white;
+    }
+
+    .linkedItemPrice {
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .linkedItemOriginal {
+        text-decoration: line-through;
+        margin-right: 0.4rem;
+        opacity: 0.6;
+    }
+
+    /* Auto products carousel */
+    .autoProducts {
+        display: flex;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+        max-width: 100%;
+    }
+
+    .autoProducts::-webkit-scrollbar {
+        height: 4px;
+    }
+
+    .autoProducts::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 2px;
+    }
+
+    .autoProducts::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 2px;
+    }
+
+    .autoProductCard {
+        flex-shrink: 0;
+        width: 100px;
+        background-color: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(8px);
+        border-radius: 8px;
+        padding: 0.5rem;
+        text-decoration: none;
+        color: white;
+        transition: background-color 150ms ease, transform 150ms ease;
+    }
+
+    .autoProductCard:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+    }
+
+    .autoProductImage {
+        width: 100%;
+        aspect-ratio: 1;
+        border-radius: 6px;
+        object-fit: cover;
+        background-color: rgba(255, 255, 255, 0.1);
+        margin-bottom: 0.4rem;
+    }
+
+    .autoProductName {
+        font-size: 0.7rem;
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .autoProductPrice {
+        font-size: 0.65rem;
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .button {
+        width: max-content;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.6rem 1.6rem;
+        border-radius: 999px;
+        font-size: 0.95rem;
+        font-weight: 500;
+        border: none;
+        text-decoration: none;
+        cursor: pointer;
+        transition: transform 150ms ease, box-shadow 150ms ease, background-color 150ms ease,
+            color 150ms ease;
+        background-color: #ffffff;
+        color: #111111 !important;
+    }
+
+    .button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+        background-color: #f4f4f4;
+    }
+
+    /* Arrows */
+    .arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 3;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: none;
+        background-color: rgba(255, 255, 255, 0.9);
+        color: #333;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        font-size: 1.5rem;
+        transition: background-color 120ms ease, transform 120ms ease;
+    }
+
+    .arrowLeft {
+        left: 1.2rem;
+    }
+
+    .arrowRight {
+        right: 1.2rem;
+    }
+
+    .arrow:hover {
+        background-color: #ffffff;
+        transform: translateY(-50%) scale(1.04);
+    }
+
+    @media screen and (width <=800px) {
+        .arrow {
+            display: none;
+        }
+
+        .innerShadow {
+            background: linear-gradient(180deg, rgba(0, 0, 0, .9) 0%, rgba(255, 255, 255, 0) 90%);
+        }
+
+        .content {
+            width: 80%;
+            padding-block: 2rem;
+            justify-content: flex-start;
+        }
+
+        .title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            font-size: 16px;
+        }
+
+        .description {
+            font-size: 14px;
+        }
+
+        .linkedItem {
+            max-width: 220px;
+        }
+
+        .autoProductCard {
+            width: 80px;
+        }
+
+        .discountBadge {
+            font-size: 0.75rem;
+            padding: 0.3rem 0.6rem;
+        }
+    }
+
+    /* Pills */
+    .pills {
+        position: absolute;
+        left: 50%;
+        bottom: 1.5rem;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 0.6rem;
+        z-index: 3;
+    }
+
+    .pill {
+        position: relative;
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        border: none;
+        padding: 0;
+        background-color: rgba(255, 255, 255, 0.55);
+        cursor: pointer;
+        overflow: hidden;
+        transition: width 160ms ease, height 160ms ease, background-color 160ms ease;
+    }
+
+    .pillActive {
+        width: 46px;
+        height: 10px;
+        background-color: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+    }
+
+    .pillFill {
+        position: absolute;
+        inset: 0;
+        transform-origin: left center;
+        background-color: #ffffff;
+        border-radius: inherit;
+        transition: transform 80ms linear;
+    }
+
+    @media screen and (width <=600px) {
+        .content {
+            padding-inline: 1.2rem;
+        }
+
+        .subtitle {
+            max-width: none;
+        }
+    }
+
+    .iconSize {
+        width: 1.25rem;
+        height: 1.25rem;
+    }
+
+    @media (min-width: 768px) {
+        .iconSize {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+    }
+}

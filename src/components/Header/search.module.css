@@ -1,0 +1,186 @@
+@layer utilities {
+    .navSearch {
+        position: absolute;
+        top: var(--navbar-height);
+        left: 0;
+        width: 100%;
+        padding: 1rem 1rem 0rem;
+        height: var(--navbar-height);
+        background-color: var(--background);
+        z-index: 45;
+
+        form {
+            position: sticky;
+            top: 0;
+
+            .searchBox {
+                position: relative;
+                width: 100%;
+                border: 1px solid black;
+                border-radius: 10px;
+            }
+        }
+    }
+
+    .navSearchResultsContainer {
+        top: calc(var(--navbar-height) * 2);
+        height: calc(100dvh - var(--navbar-height) * 2);
+        background-color: var(--background);
+        overflow-y: auto;
+        padding-bottom: 2rem;
+    }
+
+    /* Suggestions Dropdown */
+    .suggestionsDropdown {
+        position: absolute;
+        top: 0;
+        left: 1rem;
+        right: 1rem;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 1000;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .suggestionsHeader {
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .suggestionsHeader span {
+        font-size: 12px;
+        color: #9ca3af;
+    }
+
+    .suggestionsHeader button {
+        background-color: #f3f4f6;
+        border-radius: 6px;
+        padding: 4px 10px;
+        border: none;
+        cursor: pointer;
+        color: #6b7280;
+        font-size: 12px;
+        transition: background-color 0.2s;
+    }
+
+    .suggestionsHeader button:hover {
+        background-color: #e5e7eb;
+    }
+
+    .suggestionItem {
+        padding: 12px 16px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: background-color 0.2s;
+    }
+
+    .suggestionItem:hover {
+        background-color: #f9fafb;
+    }
+
+    .suggestionItem span {
+        font-size: 14px;
+        color: #374151;
+    }
+
+
+
+    @media screen and (width <=600px) {
+        .navSearch {
+            top: var(--navbar-height-mobile);
+            max-height: calc(100dvh - var(--navbar-height-mobile));
+            padding: .5rem;
+        }
+
+        .navSearchResultsContainer {
+            top: calc(var(--navbar-height-mobile) * 2);
+            height: calc(100dvh - var(--navbar-height-mobile) * 2);
+        }
+    }
+
+    /* Quick Results */
+    .quickResults {
+        padding: 1rem;
+    }
+
+    .quickResultsHeader {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+    }
+
+    .quickResultsHeader span {
+        font-size: 0.875rem;
+        color: #6b7280;
+    }
+
+    .viewAllButton {
+        padding: 0.5rem 1rem;
+        background-color: #111827;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 150ms ease;
+    }
+
+    .viewAllButton:hover {
+        background-color: #1f2937;
+    }
+
+    .quickResultsGrid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1.25rem;
+    }
+
+    .noResults {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem 2rem;
+        text-align: center;
+    }
+
+    .noResults p {
+        font-size: 1rem;
+        font-weight: 500;
+        color: #374151;
+        margin-bottom: 0.5rem;
+    }
+
+    .noResults span {
+        font-size: 0.875rem;
+        color: #6b7280;
+    }
+
+    .searchHint {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem 2rem;
+    }
+
+    .searchHint p {
+        font-size: 0.875rem;
+        color: #9ca3af;
+    }
+
+    @media screen and (width <= 600px) {
+        .quickResultsGrid {
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+        }
+    }
+}

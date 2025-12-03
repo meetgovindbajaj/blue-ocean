@@ -1,0 +1,243 @@
+@layer component {
+  .page {
+    display: flex;
+    background-color: var(--footer-background);
+    color: var(--footer-text);
+    width: 100%;
+    padding: 3rem 1rem 1.5rem;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 1200px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .brand {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--footer-text);
+  }
+
+  .tagline {
+    font-size: 0.875rem;
+    opacity: 0.8;
+    margin: 0;
+  }
+
+  .description {
+    font-size: 0.875rem;
+    opacity: 0.7;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .sectionTitle {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+    color: var(--footer-text);
+  }
+
+  .links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .links a {
+    color: var(--footer-text);
+    text-decoration: none;
+    font-size: 0.875rem;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+  }
+
+  .links a:hover {
+    opacity: 1;
+    text-decoration: underline;
+  }
+
+  .contactInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .contactItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--footer-text);
+    text-decoration: none;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+  }
+
+  .contactItem:hover {
+    opacity: 1;
+  }
+
+  .contactItem svg {
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .newsletterText {
+    font-size: 0.875rem;
+    opacity: 0.8;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .newsletterForm {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .newsletterInput {
+    flex: 1;
+    padding: 0.625rem 0.875rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--footer-text);
+    font-size: 0.875rem;
+    outline: none;
+    transition: border-color 0.2s, background-color 0.2s;
+  }
+
+  .newsletterInput::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .newsletterInput:focus {
+    border-color: var(--primary);
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+
+  .newsletterInput:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .newsletterButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border: none;
+    border-radius: 6px;
+    background-color: var(--primary);
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+    flex-shrink: 0;
+  }
+
+  .newsletterButton:hover:not(:disabled) {
+    background-color: var(--primary-dark, var(--primary));
+    transform: translateY(-1px);
+  }
+
+  .newsletterButton:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  .spinner {
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .socialSection {
+    display: flex;
+    justify-content: center;
+    padding: 1.5rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 0;
+  }
+
+  .socialLinks {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .socialLink {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--footer-text);
+    transition: background-color 0.2s, transform 0.2s;
+  }
+
+  .socialLink:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+  }
+
+  .copyright {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 1.5rem;
+    text-align: center;
+  }
+
+  .copyright p {
+    margin: 0;
+    font-size: 0.813rem;
+    opacity: 0.7;
+  }
+
+  @media (max-width: 768px) {
+    .page {
+      padding: 2rem 1rem 1rem;
+    }
+
+    .grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .section:first-child {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}
