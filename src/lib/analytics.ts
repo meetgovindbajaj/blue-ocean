@@ -1,8 +1,17 @@
 import { NextRequest } from "next/server";
-import { AnalyticsEvent, DailyAnalytics, EventType, EntityType } from "@/models/Analytics";
+import {
+  AnalyticsEvent,
+  DailyAnalytics,
+  EventType,
+  EntityType,
+} from "@/models/Analytics";
 import Product from "@/models/Product";
 import Category from "@/models/Category";
 import HeroBanner from "@/models/HeroBanner";
+import User from "@/models/User";
+import Profile from "@/models/Profile";
+import mongoose, { Types } from "mongoose";
+import { getCurrentUser } from "./auth";
 
 // Get client IP with proper priority
 export function getClientIp(request: NextRequest): string {
@@ -36,6 +45,12 @@ export async function trackEvent(data: {
   skipDedup?: boolean; // For impressions and other events that should always be recorded
 }) {
   try {
+    const currentUser = await getCurrentUser();
+    let userId = data.userId;
+    if (!userId && currentUser && currentUser.userId) {
+      userId = currentUser.userId;
+    }
+
     // Deduplication: Check if same event was recorded recently for this IP/session/entity
     // Skip dedup for impressions (should always be counted) or when explicitly skipped
     if (!data.skipDedup && data.eventType.includes("view")) {
@@ -48,7 +63,7 @@ export async function trackEvent(data: {
         $or: [
           { ip: data.ip },
           ...(data.sessionId ? [{ sessionId: data.sessionId }] : []),
-          ...(data.userId ? [{ userId: data.userId }] : []),
+          ...(userId ? [{ userId }] : []),
         ],
         createdAt: { $gte: dedupWindow },
       }).lean();
@@ -67,7 +82,7 @@ export async function trackEvent(data: {
       entitySlug: data.entitySlug,
       entityName: data.entityName,
       sessionId: data.sessionId,
-      userId: data.userId,
+      userId: userId,
       ip: data.ip,
       metadata: data.metadata,
     });
@@ -98,6 +113,18 @@ export async function trackEvent(data: {
     // 3. Update entity-specific counters
     await updateEntityCounters(data.entityType, data.entityId, data.eventType);
 
+    // Update recently viewed if this is a product_view event with a userId
+    if (
+      data.eventType === "product_view" &&
+      data.entityType === "product" &&
+      userId &&
+      data.entityId
+    ) {
+      updateRecentlyViewed(userId, data.entityId).catch((err) =>
+        console.error("updateRecentlyViewed error:", err)
+      );
+    }
+
     return event;
   } catch (error) {
     console.error("Track event error:", error);
@@ -125,7 +152,9 @@ async function updateEntityCounters(
         await HeroBanner.findByIdAndUpdate(entityId, { $inc: { clicks: 1 } });
       }
       if (eventType.includes("impression")) {
-        await HeroBanner.findByIdAndUpdate(entityId, { $inc: { impressions: 1 } });
+        await HeroBanner.findByIdAndUpdate(entityId, {
+          $inc: { impressions: 1 },
+        });
       }
     }
   } catch (error) {
@@ -188,7 +217,10 @@ export async function getEntityStats(
 }
 
 // Get top viewed products from analytics
-export async function getTopViewedProducts(days: number = 7, limit: number = 10) {
+export async function getTopViewedProducts(
+  days: number = 7,
+  limit: number = 10
+) {
   try {
     const startDate = new Date();
     startDate.setUTCDate(startDate.getUTCDate() - days);
@@ -222,7 +254,10 @@ export async function getTopViewedProducts(days: number = 7, limit: number = 10)
 }
 
 // Get trending products based on recent activity
-export async function getTrendingProducts(period: "day" | "week" | "month" = "week", limit: number = 10) {
+export async function getTrendingProducts(
+  period: "day" | "week" | "month" = "week",
+  limit: number = 10
+) {
   try {
     const now = new Date();
     let startDate: Date;
@@ -260,7 +295,9 @@ export async function getTrendingProducts(period: "day" | "week" | "month" = "we
         $addFields: {
           uniqueCount: { $size: "$uniqueVisitors" },
           // Score: views + (unique visitors * 2) for better ranking
-          score: { $add: ["$views", { $multiply: [{ $size: "$uniqueVisitors" }, 2] }] },
+          score: {
+            $add: ["$views", { $multiply: [{ $size: "$uniqueVisitors" }, 2] }],
+          },
         },
       },
       { $sort: { score: -1 } },
@@ -311,4 +348,39 @@ export async function getDashboardStats(days: number = 30) {
     console.error("Get dashboard stats error:", error);
     return { totalStats: [], dailyStats: [] };
   }
+}
+
+// Update recentlyViewed via User -> Profile
+async function updateRecentlyViewed(userId: string, productId: string) {
+  if (
+    !mongoose.isValidObjectId(userId) ||
+    !mongoose.isValidObjectId(productId)
+  ) {
+    return;
+  }
+
+  const userObjectId = new Types.ObjectId(userId);
+  const productObjectId = new Types.ObjectId(productId);
+
+  const user = await User.findById(userObjectId).select("profile").lean();
+  const profileId = user?.profile as Types.ObjectId | undefined;
+  if (!profileId) return;
+
+  // Remove existing occurrence then push to front (keeps ordering)
+  await Profile.updateOne(
+    { _id: profileId },
+    { $pull: { recentlyViewed: productObjectId } }
+  );
+  await Profile.updateOne(
+    { _id: profileId },
+    {
+      $push: {
+        recentlyViewed: {
+          $each: [productObjectId],
+          $position: 0,
+          $slice: 20,
+        },
+      },
+    }
+  );
 }

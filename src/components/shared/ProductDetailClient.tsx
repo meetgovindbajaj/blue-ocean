@@ -8,6 +8,14 @@ import ProductCard from "./ProductCard";
 import styles from "./ProductDetailClient.module.css";
 import { Route } from "next";
 import { ChevronLeft, ChevronRight, X, ZoomIn } from "lucide-react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+} from "@/components/ui/carousel";
+import { useCurrency } from "@/context/CurrencyContext";
 
 interface Breadcrumb {
   id: string;
@@ -67,13 +75,7 @@ export default function ProductDetailClient({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const autoScrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(price);
-  };
+  const { formatPrice } = useCurrency();
 
   const hasDiscount = product.prices.discount > 0;
   const discountedPrice = hasDiscount
@@ -403,11 +405,23 @@ export default function ProductDetailClient({
       {relatedProducts.length > 0 && (
         <section className={styles.relatedSection}>
           <h2 className={styles.relatedTitle}>Related Products</h2>
-          <div className={styles.relatedGrid}>
-            {relatedProducts.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
+          <Carousel
+            opts={{
+              align: "start",
+              loop: relatedProducts.length > 4,
+            }}
+            className={styles.carouselContainer}
+          >
+            <CarouselContent className="-ml-2 md:-ml-4">
+              {relatedProducts.map((p) => (
+                <CarouselItem key={p.id} className="pl-2 md:pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+                  <ProductCard product={p} />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className={styles.carouselNav} />
+            <CarouselNext className={styles.carouselNav} />
+          </Carousel>
         </section>
       )}
 
@@ -418,46 +432,57 @@ export default function ProductDetailClient({
           <p className={styles.sectionSubtitle}>
             Based on popular products and your browsing history
           </p>
-          <div className={styles.relatedGrid}>
-            {recommendedProducts.map((rec: RecommendedProduct) => (
-              <ProductCard
-                key={rec.id}
-                product={{
-                  id: rec.id,
-                  name: rec.name,
-                  slug: rec.slug,
-                  description: rec.description || "",
-                  prices: rec.prices,
-                  size: {
-                    length: rec.size?.length || 0,
-                    width: rec.size?.width || 0,
-                    height: rec.size?.height || 0,
-                    fixedSize: rec.size?.fixedSize || false,
-                    unit: (rec.size?.unit as "in" | "cm" | "mm" | "ft") || "in",
-                  },
-                  images: rec.thumbnail
-                    ? [
-                        {
-                          id: "1",
-                          name: rec.name,
-                          url: rec.thumbnail.url,
-                          thumbnailUrl:
-                            rec.thumbnail.thumbnailUrl || rec.thumbnail.url,
-                          isThumbnail: true,
-                          downloadUrl: rec.thumbnail.url,
-                          size: 0,
-                          width: 0,
-                          height: 0,
-                        },
-                      ]
-                    : [],
-                  category: rec.category?.name || "",
-                  breadcrumbs: [],
-                  isActive: true,
-                }}
-              />
-            ))}
-          </div>
+          <Carousel
+            opts={{
+              align: "start",
+              loop: recommendedProducts.length > 4,
+            }}
+            className={styles.carouselContainer}
+          >
+            <CarouselContent className="-ml-2 md:-ml-4">
+              {recommendedProducts.map((rec: RecommendedProduct) => (
+                <CarouselItem key={rec.id} className="pl-2 md:pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+                  <ProductCard
+                    product={{
+                      id: rec.id,
+                      name: rec.name,
+                      slug: rec.slug,
+                      description: rec.description || "",
+                      prices: rec.prices,
+                      size: {
+                        length: rec.size?.length || 0,
+                        width: rec.size?.width || 0,
+                        height: rec.size?.height || 0,
+                        fixedSize: rec.size?.fixedSize || false,
+                        unit: (rec.size?.unit as "in" | "cm" | "mm" | "ft") || "in",
+                      },
+                      images: rec.thumbnail
+                        ? [
+                            {
+                              id: "1",
+                              name: rec.name,
+                              url: rec.thumbnail.url,
+                              thumbnailUrl:
+                                rec.thumbnail.thumbnailUrl || rec.thumbnail.url,
+                              isThumbnail: true,
+                              downloadUrl: rec.thumbnail.url,
+                              size: 0,
+                              width: 0,
+                              height: 0,
+                            },
+                          ]
+                        : [],
+                      category: rec.category?.name || "",
+                      breadcrumbs: [],
+                      isActive: true,
+                    }}
+                  />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className={styles.carouselNav} />
+            <CarouselNext className={styles.carouselNav} />
+          </Carousel>
         </section>
       )}
 

@@ -6,12 +6,14 @@ import type { Product } from "@/context/LandingDataContext";
 import styles from "./ProductCard.module.css";
 import { useRef, useEffect, useState } from "react";
 import { Route } from "next";
+import { useCurrency } from "@/context/CurrencyContext";
 
 interface ProductCardProps {
   product: Product;
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
+  const { formatPrice } = useCurrency();
   const visibleContentRef = useRef<HTMLDivElement>(null);
   const [collapsedHeight, setCollapsedHeight] = useState(75); // fallback
 
@@ -118,16 +120,20 @@ const ProductCard = ({ product }: ProductCardProps) => {
             {/* <div className={styles.category}>{categoryName}</div> */}
 
             <div className={styles.priceContainer}>
-              <span className={styles.price}>${product.prices.retail}</span>
-              {hasDiscount && (
+              {hasDiscount ? (
                 <>
+                  <span className={styles.price}>
+                    {formatPrice(product.prices.retail * (1 - product.prices.discount / 100))}
+                  </span>
                   <span className={styles.originalPrice}>
-                    ${product.prices.wholesale}
+                    {formatPrice(product.prices.retail)}
                   </span>
                   <span className={styles.discount}>
                     -{product.prices.discount}%
                   </span>
                 </>
+              ) : (
+                <span className={styles.price}>{formatPrice(product.prices.retail)}</span>
               )}
             </div>
           </div>

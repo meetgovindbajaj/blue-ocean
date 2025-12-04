@@ -8,6 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "sonner";
 import {
   Building2,
@@ -21,14 +28,69 @@ import {
   Plus,
   Trash2,
   GripVertical,
+  DollarSign,
+  Clock,
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
+
+const SOCIAL_PLATFORMS = [
+  { value: "Facebook", label: "Facebook" },
+  { value: "Instagram", label: "Instagram" },
+  { value: "Twitter", label: "Twitter / X" },
+  { value: "LinkedIn", label: "LinkedIn" },
+  { value: "YouTube", label: "YouTube" },
+  { value: "Pinterest", label: "Pinterest" },
+  { value: "TikTok", label: "TikTok" },
+  { value: "WhatsApp", label: "WhatsApp" },
+  { value: "Telegram", label: "Telegram" },
+  { value: "Discord", label: "Discord" },
+  { value: "Reddit", label: "Reddit" },
+  { value: "Snapchat", label: "Snapchat" },
+  { value: "Threads", label: "Threads" },
+];
+
+const CURRENCIES = [
+  { value: "INR", symbol: "₹", label: "Indian Rupee (₹)" },
+  { value: "USD", symbol: "$", label: "US Dollar ($)" },
+  { value: "EUR", symbol: "€", label: "Euro (€)" },
+  { value: "GBP", symbol: "£", label: "British Pound (£)" },
+  { value: "AED", symbol: "د.إ", label: "UAE Dirham (د.إ)" },
+  { value: "SAR", symbol: "﷼", label: "Saudi Riyal (﷼)" },
+  { value: "CAD", symbol: "C$", label: "Canadian Dollar (C$)" },
+  { value: "AUD", symbol: "A$", label: "Australian Dollar (A$)" },
+  { value: "JPY", symbol: "¥", label: "Japanese Yen (¥)" },
+  { value: "CNY", symbol: "¥", label: "Chinese Yuan (¥)" },
+];
+
+const DEFAULT_EXCHANGE_RATES: Record<string, number> = {
+  USD: 1,
+  INR: 83.5,
+  EUR: 0.92,
+  GBP: 0.79,
+  AED: 3.67,
+  SAR: 3.75,
+  CAD: 1.36,
+  AUD: 1.53,
+  JPY: 149.5,
+  CNY: 7.24,
+};
+
+const DAYS_OF_WEEK = [
+  "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
+];
 
 interface FAQItem {
   question: string;
   answer: string;
   order?: number;
   isActive?: boolean;
+}
+
+interface BusinessHour {
+  day: string;
+  open: string;
+  close: string;
+  isClosed?: boolean;
 }
 
 interface SiteSettings {
@@ -67,6 +129,15 @@ interface SiteSettings {
     keywords?: string[];
   };
   faq?: FAQItem[];
+  locale?: {
+    currency: string;
+    currencySymbol: string;
+    locale: string;
+    exchangeRates?: {
+      [key: string]: number;
+    };
+  };
+  businessHours?: BusinessHour[];
 }
 
 export default function SettingsPage() {
@@ -105,6 +176,9 @@ export default function SettingsPage() {
       const data = await response.json();
 
       if (data.success) {
+        // Update local state with the saved settings from server
+        // This prevents stale state issues on subsequent saves
+        setSettings(data.settings);
         toast.success("Settings saved successfully");
       } else {
         throw new Error(data.error);
@@ -120,7 +194,9 @@ export default function SettingsPage() {
     if (!settings) return;
 
     const keys = path.split(".");
-    const newSettings = { ...settings };
+
+    // Deep clone the settings to avoid mutation issues
+    const newSettings = JSON.parse(JSON.stringify(settings));
     let current: any = newSettings;
 
     for (let i = 0; i < keys.length - 1; i++) {
@@ -226,10 +302,12 @@ export default function SettingsPage() {
       </div>
 
       <Tabs defaultValue="general" className="space-y-4">
-        <TabsList className="flex flex-wrap h-auto gap-1 p-1 w-full sm:grid sm:grid-cols-3 md:grid-cols-6">
+        <TabsList className="flex flex-wrap h-auto gap-1 p-1 w-full sm:grid sm:grid-cols-4 md:grid-cols-8">
           <TabsTrigger value="general" className="flex-1 min-w-[70px]">General</TabsTrigger>
+          <TabsTrigger value="locale" className="flex-1 min-w-[70px]">Currency</TabsTrigger>
           <TabsTrigger value="about" className="flex-1 min-w-[70px]">About</TabsTrigger>
           <TabsTrigger value="contact" className="flex-1 min-w-[70px]">Contact</TabsTrigger>
+          <TabsTrigger value="hours" className="flex-1 min-w-[70px]">Hours</TabsTrigger>
           <TabsTrigger value="social" className="flex-1 min-w-[70px]">Social</TabsTrigger>
           <TabsTrigger value="faq" className="flex-1 min-w-[70px]">FAQ</TabsTrigger>
           <TabsTrigger value="seo" className="flex-1 min-w-[70px]">SEO</TabsTrigger>
@@ -325,6 +403,124 @@ export default function SettingsPage() {
                   />
                 </div>
               </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Currency & Locale Settings */}
+        <TabsContent value="locale" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <DollarSign className="w-5 h-5" />
+                Currency & Locale
+              </CardTitle>
+              <CardDescription>Configure currency and regional settings for your store</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="currency">Base Currency</Label>
+                  <Select
+                    value={settings.locale?.currency || "INR"}
+                    onValueChange={(value) => {
+                      const currency = CURRENCIES.find(c => c.value === value);
+                      if (currency) {
+                        updateSettings("locale.currency", value);
+                        updateSettings("locale.currencySymbol", currency.symbol);
+                      }
+                    }}
+                  >
+                    <SelectTrigger id="currency">
+                      <SelectValue placeholder="Select currency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {CURRENCIES.map((currency) => (
+                        <SelectItem key={currency.value} value={currency.value}>
+                          {currency.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">
+                    The base currency in which product prices are stored
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="currencySymbol">Currency Symbol</Label>
+                  <Input
+                    id="currencySymbol"
+                    value={settings.locale?.currencySymbol || "₹"}
+                    onChange={(e) => updateSettings("locale.currencySymbol", e.target.value)}
+                    placeholder="₹"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="localeCode">Locale Code</Label>
+                <Input
+                  id="localeCode"
+                  value={settings.locale?.locale || "en-IN"}
+                  onChange={(e) => updateSettings("locale.locale", e.target.value)}
+                  placeholder="en-IN"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Used for formatting numbers and dates. Examples: en-IN, en-US, en-GB
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Globe className="w-5 h-5" />
+                Exchange Rates
+              </CardTitle>
+              <CardDescription>
+                Set custom exchange rates relative to USD. These rates are used when users view prices in different currencies.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {CURRENCIES.map((currency) => {
+                  const currentRate = settings.locale?.exchangeRates?.[currency.value]
+                    ?? DEFAULT_EXCHANGE_RATES[currency.value]
+                    ?? 1;
+
+                  return (
+                    <div key={currency.value} className="space-y-2">
+                      <Label htmlFor={`rate-${currency.value}`} className="flex items-center gap-2">
+                        <span className="text-lg">{currency.symbol}</span>
+                        <span>{currency.value}</span>
+                        {currency.value === "USD" && (
+                          <span className="text-xs text-muted-foreground">(Reference)</span>
+                        )}
+                      </Label>
+                      <Input
+                        id={`rate-${currency.value}`}
+                        type="number"
+                        step="0.0001"
+                        min="0"
+                        value={currentRate}
+                        onChange={(e) => {
+                          const newRates = {
+                            ...DEFAULT_EXCHANGE_RATES,
+                            ...(settings.locale?.exchangeRates || {}),
+                            [currency.value]: parseFloat(e.target.value) || 0,
+                          };
+                          updateSettings("locale.exchangeRates", newRates);
+                        }}
+                        disabled={currency.value === "USD"}
+                        className={currency.value === "USD" ? "bg-muted" : ""}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="text-xs text-muted-foreground mt-4">
+                All rates are relative to USD (1 USD = X currency). For example, if 1 USD = 83.5 INR, enter 83.5 for INR.
+              </p>
             </CardContent>
           </Card>
         </TabsContent>
@@ -479,6 +675,74 @@ export default function SettingsPage() {
           </Card>
         </TabsContent>
 
+        {/* Business Hours */}
+        <TabsContent value="hours" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Clock className="w-5 h-5" />
+                Business Hours
+              </CardTitle>
+              <CardDescription>Set your store operating hours</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {DAYS_OF_WEEK.map((day) => {
+                const hourEntry = settings.businessHours?.find(h => h.day === day) || {
+                  day,
+                  open: "09:00",
+                  close: "18:00",
+                  isClosed: false
+                };
+                const dayIndex = settings.businessHours?.findIndex(h => h.day === day) ?? -1;
+
+                const updateHour = (field: string, value: string | boolean) => {
+                  const hours = [...(settings.businessHours || [])];
+                  if (dayIndex >= 0) {
+                    hours[dayIndex] = { ...hours[dayIndex], [field]: value };
+                  } else {
+                    hours.push({ day, open: "09:00", close: "18:00", isClosed: false, [field]: value });
+                  }
+                  updateSettings("businessHours", hours);
+                };
+
+                return (
+                  <div key={day} className="flex flex-col gap-2 p-3 border rounded-lg sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="font-medium w-24">{day}</span>
+                      <div className="flex items-center gap-2">
+                        <Switch
+                          checked={!hourEntry.isClosed}
+                          onCheckedChange={(checked) => updateHour("isClosed", !checked)}
+                        />
+                        <span className="text-xs text-muted-foreground">
+                          {hourEntry.isClosed ? "Closed" : "Open"}
+                        </span>
+                      </div>
+                    </div>
+                    {!hourEntry.isClosed && (
+                      <div className="flex items-center gap-2">
+                        <Input
+                          type="time"
+                          value={hourEntry.open}
+                          onChange={(e) => updateHour("open", e.target.value)}
+                          className="w-32"
+                        />
+                        <span>to</span>
+                        <Input
+                          type="time"
+                          value={hourEntry.close}
+                          onChange={(e) => updateHour("close", e.target.value)}
+                          className="w-32"
+                        />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         {/* Social Links */}
         <TabsContent value="social" className="space-y-4">
           <Card>
@@ -491,14 +755,24 @@ export default function SettingsPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               {settings.socialLinks?.map((link, index) => (
-                <div key={index} className="flex flex-col gap-3 p-3 border rounded-lg sm:flex-row sm:items-end sm:gap-4 sm:p-0 sm:border-0">
+                <div key={index} className="flex flex-col gap-3 p-3 border rounded-lg sm:flex-row sm:items-end sm:gap-4">
                   <div className="flex-1 space-y-2">
                     <Label>Platform</Label>
-                    <Input
-                      value={link.platform}
-                      onChange={(e) => updateSocialLink(index, "platform", e.target.value)}
-                      placeholder="Facebook, Instagram, etc."
-                    />
+                    <Select
+                      value={link.platform || ""}
+                      onValueChange={(value) => updateSocialLink(index, "platform", value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select platform" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {SOCIAL_PLATFORMS.map((platform) => (
+                          <SelectItem key={platform.value} value={platform.value}>
+                            {platform.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div className="flex-[2] space-y-2">
                     <Label>URL</Label>
@@ -512,13 +786,14 @@ export default function SettingsPage() {
                     variant="destructive"
                     size="sm"
                     onClick={() => removeSocialLink(index)}
-                    className="w-full sm:w-auto"
+                    className="w-full sm:w-auto text-white"
                   >
-                    Remove
+                    <Trash2 className="w-4 h-4" />
                   </Button>
                 </div>
               ))}
               <Button variant="outline" onClick={addSocialLink} className="w-full sm:w-auto">
+                <Plus className="w-4 h-4 mr-2" />
                 Add Social Link
               </Button>
             </CardContent>

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import mongoose from "mongoose";
 import HeroBanner from "@/models/HeroBanner";
+import Product from "@/models/Product";
 import dbConnect from "@/lib/db";
 import { generateCtaLink, transformBanner } from "@/lib/transformers/heroBanner";
 
@@ -92,7 +93,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         height: body.image.height || 0,
       };
 
-      // Transform mobileImage if provided
+      // Transform mobileImage if provided via mobileUrl in image object
       if (mobileUrl) {
         body.mobileImage = {
           id: `mobile-${body.image.id}`,
@@ -105,7 +106,25 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
           width: 0,
           height: 0,
         };
+      } else if (mobileUrl === "" || mobileUrl === null) {
+        // Explicitly remove mobile image if empty string or null is passed
+        body.mobileImage = null;
       }
+    }
+
+    // Also handle separate mobileImage object if passed directly
+    if (body.mobileImage && body.mobileImage.url && body.mobileImage.id) {
+      body.mobileImage = {
+        id: body.mobileImage.id,
+        name: body.mobileImage.name || "Mobile Banner",
+        url: body.mobileImage.url,
+        thumbnailUrl: body.mobileImage.thumbnailUrl || body.mobileImage.url,
+        isThumbnail: false,
+        downloadUrl: body.mobileImage.downloadUrl || "",
+        size: body.mobileImage.size || 0,
+        width: body.mobileImage.width || 0,
+        height: body.mobileImage.height || 0,
+      };
     }
 
     // Auto-generate ctaLink if content is being updated but ctaLink is not provided
@@ -127,6 +146,14 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         { success: false, error: "Banner not found" },
         { status: 404 }
       );
+    }
+
+    // If banner has a product and discount, update the product's discount
+    if (body.content?.productId && body.content?.discountPercent > 0) {
+      await Product.findByIdAndUpdate(body.content.productId, {
+        $set: { "prices.discount": body.content.discountPercent }
+      });
+      revalidatePath("/products");
     }
 
     // Revalidate cached pages

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import connectDB from "@/lib/db";
 import Tag from "@/models/Tag";
 
@@ -111,6 +112,10 @@ export async function POST(request: NextRequest) {
     });
 
     await tag.save();
+
+    // Revalidate paths
+    revalidatePath("/");
+    revalidatePath("/api/tags");
 
     return NextResponse.json({
       success: true,

@@ -203,6 +203,93 @@
     transform: translateY(-2px);
   }
 
+  /* History Section */
+  .historySection {
+    padding: 2rem 0;
+  }
+
+  .historyContent {
+    background-color: var(--background-secondary);
+    border-radius: 12px;
+    padding: 2rem;
+  }
+
+  .historyText {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--text-secondary);
+    margin: 0;
+    white-space: pre-line;
+  }
+
+  /* Team Section */
+  .teamSection {
+    padding: 2rem 0;
+  }
+
+  .teamGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .teamCard {
+    background-color: var(--background-secondary);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .teamCard:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  }
+
+  .teamImageWrapper {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 1rem;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .teamImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .teamPlaceholder {
+    color: white;
+  }
+
+  .teamName {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin: 0 0 0.25rem 0;
+    color: var(--text-primary);
+  }
+
+  .teamRole {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--primary);
+    margin: 0 0 0.75rem 0;
+  }
+
+  .teamBio {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
   @media (max-width: 768px) {
     .page {
       padding: 1.5rem 1rem;
@@ -234,6 +321,14 @@
 
     .ctaSection {
       padding: 2rem 1.5rem;
+    }
+
+    .teamGrid {
+      grid-template-columns: 1fr;
+    }
+
+    .historyContent {
+      padding: 1.5rem;
     }
   }
 }

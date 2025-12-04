@@ -5,6 +5,8 @@ import {
   useContext,
   useEffect,
   useState,
+  useMemo,
+  useCallback,
   ReactNode,
 } from "react";
 
@@ -20,6 +22,13 @@ export interface SiteSettings {
     description?: string;
     mission?: string;
     vision?: string;
+    history?: string;
+    team?: {
+      name: string;
+      role: string;
+      image?: string;
+      bio?: string;
+    }[];
   };
   contact: {
     email?: string;
@@ -60,7 +69,11 @@ export interface SiteSettings {
   }>;
   locale?: {
     currency?: string;
-    language?: string;
+    currencySymbol?: string;
+    locale?: string;
+    exchangeRates?: {
+      [key: string]: number;
+    };
   };
 }
 
@@ -68,6 +81,7 @@ interface SiteSettingsContextValue {
   settings: SiteSettings | null;
   loading: boolean;
   error: string | null;
+  formatPrice: (price: number) => string;
 }
 
 const defaultSettings: SiteSettings = {
@@ -80,10 +94,18 @@ const defaultSettings: SiteSettings = {
   seo: {},
 };
 
+const defaultFormatPrice = (price: number) => {
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+  }).format(price);
+};
+
 const SiteSettingsContext = createContext<SiteSettingsContextValue>({
   settings: defaultSettings,
   loading: true,
   error: null,
+  formatPrice: defaultFormatPrice,
 });
 
 export function SiteSettingsProvider({ children }: { children: ReactNode }) {
@@ -114,8 +136,27 @@ export function SiteSettingsProvider({ children }: { children: ReactNode }) {
     fetchSettings();
   }, []);
 
+  const formatPrice = useCallback((price: number) => {
+    const currency = settings?.locale?.currency || "INR";
+    const locale = settings?.locale?.locale || "en-IN";
+
+    return new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency: currency,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(price);
+  }, [settings?.locale?.currency, settings?.locale?.locale]);
+
+  const value = useMemo(() => ({
+    settings,
+    loading,
+    error,
+    formatPrice,
+  }), [settings, loading, error, formatPrice]);
+
   return (
-    <SiteSettingsContext.Provider value={{ settings, loading, error }}>
+    <SiteSettingsContext.Provider value={value}>
       {children}
     </SiteSettingsContext.Provider>
   );

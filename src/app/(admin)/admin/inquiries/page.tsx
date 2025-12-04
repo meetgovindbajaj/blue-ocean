@@ -97,14 +97,14 @@ interface Inquiry {
 interface StatusCounts {
   total: number;
   pending: number;
-  in_progress: number;
+  "in-progress": number;
   resolved: number;
   closed: number;
 }
 
 const STATUSES = [
   { value: "pending", label: "Pending", color: "bg-yellow-100 text-yellow-800" },
-  { value: "in_progress", label: "In Progress", color: "bg-blue-100 text-blue-800" },
+  { value: "in-progress", label: "In Progress", color: "bg-blue-100 text-blue-800" },
   { value: "resolved", label: "Resolved", color: "bg-green-100 text-green-800" },
   { value: "closed", label: "Closed", color: "bg-gray-100 text-gray-800" },
 ];
@@ -321,14 +321,14 @@ export default function InquiriesPage() {
               </div>
             </CardContent>
           </Card>
-          <Card className="cursor-pointer hover:bg-muted/50" onClick={() => setStatusFilter("in_progress")}>
+          <Card className="cursor-pointer hover:bg-muted/50" onClick={() => setStatusFilter("in-progress")}>
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-lg bg-blue-100">
                   <Clock className="h-5 w-5 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">{counts.in_progress}</p>
+                  <p className="text-2xl font-bold">{counts["in-progress"]}</p>
                   <p className="text-xs text-muted-foreground">In Progress</p>
                 </div>
               </div>
@@ -473,7 +473,7 @@ export default function InquiriesPage() {
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
-                              onClick={() => handleUpdateStatus(inquiry.id, "in_progress")}
+                              onClick={() => handleUpdateStatus(inquiry.id, "in-progress")}
                             >
                               <Clock className="h-4 w-4 mr-2" />
                               Mark In Progress

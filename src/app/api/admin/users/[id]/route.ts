@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import connectDB from "@/lib/db";
 import User from "@/models/User";
+import Token from "@/models/Token";
 import { Types } from "mongoose";
 
 export async function GET(
@@ -30,11 +32,28 @@ export async function GET(
       );
     }
 
+    // Fetch active tokens for this user (email verification, password reset)
+    const userId = (user as any)._id;
+    const activeTokens = await Token.find({
+      user: userId,
+      expiresAt: { $gt: new Date() },
+    })
+      .select("token type expiresAt createdAt")
+      .lean();
+
+    const tokens = activeTokens.map((t: any) => ({
+      token: t.token,
+      type: t.type,
+      expiresAt: t.expiresAt,
+      createdAt: t.createdAt,
+    }));
+
     return NextResponse.json({
       success: true,
       user: {
         ...(user as any),
         id: (user as any).id || (user as any)._id?.toString(),
+        activeTokens: tokens,
       },
     });
   } catch (error) {
@@ -78,6 +97,10 @@ export async function PUT(
       );
     }
 
+    // Revalidate paths
+    revalidatePath("/admin/users");
+    revalidatePath("/api/admin/users");
+
     return NextResponse.json({
       success: true,
       user: {
@@ -117,6 +140,10 @@ export async function DELETE(
         { status: 404 }
       );
     }
+
+    // Revalidate paths
+    revalidatePath("/admin/users");
+    revalidatePath("/api/admin/users");
 
     return NextResponse.json({
       success: true,

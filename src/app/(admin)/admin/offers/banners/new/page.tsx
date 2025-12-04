@@ -19,15 +19,18 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ArrowLeft, Save } from "lucide-react";
 import ImagePicker, { ImageData } from "@/components/admin/ImagePicker";
+import { toast } from "sonner";
 
 interface Category {
   id: string;
   name: string;
+  slug: string;
 }
 
 interface Product {
   id: string;
   name: string;
+  slug: string;
 }
 
 const CONTENT_TYPES = [
@@ -66,6 +69,41 @@ export default function NewBannerPage() {
     isActive: true,
   });
 
+  // Helper to generate CTA link based on content type and selection
+  const generateCtaLink = (contentType: string, productId: string, categoryId: string): string => {
+    switch (contentType) {
+      case "product":
+        const product = products.find(p => p.id === productId);
+        return product ? `/products/${product.slug}` : "/products";
+      case "category":
+        const category = categories.find(c => c.id === categoryId);
+        return category ? `/category/${category.slug}` : "/categories";
+      case "trending":
+        return "/products?sort=trending";
+      case "new_arrivals":
+        return "/products?sort=newest";
+      case "offer":
+        return "/products?filter=offers";
+      default:
+        return "";
+    }
+  };
+
+  // Auto-update CTA link when content type or selection changes
+  useEffect(() => {
+    const newCtaLink = generateCtaLink(
+      formData.contentType,
+      formData.content.productId,
+      formData.content.categoryId
+    );
+    if (newCtaLink && formData.content.ctaLink !== newCtaLink) {
+      setFormData(prev => ({
+        ...prev,
+        content: { ...prev.content, ctaLink: newCtaLink }
+      }));
+    }
+  }, [formData.contentType, formData.content.productId, formData.content.categoryId, products, categories]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -93,7 +131,7 @@ export default function NewBannerPage() {
     try {
       // Validate image
       if (!formData.image) {
-        alert("Please select a banner image");
+        toast.error("Please select a banner image");
         setLoading(false);
         return;
       }
@@ -124,13 +162,14 @@ export default function NewBannerPage() {
       const data = await response.json();
 
       if (data.success) {
+        toast.success("Banner created successfully");
         router.push("/admin/offers" as Route);
       } else {
-        alert(data.error || "Failed to create banner");
+        toast.error(data.error || "Failed to create banner");
       }
     } catch (error) {
       console.error("Failed to create banner:", error);
-      alert("Failed to create banner");
+      toast.error("Failed to create banner");
     } finally {
       setLoading(false);
     }

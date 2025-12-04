@@ -26,6 +26,7 @@ import {
   ShieldOff,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useCurrency, CURRENCIES } from "@/context/CurrencyContext";
 
 interface Address {
   street?: string;
@@ -72,6 +73,7 @@ interface UserProfile {
 
 const SettingsPage = () => {
   const router = useRouter();
+  const { currency, setUserCurrency, siteCurrency, loading: currencyLoading } = useCurrency();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -672,19 +674,30 @@ const SettingsPage = () => {
                       <div>
                         <h3 className={styles.settingLabel}>Currency</h3>
                         <p className={styles.settingDescription}>
-                          Select your preferred currency for prices
+                          Select your preferred currency for viewing prices
                         </p>
                       </div>
                     </div>
                     <select
                       className={styles.select}
-                      value={preferences.currency}
-                      onChange={(e) => handlePreferencesChange("currency", e.target.value)}
+                      value={currency}
+                      onChange={async (e) => {
+                        const value = e.target.value;
+                        // If user selects the same as site default, clear their preference
+                        if (value === siteCurrency) {
+                          await setUserCurrency("");
+                        } else {
+                          await setUserCurrency(value);
+                        }
+                        toast.success("Currency preference saved");
+                      }}
+                      disabled={currencyLoading}
                     >
-                      <option value="INR">INR (₹)</option>
-                      <option value="USD">USD ($)</option>
-                      <option value="EUR">EUR (€)</option>
-                      <option value="GBP">GBP (£)</option>
+                      {CURRENCIES.map((curr) => (
+                        <option key={curr.code} value={curr.code}>
+                          {curr.code} ({curr.symbol}) - {curr.name}
+                        </option>
+                      ))}
                     </select>
                   </div>
 

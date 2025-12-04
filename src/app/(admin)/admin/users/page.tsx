@@ -74,6 +74,9 @@ import {
   Key,
   ShieldCheck,
   AlertTriangle,
+  Copy,
+  Mail,
+  KeyRound,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -103,6 +106,13 @@ interface Profile {
   };
 }
 
+interface ActiveToken {
+  token: string;
+  type: string;
+  expiresAt: string;
+  createdAt: string;
+}
+
 interface User {
   id: string;
   name: string;
@@ -118,6 +128,7 @@ interface User {
   lockUntil?: string;
   permissions?: string[];
   profile?: Profile;
+  activeTokens?: ActiveToken[];
   createdAt: string;
   updatedAt?: string;
 }
@@ -415,6 +426,39 @@ export default function UsersPage() {
       hour: "2-digit",
       minute: "2-digit",
     });
+  };
+
+  const copyToClipboard = async (text: string, label: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success(`${label} copied to clipboard`);
+    } catch (error) {
+      toast.error("Failed to copy to clipboard");
+    }
+  };
+
+  const getTokenTypeLabel = (type: string) => {
+    switch (type) {
+      case "email_verification":
+        return "Email Verification";
+      case "reset_password":
+        return "Password Reset";
+      case "activation":
+        return "Account Activation";
+      default:
+        return type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+    }
+  };
+
+  const getTokenTypeIcon = (type: string) => {
+    switch (type) {
+      case "email_verification":
+        return Mail;
+      case "reset_password":
+        return KeyRound;
+      default:
+        return Key;
+    }
   };
 
   return (
@@ -856,6 +900,94 @@ export default function UsersPage() {
                     </div>
                   </div>
                 )}
+
+                {/* Active Tokens Section */}
+                <div className="space-y-3 pt-4 border-t">
+                  <p className="text-sm font-medium flex items-center gap-2">
+                    <Key className="h-4 w-4" />
+                    Active Tokens
+                    {viewUser.activeTokens && viewUser.activeTokens.length > 0 && (
+                      <Badge variant="secondary" className="ml-1">
+                        {viewUser.activeTokens.length}
+                      </Badge>
+                    )}
+                  </p>
+                  {viewUser.activeTokens && viewUser.activeTokens.length > 0 ? (
+                    <div className="space-y-2">
+                      {viewUser.activeTokens.map((token, index) => {
+                        const TokenIcon = getTokenTypeIcon(token.type);
+                        return (
+                          <div
+                            key={index}
+                            className="p-3 bg-muted rounded-lg space-y-2"
+                          >
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <TokenIcon className="h-4 w-4 text-muted-foreground" />
+                                <span className="font-medium text-sm">
+                                  {getTokenTypeLabel(token.type)}
+                                </span>
+                              </div>
+                              <Badge variant="outline" className="text-xs">
+                                Expires: {formatDate(token.expiresAt)}
+                              </Badge>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <code className="flex-1 text-xs bg-background px-2 py-1 rounded border font-mono truncate">
+                                {token.token}
+                              </code>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => copyToClipboard(token.token, getTokenTypeLabel(token.type) + " Token")}
+                              >
+                                <Copy className="h-3 w-3" />
+                              </Button>
+                            </div>
+                            {token.type === "email_verification" && (
+                              <div className="flex items-center gap-2 pt-1">
+                                <span className="text-xs text-muted-foreground">Verification URL:</span>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-6 text-xs"
+                                  onClick={() => {
+                                    const url = `${window.location.origin}/auth/verify-email?token=${token.token}`;
+                                    copyToClipboard(url, "Verification URL");
+                                  }}
+                                >
+                                  <Copy className="h-3 w-3 mr-1" />
+                                  Copy Full URL
+                                </Button>
+                              </div>
+                            )}
+                            {token.type === "reset_password" && (
+                              <div className="flex items-center gap-2 pt-1">
+                                <span className="text-xs text-muted-foreground">Reset URL:</span>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-6 text-xs"
+                                  onClick={() => {
+                                    const url = `${window.location.origin}/auth/reset-password?token=${token.token}`;
+                                    copyToClipboard(url, "Password Reset URL");
+                                  }}
+                                >
+                                  <Copy className="h-3 w-3 mr-1" />
+                                  Copy Full URL
+                                </Button>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground py-2">
+                      No active tokens for this user
+                    </p>
+                  )}
+                </div>
               </TabsContent>
             </Tabs>
           )}

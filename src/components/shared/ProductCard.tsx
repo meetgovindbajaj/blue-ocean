@@ -6,14 +6,10 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { useCurrency } from "@/context/CurrencyContext";
 
 const ProductCard = ({ product }: { product: ProductType }) => {
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(price);
-  };
+  const { formatPrice } = useCurrency();
 
   const getPriceDisplay = (product: ProductType) => {
     if (product.prices.discount > 0) {

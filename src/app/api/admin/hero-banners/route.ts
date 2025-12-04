@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import HeroBanner from "@/models/HeroBanner";
+import Product from "@/models/Product";
 import dbConnect from "@/lib/db";
 import { generateCtaLink, transformBanner, transformBanners } from "@/lib/transformers/heroBanner";
 
@@ -65,11 +67,23 @@ export async function POST(request: NextRequest) {
     const banner = new HeroBanner(body);
     await banner.save();
 
+    // If banner has a product and discount, update the product's discount
+    if (body.content?.productId && body.content?.discountPercent > 0) {
+      await Product.findByIdAndUpdate(body.content.productId, {
+        $set: { "prices.discount": body.content.discountPercent }
+      });
+      revalidatePath("/products");
+    }
+
     // Populate and transform for consistent response
     const populated = await HeroBanner.findById(banner._id)
       .populate("content.productId", "name slug prices images")
       .populate("content.categoryId", "name slug image")
       .lean();
+
+    // Revalidate paths
+    revalidatePath("/");
+    revalidatePath("/api/hero-banners");
 
     return NextResponse.json({
       success: true,

@@ -19,12 +19,15 @@ import {
   Users,
   ShoppingCart,
   BarChart3,
+  UserCheck,
 } from "lucide-react";
 
 interface AnalyticsData {
   overview: {
     totalViews: number;
     totalClicks: number;
+    uniqueVisitors: number;
+    totalBannerClicks: number;
     totalProducts: number;
     totalUsers: number;
   };
@@ -32,6 +35,7 @@ interface AnalyticsData {
     id: string;
     name: string;
     views: number;
+    uniqueVisitors: number;
     percentage: number;
   }>;
   topCategories: Array<{
@@ -88,6 +92,13 @@ export default function AnalyticsPage() {
       bgColor: "bg-green-100",
     },
     {
+      title: "Unique Visitors",
+      value: data?.overview.uniqueVisitors || 0,
+      icon: UserCheck,
+      color: "text-cyan-600",
+      bgColor: "bg-cyan-100",
+    },
+    {
       title: "Products",
       value: data?.overview.totalProducts || 0,
       icon: Package,
@@ -110,8 +121,8 @@ export default function AnalyticsPage() {
           <Skeleton className="h-8 w-32" />
           <Skeleton className="h-10 w-32" />
         </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {[...Array(4)].map((_, i) => (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+          {[...Array(5)].map((_, i) => (
             <Card key={i}>
               <CardHeader className="pb-2">
                 <Skeleton className="h-4 w-24" />
@@ -149,7 +160,7 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Overview Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {overviewCards.map((card) => (
           <Card key={card.title}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">

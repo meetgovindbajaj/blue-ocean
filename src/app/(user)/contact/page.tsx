@@ -6,7 +6,7 @@ import Image from "next/image";
 import styles from "./page.module.css";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 import { useAuth } from "@/context/AuthContext";
-import { Mail, Phone, MapPin, Clock, MessageCircle, Send, Loader2, Search, X, ChevronDown, Package } from "lucide-react";
+import { Mail, Phone, MapPin, Clock, MessageCircle, Send, Loader2, Search, X, ChevronDown, Package, Share2, Facebook, Twitter, Instagram, Linkedin, Youtube, Globe } from "lucide-react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -16,6 +16,22 @@ interface ProductOption {
   slug: string;
   image?: string;
 }
+
+// Helper function to get the appropriate icon for each social platform
+const getSocialIcon = (platform: string) => {
+  const platformLower = platform.toLowerCase();
+  if (platformLower.includes("facebook")) return Facebook;
+  if (platformLower.includes("twitter") || platformLower.includes("x")) return Twitter;
+  if (platformLower.includes("instagram")) return Instagram;
+  if (platformLower.includes("linkedin")) return Linkedin;
+  if (platformLower.includes("youtube")) return Youtube;
+  return Globe;
+};
+
+// Helper function to format platform name for display
+const formatPlatformName = (platform: string) => {
+  return platform.charAt(0).toUpperCase() + platform.slice(1).toLowerCase();
+};
 
 const ContactPageInner = () => {
   const { settings, loading } = useSiteSettings();
@@ -130,7 +146,7 @@ const ContactPageInner = () => {
         ...prev,
         name: user.name || prev.name,
         email: user.email || prev.email,
-        phone: (user as any)?.profile?.phone || prev.phone,
+        phone: user.phone || prev.phone,
       }));
     }
 
@@ -200,7 +216,7 @@ const ContactPageInner = () => {
         setFormData({
           name: user?.name || "",
           email: user?.email || "",
-          phone: (user as any)?.profile?.phone || "",
+          phone: user?.phone || "",
           subject: "",
           message: "",
           productId: "",
@@ -349,6 +365,33 @@ const ContactPageInner = () => {
                       </span>
                     </div>
                   ))}
+                </div>
+              </div>
+            )}
+
+            {/* Social Links */}
+            {settings?.socialLinks && settings.socialLinks.length > 0 && (
+              <div className={styles.socialSection}>
+                <h3 className={styles.socialTitle}>
+                  <Share2 size={20} />
+                  Connect With Us
+                </h3>
+                <div className={styles.socialLinks}>
+                  {settings.socialLinks.map((link, index) => {
+                    const IconComponent = getSocialIcon(link.platform);
+                    return (
+                      <a
+                        key={index}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={styles.socialLink}
+                      >
+                        <IconComponent size={20} />
+                        <span>{formatPlatformName(link.platform)}</span>
+                      </a>
+                    );
+                  })}
                 </div>
               </div>
             )}

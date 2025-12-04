@@ -13,6 +13,15 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
   Download,
   FileSpreadsheet,
   FileText,
@@ -22,7 +31,10 @@ import {
   Image,
   ShoppingCart,
   TrendingUp,
+  Eye,
+  Loader2,
 } from "lucide-react";
+import { toast } from "sonner";
 
 interface ReportType {
   id: string;
@@ -77,11 +89,59 @@ const REPORT_TYPES: ReportType[] = [
   },
 ];
 
+interface PreviewData {
+  headers: string[];
+  rows: any[][];
+  total: number;
+}
+
 export default function ReportsPage() {
   const [selectedReport, setSelectedReport] = useState<string | null>(null);
   const [format, setFormat] = useState("csv");
   const [dateRange, setDateRange] = useState("30d");
   const [downloading, setDownloading] = useState(false);
+  const [previewing, setPreviewing] = useState(false);
+  const [previewData, setPreviewData] = useState<PreviewData | null>(null);
+
+  const handlePreview = async () => {
+    if (!selectedReport) return;
+    setPreviewing(true);
+    setPreviewData(null);
+
+    try {
+      const response = await fetch(
+        `/api/admin/reports/${selectedReport}?format=json&range=${dateRange}&preview=true&limit=10`
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.data) {
+          // Convert data to preview format
+          const items = data.data;
+          if (items.length > 0) {
+            const headers = Object.keys(items[0]);
+            const rows = items.map((item: any) => headers.map((h) => item[h]));
+            setPreviewData({
+              headers,
+              rows,
+              total: data.total || items.length,
+            });
+          } else {
+            setPreviewData({ headers: [], rows: [], total: 0 });
+          }
+        } else {
+          toast.error("No data available for preview");
+        }
+      } else {
+        toast.error("Failed to fetch preview");
+      }
+    } catch (error) {
+      console.error("Failed to fetch preview:", error);
+      toast.error("Failed to fetch preview");
+    } finally {
+      setPreviewing(false);
+    }
+  };
 
   const handleDownload = async () => {
     if (!selectedReport) return;
@@ -102,12 +162,13 @@ export default function ReportsPage() {
         a.click();
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
+        toast.success("Report downloaded successfully");
       } else {
-        alert("Failed to download report");
+        toast.error("Failed to download report");
       }
     } catch (error) {
       console.error("Failed to download report:", error);
-      alert("Failed to download report");
+      toast.error("Failed to download report");
     } finally {
       setDownloading(false);
     }
@@ -227,14 +288,33 @@ export default function ReportsPage() {
                 </Select>
               </div>
 
-              <Button
-                className="w-full"
-                onClick={handleDownload}
-                disabled={!selectedReport || downloading}
-              >
-                <Download className="h-4 w-4 mr-2" />
-                {downloading ? "Generating..." : "Download Report"}
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  onClick={handlePreview}
+                  disabled={!selectedReport || previewing}
+                >
+                  {previewing ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <Eye className="h-4 w-4 mr-2" />
+                  )}
+                  Preview
+                </Button>
+                <Button
+                  className="flex-1"
+                  onClick={handleDownload}
+                  disabled={!selectedReport || downloading}
+                >
+                  {downloading ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <Download className="h-4 w-4 mr-2" />
+                  )}
+                  Download
+                </Button>
+              </div>
             </CardContent>
           </Card>
 
@@ -260,6 +340,76 @@ export default function ReportsPage() {
           )}
         </div>
       </div>
+
+      {/* Preview Section */}
+      {(previewing || previewData) && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Eye className="h-5 w-5" />
+              Report Preview
+              {previewData && (
+                <Badge variant="secondary" className="ml-2">
+                  Showing {previewData.rows.length} of {previewData.total} records
+                </Badge>
+              )}
+            </CardTitle>
+            <CardDescription>
+              Preview of the data that will be included in the report
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {previewing ? (
+              <div className="space-y-3">
+                <Skeleton className="h-10 w-full" />
+                {[...Array(5)].map((_, i) => (
+                  <Skeleton key={i} className="h-8 w-full" />
+                ))}
+              </div>
+            ) : previewData && previewData.rows.length > 0 ? (
+              <div className="border rounded-lg overflow-auto max-h-[400px]">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      {previewData.headers.map((header) => (
+                        <TableHead key={header} className="whitespace-nowrap">
+                          {header
+                            .replace(/([A-Z])/g, " $1")
+                            .replace(/^./, (str) => str.toUpperCase())
+                            .trim()}
+                        </TableHead>
+                      ))}
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {previewData.rows.map((row, rowIndex) => (
+                      <TableRow key={rowIndex}>
+                        {row.map((cell, cellIndex) => (
+                          <TableCell key={cellIndex} className="whitespace-nowrap">
+                            {cell === null || cell === undefined
+                              ? "-"
+                              : typeof cell === "boolean"
+                              ? cell
+                                ? "Yes"
+                                : "No"
+                              : typeof cell === "object"
+                              ? JSON.stringify(cell)
+                              : String(cell)}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            ) : previewData ? (
+              <p className="text-sm text-muted-foreground text-center py-8">
+                No data available for the selected report and date range
+              </p>
+            ) : null}
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

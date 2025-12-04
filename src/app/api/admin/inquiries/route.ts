@@ -58,17 +58,17 @@ export async function GET(request: NextRequest) {
       { $group: { _id: "$status", count: { $sum: 1 } } },
     ]);
 
-    const counts = {
+    const counts: Record<string, number> = {
       total,
       pending: 0,
-      in_progress: 0,
+      "in-progress": 0,
       resolved: 0,
       closed: 0,
     };
 
     statusCounts.forEach((s: any) => {
-      if (s._id in counts) {
-        (counts as any)[s._id] = s.count;
+      if (s._id && s._id in counts) {
+        counts[s._id] = s.count;
       }
     });
 

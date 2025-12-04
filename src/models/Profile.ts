@@ -63,8 +63,8 @@ const ProfileSchema = new Schema<IProfile>(
         },
         currency: {
           type: String,
-          default: "INR",
-          enum: ["INR", "USD", "EUR", "GBP"],
+          default: "",  // Empty means use site default
+          enum: ["", "INR", "USD", "EUR", "GBP", "AED", "SAR", "CAD", "AUD", "JPY", "CNY"],
         },
         language: {
           type: String,
@@ -89,7 +89,7 @@ const ProfileSchema = new Schema<IProfile>(
       default: {
         newsletter: true,
         promotions: true,
-        currency: "INR",
+        currency: "",  // Empty means use site default
         language: "en",
         notifications: {
           email: false,

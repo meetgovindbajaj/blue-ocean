@@ -105,6 +105,9 @@ interface ISiteSettings extends Document {
     currency: string;
     currencySymbol: string;
     locale: string;
+    exchangeRates?: {
+      [key: string]: number;
+    };
   };
 
   updatedAt: Date;
@@ -213,6 +216,21 @@ const SiteSettingsSchema = new Schema<ISiteSettings>(
       currency: { type: String, default: "INR" },
       currencySymbol: { type: String, default: "₹" },
       locale: { type: String, default: "en-IN" },
+      exchangeRates: {
+        type: Object,
+        default: {
+          USD: 1,
+          INR: 83.5,
+          EUR: 0.92,
+          GBP: 0.79,
+          AED: 3.67,
+          SAR: 3.75,
+          CAD: 1.36,
+          AUD: 1.53,
+          JPY: 149.5,
+          CNY: 7.24,
+        },
+      },
     },
   },
   {
@@ -225,7 +243,7 @@ SiteSettingsSchema.statics.getSettings = async function () {
   let settings = await this.findOne();
   if (!settings) {
     settings = await this.create({
-      siteName: "Furniture Store",
+      siteName: "Blue Ocean",
       contact: { email: "contact@example.com" },
     });
   }

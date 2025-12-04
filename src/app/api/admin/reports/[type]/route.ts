@@ -16,6 +16,8 @@ export async function GET(
     const { searchParams } = new URL(request.url);
     const format = searchParams.get("format") || "csv";
     const range = searchParams.get("range") || "30d";
+    const preview = searchParams.get("preview") === "true";
+    const limit = parseInt(searchParams.get("limit") || "0") || 0;
 
     // Calculate date range
     let startDate: Date | null = null;
@@ -165,7 +167,20 @@ export async function GET(
         );
     }
 
-    if (format === "json") {
+    // For preview mode, return structured response
+    if (preview || format === "json") {
+      const totalCount = data.length;
+      const responseData = limit > 0 ? data.slice(0, limit) : data;
+
+      if (preview) {
+        return NextResponse.json({
+          success: true,
+          data: responseData,
+          total: totalCount,
+        });
+      }
+
+      // Regular JSON download
       return NextResponse.json(data, {
         headers: {
           "Content-Disposition": `attachment; filename="${filename}.json"`,

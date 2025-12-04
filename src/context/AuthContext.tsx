@@ -9,6 +9,7 @@ interface User {
   role: string;
   isVerified: boolean;
   avatar?: string;
+  phone?: string;
 }
 
 interface AuthContextType {
@@ -38,6 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           role: data.user.role,
           isVerified: data.user.isVerified,
           avatar: data.user.profile?.avatar,
+          phone: data.user.profile?.phone,
         });
       } else {
         setUser(null);

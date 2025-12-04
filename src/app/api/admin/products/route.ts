@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import connectDB from "@/lib/db";
 import Product from "@/models/Product";
 import { getAuthUser, isAdmin, hasPermission, Permissions, unauthorizedResponse, forbiddenResponse } from "@/lib/apiAuth";
@@ -114,6 +115,13 @@ export async function POST(request: NextRequest) {
     });
 
     await product.save();
+
+    // Revalidate paths
+    revalidatePath("/");
+    revalidatePath("/products");
+    revalidatePath("/categories");
+    revalidatePath("/api/products");
+    revalidatePath("/api/recommendations");
 
     return NextResponse.json({
       success: true,

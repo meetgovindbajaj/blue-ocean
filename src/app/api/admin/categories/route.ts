@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import connectDB from "@/lib/db";
 import Category from "@/models/Category";
 
@@ -89,6 +90,12 @@ export async function POST(request: NextRequest) {
     });
 
     await category.save();
+
+    // Revalidate paths
+    revalidatePath("/");
+    revalidatePath("/categories");
+    revalidatePath("/products");
+    revalidatePath("/api/categories");
 
     return NextResponse.json({
       success: true,

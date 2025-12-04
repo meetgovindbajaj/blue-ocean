@@ -20,15 +20,18 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, Save } from "lucide-react";
 import ImagePicker, { ImageData } from "@/components/admin/ImagePicker";
+import { toast } from "sonner";
 
 interface Category {
   id: string;
   name: string;
+  slug: string;
 }
 
 interface Product {
   id: string;
   name: string;
+  slug: string;
 }
 
 const CONTENT_TYPES = [
@@ -65,13 +68,36 @@ export default function EditBannerPage({
       ctaLink: "",
       discountPercent: 0,
       offerCode: "",
+      offerValidUntil: "",
     },
     image: null as ImageData | null,
     imageAlt: "Hero Banner",
     mobileImage: null as ImageData | null,
     order: 0,
     isActive: true,
+    startDate: "",
+    endDate: "",
   });
+
+  // Helper to generate CTA link based on content type and selection
+  const generateCtaLink = (contentType: string, productId: string, categoryId: string, prods: Product[], cats: Category[]): string => {
+    switch (contentType) {
+      case "product":
+        const product = prods.find(p => p.id === productId);
+        return product ? `/products/${product.slug}` : "/products";
+      case "category":
+        const category = cats.find(c => c.id === categoryId);
+        return category ? `/category/${category.slug}` : "/categories";
+      case "trending":
+        return "/products?sort=trending";
+      case "new_arrivals":
+        return "/products?sort=newest";
+      case "offer":
+        return "/products?filter=offers";
+      default:
+        return "";
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -86,22 +112,46 @@ export default function EditBannerPage({
         const catData = await catRes.json();
         const prodData = await prodRes.json();
 
+        const loadedCategories = catData.success ? catData.categories : [];
+        const loadedProducts = prodData.success ? prodData.products : [];
+
+        if (catData.success) setCategories(loadedCategories);
+        if (prodData.success) setProducts(loadedProducts);
+
         if (bannerData.success) {
           const b = bannerData.banner;
+          const productId = b.content?.productId?.id || b.content?.productId || "";
+          const categoryId = b.content?.categoryId?.id || b.content?.categoryId || "";
+          const contentType = b.contentType || "custom";
+
+          // Generate CTA link if not already set
+          let ctaLink = b.content?.ctaLink || "";
+          if (!ctaLink && contentType !== "custom") {
+            ctaLink = generateCtaLink(contentType, productId, categoryId, loadedProducts, loadedCategories);
+          }
+
+          // Format dates for datetime-local input
+          const formatDateForInput = (dateStr: string | null) => {
+            if (!dateStr) return "";
+            const date = new Date(dateStr);
+            return date.toISOString().slice(0, 16);
+          };
+
           setFormData({
             name: b.name || "",
-            contentType: b.contentType || "custom",
+            contentType: contentType,
             sourceType: b.sourceType || "manual",
             content: {
-              productId: b.content?.productId?.id || b.content?.productId || "",
-              categoryId: b.content?.categoryId?.id || b.content?.categoryId || "",
+              productId: productId,
+              categoryId: categoryId,
               title: b.content?.title || "",
               subtitle: b.content?.subtitle || "",
               description: b.content?.description || "",
               ctaText: b.content?.ctaText || "Shop Now",
-              ctaLink: b.content?.ctaLink || "",
+              ctaLink: ctaLink,
               discountPercent: b.content?.discountPercent || 0,
               offerCode: b.content?.offerCode || "",
+              offerValidUntil: formatDateForInput(b.offerValidUntil || b.content?.offerValidUntil),
             },
             image: b.image?.id ? {
               id: b.image.id,
@@ -114,25 +164,25 @@ export default function EditBannerPage({
               height: b.image.height || 0,
             } : null,
             imageAlt: b.image?.alt || "Hero Banner",
-            mobileImage: b.image?.mobileUrl ? {
-              id: `mobile-${b.image.id || ""}`,
-              name: "Mobile Banner",
-              url: b.image.mobileUrl,
-              thumbnailUrl: b.image.mobileUrl,
-              downloadUrl: "",
-              size: 0,
-              width: 0,
-              height: 0,
+            mobileImage: (b.mobileImage?.url || b.image?.mobileUrl) ? {
+              id: b.mobileImage?.id || `mobile-${b.image?.id || ""}`,
+              name: b.mobileImage?.name || "Mobile Banner",
+              url: b.mobileImage?.url || b.image?.mobileUrl,
+              thumbnailUrl: b.mobileImage?.thumbnailUrl || b.mobileImage?.url || b.image?.mobileUrl,
+              downloadUrl: b.mobileImage?.downloadUrl || "",
+              size: b.mobileImage?.size || 0,
+              width: b.mobileImage?.width || 0,
+              height: b.mobileImage?.height || 0,
             } : null,
             order: b.order || 0,
             isActive: b.isActive ?? true,
+            startDate: formatDateForInput(b.startDate),
+            endDate: formatDateForInput(b.endDate),
           });
         }
-
-        if (catData.success) setCategories(catData.categories);
-        if (prodData.success) setProducts(prodData.products);
       } catch (error) {
         console.error("Failed to fetch data:", error);
+        toast.error("Failed to load banner data");
       } finally {
         setLoading(false);
       }
@@ -141,13 +191,32 @@ export default function EditBannerPage({
     fetchData();
   }, [id]);
 
+  // Auto-update CTA link when content type or selection changes (after initial load)
+  useEffect(() => {
+    if (loading || products.length === 0) return;
+
+    const newCtaLink = generateCtaLink(
+      formData.contentType,
+      formData.content.productId,
+      formData.content.categoryId,
+      products,
+      categories
+    );
+    if (newCtaLink && formData.content.ctaLink !== newCtaLink) {
+      setFormData(prev => ({
+        ...prev,
+        content: { ...prev.content, ctaLink: newCtaLink }
+      }));
+    }
+  }, [formData.contentType, formData.content.productId, formData.content.categoryId]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
 
     try {
       if (!formData.image) {
-        alert("Please select a banner image");
+        toast.error("Please select a banner image");
         setSaving(false);
         return;
       }
@@ -163,28 +232,39 @@ export default function EditBannerPage({
             ...formData.content,
             productId: formData.content.productId || undefined,
             categoryId: formData.content.categoryId || undefined,
+            offerValidUntil: formData.content.offerValidUntil || undefined,
           },
           image: {
             id: formData.image.id,
             url: formData.image.url,
             alt: formData.imageAlt,
-            mobileUrl: formData.mobileImage?.url || "",
+            thumbnailUrl: formData.image.thumbnailUrl,
+            name: formData.image.name,
           },
+          mobileImage: formData.mobileImage ? {
+            id: formData.mobileImage.id,
+            url: formData.mobileImage.url,
+            thumbnailUrl: formData.mobileImage.thumbnailUrl || formData.mobileImage.url,
+            name: formData.mobileImage.name || "Mobile Banner",
+          } : null,
           order: formData.order,
           isActive: formData.isActive,
+          startDate: formData.startDate || null,
+          endDate: formData.endDate || null,
         }),
       });
 
       const data = await response.json();
 
       if (data.success) {
+        toast.success("Banner updated successfully");
         router.push("/admin/offers" as Route);
       } else {
-        alert(data.error || "Failed to update banner");
+        toast.error(data.error || "Failed to update banner");
       }
     } catch (error) {
       console.error("Failed to update banner:", error);
-      alert("Failed to update banner");
+      toast.error("Failed to update banner");
     } finally {
       setSaving(false);
     }
@@ -506,7 +586,7 @@ export default function EditBannerPage({
                 </div>
               </div>
 
-              {formData.contentType === "offer" && (
+              {(formData.contentType === "offer" || formData.contentType === "product") && (
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="discountPercent">Discount %</Label>
@@ -526,24 +606,92 @@ export default function EditBannerPage({
                         })
                       }
                     />
+                    {formData.contentType === "product" && (
+                      <p className="text-xs text-muted-foreground">
+                        This will update the product&apos;s discount
+                      </p>
+                    )}
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="offerCode">Offer Code</Label>
-                    <Input
-                      id="offerCode"
-                      value={formData.content.offerCode}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          content: { ...formData.content, offerCode: e.target.value },
-                        })
-                      }
-                      placeholder="SUMMER20"
-                    />
-                  </div>
+                  {formData.contentType === "offer" && (
+                    <div className="space-y-2">
+                      <Label htmlFor="offerCode">Offer Code</Label>
+                      <Input
+                        id="offerCode"
+                        value={formData.content.offerCode}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            content: { ...formData.content, offerCode: e.target.value },
+                          })
+                        }
+                        placeholder="SUMMER20"
+                      />
+                    </div>
+                  )}
                 </div>
               )}
+
+              {formData.contentType === "offer" && (
+                <div className="space-y-2">
+                  <Label htmlFor="offerValidUntil">Offer Expires</Label>
+                  <Input
+                    id="offerValidUntil"
+                    type="datetime-local"
+                    value={formData.content.offerValidUntil}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        content: { ...formData.content, offerValidUntil: e.target.value },
+                      })
+                    }
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    When the offer expires (displayed on the banner)
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Schedule Card */}
+          <Card className="lg:col-span-2">
+            <CardHeader>
+              <CardTitle>Schedule</CardTitle>
+              <CardDescription>Control when this banner is shown</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="startDate">Start Date</Label>
+                  <Input
+                    id="startDate"
+                    type="datetime-local"
+                    value={formData.startDate}
+                    onChange={(e) =>
+                      setFormData({ ...formData, startDate: e.target.value })
+                    }
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Leave empty to show immediately
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="endDate">End Date</Label>
+                  <Input
+                    id="endDate"
+                    type="datetime-local"
+                    value={formData.endDate}
+                    onChange={(e) =>
+                      setFormData({ ...formData, endDate: e.target.value })
+                    }
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Leave empty to show indefinitely
+                  </p>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>

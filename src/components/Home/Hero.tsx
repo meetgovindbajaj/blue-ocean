@@ -97,6 +97,18 @@ const HeroSection = ({ banners }: HeroSectionProps) => {
     }
   };
 
+  // Track banner CTA click
+  const trackBannerClick = async (bannerId: string) => {
+    try {
+      await fetch(`/api/hero-banners/${bannerId}/click`, {
+        method: "POST",
+      });
+    } catch (error) {
+      // Silently fail - don't block navigation
+      console.error("Failed to track banner click:", error);
+    }
+  };
+
   if (!total) return null;
 
   const goTo = (index: number) => {
@@ -259,7 +271,11 @@ const HeroSection = ({ banners }: HeroSectionProps) => {
           {renderCategoryPreview()}
           {renderAutoProducts()} */}
           {current.ctaText && (
-            <a href={current.ctaLink || "#"} className={styles.button}>
+            <a
+              href={current.ctaLink || "#"}
+              className={styles.button}
+              onClick={() => trackBannerClick(current.id)}
+            >
               {current.ctaText}
             </a>
           )}

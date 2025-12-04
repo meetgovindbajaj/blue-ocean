@@ -381,8 +381,28 @@
 
 .relatedGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 480px) {
+  .relatedGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .relatedGrid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .relatedGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 /* Recommended Products */
@@ -390,6 +410,35 @@
   border-top: 1px solid #e5e7eb;
   padding-top: 3rem;
   margin-top: 3rem;
+}
+
+/* Carousel Styles */
+.carouselContainer {
+  position: relative;
+  padding: 0 3rem;
+}
+
+.carouselNav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.carouselNav:hover:not(:disabled) {
+  background-color: #f9fafb;
+}
+
+.carouselNav:disabled {
+  opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+  .carouselContainer {
+    padding: 0 2.5rem;
+  }
 }
 
 
@@ -557,11 +606,6 @@
 @media (max-width: 600px) {
   .container {
     padding: 1rem;
-  }
-
-  .relatedGrid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
   }
 
   /* Fullscreen adjustments for mobile */

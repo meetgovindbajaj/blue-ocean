@@ -2,8 +2,9 @@
 
 import styles from "./page.module.css";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
-import { Target, Eye, Building2, PencilRuler, Globe2, Headset, ShieldCheck } from "lucide-react";
+import { Target, Eye, Building2, PencilRuler, Globe2, Headset, ShieldCheck, History, Users, User } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import Image from "next/image";
 
 const services = [
   {
@@ -101,6 +102,51 @@ const AboutPage = () => {
                 <p className={styles.cardText}>{about.vision}</p>
               </div>
             )}
+          </section>
+        )}
+
+        {/* History Section */}
+        {about.history && (
+          <section className={styles.historySection}>
+            <h2 className={styles.sectionTitle}>
+              <History size={24} style={{ display: "inline", marginRight: "0.5rem", verticalAlign: "middle" }} />
+              Our Story
+            </h2>
+            <div className={styles.historyContent}>
+              <p className={styles.historyText}>{about.history}</p>
+            </div>
+          </section>
+        )}
+
+        {/* Team Section */}
+        {about.team && about.team.length > 0 && (
+          <section className={styles.teamSection}>
+            <h2 className={styles.sectionTitle}>
+              <Users size={24} style={{ display: "inline", marginRight: "0.5rem", verticalAlign: "middle" }} />
+              Meet Our Team
+            </h2>
+            <div className={styles.teamGrid}>
+              {about.team.map((member, index) => (
+                <div key={index} className={styles.teamCard}>
+                  <div className={styles.teamImageWrapper}>
+                    {member.image ? (
+                      <Image
+                        src={member.image}
+                        alt={member.name}
+                        width={100}
+                        height={100}
+                        className={styles.teamImage}
+                      />
+                    ) : (
+                      <User size={40} className={styles.teamPlaceholder} />
+                    )}
+                  </div>
+                  <h3 className={styles.teamName}>{member.name}</h3>
+                  <p className={styles.teamRole}>{member.role}</p>
+                  {member.bio && <p className={styles.teamBio}>{member.bio}</p>}
+                </div>
+              ))}
+            </div>
           </section>
         )}
 

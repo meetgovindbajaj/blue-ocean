@@ -55,6 +55,12 @@ export interface BannerImage {
   mobileUrl?: string;
 }
 
+export interface MobileImage {
+  id?: string;
+  url: string;
+  thumbnailUrl?: string;
+}
+
 export interface AutoConfig {
   limit?: number;
   period?: string;
@@ -80,6 +86,7 @@ export interface HeroBanner {
   autoProducts?: AutoProduct[] | null;
   autoConfig?: AutoConfig | null;
   image: BannerImage;
+  mobileImage?: MobileImage;
   order: number;
   isActive: boolean;
   startDate?: string | null;

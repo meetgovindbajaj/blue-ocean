@@ -58,6 +58,7 @@ import {
   X,
   User,
 } from "lucide-react";
+import { toast } from "sonner";
 
 interface ImageUsage {
   type: "product" | "category" | "banner" | "tag" | "avatar";
@@ -182,12 +183,30 @@ export default function AdminImagesPage() {
       if (data.success) {
         setImages((prev) => prev.filter((img) => img.id !== deleteImage.id));
         setDeleteImage(null);
+        toast.success("Image deleted successfully");
+
+        // Show warning if products were deactivated
+        if (data.deactivatedProducts && data.deactivatedProducts.length > 0) {
+          toast.warning(
+            `${data.deactivatedProducts.length} product(s) deactivated due to no remaining images: ${data.deactivatedProducts.join(", ")}`
+          );
+        }
+
+        // Show warning if banners were deactivated
+        if (data.deactivatedBanners && data.deactivatedBanners.length > 0) {
+          toast.warning(
+            `${data.deactivatedBanners.length} banner(s) deactivated due to image removal: ${data.deactivatedBanners.join(", ")}`
+          );
+        }
+
+        // Refresh the list to update stats
+        fetchImages();
       } else {
-        alert(data.error || "Failed to delete image");
+        toast.error(data.error || "Failed to delete image");
       }
     } catch (error) {
       console.error("Delete error:", error);
-      alert("Failed to delete image");
+      toast.error("Failed to delete image");
     }
   };
 
@@ -199,15 +218,42 @@ export default function AdminImagesPage() {
 
     try {
       const deletePromises = Array.from(selectedImages).map((id) =>
-        fetch(`/api/upload/${encodeURIComponent(id)}`, { method: "DELETE" })
+        fetch(`/api/upload/${encodeURIComponent(id)}`, { method: "DELETE" }).then(r => r.json())
       );
 
-      await Promise.allSettled(deletePromises);
+      const results = await Promise.allSettled(deletePromises);
+      const successful = results.filter(r => r.status === "fulfilled" && (r.value as any).success).length;
+      const deactivatedProducts: string[] = [];
+      const deactivatedBanners: string[] = [];
+
+      results.forEach(r => {
+        if (r.status === "fulfilled" && (r.value as any).deactivatedProducts) {
+          deactivatedProducts.push(...(r.value as any).deactivatedProducts);
+        }
+        if (r.status === "fulfilled" && (r.value as any).deactivatedBanners) {
+          deactivatedBanners.push(...(r.value as any).deactivatedBanners);
+        }
+      });
+
       setSelectedImages(new Set());
       fetchImages();
+
+      toast.success(`${successful} image(s) deleted successfully`);
+
+      if (deactivatedProducts.length > 0) {
+        toast.warning(
+          `${deactivatedProducts.length} product(s) deactivated due to no remaining images`
+        );
+      }
+
+      if (deactivatedBanners.length > 0) {
+        toast.warning(
+          `${deactivatedBanners.length} banner(s) deactivated due to image removal`
+        );
+      }
     } catch (error) {
       console.error("Bulk delete error:", error);
-      alert("Some images failed to delete");
+      toast.error("Some images failed to delete");
     }
   };
 

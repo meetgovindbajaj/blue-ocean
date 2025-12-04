@@ -19,6 +19,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Save } from "lucide-react";
 import ImagePicker, { ImageData } from "@/components/admin/ImagePicker";
+import { toast } from "sonner";
 
 interface Category {
   id: string;
@@ -80,15 +81,73 @@ export default function NewProductPage() {
       const data = await response.json();
 
       if (data.success) {
+        toast.success("Product created successfully");
         router.push("/admin/products" as Route);
       } else {
-        alert(data.error || "Failed to create product");
+        toast.error(data.error || "Failed to create product");
       }
     } catch (error) {
       console.error("Failed to create product:", error);
-      alert("Failed to create product");
+      toast.error("Failed to create product");
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Auto-calculate discount based on retail and wholesale price difference
+  const calculateDiscountFromPrices = (retail: number, wholesale: number): number => {
+    if (retail > 0 && wholesale > 0 && retail > wholesale) {
+      return Math.round(((retail - wholesale) / retail) * 100);
+    }
+    return 0;
+  };
+
+  // Handler for retail price change - auto-calculate discount
+  const handleRetailPriceChange = (value: number) => {
+    const newDiscount = calculateDiscountFromPrices(value, formData.prices.wholesale);
+    setFormData({
+      ...formData,
+      prices: {
+        ...formData.prices,
+        retail: value,
+        discount: newDiscount,
+      },
+    });
+  };
+
+  // Handler for wholesale price change - auto-calculate discount
+  const handleWholesalePriceChange = (value: number) => {
+    const newDiscount = calculateDiscountFromPrices(formData.prices.retail, value);
+    setFormData({
+      ...formData,
+      prices: {
+        ...formData.prices,
+        wholesale: value,
+        discount: newDiscount,
+      },
+    });
+  };
+
+  // Handler for discount change - auto-calculate wholesale price
+  const handleDiscountChange = (discount: number) => {
+    if (discount > 0 && formData.prices.retail > 0) {
+      const newWholesale = Math.round(formData.prices.retail * (1 - discount / 100));
+      setFormData({
+        ...formData,
+        prices: {
+          ...formData.prices,
+          discount,
+          wholesale: newWholesale,
+        },
+      });
+    } else {
+      setFormData({
+        ...formData,
+        prices: {
+          ...formData.prices,
+          discount,
+        },
+      });
     }
   };
 
@@ -212,15 +271,7 @@ export default function NewProductPage() {
                   min="0"
                   step="0.01"
                   value={formData.prices.retail}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      prices: {
-                        ...formData.prices,
-                        retail: parseFloat(e.target.value) || 0,
-                      },
-                    })
-                  }
+                  onChange={(e) => handleRetailPriceChange(parseFloat(e.target.value) || 0)}
                   required
                 />
               </div>
@@ -233,16 +284,11 @@ export default function NewProductPage() {
                   min="0"
                   step="0.01"
                   value={formData.prices.wholesale}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      prices: {
-                        ...formData.prices,
-                        wholesale: parseFloat(e.target.value) || 0,
-                      },
-                    })
-                  }
+                  onChange={(e) => handleWholesalePriceChange(parseFloat(e.target.value) || 0)}
                 />
+                <p className="text-xs text-muted-foreground">
+                  Auto-calculated based on discount, or enter to auto-calculate discount
+                </p>
               </div>
 
               <div className="space-y-2">
@@ -253,16 +299,11 @@ export default function NewProductPage() {
                   min="0"
                   max="100"
                   value={formData.prices.discount}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      prices: {
-                        ...formData.prices,
-                        discount: parseInt(e.target.value) || 0,
-                      },
-                    })
-                  }
+                  onChange={(e) => handleDiscountChange(parseInt(e.target.value) || 0)}
                 />
+                <p className="text-xs text-muted-foreground">
+                  Auto-calculated from retail/wholesale difference
+                </p>
               </div>
             </CardContent>
           </Card>

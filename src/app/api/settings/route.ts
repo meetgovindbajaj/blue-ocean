@@ -46,7 +46,13 @@ export async function GET() {
         whatsappNumber: (settings as any).support?.whatsappNumber,
         whatsappMessage: (settings as any).support?.whatsappMessage,
       },
-      locale: (settings as any).locale,
+      locale: {
+        ...(settings as any).locale,
+        // Convert Map to plain object if needed
+        exchangeRates: (settings as any).locale?.exchangeRates instanceof Map
+          ? Object.fromEntries((settings as any).locale.exchangeRates)
+          : (settings as any).locale?.exchangeRates || {},
+      },
       faq: ((settings as any).faq || []).filter((item: any) => item.isActive !== false),
     };
 

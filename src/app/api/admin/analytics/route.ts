@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
     const dateMatch = startDate ? { createdAt: { $gte: startDate } } : {};
 
     // Get overview stats from unified analytics
-    const [totalProducts, totalUsers, analyticsOverview] = await Promise.all([
+    const [totalProducts, totalUsers, analyticsOverview, storedBannerClicks] = await Promise.all([
       Product.countDocuments(),
       User.countDocuments(),
       AnalyticsEvent.aggregate([
@@ -54,11 +54,19 @@ export async function GET(request: NextRequest) {
           },
         },
       ]),
+      // Also get stored banner clicks that may not be in analytics events (legacy data)
+      HeroBanner.aggregate([
+        { $group: { _id: null, totalClicks: { $sum: "$clicks" } } },
+      ]),
     ]);
+
+    // Use the higher of analytics clicks or stored banner clicks for total
+    const analyticsClicks = analyticsOverview[0]?.totalClicks || 0;
+    const bannerStoredClicks = storedBannerClicks[0]?.totalClicks || 0;
 
     const overview = {
       totalViews: analyticsOverview[0]?.totalViews || 0,
-      totalClicks: analyticsOverview[0]?.totalClicks || 0,
+      totalClicks: Math.max(analyticsClicks, bannerStoredClicks),
       uniqueVisitors: analyticsOverview[0]?.uniqueIps?.length || 0,
       totalProducts,
       totalUsers,
@@ -203,17 +211,29 @@ export async function GET(request: NextRequest) {
       ]),
     ]);
 
-    // Merge banner data
-    const bannerAnalyticsMap = new Map(
-      bannerAnalytics.map((b: any) => [b._id, b])
-    );
+    // Merge banner data - create map with both _id formats for matching
+    const bannerAnalyticsMap = new Map<string, any>();
+    bannerAnalytics.forEach((b: any) => {
+      bannerAnalyticsMap.set(b._id, b);
+    });
 
     const bannerStatsWithCTR = bannerStats.map((b: any) => {
-      const analytics = bannerAnalyticsMap.get(b._id?.toString()) || {};
-      const impressions = (analytics as any).impressions || b.impressions || 0;
-      const clicks = (analytics as any).clicks || b.clicks || 0;
+      const bannerId = b.id || b._id?.toString();
+      // Try to find analytics data by matching the banner ID
+      const analytics = bannerAnalyticsMap.get(bannerId) || {};
+      // Use analytics data if available, otherwise fall back to stored counts
+      // Also add the stored clicks/impressions as they may be from direct database updates
+      const analyticsImpressions = (analytics as any).impressions || 0;
+      const analyticsClicks = (analytics as any).clicks || 0;
+      const storedImpressions = b.impressions || 0;
+      const storedClicks = b.clicks || 0;
+
+      // Use whichever is higher - analytics events or stored values
+      const impressions = Math.max(analyticsImpressions, storedImpressions);
+      const clicks = Math.max(analyticsClicks, storedClicks);
+
       return {
-        id: b.id || b._id?.toString(),
+        id: bannerId,
         name: b.name,
         impressions,
         clicks,
@@ -221,10 +241,16 @@ export async function GET(request: NextRequest) {
       };
     });
 
+    // Calculate total banner clicks for consistency check
+    const totalBannerClicks = bannerStatsWithCTR.reduce((sum, b) => sum + b.clicks, 0);
+
     return NextResponse.json({
       success: true,
       data: {
-        overview,
+        overview: {
+          ...overview,
+          totalBannerClicks,
+        },
         topProducts: topProductsWithPercentage,
         topCategories,
         bannerStats: bannerStatsWithCTR,
