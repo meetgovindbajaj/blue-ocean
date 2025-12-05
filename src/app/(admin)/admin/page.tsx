@@ -122,7 +122,7 @@ export default function Dashboard() {
 
   return (
     <div className="flex-1 p-6 space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between md:flex-row flex-col">
         <h1 className="text-2xl font-bold">Dashboard</h1>
         <p className="text-sm text-muted-foreground">
           Welcome to Blue Ocean Admin

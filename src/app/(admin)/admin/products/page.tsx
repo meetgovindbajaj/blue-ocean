@@ -128,12 +128,14 @@ export default function ProductsPage() {
 
   const getThumbnail = (product: Product) => {
     const thumbnail = product.images?.find((img) => img.isThumbnail);
-    return thumbnail?.thumbnailUrl || thumbnail?.url || product.images?.[0]?.url;
+    return (
+      thumbnail?.thumbnailUrl || thumbnail?.url || product.images?.[0]?.url
+    );
   };
 
   return (
     <div className="flex-1 p-6 space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between md:flex-row flex-col gap-4">
         <div>
           <h1 className="text-2xl font-bold">Products</h1>
           <p className="text-sm text-muted-foreground">
@@ -269,7 +271,9 @@ export default function ProductsPage() {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem asChild>
-                              <Link href={`/admin/products/${product.id}` as Route}>
+                              <Link
+                                href={`/admin/products/${product.id}` as Route}
+                              >
                                 <Pencil className="h-4 w-4 mr-2" />
                                 Edit
                               </Link>

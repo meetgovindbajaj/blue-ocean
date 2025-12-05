@@ -21,18 +21,20 @@ const Header = () => {
         {/* <MobileSidebar /> */}
         <Anchor href="/" className={styles.brand} content={siteName} />
       </div>
-      <div className={styles.links} id={id}>
+      <div className={styles.links}>
         <Anchor
           href="/"
           content="Home"
           tracking={{ ...tracking, id: "home" }}
         />
-        <Anchor
-          href="/products"
-          content="Products"
-          tracking={{ ...tracking, id: "products" }}
-        />
-        <CategoryDropdown id={id} />
+        <div style={{ display: "contents" }} id={id}>
+          <Anchor
+            href="/products"
+            content="Products"
+            tracking={{ ...tracking, id: "products" }}
+          />
+          <CategoryDropdown id={id} />
+        </div>
         <Anchor
           href="/about"
           content="About Us"

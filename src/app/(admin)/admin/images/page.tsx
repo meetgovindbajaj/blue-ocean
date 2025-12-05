@@ -93,42 +93,51 @@ export default function AdminImagesPage() {
   const [filter, setFilter] = useState<"all" | "active" | "unused">("all");
   const [folder, setFolder] = useState<"blue_ocean" | "avatars">("blue_ocean");
   const [searchQuery, setSearchQuery] = useState("");
-  const [stats, setStats] = useState<ImageStats>({ total: 0, active: 0, unused: 0 });
+  const [stats, setStats] = useState<ImageStats>({
+    total: 0,
+    active: 0,
+    unused: 0,
+  });
   const [nextCursor, setNextCursor] = useState<string | null>(null);
-  const [selectedImage, setSelectedImage] = useState<CloudinaryImage | null>(null);
+  const [selectedImage, setSelectedImage] = useState<CloudinaryImage | null>(
+    null
+  );
   const [deleteImage, setDeleteImage] = useState<CloudinaryImage | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set());
 
-  const fetchImages = useCallback(async (cursor?: string, append = false) => {
-    try {
-      if (!append) setLoading(true);
+  const fetchImages = useCallback(
+    async (cursor?: string, append = false) => {
+      try {
+        if (!append) setLoading(true);
 
-      const params = new URLSearchParams({
-        filter,
-        folder,
-        limit: "50",
-      });
-      if (cursor) params.set("cursor", cursor);
+        const params = new URLSearchParams({
+          filter,
+          folder,
+          limit: "50",
+        });
+        if (cursor) params.set("cursor", cursor);
 
-      const response = await fetch(`/api/admin/images?${params.toString()}`);
-      const data = await response.json();
+        const response = await fetch(`/api/admin/images?${params.toString()}`);
+        const data = await response.json();
 
-      if (data.success) {
-        if (append) {
-          setImages((prev) => [...prev, ...data.images]);
-        } else {
-          setImages(data.images);
+        if (data.success) {
+          if (append) {
+            setImages((prev) => [...prev, ...data.images]);
+          } else {
+            setImages(data.images);
+          }
+          setNextCursor(data.nextCursor || null);
+          setStats(data.stats);
         }
-        setNextCursor(data.nextCursor || null);
-        setStats(data.stats);
+      } catch (error) {
+        console.error("Failed to fetch images:", error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Failed to fetch images:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [filter, folder]);
+    },
+    [filter, folder]
+  );
 
   useEffect(() => {
     fetchImages();
@@ -174,9 +183,12 @@ export default function AdminImagesPage() {
     if (!deleteImage) return;
 
     try {
-      const response = await fetch(`/api/upload/${encodeURIComponent(deleteImage.id)}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        `/api/upload/${encodeURIComponent(deleteImage.id)}`,
+        {
+          method: "DELETE",
+        }
+      );
 
       const data = await response.json();
 
@@ -188,14 +200,22 @@ export default function AdminImagesPage() {
         // Show warning if products were deactivated
         if (data.deactivatedProducts && data.deactivatedProducts.length > 0) {
           toast.warning(
-            `${data.deactivatedProducts.length} product(s) deactivated due to no remaining images: ${data.deactivatedProducts.join(", ")}`
+            `${
+              data.deactivatedProducts.length
+            } product(s) deactivated due to no remaining images: ${data.deactivatedProducts.join(
+              ", "
+            )}`
           );
         }
 
         // Show warning if banners were deactivated
         if (data.deactivatedBanners && data.deactivatedBanners.length > 0) {
           toast.warning(
-            `${data.deactivatedBanners.length} banner(s) deactivated due to image removal: ${data.deactivatedBanners.join(", ")}`
+            `${
+              data.deactivatedBanners.length
+            } banner(s) deactivated due to image removal: ${data.deactivatedBanners.join(
+              ", "
+            )}`
           );
         }
 
@@ -213,20 +233,26 @@ export default function AdminImagesPage() {
   const handleBulkDelete = async () => {
     if (selectedImages.size === 0) return;
 
-    const confirmed = confirm(`Are you sure you want to delete ${selectedImages.size} images?`);
+    const confirmed = confirm(
+      `Are you sure you want to delete ${selectedImages.size} images?`
+    );
     if (!confirmed) return;
 
     try {
       const deletePromises = Array.from(selectedImages).map((id) =>
-        fetch(`/api/upload/${encodeURIComponent(id)}`, { method: "DELETE" }).then(r => r.json())
+        fetch(`/api/upload/${encodeURIComponent(id)}`, {
+          method: "DELETE",
+        }).then((r) => r.json())
       );
 
       const results = await Promise.allSettled(deletePromises);
-      const successful = results.filter(r => r.status === "fulfilled" && (r.value as any).success).length;
+      const successful = results.filter(
+        (r) => r.status === "fulfilled" && (r.value as any).success
+      ).length;
       const deactivatedProducts: string[] = [];
       const deactivatedBanners: string[] = [];
 
-      results.forEach(r => {
+      results.forEach((r) => {
         if (r.status === "fulfilled" && (r.value as any).deactivatedProducts) {
           deactivatedProducts.push(...(r.value as any).deactivatedProducts);
         }
@@ -309,9 +335,10 @@ export default function AdminImagesPage() {
     }
   };
 
-  const filteredImages = images.filter((img) =>
-    img.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    img.id.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredImages = images.filter(
+    (img) =>
+      img.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      img.id.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const toggleImageSelection = (id: string) => {
@@ -325,14 +352,16 @@ export default function AdminImagesPage() {
   };
 
   const selectAllUnused = () => {
-    const unusedIds = images.filter((img) => !img.isActive).map((img) => img.id);
+    const unusedIds = images
+      .filter((img) => !img.isActive)
+      .map((img) => img.id);
     setSelectedImages(new Set(unusedIds));
   };
 
   return (
     <div className="flex-1 p-6 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between md:flex-row flex-col gap-4">
         <div>
           <h1 className="text-2xl font-bold">Image Library</h1>
           <p className="text-sm text-muted-foreground">
@@ -340,8 +369,14 @@ export default function AdminImagesPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={() => fetchImages()} disabled={loading}>
-            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`} />
+          <Button
+            variant="outline"
+            onClick={() => fetchImages()}
+            disabled={loading}
+          >
+            <RefreshCw
+              className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`}
+            />
             Refresh
           </Button>
           <label>
@@ -364,7 +399,10 @@ export default function AdminImagesPage() {
       </div>
 
       {/* Folder Tabs */}
-      <Tabs value={folder} onValueChange={(v) => setFolder(v as "blue_ocean" | "avatars")}>
+      <Tabs
+        value={folder}
+        onValueChange={(v) => setFolder(v as "blue_ocean" | "avatars")}
+      >
         <TabsList>
           <TabsTrigger value="blue_ocean" className="flex items-center gap-2">
             <ImageLucide className="h-4 w-4" />
@@ -430,7 +468,10 @@ export default function AdminImagesPage() {
             </button>
           )}
         </div>
-        <Select value={filter} onValueChange={(v: "all" | "active" | "unused") => setFilter(v)}>
+        <Select
+          value={filter}
+          onValueChange={(v: "all" | "active" | "unused") => setFilter(v)}
+        >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Filter" />
           </SelectTrigger>
@@ -445,7 +486,11 @@ export default function AdminImagesPage() {
             <span className="text-sm text-muted-foreground">
               {selectedImages.size} selected
             </span>
-            <Button variant="outline" size="sm" onClick={() => setSelectedImages(new Set())}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setSelectedImages(new Set())}
+            >
               Clear
             </Button>
             <Button variant="destructive" size="sm" onClick={handleBulkDelete}>
@@ -454,11 +499,13 @@ export default function AdminImagesPage() {
             </Button>
           </div>
         )}
-        {filter === "unused" && stats.unused > 0 && selectedImages.size === 0 && (
-          <Button variant="outline" size="sm" onClick={selectAllUnused}>
-            Select All Unused
-          </Button>
-        )}
+        {filter === "unused" &&
+          stats.unused > 0 &&
+          selectedImages.size === 0 && (
+            <Button variant="outline" size="sm" onClick={selectAllUnused}>
+              Select All Unused
+            </Button>
+          )}
       </div>
 
       {/* Images Grid */}
@@ -473,7 +520,9 @@ export default function AdminImagesPage() {
           <ImageIcon className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
           <p className="text-lg font-medium">No images found</p>
           <p className="text-muted-foreground">
-            {searchQuery ? "Try a different search term" : "Upload some images to get started"}
+            {searchQuery
+              ? "Try a different search term"
+              : "Upload some images to get started"}
           </p>
         </div>
       ) : (
@@ -517,7 +566,10 @@ export default function AdminImagesPage() {
                 </div>
                 {/* Status badge */}
                 <div className="absolute top-2 right-2">
-                  <Badge variant={image.isActive ? "default" : "secondary"} className="text-xs">
+                  <Badge
+                    variant={image.isActive ? "default" : "secondary"}
+                    className="text-xs"
+                  >
                     {image.isActive ? "In Use" : "Unused"}
                   </Badge>
                 </div>
@@ -561,14 +613,18 @@ export default function AdminImagesPage() {
       )}
 
       {/* Image Detail Dialog */}
-      <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
+      <Dialog
+        open={!!selectedImage}
+        onOpenChange={() => setSelectedImage(null)}
+      >
         <DialogContent className="max-w-3xl">
           {selectedImage && (
             <>
               <DialogHeader>
                 <DialogTitle>{selectedImage.name}</DialogTitle>
                 <DialogDescription>
-                  {selectedImage.width}x{selectedImage.height} • {formatBytes(selectedImage.size)}
+                  {selectedImage.width}x{selectedImage.height} •{" "}
+                  {formatBytes(selectedImage.size)}
                 </DialogDescription>
               </DialogHeader>
               <div className="grid md:grid-cols-2 gap-6">
@@ -613,7 +669,9 @@ export default function AdminImagesPage() {
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => copyToClipboard(selectedImage.url, "url")}
+                        onClick={() =>
+                          copyToClipboard(selectedImage.url, "url")
+                        }
                       >
                         {copiedId === "url" ? (
                           <Check className="h-4 w-4" />
@@ -627,7 +685,9 @@ export default function AdminImagesPage() {
                   <div>
                     <p className="text-sm font-medium mb-2">Used In</p>
                     {selectedImage.usedIn.length === 0 ? (
-                      <p className="text-sm text-muted-foreground">Not used anywhere</p>
+                      <p className="text-sm text-muted-foreground">
+                        Not used anywhere
+                      </p>
                     ) : (
                       <div className="space-y-2">
                         {selectedImage.usedIn.map((usage, idx) => (
@@ -655,7 +715,11 @@ export default function AdminImagesPage() {
                   </a>
                 </Button>
                 <Button variant="outline" asChild>
-                  <a href={selectedImage.url} target="_blank" rel="noopener noreferrer">
+                  <a
+                    href={selectedImage.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     <ExternalLink className="h-4 w-4 mr-2" />
                     Open Original
                   </a>
@@ -679,17 +743,24 @@ export default function AdminImagesPage() {
       </Dialog>
 
       {/* Delete Confirmation */}
-      <AlertDialog open={!!deleteImage} onOpenChange={() => setDeleteImage(null)}>
+      <AlertDialog
+        open={!!deleteImage}
+        onOpenChange={() => setDeleteImage(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Image?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete the image from Cloudinary. This action cannot be undone.
+              This will permanently delete the image from Cloudinary. This
+              action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-white hover:bg-destructive/90">
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-destructive text-white hover:bg-destructive/90"
+            >
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>

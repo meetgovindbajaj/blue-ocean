@@ -104,7 +104,7 @@ export default function CategoriesPage() {
 
   return (
     <div className="flex-1 p-6 space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between md:flex-row flex-col gap-4">
         <div>
           <h1 className="text-2xl font-bold">Categories</h1>
           <p className="text-sm text-muted-foreground">
@@ -175,7 +175,9 @@ export default function CategoriesPage() {
                     <TableCell>
                       {category.image?.url ? (
                         <Image
-                          src={category.image.thumbnailUrl || category.image.url}
+                          src={
+                            category.image.thumbnailUrl || category.image.url
+                          }
                           alt={category.name}
                           width={48}
                           height={48}
@@ -225,7 +227,9 @@ export default function CategoriesPage() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem asChild>
-                            <Link href={`/admin/categories/${category.id}` as Route}>
+                            <Link
+                              href={`/admin/categories/${category.id}` as Route}
+                            >
                               <Pencil className="h-4 w-4 mr-2" />
                               Edit
                             </Link>

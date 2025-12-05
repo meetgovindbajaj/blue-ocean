@@ -68,6 +68,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Check if email is verified
+    if (!user.isVerified) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Please verify your email address before logging in. Check your inbox for the verification link.",
+          code: "EMAIL_NOT_VERIFIED",
+          email: user.email
+        },
+        { status: 403 }
+      );
+    }
+
     // Check if account is active
     if (user.status === UserStatus.SUSPENDED) {
       return NextResponse.json(

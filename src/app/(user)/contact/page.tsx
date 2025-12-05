@@ -592,7 +592,7 @@ const ContactPageInner = () => {
                   disabled={submitting}
                 />
                 <p className={styles.hint}>
-                  {formData.message.length}/1000 characters
+                  {formData.message.length}/1000 characters (minimum 10)
                 </p>
               </div>
 

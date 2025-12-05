@@ -139,7 +139,7 @@ export default function AnalyticsPage() {
 
   return (
     <div className="flex-1 p-6 space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between md:flex-row flex-col gap-4">
         <div>
           <h1 className="text-2xl font-bold">Analytics</h1>
           <p className="text-sm text-muted-foreground">

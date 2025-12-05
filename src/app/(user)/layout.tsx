@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import { SiteSettingsProvider } from "@/context/SiteSettingsContext";
 import { CurrencyProvider } from "@/context/CurrencyContext";
 import { AuthProvider } from "@/context/AuthContext";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function RootLayout({
   children,
@@ -19,6 +20,7 @@ export default function RootLayout({
           </Suspense>
           <Suspense>{children}</Suspense>
           <Footer />
+          <Toaster position="top-right" />
         </CurrencyProvider>
       </SiteSettingsProvider>
     </AuthProvider>
