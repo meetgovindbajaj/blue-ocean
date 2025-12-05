@@ -84,6 +84,13 @@ export async function PUT(
       updateQuery.push({ _id: new Types.ObjectId(id) });
     }
 
+    const userId = body.id;
+    User.findById(userId).then((res) => {
+      if (res?.role === "super_admin" && body.role !== "super_admin") {
+        throw new Error("Cannot change role of superadmin user");
+      }
+    });
+
     const user = await User.findOneAndUpdate(
       { $or: updateQuery },
       { $set: body },
