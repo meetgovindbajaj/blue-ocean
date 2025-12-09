@@ -43,6 +43,17 @@ interface RecommendedProduct {
     url: string;
     thumbnailUrl?: string;
   };
+  images?: {
+    id: string;
+    name?: string;
+    url: string;
+    thumbnailUrl?: string;
+    isThumbnail?: boolean;
+    downloadUrl?: string;
+    size?: number;
+    width?: number;
+    height?: number;
+  }[];
 }
 
 interface ProductDetailClientProps {
@@ -100,7 +111,7 @@ export default function ProductDetailClient({
   const recommendedCarouselData: CarouselItem[] = useMemo(() => {
     return recommendedProducts.map((rec) => ({
       id: rec.id,
-      image: rec.thumbnail?.url || "",
+      image: rec.thumbnail?.url || rec.images?.[0]?.url || "",
       alt: rec.name,
       content: (
         <ProductCard
@@ -117,22 +128,34 @@ export default function ProductDetailClient({
               fixedSize: rec.size?.fixedSize || false,
               unit: (rec.size?.unit as "in" | "cm" | "mm" | "ft") || "in",
             },
-            images: rec.thumbnail
-              ? [
-                  {
-                    id: "1",
-                    name: rec.name,
-                    url: rec.thumbnail.url,
-                    thumbnailUrl:
-                      rec.thumbnail.thumbnailUrl || rec.thumbnail.url,
-                    isThumbnail: true,
-                    downloadUrl: rec.thumbnail.url,
-                    size: 0,
-                    width: 0,
-                    height: 0,
-                  },
-                ]
-              : [],
+            images: rec.images?.length
+              ? rec.images.map((img) => ({
+                  id: img.id,
+                  name: img.name || rec.name,
+                  url: img.url,
+                  thumbnailUrl: img.thumbnailUrl || img.url,
+                  isThumbnail: img.isThumbnail || false,
+                  downloadUrl: img.downloadUrl || img.url,
+                  size: img.size || 0,
+                  width: img.width || 0,
+                  height: img.height || 0,
+                }))
+              : rec.thumbnail
+                ? [
+                    {
+                      id: "1",
+                      name: rec.name,
+                      url: rec.thumbnail.url,
+                      thumbnailUrl:
+                        rec.thumbnail.thumbnailUrl || rec.thumbnail.url,
+                      isThumbnail: true,
+                      downloadUrl: rec.thumbnail.url,
+                      size: 0,
+                      width: 0,
+                      height: 0,
+                    },
+                  ]
+                : [],
             category: rec.category?.name || "",
             breadcrumbs: [],
             isActive: true,

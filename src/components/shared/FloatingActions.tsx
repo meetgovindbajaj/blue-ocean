@@ -137,34 +137,46 @@ export default function FloatingActions() {
             {/* Share submenu */}
             {showShareMenu && (
               <div className={styles.shareSubmenu}>
-                <button
-                  onClick={() => handleShare("facebook")}
+                <a
+                  href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className={styles.shareOption}
                   aria-label="Share on Facebook"
+                  onClick={() => setShowShareMenu(false)}
                 >
                   <Facebook size={18} />
-                </button>
-                <button
-                  onClick={() => handleShare("twitter")}
+                </a>
+                <a
+                  href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '')}&text=${encodeURIComponent(typeof window !== 'undefined' ? document.title : '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className={styles.shareOption}
                   aria-label="Share on Twitter"
+                  onClick={() => setShowShareMenu(false)}
                 >
                   <Twitter size={18} />
-                </button>
-                <button
-                  onClick={() => handleShare("linkedin")}
+                </a>
+                <a
+                  href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className={styles.shareOption}
                   aria-label="Share on LinkedIn"
+                  onClick={() => setShowShareMenu(false)}
                 >
                   <Linkedin size={18} />
-                </button>
-                <button
-                  onClick={() => handleShare("whatsapp")}
+                </a>
+                <a
+                  href={`https://wa.me/?text=${encodeURIComponent(typeof window !== 'undefined' ? document.title + ' ' + window.location.href : '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className={styles.shareOption}
                   aria-label="Share on WhatsApp"
+                  onClick={() => setShowShareMenu(false)}
                 >
                   <MessageCircle size={18} />
-                </button>
+                </a>
                 <button
                   onClick={() => handleShare("copy")}
                   className={styles.shareOption}

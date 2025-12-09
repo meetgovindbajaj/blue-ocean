@@ -229,6 +229,7 @@ export async function GET(request: NextRequest) {
         product.images?.find((img: any) => img.isThumbnail) ||
         product.images?.[0] ||
         null,
+      images: product.images || [],
       isActive: product.isActive,
       // you *can* expose internal ranking data if useful:
       // score: product.score,
