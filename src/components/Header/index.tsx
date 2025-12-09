@@ -5,7 +5,7 @@ import SearchBar from "./search";
 import Anchor from "../shared/Anchor";
 import CategoryDropdown from "./categoryDropdown";
 import UserMenu from "./UserMenu";
-import MobileSidebar from "./MobileSidebar";
+import MobileNavSidebar from "./MobileNavSidebar";
 import { useId } from "react";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 
@@ -52,9 +52,9 @@ const Header = () => {
         <div className={styles.desktopOnly}>
           <UserMenu />
         </div>
-        {/* Mobile/Tablet - profile icon opens mobile sidebar */}
+        {/* Mobile/Tablet - hamburger menu opens mobile sidebar */}
         <div className={styles.mobileOnly}>
-          <MobileSidebar />
+          <MobileNavSidebar />
         </div>
       </div>
     </div>
