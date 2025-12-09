@@ -141,21 +141,21 @@ export default function ProductDetailClient({
                   height: img.height || 0,
                 }))
               : rec.thumbnail
-                ? [
-                    {
-                      id: "1",
-                      name: rec.name,
-                      url: rec.thumbnail.url,
-                      thumbnailUrl:
-                        rec.thumbnail.thumbnailUrl || rec.thumbnail.url,
-                      isThumbnail: true,
-                      downloadUrl: rec.thumbnail.url,
-                      size: 0,
-                      width: 0,
-                      height: 0,
-                    },
-                  ]
-                : [],
+              ? [
+                  {
+                    id: "1",
+                    name: rec.name,
+                    url: rec.thumbnail.url,
+                    thumbnailUrl:
+                      rec.thumbnail.thumbnailUrl || rec.thumbnail.url,
+                    isThumbnail: true,
+                    downloadUrl: rec.thumbnail.url,
+                    size: 0,
+                    width: 0,
+                    height: 0,
+                  },
+                ]
+              : [],
             category: rec.category?.name || "",
             breadcrumbs: [],
             isActive: true,
@@ -194,7 +194,6 @@ export default function ProductDetailClient({
                 showControlDots: false,
                 showPreviewCards: images.length > 1,
                 showPreviewBtn: true,
-                showShareBtn: true,
                 showOverlay: false,
                 autoPlay: true,
                 autoPlayInterval: 5000,

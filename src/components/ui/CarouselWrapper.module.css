@@ -1,4 +1,5 @@
 @layer utilities {
+
   /* Base Carousel Wrapper */
   .carouselWrapper {
     position: relative;
@@ -29,13 +30,13 @@
     color: white;
   }
 
-  @media screen and (width <= 1000px) {
+  @media screen and (width <=1000px) {
     .variantFullWidth {
       aspect-ratio: 1 / 0.6;
     }
   }
 
-  @media screen and (width <= 600px) {
+  @media screen and (width <=600px) {
     .variantFullWidth {
       aspect-ratio: unset;
       height: 70vh;
@@ -65,7 +66,7 @@
     background: linear-gradient(90deg, rgba(0, 0, 0, 0.87) 0%, rgba(255, 255, 255, 0) 70%);
   }
 
-  @media screen and (width <= 800px) {
+  @media screen and (width <=800px) {
     .fullWidthOverlay {
       background: linear-gradient(180deg, rgba(0, 0, 0, 0.9) 0%, rgba(255, 255, 255, 0) 90%);
     }
@@ -93,7 +94,7 @@
     height: 70%;
   }
 
-  @media screen and (width <= 800px) {
+  @media screen and (width <=800px) {
     .fullWidthContent {
       width: 80%;
       padding-block: 2rem;
@@ -147,7 +148,7 @@
     }
   }
 
-  @media screen and (width <= 800px) {
+  @media screen and (width <=800px) {
     .navArrow {
       display: none;
     }
@@ -210,13 +211,13 @@
     overflow: hidden;
   }
 
-  @media screen and (width <= 1000px) {
+  @media screen and (width <=1000px) {
     .variantInset {
       padding: 24px 0;
     }
   }
 
-  @media screen and (width <= 600px) {
+  @media screen and (width <=600px) {
     .variantInset {
       padding: 12px 0;
     }
@@ -232,13 +233,13 @@
     overflow: hidden;
   }
 
-  @media screen and (width <= 1000px) {
+  @media screen and (width <=1000px) {
     .insetWrapper {
       min-height: 450px;
     }
   }
 
-  @media screen and (width <= 600px) {
+  @media screen and (width <=600px) {
     .insetWrapper {
       min-height: 500px;
     }
@@ -272,13 +273,13 @@
     padding-inline: 32px;
   }
 
-  @media screen and (width <= 1000px) {
+  @media screen and (width <=1000px) {
     .insetHeader {
       padding-inline: 24px;
     }
   }
 
-  @media screen and (width <= 600px) {
+  @media screen and (width <=600px) {
     .insetHeader {
       padding-inline: 12px;
     }
@@ -392,7 +393,7 @@
   .insetCardImage {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: fill;
   }
 
   .insetCardGradient {
@@ -500,6 +501,7 @@
   }
 
   @media screen and (max-width: 1000px) {
+
     .defaultCarouselContainer,
     .defaultTrack,
     .defaultItem,
@@ -509,6 +511,7 @@
   }
 
   @media screen and (max-width: 600px) {
+
     .defaultCarouselContainer,
     .defaultTrack,
     .defaultItem,
@@ -518,6 +521,7 @@
   }
 
   @media screen and (max-width: 340px) {
+
     .defaultCarouselContainer,
     .defaultTrack,
     .defaultItem,
@@ -530,7 +534,7 @@
     width: 100%;
     height: auto;
     aspect-ratio: 1;
-    object-fit: cover;
+    object-fit: fill;
     border-radius: 0.75rem;
   }
 
@@ -675,7 +679,7 @@
   .previewCard img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: fill;
   }
 
   .previewCard:hover {
@@ -773,6 +777,7 @@
     from {
       opacity: 0;
     }
+
     to {
       opacity: 1;
     }
@@ -812,7 +817,7 @@
   .fullscreenImage {
     max-width: 100%;
     max-height: 100%;
-    object-fit: contain;
+    object-fit: fill;
   }
 
   .fullscreenNav {
@@ -893,7 +898,7 @@
   .fullscreenThumb img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: fill;
   }
 
   .fullscreenThumb:hover {
