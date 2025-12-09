@@ -451,9 +451,6 @@ const CategoryDropdown = ({ id }: { id: string }) => {
             <div className={styles.previewOverlay} />
             <div className={styles.previewInfo}>
               <h4 className={styles.previewTitle}>{category.name}</h4>
-              <p className={styles.previewMeta}>
-                {category.productCount || 0} products
-              </p>
             </div>
           </div>
         </div>
@@ -462,23 +459,51 @@ const CategoryDropdown = ({ id }: { id: string }) => {
 
     if (previewState.type === "product") {
       const { product } = previewState;
+      const hasMultipleImages = product.images && product.images.length > 1;
+
+      // Convert product images to carousel format
+      const productCarouselData: CarouselItem[] =
+        product.images?.map((img, idx) => ({
+          id: img.id || `img-${idx}`,
+          image: img.url || img.thumbnailUrl,
+          thumbnailImage: img.thumbnailUrl,
+          alt: `${product.name} - ${idx + 1}`,
+        })) || [];
+
       return (
         <div className={styles.previewColumn}>
           <div className={styles.previewCard}>
-            <div
-              className={styles.previewImageWrapper}
-              style={{
-                backgroundImage: product.images?.[0]
-                  ? `url(${getImageUrl(product.images[0])})`
-                  : undefined,
-              }}
-            >
-              {!product.images?.[0] && (
-                <div className={styles.previewImagePlaceholder}>
-                  <span>{product.name.charAt(0)}</span>
-                </div>
-              )}
-            </div>
+            {hasMultipleImages ? (
+              <CarouselWrapper
+                variant="fullWidth"
+                data={productCarouselData}
+                className={styles.productPreviewCarousel}
+                options={{
+                  showControlBtns: true,
+                  showControlDots: true,
+                  showDotsProgress: false,
+                  autoPlay: true,
+                  autoPlayInterval: 2500,
+                  loop: true,
+                  showOverlay: true,
+                }}
+              />
+            ) : (
+              <div
+                className={styles.previewImageWrapper}
+                style={{
+                  backgroundImage: product.images?.[0]
+                    ? `url(${getImageUrl(product.images[0])})`
+                    : undefined,
+                }}
+              >
+                {!product.images?.[0] && (
+                  <div className={styles.previewImagePlaceholder}>
+                    <span>{product.name.charAt(0)}</span>
+                  </div>
+                )}
+              </div>
+            )}
             <div className={styles.previewOverlay} />
             <div className={styles.previewInfo}>
               <h4 className={styles.previewTitle}>{product.name}</h4>

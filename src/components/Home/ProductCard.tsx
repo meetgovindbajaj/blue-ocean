@@ -113,7 +113,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
             options={{
               showControlBtns: false,
               showControlDots: false,
-              // showDotsProgress: false,
+              pauseOnInteraction: true,
               autoPlay: true,
               autoPlayInterval: 3000,
               loop: true,

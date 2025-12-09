@@ -8,6 +8,17 @@
     outline: none;
   }
 
+  /* Dragging state - prevent text selection and change cursor */
+  .dragging {
+    cursor: grabbing !important;
+    user-select: none;
+  }
+
+  .dragging * {
+    cursor: grabbing !important;
+    user-select: none;
+  }
+
   /* ============================================
      FULL WIDTH VARIANT (Hero Banner Style)
      ============================================ */

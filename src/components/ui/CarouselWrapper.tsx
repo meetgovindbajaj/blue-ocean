@@ -416,6 +416,11 @@ export const CarouselWrapper = ({
   const [touchEnd, setTouchEnd] = useState(0);
   const minSwipeDistance = 50;
 
+  // Mouse drag state
+  const [isDragging, setIsDragging] = useState(false);
+  const [mouseStart, setMouseStart] = useState(0);
+  const [mouseEnd, setMouseEnd] = useState(0);
+
   // Get items per view based on variant and screen size
   const getItemsPerView = useCallback(() => {
     if (variant === "fullWidth") return 1;
@@ -512,6 +517,69 @@ export const CarouselWrapper = ({
     else if (isRightSwipe) goPrev();
   };
 
+  // Track if a real drag happened (to prevent click navigation)
+  const hasDraggedRef = useRef(false);
+
+  // Mouse drag handlers for desktop swipe
+  const onMouseDown = (e: React.MouseEvent) => {
+    // Prevent default to stop text selection and link dragging
+    e.preventDefault();
+    setIsDragging(true);
+    setMouseStart(e.clientX);
+    setMouseEnd(0);
+    hasDraggedRef.current = false;
+  };
+
+  const onMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const currentX = e.clientX;
+    setMouseEnd(currentX);
+
+    // Mark as dragged if moved more than a small threshold
+    if (Math.abs(mouseStart - currentX) > 10) {
+      hasDraggedRef.current = true;
+    }
+  };
+
+  const onMouseUp = () => {
+    if (!isDragging) return;
+    setIsDragging(false);
+
+    if (!mouseStart || !mouseEnd) {
+      setMouseStart(0);
+      setMouseEnd(0);
+      return;
+    }
+
+    const distance = mouseStart - mouseEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe) goNext();
+    else if (isRightSwipe) goPrev();
+
+    setMouseStart(0);
+    setMouseEnd(0);
+  };
+
+  const onMouseLeave = () => {
+    if (isDragging) {
+      setIsDragging(false);
+      setMouseStart(0);
+      setMouseEnd(0);
+    }
+  };
+
+  // Prevent click navigation if user was dragging
+  const onClick = (e: React.MouseEvent) => {
+    if (hasDraggedRef.current) {
+      e.preventDefault();
+      e.stopPropagation();
+      hasDraggedRef.current = false;
+    }
+  };
+
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -594,12 +662,19 @@ export const CarouselWrapper = ({
 
     return (
       <div
-        className={styles.fullWidthWrapper}
+        className={cn(styles.fullWidthWrapper, isDragging && styles.dragging)}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={onMouseUp}
+        onClick={onClick}
+        onMouseLeave={() => {
+          onMouseLeave();
+          options.pauseOnInteraction && setIsPaused(false);
+        }}
         onMouseEnter={() => options.pauseOnInteraction && setIsPaused(true)}
-        onMouseLeave={() => options.pauseOnInteraction && setIsPaused(false)}
       >
         {/* Background Image */}
         <motion.div
@@ -755,7 +830,7 @@ export const CarouselWrapper = ({
 
     return (
       <div
-        className={styles.insetWrapper}
+        className={cn(styles.insetWrapper, isDragging && styles.dragging)}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={() => {
@@ -764,8 +839,24 @@ export const CarouselWrapper = ({
           if (distance > minSwipeDistance) handleInsetNext();
           else if (distance < -minSwipeDistance) handleInsetPrev();
         }}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={() => {
+          if (!isDragging) return;
+          setIsDragging(false);
+          if (!mouseStart || !mouseEnd) return;
+          const distance = mouseStart - mouseEnd;
+          if (distance > minSwipeDistance) handleInsetNext();
+          else if (distance < -minSwipeDistance) handleInsetPrev();
+          setMouseStart(0);
+          setMouseEnd(0);
+        }}
         onMouseEnter={() => options.pauseOnInteraction && setIsPaused(true)}
-        onMouseLeave={() => options.pauseOnInteraction && setIsPaused(false)}
+        onMouseLeave={() => {
+          onMouseLeave();
+          options.pauseOnInteraction && setIsPaused(false);
+        }}
+        onClick={onClick}
       >
         {/* Blurred Background */}
         <div className={styles.insetBackground}>
@@ -956,12 +1047,19 @@ export const CarouselWrapper = ({
 
     return (
       <div
-        className={styles.defaultWrapper}
+        className={cn(styles.defaultWrapper, isDragging && styles.dragging)}
         onMouseEnter={() => options.pauseOnInteraction && setIsPaused(true)}
-        onMouseLeave={() => options.pauseOnInteraction && setIsPaused(false)}
+        onMouseLeave={() => {
+          onMouseLeave();
+          options.pauseOnInteraction && setIsPaused(false);
+        }}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={onMouseUp}
+        onClick={onClick}
       >
         {/* Header Content */}
         {options.headerContent && (
