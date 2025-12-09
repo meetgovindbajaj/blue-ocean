@@ -75,10 +75,26 @@ const shopNavItems = [
 
 const sortOptions = [
   { title: "Newest First", url: "/products?sort=newest" as Route, icon: Clock },
-  { title: "Price: Low to High", url: "/products?sort=price_asc" as Route, icon: DollarSign },
-  { title: "Price: High to Low", url: "/products?sort=price_desc" as Route, icon: DollarSign },
-  { title: "Best Discount", url: "/products?sort=discount" as Route, icon: Percent },
-  { title: "Trending", url: "/products?sort=trending" as Route, icon: TrendingUp },
+  {
+    title: "Price: Low to High",
+    url: "/products?sort=price_asc" as Route,
+    icon: DollarSign,
+  },
+  {
+    title: "Price: High to Low",
+    url: "/products?sort=price_desc" as Route,
+    icon: DollarSign,
+  },
+  {
+    title: "Best Discount",
+    url: "/products?sort=discount" as Route,
+    icon: Percent,
+  },
+  {
+    title: "Trending",
+    url: "/products?sort=trending" as Route,
+    icon: TrendingUp,
+  },
 ];
 
 const supportNavItems = [
@@ -106,7 +122,12 @@ interface NavGroupProps {
   onNavigate: () => void;
 }
 
-const NavGroup = ({ label, items, defaultOpen = true, onNavigate }: NavGroupProps) => {
+const NavGroup = ({
+  label,
+  items,
+  defaultOpen = true,
+  onNavigate,
+}: NavGroupProps) => {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
@@ -114,12 +135,15 @@ const NavGroup = ({ label, items, defaultOpen = true, onNavigate }: NavGroupProp
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <CollapsibleTrigger className="flex w-full items-center justify-between px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
         <span>{label}</span>
-        <ChevronDown className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")} />
+        <ChevronDown
+          className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")}
+        />
       </CollapsibleTrigger>
       <CollapsibleContent>
         <div className="space-y-1 px-2">
           {items.map((item) => {
-            const isActive = pathname === item.url || pathname.startsWith(item.url + "/");
+            const isActive =
+              pathname === item.url || pathname.startsWith(item.url + "/");
             return (
               <Link
                 key={item.title}
@@ -224,21 +248,34 @@ const MobileNavSidebar = () => {
             <Separator className="my-2" />
 
             {/* Shop Section */}
-            <NavGroup label="Shop" items={shopNavItems} onNavigate={handleNavigate} />
+            {/* <NavGroup label="Shop" items={shopNavItems} onNavigate={handleNavigate} /> */}
 
             {/* Sort Options */}
-            <NavGroup label="Sort Products" items={sortOptions} defaultOpen={false} onNavigate={handleNavigate} />
+            <NavGroup
+              label="Shop"
+              items={sortOptions}
+              // defaultOpen={false}
+              onNavigate={handleNavigate}
+            />
 
             <Separator className="my-2" />
 
             {/* Support Section */}
-            <NavGroup label="Support" items={supportNavItems} onNavigate={handleNavigate} />
+            <NavGroup
+              label="Support"
+              items={supportNavItems}
+              onNavigate={handleNavigate}
+            />
 
             {/* Account Section - Only for logged-in users */}
             {user && (
               <>
                 <Separator className="my-2" />
-                <NavGroup label="Account" items={accountNavItems} onNavigate={handleNavigate} />
+                <NavGroup
+                  label="Account"
+                  items={accountNavItems}
+                  onNavigate={handleNavigate}
+                />
               </>
             )}
 

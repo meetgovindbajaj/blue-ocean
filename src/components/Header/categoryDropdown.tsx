@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { X } from "lucide-react";
 import Anchor from "../shared/Anchor";
@@ -65,8 +65,9 @@ const CategoryDropdown = ({ id }: { id: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [hoveredParentCategory, setHoveredParentCategory] =
     useState<Category | null>(null);
-  const [hoveredSubCategory, setHoveredSubCategory] =
-    useState<Category | null>(null);
+  const [hoveredSubCategory, setHoveredSubCategory] = useState<Category | null>(
+    null
+  );
   const [previewState, setPreviewState] = useState<PreviewState>({
     type: "default",
   });
@@ -152,7 +153,12 @@ const CategoryDropdown = ({ id }: { id: string }) => {
       return getProductsForCategory(hoveredParentCategory);
     }
     return [];
-  }, [hoveredParentCategory, hoveredSubCategory, products, getProductsForCategory]);
+  }, [
+    hoveredParentCategory,
+    hoveredSubCategory,
+    products,
+    getProductsForCategory,
+  ]);
 
   // Handle mouse events for dropdown
   useEffect(() => {
@@ -204,9 +210,7 @@ const CategoryDropdown = ({ id }: { id: string }) => {
           {banner.discountPercent && (
             <span className={styles.offerBadge}>LIMITED OFFER</span>
           )}
-          <h4 className={styles.offerTitle}>
-            {banner.title || banner.name}
-          </h4>
+          <h4 className={styles.offerTitle}>{banner.title || banner.name}</h4>
           {banner.subtitle && (
             <p className={styles.offerSubtitle}>{banner.subtitle}</p>
           )}
@@ -248,9 +252,6 @@ const CategoryDropdown = ({ id }: { id: string }) => {
                 className={styles.categoryLink}
               >
                 <span className={styles.categoryName}>{category.name}</span>
-                <span className={styles.categoryCount}>
-                  {category.productCount || 0}
-                </span>
               </Link>
             </li>
           ))}
@@ -290,9 +291,7 @@ const CategoryDropdown = ({ id }: { id: string }) => {
               ))}
             </ul>
           ) : (
-            <div className={styles.noSubCategories}>
-              No subcategories
-            </div>
+            <div className={styles.noSubCategories}>No subcategories</div>
           )}
         </>
       ) : (
@@ -324,53 +323,42 @@ const CategoryDropdown = ({ id }: { id: string }) => {
       return (
         <div className={styles.column}>
           <div className={styles.productHeader}>
-            <h3 className={styles.columnTitle}>
+            <div className={styles.columnTitle}>
               {hoveredSubCategory
                 ? hoveredSubCategory.name
                 : `All in ${hoveredParentCategory?.name}`}
-            </h3>
+            </div>
             <button
               className={styles.clearButton}
               onClick={handleClearSelection}
               aria-label="Clear selection"
             >
-              <X size={16} />
+              <X size={12} />
             </button>
           </div>
           {productsToShow.length > 0 ? (
-            <div className={styles.productGrid}>
-              {productsToShow.slice(0, 6).map((product) => (
-                <Link
+            <ul className={styles.productList}>
+              {productsToShow.slice(0, 8).map((product) => (
+                <li
                   key={product.id}
-                  href={`/products/${product.slug}` as any}
-                  className={styles.productCard}
+                  className={styles.productListItem}
                   onMouseEnter={() => handleProductHover(product)}
                 >
-                  <div
-                    className={styles.productCardBg}
-                    style={{
-                      backgroundImage: product.images?.[0]
-                        ? `url(${getImageUrl(product.images[0])})`
-                        : undefined,
-                    }}
-                  />
-                  <div className={styles.productCardOverlay} />
-                  <div className={styles.productCardInfo}>
-                    <span className={styles.productCardName}>{product.name}</span>
-                    {product.size && (
-                      <span className={styles.productCardDimensions}>
-                        {product.size.length} × {product.size.width} ×{" "}
-                        {product.size.height} {product.size.unit}
-                      </span>
-                    )}
-                  </div>
-                </Link>
+                  <Link
+                    href={`/products/${product.slug}` as any}
+                    className={styles.productListLink}
+                  >
+                    <span className={styles.productListName}>
+                      {product.name}
+                    </span>
+                  </Link>
+                </li>
               ))}
-            </div>
+            </ul>
           ) : (
             <div className={styles.noProducts}>No products found</div>
           )}
-          {productsToShow.length > 6 && (
+          {productsToShow.length > 8 && (
             <div className={styles.viewAllProducts}>
               <Link
                 href={
