@@ -4,13 +4,9 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Product } from "@/context/LandingDataContext";
 import styles from "./ProductCard.module.css";
-import { useRef, useEffect, useState, useMemo } from "react";
+import { useRef, useEffect, useState } from "react";
 import { Route } from "next";
 import { useCurrency } from "@/context/CurrencyContext";
-import {
-  CarouselWrapper,
-  type CarouselItem,
-} from "@/components/ui/CarouselWrapper";
 
 interface ProductCardProps {
   product: Product;
@@ -23,18 +19,14 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
   const hasDiscount = product.prices?.discount > 0;
 
-  // Convert product images to CarouselItem format
-  const carouselImages: CarouselItem[] = useMemo(() => {
-    if (!product.images || product.images.length === 0) return [];
-    return product.images.map((img) => ({
-      id: img.id,
-      image: img.url,
-      thumbnailImage: img.thumbnailUrl,
-      alt: product.name,
-    }));
-  }, [product.images, product.name]);
-
-  const hasMultipleImages = carouselImages.length > 1;
+  // Get the display image (thumbnail preferred, fallback to first image)
+  const thumbnailImage = product.images?.find((img) => img.isThumbnail);
+  const displayImage =
+    thumbnailImage?.thumbnailUrl ||
+    thumbnailImage?.url ||
+    product.images?.[0]?.thumbnailUrl ||
+    product.images?.[0]?.url ||
+    "";
 
   // ResizeObserver for dynamic height calculation
   useEffect(() => {
@@ -105,29 +97,13 @@ const ProductCard = ({ product }: ProductCardProps) => {
       }
     >
       <div className={styles.imageContainer}>
-        {hasMultipleImages ? (
-          <CarouselWrapper
-            variant="fullWidth"
-            data={carouselImages}
-            className={styles.productCarousel}
-            options={{
-              showControlBtns: false,
-              showControlDots: false,
-              pauseOnInteraction: true,
-              autoPlay: true,
-              autoPlayInterval: 3000,
-              loop: true,
-            }}
-          />
-        ) : (
-          <Image
-            src={carouselImages[0]?.image || ""}
-            alt={product.name}
-            fill
-            className={styles.image}
-            quality={85}
-          />
-        )}
+        <Image
+          src={displayImage}
+          alt={product.name}
+          fill
+          className={styles.image}
+          quality={85}
+        />
 
         {/* Glassmorphism info section that slides up on hover */}
         <div className={styles.infoSection} ref={visibleContentRef}>
