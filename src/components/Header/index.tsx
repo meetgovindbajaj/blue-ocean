@@ -27,12 +27,12 @@ const Header = () => {
           content="Home"
           tracking={{ ...tracking, id: "home" }}
         />
+        <Anchor
+          href="/products"
+          content="Products"
+          tracking={{ ...tracking, id: "products" }}
+        />
         <div style={{ display: "contents" }} id={id}>
-          <Anchor
-            href="/products"
-            content="Products"
-            tracking={{ ...tracking, id: "products" }}
-          />
           <CategoryDropdown id={id} />
         </div>
         <Anchor
