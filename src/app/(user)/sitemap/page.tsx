@@ -1,28 +1,77 @@
 import { Metadata } from "next";
+import dbConnect from "@/lib/db";
+import Category from "@/models/Category";
+import Product from "@/models/Product";
+import SiteSettings from "@/models/SiteSettings";
 import SitemapPageClient from "./SitemapPageClient";
 
-// Fetch all data for sitemap
+// Force dynamic rendering to fetch fresh data from database
+export const dynamic = "force-dynamic";
+export const revalidate = 3600; // Revalidate every hour
+
+// Fetch all data for sitemap directly from database
 async function getSitemapData() {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-
   try {
-    const [categoriesRes, productsRes, settingsRes] = await Promise.all([
-      fetch(`${baseUrl}/api/categories?limit=100`, { next: { revalidate: 3600 } }),
-      fetch(`${baseUrl}/api/products?limit=500&isActive=true`, { next: { revalidate: 3600 } }),
-      fetch(`${baseUrl}/api/settings`, { next: { revalidate: 3600 } }),
+    await dbConnect();
+
+    const [categories, products, settings] = await Promise.all([
+      // Fetch categories with children
+      Category.find({ isActive: true })
+        .select("id name slug description image children isActive")
+        .populate({
+          path: "children",
+          select: "id name slug image isActive",
+          match: { isActive: true },
+        })
+        .sort({ name: 1 })
+        .limit(100)
+        .lean(),
+      // Fetch active products
+      Product.find({ isActive: true })
+        .select("id name slug category")
+        .populate({
+          path: "category",
+          select: "name slug",
+        })
+        .sort({ name: 1 })
+        .limit(500)
+        .lean(),
+      // Fetch site settings
+      SiteSettings.findOne().lean(),
     ]);
 
-    const [categoriesData, productsData, settingsData] = await Promise.all([
-      categoriesRes.ok ? categoriesRes.json() : { categories: [] },
-      productsRes.ok ? productsRes.json() : { products: [] },
-      settingsRes.ok ? settingsRes.json() : { settings: null },
-    ]);
+    // Transform categories
+    const transformedCategories = categories.map((cat: any) => ({
+      id: cat.id || cat._id?.toString(),
+      name: cat.name,
+      slug: cat.slug,
+      description: cat.description,
+      image: cat.image,
+      children: cat.children?.map((child: any) => ({
+        id: child.id || child._id?.toString(),
+        name: child.name,
+        slug: child.slug,
+        image: child.image,
+      })),
+    }));
 
-    return {
-      categories: categoriesData.categories || [],
-      products: productsData.products || [],
-      settings: settingsData.settings || null,
-    };
+    // Transform products
+    const transformedProducts = products.map((product: any) => ({
+      id: product.id || product._id?.toString(),
+      name: product.name,
+      slug: product.slug,
+      category: product.category ? {
+        name: product.category.name,
+        slug: product.category.slug,
+      } : undefined,
+    }));
+
+    // Serialize to plain objects (removes Mongoose special properties like _id buffers)
+    return JSON.parse(JSON.stringify({
+      categories: transformedCategories,
+      products: transformedProducts,
+      settings: settings ? { siteName: settings.siteName } : null,
+    }));
   } catch (error) {
     console.error("Failed to fetch sitemap data:", error);
     return { categories: [], products: [], settings: null };
