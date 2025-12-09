@@ -554,16 +554,21 @@ export const CarouselWrapper = ({
     return () => container.removeEventListener("scroll", handleScroll);
   }, [variant, screenSize, activeIndex, total]);
 
-  // Scroll active preview card into view
+  // Scroll active preview card into view (horizontally only)
   useEffect(() => {
     if (previewCardsRef.current && options.showPreviewCards) {
       const container = previewCardsRef.current;
       const activeCard = container.children[activeIndex] as HTMLElement;
       if (activeCard) {
-        activeCard.scrollIntoView({
+        // Calculate the scroll position to center the active card horizontally
+        const containerWidth = container.offsetWidth;
+        const cardLeft = activeCard.offsetLeft;
+        const cardWidth = activeCard.offsetWidth;
+        const scrollLeft = cardLeft - (containerWidth / 2) + (cardWidth / 2);
+
+        container.scrollTo({
+          left: scrollLeft,
           behavior: "smooth",
-          block: "nearest",
-          inline: "center",
         });
       }
     }

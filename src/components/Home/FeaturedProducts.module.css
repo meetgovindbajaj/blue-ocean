@@ -17,27 +17,8 @@
 
     .productCardWrapper {
         width: 100%;
-        height: 360px;
+        height: 100%;
         border-radius: 12px;
-        overflow: hidden;
-    }
-
-    @media screen and (width <=1000px) {
-        .productCardWrapper {
-            height: 340px;
-        }
-    }
-
-    @media screen and (width <=600px) {
-        .productCardWrapper {
-            height: 320px;
-        }
-    }
-
-    @media screen and (width <=340px) {
-        .productCardWrapper {
-            height: 300px;
-        }
     }
 
     .mobileViewAll {

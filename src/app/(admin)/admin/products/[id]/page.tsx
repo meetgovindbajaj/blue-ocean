@@ -7,8 +7,8 @@ import { Route } from "next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import RichTextEditor from "@/components/admin/RichTextEditor";
 import {
   Select,
   SelectContent,
@@ -287,14 +287,13 @@ export default function EditProductPage({
 
               <div className="space-y-2">
                 <Label htmlFor="description">Description *</Label>
-                <Textarea
-                  id="description"
+                <RichTextEditor
                   value={formData.description}
-                  onChange={(e) =>
-                    setFormData({ ...formData, description: e.target.value })
+                  onChange={(value) =>
+                    setFormData({ ...formData, description: value })
                   }
-                  rows={4}
-                  required
+                  placeholder="Enter product description..."
+                  minHeight="150px"
                 />
               </div>
 
@@ -504,7 +503,7 @@ export default function EditProductPage({
               maxImages={10}
             />
             <p className="text-sm text-muted-foreground mt-2">
-              Click on an image and select &quot;Set Thumb&quot; to mark it as the thumbnail.
+              Drag images to reorder. Click on an image and select &quot;Set Thumb&quot; to mark it as the thumbnail. Images are displayed in the product details page in this order.
             </p>
           </CardContent>
         </Card>

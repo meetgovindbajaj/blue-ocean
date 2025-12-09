@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,6 +22,7 @@ import {
   Search,
   RefreshCw,
   Plus,
+  GripVertical,
 } from "lucide-react";
 
 export interface ImageData {
@@ -207,6 +208,51 @@ export default function ImagePicker({
     onChange(updated);
   };
 
+  // Drag and drop state
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", index.toString());
+    // Add a slight delay to allow the drag image to be created
+    setTimeout(() => {
+      (e.target as HTMLElement).style.opacity = "0.5";
+    }, 0);
+  };
+
+  const handleDragEnd = (e: React.DragEvent) => {
+    (e.target as HTMLElement).style.opacity = "1";
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    if (draggedIndex !== null && index !== draggedIndex) {
+      setDragOverIndex(index);
+    }
+  };
+
+  const handleDragLeave = () => {
+    setDragOverIndex(null);
+  };
+
+  const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === dropIndex) return;
+
+    const newImages = [...currentImages];
+    const [draggedImage] = newImages.splice(draggedIndex, 1);
+    newImages.splice(dropIndex, 0, draggedImage);
+
+    onChange(newImages);
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
+
   const filteredImages = cloudinaryImages.filter(
     (img) =>
       img.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -218,18 +264,39 @@ export default function ImagePicker({
       {/* Current Images Preview */}
       {currentImages.length > 0 ? (
         <div className="flex flex-wrap gap-3">
-          {currentImages.map((img) => (
+          {currentImages.map((img, index) => (
             <div
               key={img.id}
-              className={`relative group w-24 h-24 rounded-lg overflow-hidden border-2 bg-muted ${
+              draggable={multiple}
+              onDragStart={(e) => handleDragStart(e, index)}
+              onDragEnd={handleDragEnd}
+              onDragOver={(e) => handleDragOver(e, index)}
+              onDragLeave={handleDragLeave}
+              onDrop={(e) => handleDrop(e, index)}
+              className={`relative group w-24 h-24 rounded-lg overflow-hidden border-2 bg-muted transition-all ${
                 img.isThumbnail ? "border-primary" : "border-muted"
-              }`}
+              } ${draggedIndex === index ? "opacity-50" : ""} ${
+                dragOverIndex === index ? "ring-2 ring-primary ring-offset-2" : ""
+              } ${multiple ? "cursor-grab active:cursor-grabbing" : ""}`}
             >
+              {/* Drag handle indicator */}
+              {multiple && (
+                <div className="absolute top-1 right-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <GripVertical className="h-4 w-4 text-white drop-shadow-md" />
+                </div>
+              )}
+              {/* Order number */}
+              {multiple && (
+                <div className="absolute bottom-1 right-1 bg-black/70 text-white text-xs px-1.5 py-0.5 rounded z-10">
+                  {index + 1}
+                </div>
+              )}
               <Image
                 src={img.thumbnailUrl || img.url}
                 alt={img.name}
                 fill
                 className="object-contain p-1"
+                draggable={false}
               />
               {img.isThumbnail && (
                 <div className="absolute top-1 left-1 bg-primary text-primary-foreground text-xs px-1 rounded">

@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
+import parse from "html-react-parser";
 import { ProductType } from "@/types/product";
 import ProductCard from "./ProductCard";
 import styles from "./ProductDetailClient.module.css";
@@ -167,7 +168,7 @@ export default function ProductDetailClient({
               data={galleryCarouselData}
               options={{
                 showControlBtns: images.length > 1,
-                showControlDots: images.length > 1,
+                showControlDots: false,
                 showPreviewCards: images.length > 1,
                 showPreviewBtn: true,
                 showOverlay: false,
@@ -213,7 +214,9 @@ export default function ProductDetailClient({
 
           {/* Description */}
           {product.description && (
-            <p className={styles.description}>{product.description}</p>
+            <div className={styles.description}>
+              {parse(product.description)}
+            </div>
           )}
 
           {/* Specifications */}

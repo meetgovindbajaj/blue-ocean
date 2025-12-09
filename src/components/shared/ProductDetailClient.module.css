@@ -266,6 +266,59 @@
   margin: 0;
 }
 
+/* Rich text content styles */
+.description h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 1rem 0 0.5rem 0;
+  color: #1f2937;
+}
+
+.description h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 1rem 0 0.5rem 0;
+  color: #1f2937;
+}
+
+.description h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0.75rem 0 0.5rem 0;
+  color: #374151;
+}
+
+.description p {
+  margin: 0.5rem 0;
+}
+
+.description ul,
+.description ol {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.description li {
+  margin: 0.25rem 0;
+}
+
+.description blockquote {
+  border-left: 4px solid #d1d5db;
+  padding-left: 1rem;
+  margin: 0.75rem 0;
+  font-style: italic;
+  color: #6b7280;
+}
+
+.description a {
+  color: #3b82f6;
+  text-decoration: underline;
+}
+
+.description a:hover {
+  color: #1d4ed8;
+}
+
 /* Specifications */
 .specifications {
   background-color: #f9fafb;
@@ -655,27 +708,8 @@
 /* Product Card Wrapper for carousels */
 .productCardWrapper {
   width: 100%;
-  height: 360px;
+  height: 100%;
   border-radius: 12px;
-  overflow: hidden;
-}
-
-@media (max-width: 1000px) {
-  .productCardWrapper {
-    height: 340px;
-  }
-}
-
-@media (max-width: 600px) {
-  .productCardWrapper {
-    height: 320px;
-  }
-}
-
-@media (max-width: 340px) {
-  .productCardWrapper {
-    height: 300px;
-  }
 }
 
 /* Related Carousel */
