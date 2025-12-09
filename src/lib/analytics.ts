@@ -8,6 +8,7 @@ import {
 import Product from "@/models/Product";
 import Category from "@/models/Category";
 import HeroBanner from "@/models/HeroBanner";
+import Tag from "@/models/Tag";
 import User from "@/models/User";
 import Profile from "@/models/Profile";
 import mongoose, { Types } from "mongoose";
@@ -155,6 +156,10 @@ async function updateEntityCounters(
         await HeroBanner.findByIdAndUpdate(entityId, {
           $inc: { impressions: 1 },
         });
+      }
+    } else if (entityType === "tag") {
+      if (eventType.includes("click")) {
+        await Tag.findByIdAndUpdate(entityId, { $inc: { clicks: 1 } });
       }
     }
   } catch (error) {

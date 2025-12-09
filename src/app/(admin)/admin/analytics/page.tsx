@@ -20,6 +20,9 @@ import {
   ShoppingCart,
   BarChart3,
   UserCheck,
+  Tag,
+  PieChart,
+  Activity,
 } from "lucide-react";
 
 interface AnalyticsData {
@@ -28,6 +31,7 @@ interface AnalyticsData {
     totalClicks: number;
     uniqueVisitors: number;
     totalBannerClicks: number;
+    totalTagClicks: number;
     totalProducts: number;
     totalUsers: number;
   };
@@ -51,7 +55,38 @@ interface AnalyticsData {
     clicks: number;
     ctr: number;
   }>;
+  tagStats: Array<{
+    id: string;
+    name: string;
+    slug: string;
+    clicks: number;
+  }>;
+  dailyTrends: Array<{
+    date: string;
+    views: number;
+    clicks: number;
+  }>;
+  entityBreakdown: Array<{
+    name: string;
+    value: number;
+  }>;
 }
+
+const ENTITY_COLORS: Record<string, string> = {
+  product: "bg-blue-500",
+  category: "bg-green-500",
+  banner: "bg-purple-500",
+  tag: "bg-orange-500",
+  page: "bg-cyan-500",
+};
+
+const ENTITY_LABELS: Record<string, string> = {
+  product: "Products",
+  category: "Categories",
+  banner: "Banners",
+  tag: "Tags",
+  page: "Pages",
+};
 
 export default function AnalyticsPage() {
   const [data, setData] = useState<AnalyticsData | null>(null);
@@ -99,6 +134,13 @@ export default function AnalyticsPage() {
       bgColor: "bg-cyan-100",
     },
     {
+      title: "Tag Clicks",
+      value: data?.overview.totalTagClicks || 0,
+      icon: Tag,
+      color: "text-orange-600",
+      bgColor: "bg-orange-100",
+    },
+    {
       title: "Products",
       value: data?.overview.totalProducts || 0,
       icon: Package,
@@ -109,10 +151,15 @@ export default function AnalyticsPage() {
       title: "Users",
       value: data?.overview.totalUsers || 0,
       icon: Users,
-      color: "text-orange-600",
-      bgColor: "bg-orange-100",
+      color: "text-pink-600",
+      bgColor: "bg-pink-100",
     },
   ];
+
+  // Calculate max values for charts
+  const maxDailyViews = Math.max(...(data?.dailyTrends?.map((d) => d.views) || [1]), 1);
+  const maxTagClicks = Math.max(...(data?.tagStats?.map((t) => t.clicks) || [1]), 1);
+  const totalEntityEvents = data?.entityBreakdown?.reduce((sum, e) => sum + e.value, 0) || 1;
 
   if (loading) {
     return (
@@ -121,8 +168,8 @@ export default function AnalyticsPage() {
           <Skeleton className="h-8 w-32" />
           <Skeleton className="h-10 w-32" />
         </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-          {[...Array(5)].map((_, i) => (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+          {[...Array(6)].map((_, i) => (
             <Card key={i}>
               <CardHeader className="pb-2">
                 <Skeleton className="h-4 w-24" />
@@ -160,7 +207,7 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Overview Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         {overviewCards.map((card) => (
           <Card key={card.title}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -178,6 +225,112 @@ export default function AnalyticsPage() {
             </CardContent>
           </Card>
         ))}
+      </div>
+
+      {/* Charts Row */}
+      <div className="grid gap-6 md:grid-cols-2">
+        {/* Daily Trends Chart */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Activity className="h-5 w-5" />
+              Daily Trends
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {data?.dailyTrends && data.dailyTrends.length > 0 ? (
+              <div className="space-y-4">
+                {/* Simple bar chart */}
+                <div className="flex items-end gap-1" style={{ height: "160px" }}>
+                  {data.dailyTrends.slice(-14).map((day, index) => {
+                    const viewHeight = Math.max((day.views / maxDailyViews) * 100, 2);
+                    return (
+                      <div
+                        key={day.date}
+                        className="flex-1 flex flex-col items-center justify-end h-full group"
+                      >
+                        <div
+                          className="w-full bg-blue-500 rounded-t transition-all hover:bg-blue-600 min-h-[4px]"
+                          style={{ height: `${viewHeight}%` }}
+                          title={`${day.date}: ${day.views} views`}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+                {/* Date labels */}
+                <div className="flex gap-1">
+                  {data.dailyTrends.slice(-14).map((day, index) => (
+                    <div key={`label-${day.date}`} className="flex-1 text-center">
+                      {index % 2 === 0 && (
+                        <span className="text-[10px] text-muted-foreground">
+                          {day.date.slice(5)}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-blue-500 rounded" />
+                    <span>Views</span>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-8">
+                No trend data available
+              </p>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Entity Breakdown Pie Chart */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <PieChart className="h-5 w-5" />
+              Activity by Type
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {data?.entityBreakdown && data.entityBreakdown.length > 0 ? (
+              <div className="space-y-4">
+                {/* Simple horizontal bars */}
+                <div className="space-y-3">
+                  {data.entityBreakdown
+                    .filter((e) => e.value > 0)
+                    .sort((a, b) => b.value - a.value)
+                    .map((entity) => {
+                      const percentage = (entity.value / totalEntityEvents) * 100;
+                      return (
+                        <div key={entity.name} className="space-y-1">
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="font-medium">
+                              {ENTITY_LABELS[entity.name] || entity.name}
+                            </span>
+                            <span className="text-muted-foreground">
+                              {entity.value.toLocaleString()} ({percentage.toFixed(1)}%)
+                            </span>
+                          </div>
+                          <div className="h-2 bg-muted rounded-full overflow-hidden">
+                            <div
+                              className={`h-full ${ENTITY_COLORS[entity.name] || "bg-gray-500"} transition-all`}
+                              style={{ width: `${percentage}%` }}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-8">
+                No activity data available
+              </p>
+            )}
+          </CardContent>
+        </Card>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
@@ -213,6 +366,50 @@ export default function AnalyticsPage() {
               ) : (
                 <p className="text-sm text-muted-foreground text-center py-4">
                   No data available
+                </p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Tag Performance */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Tag className="h-5 w-5" />
+              Tag Performance
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {data?.tagStats && data.tagStats.length > 0 ? (
+                data.tagStats.slice(0, 5).map((tag, index) => {
+                  const percentage = (tag.clicks / maxTagClicks) * 100;
+                  return (
+                    <div key={tag.id} className="space-y-2">
+                      <div className="flex items-center justify-between text-sm">
+                        <div className="flex items-center gap-2">
+                          <span className="flex items-center justify-center w-6 h-6 rounded-full bg-orange-100 text-orange-600 text-xs font-medium">
+                            {index + 1}
+                          </span>
+                          <span className="font-medium truncate max-w-[200px]">
+                            {tag.name}
+                          </span>
+                        </div>
+                        <span className="text-muted-foreground">
+                          {tag.clicks.toLocaleString()} clicks
+                        </span>
+                      </div>
+                      <Progress
+                        value={percentage}
+                        className="h-2 [&>div]:bg-orange-500"
+                      />
+                    </div>
+                  );
+                })
+              ) : (
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  No tag data available
                 </p>
               )}
             </div>
@@ -259,7 +456,7 @@ export default function AnalyticsPage() {
         </Card>
 
         {/* Banner Performance */}
-        <Card className="md:col-span-2">
+        <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <BarChart3 className="h-5 w-5" />
@@ -267,37 +464,37 @@ export default function AnalyticsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
+            <div className="space-y-4 max-h-[400px] overflow-y-auto">
               {data?.bannerStats && data.bannerStats.length > 0 ? (
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <div className="space-y-3">
                   {data.bannerStats.map((banner) => (
                     <div
                       key={banner.id}
-                      className="p-4 border rounded-lg space-y-2"
+                      className="p-3 border rounded-lg space-y-2"
                     >
-                      <p className="font-medium truncate">{banner.name}</p>
+                      <p className="font-medium truncate text-sm">{banner.name}</p>
                       <div className="grid grid-cols-3 gap-2 text-center">
                         <div>
-                          <p className="text-lg font-bold">
+                          <p className="text-base font-bold">
                             {banner.impressions.toLocaleString()}
                           </p>
-                          <p className="text-xs text-muted-foreground">
+                          <p className="text-[10px] text-muted-foreground">
                             Impressions
                           </p>
                         </div>
                         <div>
-                          <p className="text-lg font-bold">
+                          <p className="text-base font-bold">
                             {banner.clicks.toLocaleString()}
                           </p>
-                          <p className="text-xs text-muted-foreground">
+                          <p className="text-[10px] text-muted-foreground">
                             Clicks
                           </p>
                         </div>
                         <div>
-                          <p className="text-lg font-bold">
+                          <p className="text-base font-bold">
                             {banner.ctr.toFixed(1)}%
                           </p>
-                          <p className="text-xs text-muted-foreground">CTR</p>
+                          <p className="text-[10px] text-muted-foreground">CTR</p>
                         </div>
                       </div>
                     </div>

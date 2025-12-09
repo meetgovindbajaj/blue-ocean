@@ -3,6 +3,8 @@ import { revalidatePath } from "next/cache";
 import connectDB from "@/lib/db";
 import Tag from "@/models/Tag";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -27,14 +29,11 @@ export async function GET(
         name: (tag as any).name,
         slug: (tag as any).slug,
         description: (tag as any).description,
-        image: (tag as any).image,
         logo: (tag as any).logo,
         website: (tag as any).website,
         isActive: (tag as any).isActive,
-        isFeatured: (tag as any).isFeatured,
         order: (tag as any).order,
         clicks: (tag as any).clicks || 0,
-        impressions: (tag as any).impressions || 0,
         createdAt: (tag as any).createdAt,
       },
     });
@@ -80,18 +79,15 @@ export async function PUT(
       );
     }
 
-    const updateData: any = {
+    const updateData: Record<string, unknown> = {
       name: body.name,
       slug,
     };
 
     if (body.description !== undefined) updateData.description = body.description;
-    if (body.image !== undefined) updateData.image = body.image;
     if (body.logo !== undefined) updateData.logo = body.logo;
     if (body.website !== undefined) updateData.website = body.website;
     if (body.isActive !== undefined) updateData.isActive = body.isActive;
-    if (body.isFeatured !== undefined) updateData.isFeatured = body.isFeatured;
-    if (body.order !== undefined) updateData.order = body.order;
 
     const tag = await Tag.findByIdAndUpdate(
       id,
@@ -117,14 +113,11 @@ export async function PUT(
         name: tag.name,
         slug: tag.slug,
         description: tag.description,
-        image: tag.image,
         logo: tag.logo,
         website: tag.website,
         isActive: tag.isActive,
-        isFeatured: tag.isFeatured,
         order: tag.order,
         clicks: tag.clicks || 0,
-        impressions: tag.impressions || 0,
       },
     });
   } catch (error) {

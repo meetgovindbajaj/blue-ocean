@@ -4,6 +4,8 @@ import Product from "@/models/Product";
 import Category from "@/models/Category";
 import User from "@/models/User";
 import HeroBanner from "@/models/HeroBanner";
+import Tag from "@/models/Tag";
+import { AnalyticsEvent } from "@/models/Analytics";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +22,7 @@ export async function GET(
     const range = searchParams.get("range") || "30d";
     const preview = searchParams.get("preview") === "true";
     const limit = parseInt(searchParams.get("limit") || "0") || 0;
+    const filter = searchParams.get("filter") || "all"; // "all" = all entries, "new" = only new entries in date range
 
     // Calculate date range
     let startDate: Date | null = null;
@@ -43,7 +46,9 @@ export async function GET(
         startDate = null;
     }
 
-    const dateFilter = startDate ? { createdAt: { $gte: startDate } } : {};
+    // Only apply date filter when filter=new (new entries only)
+    // When filter=all, show all entries regardless of date range
+    const dateFilter = (filter === "new" && startDate) ? { createdAt: { $gte: startDate } } : {};
 
     let data: any[] = [];
     let headers: string[] = [];
@@ -51,7 +56,7 @@ export async function GET(
 
     switch (type) {
       case "products":
-        headers = ["ID", "Name", "Slug", "Category", "Retail Price", "Wholesale Price", "Discount %", "Views", "Clicks", "Active", "Created At"];
+        headers = ["ID", "Name", "Slug", "Category", "Retail Price", "Wholesale Price", "Discount %", "Views", "Active", "Created At"];
         const products = await Product.find(dateFilter)
           .populate("category", "name")
           .sort({ createdAt: -1 })
@@ -64,8 +69,7 @@ export async function GET(
           retailPrice: p.prices?.retail || 0,
           wholesalePrice: p.prices?.wholesale || 0,
           discount: p.prices?.discount || 0,
-          views: p.views || 0,
-          clicks: p.clicks || 0,
+          views: p.totalViews || 0,
           active: p.isActive ? "Yes" : "No",
           createdAt: p.createdAt?.toISOString().split("T")[0] || "",
         }));
@@ -129,17 +133,34 @@ export async function GET(
 
       case "analytics":
         headers = ["Metric", "Value"];
-        const [totalProducts, totalCategories, totalUsers, totalBanners] = await Promise.all([
+        const [totalProducts, totalCategories, totalUsers, totalBanners, totalTags] = await Promise.all([
           Product.countDocuments(),
           Category.countDocuments(),
           User.countDocuments(),
           HeroBanner.countDocuments(),
+          Tag.countDocuments(),
         ]);
         const productStats = await Product.aggregate([
           {
             $group: {
               _id: null,
-              totalViews: { $sum: { $ifNull: ["$views", 0] } },
+              totalViews: { $sum: { $ifNull: ["$totalViews", 0] } },
+            },
+          },
+        ]);
+        const tagStats = await Tag.aggregate([
+          {
+            $group: {
+              _id: null,
+              totalClicks: { $sum: { $ifNull: ["$clicks", 0] } },
+            },
+          },
+        ]);
+        const bannerStats = await HeroBanner.aggregate([
+          {
+            $group: {
+              _id: null,
+              totalImpressions: { $sum: { $ifNull: ["$impressions", 0] } },
               totalClicks: { $sum: { $ifNull: ["$clicks", 0] } },
             },
           },
@@ -149,10 +170,30 @@ export async function GET(
           { metric: "Total Categories", value: totalCategories },
           { metric: "Total Users", value: totalUsers },
           { metric: "Total Banners", value: totalBanners },
+          { metric: "Total Tags", value: totalTags },
           { metric: "Total Product Views", value: productStats[0]?.totalViews || 0 },
-          { metric: "Total Product Clicks", value: productStats[0]?.totalClicks || 0 },
+          { metric: "Total Tag Clicks", value: tagStats[0]?.totalClicks || 0 },
+          { metric: "Total Banner Impressions", value: bannerStats[0]?.totalImpressions || 0 },
+          { metric: "Total Banner Clicks", value: bannerStats[0]?.totalClicks || 0 },
         ];
         filename = "analytics-report";
+        break;
+
+      case "tags":
+        headers = ["ID", "Name", "Slug", "Website", "Clicks", "Active", "Created At"];
+        const tags = await Tag.find(dateFilter)
+          .sort({ clicks: -1 })
+          .lean();
+        data = tags.map((t: any) => ({
+          id: t.id || t._id?.toString(),
+          name: t.name,
+          slug: t.slug,
+          website: t.website || "",
+          clicks: t.clicks || 0,
+          active: t.isActive ? "Yes" : "No",
+          createdAt: t.createdAt?.toISOString().split("T")[0] || "",
+        }));
+        filename = "tags-report";
         break;
 
       case "orders":

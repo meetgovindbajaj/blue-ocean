@@ -11,11 +11,11 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const search = searchParams.get("search") || "";
-    const featured = searchParams.get("featured");
+    const active = searchParams.get("active");
     const limit = parseInt(searchParams.get("limit") || "100");
     const page = parseInt(searchParams.get("page") || "1");
 
-    const query: any = {};
+    const query: Record<string, unknown> = {};
 
     if (search) {
       query.$or = [
@@ -25,8 +25,10 @@ export async function GET(request: NextRequest) {
       ];
     }
 
-    if (featured === "true") {
-      query.isFeatured = true;
+    if (active === "true") {
+      query.isActive = true;
+    } else if (active === "false") {
+      query.isActive = false;
     }
 
     const [tags, total] = await Promise.all([
@@ -43,14 +45,11 @@ export async function GET(request: NextRequest) {
       name: tag.name,
       slug: tag.slug,
       description: tag.description,
-      image: tag.image,
       logo: tag.logo,
       website: tag.website,
       isActive: tag.isActive,
-      isFeatured: tag.isFeatured,
       order: tag.order,
       clicks: tag.clicks || 0,
-      impressions: tag.impressions || 0,
       createdAt: tag.createdAt,
     }));
 
@@ -105,12 +104,10 @@ export async function POST(request: NextRequest) {
       name: body.name,
       slug,
       description: body.description,
-      image: body.image,
       logo: body.logo,
       website: body.website,
       isActive: body.isActive ?? true,
-      isFeatured: body.isFeatured ?? false,
-      order: body.order ?? 0,
+      // order is auto-set by pre-save hook
     });
 
     await tag.save();
@@ -126,14 +123,11 @@ export async function POST(request: NextRequest) {
         name: tag.name,
         slug: tag.slug,
         description: tag.description,
-        image: tag.image,
         logo: tag.logo,
         website: tag.website,
         isActive: tag.isActive,
-        isFeatured: tag.isFeatured,
         order: tag.order,
         clicks: 0,
-        impressions: 0,
         createdAt: tag.createdAt,
       },
     });

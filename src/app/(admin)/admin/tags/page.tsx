@@ -1,8 +1,11 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import {
   Table,
   TableBody,
@@ -32,15 +35,52 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Label } from "@/components/ui/label";
-import { Plus, Search, Pencil, Trash2, Tag } from "lucide-react";
+import ImagePicker, { ImageData } from "@/components/admin/ImagePicker";
+import {
+  Plus,
+  Search,
+  Pencil,
+  Trash2,
+  Tag,
+  MousePointerClick,
+  ExternalLink,
+} from "lucide-react";
+
+interface IImage {
+  id?: string;
+  name?: string;
+  url: string;
+  thumbnailUrl?: string;
+}
 
 interface TagItem {
   id: string;
   name: string;
   slug: string;
-  productCount: number;
+  description?: string;
+  logo?: IImage;
+  website?: string;
+  isActive: boolean;
+  order: number;
+  clicks: number;
   createdAt: string;
 }
+
+interface TagFormData {
+  name: string;
+  description: string;
+  website: string;
+  isActive: boolean;
+  logo: ImageData | null;
+}
+
+const defaultFormData: TagFormData = {
+  name: "",
+  description: "",
+  website: "",
+  isActive: true,
+  logo: null,
+};
 
 export default function TagsPage() {
   const [tags, setTags] = useState<TagItem[]>([]);
@@ -48,7 +88,7 @@ export default function TagsPage() {
   const [search, setSearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingTag, setEditingTag] = useState<TagItem | null>(null);
-  const [tagName, setTagName] = useState("");
+  const [formData, setFormData] = useState<TagFormData>(defaultFormData);
   const [saving, setSaving] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
@@ -78,16 +118,29 @@ export default function TagsPage() {
   const handleOpenDialog = (tag?: TagItem) => {
     if (tag) {
       setEditingTag(tag);
-      setTagName(tag.name);
+      setFormData({
+        name: tag.name,
+        description: tag.description || "",
+        website: tag.website || "",
+        isActive: tag.isActive,
+        logo: tag.logo
+          ? {
+              id: tag.logo.id || "",
+              name: tag.logo.name || "",
+              url: tag.logo.url,
+              thumbnailUrl: tag.logo.thumbnailUrl || tag.logo.url,
+            }
+          : null,
+      });
     } else {
       setEditingTag(null);
-      setTagName("");
+      setFormData(defaultFormData);
     }
     setDialogOpen(true);
   };
 
   const handleSaveTag = async () => {
-    if (!tagName.trim()) return;
+    if (!formData.name.trim()) return;
     setSaving(true);
 
     try {
@@ -96,16 +149,31 @@ export default function TagsPage() {
         : "/api/admin/tags";
       const method = editingTag ? "PUT" : "POST";
 
+      const payload: Record<string, unknown> = {
+        name: formData.name,
+        description: formData.description || undefined,
+        website: formData.website || undefined,
+        isActive: formData.isActive,
+        logo: formData.logo
+          ? {
+              id: formData.logo.id,
+              name: formData.logo.name,
+              url: formData.logo.url,
+              thumbnailUrl: formData.logo.thumbnailUrl,
+            }
+          : null,
+      };
+
       const response = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: tagName }),
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
         fetchTags();
         setDialogOpen(false);
-        setTagName("");
+        setFormData(defaultFormData);
         setEditingTag(null);
       }
     } catch (error) {
@@ -139,7 +207,7 @@ export default function TagsPage() {
         <div>
           <h1 className="text-2xl font-bold">Tags</h1>
           <p className="text-sm text-muted-foreground">
-            Manage product tags for better organization
+            Manage brand partnerships and affiliates shown on homepage
           </p>
         </div>
         <Button onClick={() => handleOpenDialog()}>
@@ -168,8 +236,9 @@ export default function TagsPage() {
             <div className="space-y-4">
               {[...Array(5)].map((_, i) => (
                 <div key={i} className="flex items-center gap-4">
-                  <Skeleton className="h-8 w-24" />
+                  <Skeleton className="h-10 w-10 rounded-md" />
                   <Skeleton className="h-4 w-32" />
+                  <Skeleton className="h-4 w-24" />
                 </div>
               ))}
             </div>
@@ -190,10 +259,11 @@ export default function TagsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Slug</TableHead>
-                  <TableHead>Products</TableHead>
-                  <TableHead>Created</TableHead>
+                  <TableHead>Tag</TableHead>
+                  <TableHead>Description</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Clicks</TableHead>
+                  <TableHead>Website</TableHead>
                   <TableHead className="w-24">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -201,21 +271,62 @@ export default function TagsPage() {
                 {tags.map((tag) => (
                   <TableRow key={tag.id}>
                     <TableCell>
-                      <Badge variant="secondary" className="text-sm">
-                        <Tag className="h-3 w-3 mr-1" />
-                        {tag.name}
+                      <div className="flex items-center gap-3">
+                        {tag.logo?.url ? (
+                          <div className="relative h-10 w-10 rounded-md overflow-hidden bg-muted flex-shrink-0">
+                            <Image
+                              src={tag.logo.thumbnailUrl || tag.logo.url}
+                              alt={tag.name}
+                              fill
+                              className="object-contain"
+                            />
+                          </div>
+                        ) : (
+                          <div className="h-10 w-10 rounded-md bg-muted flex items-center justify-center flex-shrink-0">
+                            <Tag className="h-4 w-4 text-muted-foreground" />
+                          </div>
+                        )}
+                        <div>
+                          <div className="font-medium">{tag.name}</div>
+                          <code className="text-xs text-muted-foreground">
+                            {tag.slug}
+                          </code>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-sm text-muted-foreground line-clamp-1 max-w-[200px]">
+                        {tag.description || "—"}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={tag.isActive ? "default" : "secondary"}
+                        className="text-xs"
+                      >
+                        {tag.isActive ? "Active" : "Inactive"}
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <code className="text-xs bg-muted px-2 py-1 rounded">
-                        {tag.slug}
-                      </code>
-                    </TableCell>
-                    <TableCell>{tag.productCount || 0}</TableCell>
-                    <TableCell>
-                      <span className="text-sm text-muted-foreground">
-                        {new Date(tag.createdAt).toLocaleDateString()}
+                      <span className="flex items-center gap-1 text-sm text-muted-foreground">
+                        <MousePointerClick className="h-3 w-3" />
+                        {tag.clicks.toLocaleString()}
                       </span>
+                    </TableCell>
+                    <TableCell>
+                      {tag.website ? (
+                        <a
+                          href={tag.website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-blue-600 hover:underline flex items-center gap-1"
+                        >
+                          <ExternalLink className="h-3 w-3" />
+                          Link
+                        </a>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">—</span>
+                      )}
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
@@ -246,20 +357,109 @@ export default function TagsPage() {
 
       {/* Add/Edit Tag Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>{editingTag ? "Edit Tag" : "New Tag"}</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-4">
+          <div className="space-y-5 py-4">
+            {/* Name */}
             <div className="space-y-2">
-              <Label htmlFor="tagName">Tag Name</Label>
+              <Label htmlFor="tagName">Tag Name *</Label>
               <Input
                 id="tagName"
-                value={tagName}
-                onChange={(e) => setTagName(e.target.value)}
-                placeholder="Enter tag name..."
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+                placeholder="e.g., Partner Brand"
               />
             </div>
+
+            {/* Description */}
+            <div className="space-y-2">
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                value={formData.description}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
+                placeholder="Brief description (max 20 characters)..."
+                rows={2}
+                maxLength={20}
+              />
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>Shown below tag name on homepage. Keep it short.</span>
+                <span>{formData.description.length}/20</span>
+              </div>
+            </div>
+
+            {/* Logo */}
+            <div className="space-y-2">
+              <Label>Logo</Label>
+              <ImagePicker
+                value={formData.logo}
+                onChange={(img) =>
+                  setFormData({
+                    ...formData,
+                    logo: img as ImageData | null,
+                  })
+                }
+                multiple={false}
+              />
+              <p className="text-xs text-muted-foreground">
+                Square logo with rounded corners shown on homepage
+              </p>
+            </div>
+
+            {/* Website */}
+            <div className="space-y-2">
+              <Label htmlFor="website">Website URL</Label>
+              <Input
+                id="website"
+                type="url"
+                value={formData.website}
+                onChange={(e) =>
+                  setFormData({ ...formData, website: e.target.value })
+                }
+                placeholder="https://example.com"
+              />
+              <p className="text-xs text-muted-foreground">
+                Clicking the tag redirects to this URL
+              </p>
+            </div>
+
+            {/* Active Status */}
+            <div className="flex items-center justify-between rounded-lg border p-3">
+              <div className="space-y-0.5">
+                <Label htmlFor="isActive">Active</Label>
+                <p className="text-xs text-muted-foreground">
+                  Show this tag on the website
+                </p>
+              </div>
+              <Switch
+                id="isActive"
+                checked={formData.isActive}
+                onCheckedChange={(checked) =>
+                  setFormData({ ...formData, isActive: checked })
+                }
+              />
+            </div>
+
+            {/* Analytics (Read-only, shown when editing) */}
+            {editingTag && (
+              <div className="rounded-lg border p-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <MousePointerClick className="h-4 w-4" />
+                    <span className="text-sm">Total Clicks</span>
+                  </div>
+                  <span className="text-lg font-semibold">
+                    {editingTag.clicks.toLocaleString()}
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogOpen(false)}>
@@ -267,7 +467,7 @@ export default function TagsPage() {
             </Button>
             <Button
               onClick={handleSaveTag}
-              disabled={saving || !tagName.trim()}
+              disabled={saving || !formData.name.trim()}
             >
               {saving ? "Saving..." : editingTag ? "Update" : "Create"}
             </Button>
@@ -281,8 +481,8 @@ export default function TagsPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Tag</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this tag? Products with this tag
-              will lose this tag association.
+              Are you sure you want to delete this tag? This action cannot be
+              undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

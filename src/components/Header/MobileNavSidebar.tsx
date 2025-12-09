@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Route } from "next";
@@ -178,13 +178,9 @@ const MobileNavSidebar = () => {
   const isAdmin =
     user?.role && ["admin", "super_admin", "moderator"].includes(user.role);
 
-  // Close sidebar on route change
-  useEffect(() => {
-    setOpen(false);
-  }, [pathname]);
-
   const handleNavigate = () => {
-    setOpen(false);
+    // Small delay to allow click event to complete before closing
+    setTimeout(() => setOpen(false), 100);
   };
 
   const handleLogout = async () => {

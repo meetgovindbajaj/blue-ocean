@@ -4,6 +4,7 @@ import Product from "@/models/Product";
 import Category from "@/models/Category";
 import User from "@/models/User";
 import HeroBanner from "@/models/HeroBanner";
+import Tag from "@/models/Tag";
 import { AnalyticsEvent } from "@/models/Analytics";
 
 export const dynamic = "force-dynamic";
@@ -144,23 +145,31 @@ export async function GET(request: NextRequest) {
       },
     ]);
 
-    // Merge category data
+    // Merge category data - deduplicate by id
     const categoryMap = new Map(
       categoryProductCounts.map((c: any) => [c.id, c])
     );
 
-    const topCategories = categoryViews.map((cv: any) => {
-      const catInfo = categoryMap.get(cv._id) || {};
-      return {
-        id: cv._id,
-        name: cv.entityName || (catInfo as any).name || "Unknown",
-        productCount: (catInfo as any).productCount || 0,
-        views: cv.views || 0,
-      };
-    });
+    // Create a set to track unique category IDs
+    const seenCategoryIds = new Set<string>();
+    const topCategories: Array<{id: string; name: string; productCount: number; views: number}> = [];
 
-    // If no category views, show categories by product count
-    if (topCategories.length === 0) {
+    // First add categories from analytics views
+    for (const cv of categoryViews) {
+      if (cv._id && !seenCategoryIds.has(cv._id)) {
+        seenCategoryIds.add(cv._id);
+        const catInfo = categoryMap.get(cv._id) || {};
+        topCategories.push({
+          id: cv._id,
+          name: cv.entityName || (catInfo as any).name || "Unknown",
+          productCount: (catInfo as any).productCount || 0,
+          views: cv.views || 0,
+        });
+      }
+    }
+
+    // If no category views or need more, show categories by product count
+    if (topCategories.length < 5) {
       const fallbackCategories = await Category.aggregate([
         { $match: { isActive: true } },
         {
@@ -180,17 +189,28 @@ export async function GET(request: NextRequest) {
           },
         },
         { $sort: { productCount: -1 } },
-        { $limit: 5 },
+        { $limit: 10 },
       ]);
-      topCategories.push(...fallbackCategories);
+
+      // Only add categories not already in the list
+      for (const fc of fallbackCategories) {
+        if (!seenCategoryIds.has(fc.id) && topCategories.length < 5) {
+          seenCategoryIds.add(fc.id);
+          topCategories.push({
+            id: fc.id,
+            name: fc.name,
+            productCount: fc.productCount,
+            views: fc.views || 0,
+          });
+        }
+      }
     }
 
-    // Get banner stats with analytics data
+    // Get banner stats with analytics data - show all banners
     const [bannerStats, bannerAnalytics] = await Promise.all([
       HeroBanner.find({ isActive: true })
         .select("id name impressions clicks")
         .sort({ impressions: -1 })
-        .limit(6)
         .lean(),
       AnalyticsEvent.aggregate([
         {
@@ -246,16 +266,109 @@ export async function GET(request: NextRequest) {
     // Calculate total banner clicks for consistency check
     const totalBannerClicks = bannerStatsWithCTR.reduce((sum, b) => sum + b.clicks, 0);
 
+    // Get tag stats with analytics data
+    const [tagStats, tagAnalytics] = await Promise.all([
+      Tag.find({ isActive: true })
+        .select("id name slug clicks")
+        .sort({ clicks: -1 })
+        .limit(10)
+        .lean(),
+      AnalyticsEvent.aggregate([
+        {
+          $match: {
+            entityType: "tag",
+            eventType: "tag_click",
+            ...dateMatch,
+          },
+        },
+        {
+          $group: {
+            _id: "$entityId",
+            clicks: { $sum: 1 },
+            entityName: { $first: "$entityName" },
+          },
+        },
+        { $sort: { clicks: -1 } },
+        { $limit: 10 },
+      ]),
+    ]);
+
+    // Create map of analytics data
+    const tagAnalyticsMap = new Map<string, any>();
+    tagAnalytics.forEach((t: any) => {
+      tagAnalyticsMap.set(t._id, t);
+    });
+
+    const tagStatsWithAnalytics = tagStats.map((t: any) => {
+      const tagId = t.id || t._id?.toString();
+      const analytics = tagAnalyticsMap.get(tagId) || {};
+      const analyticsClicks = (analytics as any).clicks || 0;
+      const storedClicks = t.clicks || 0;
+
+      return {
+        id: tagId,
+        name: t.name,
+        slug: t.slug,
+        clicks: Math.max(analyticsClicks, storedClicks),
+      };
+    });
+
+    // Sort by clicks descending
+    tagStatsWithAnalytics.sort((a, b) => b.clicks - a.clicks);
+    const totalTagClicks = tagStatsWithAnalytics.reduce((sum, t) => sum + t.clicks, 0);
+
+    // Get daily trends for charts - aggregate from AnalyticsEvent directly
+    const dailyTrends = await AnalyticsEvent.aggregate([
+      {
+        $match: dateMatch,
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+          views: {
+            $sum: { $cond: [{ $regexMatch: { input: "$eventType", regex: /view/ } }, 1, 0] },
+          },
+          clicks: {
+            $sum: { $cond: [{ $regexMatch: { input: "$eventType", regex: /click/ } }, 1, 0] },
+          },
+        },
+      },
+      { $sort: { _id: 1 } },
+      { $limit: 30 },
+    ]);
+
+    // Get entity type breakdown for pie chart
+    const entityBreakdown = await AnalyticsEvent.aggregate([
+      { $match: dateMatch },
+      {
+        $group: {
+          _id: "$entityType",
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
     return NextResponse.json({
       success: true,
       data: {
         overview: {
           ...overview,
           totalBannerClicks,
+          totalTagClicks,
         },
         topProducts: topProductsWithPercentage,
         topCategories,
         bannerStats: bannerStatsWithCTR,
+        tagStats: tagStatsWithAnalytics,
+        dailyTrends: dailyTrends.map((d: any) => ({
+          date: d._id,
+          views: d.views,
+          clicks: d.clicks,
+        })),
+        entityBreakdown: entityBreakdown.map((e: any) => ({
+          name: e._id,
+          value: e.count,
+        })),
       },
     });
   } catch (error) {

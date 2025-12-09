@@ -140,9 +140,10 @@ interface NavGroupProps {
   label: string;
   items: NavItem[];
   defaultOpen?: boolean;
+  onNavigate?: () => void;
 }
 
-const NavGroup = ({ label, items, defaultOpen = true }: NavGroupProps) => {
+const NavGroup = ({ label, items, defaultOpen = true, onNavigate }: NavGroupProps) => {
   const pathname = usePathname();
 
   return (
@@ -166,7 +167,7 @@ const NavGroup = ({ label, items, defaultOpen = true }: NavGroupProps) => {
                       isActive={isActive}
                       tooltip={item.title}
                     >
-                      <Link href={item.url}>
+                      <Link href={item.url} onClick={onNavigate}>
                         <item.icon className="h-4 w-4" />
                         <span>{item.title}</span>
                       </Link>
@@ -179,7 +180,7 @@ const NavGroup = ({ label, items, defaultOpen = true }: NavGroupProps) => {
                               asChild
                               isActive={pathname === subItem.url}
                             >
-                              <Link href={subItem.url}>
+                              <Link href={subItem.url} onClick={onNavigate}>
                                 <span>{subItem.title}</span>
                               </Link>
                             </SidebarMenuSubButton>
@@ -270,7 +271,15 @@ const NavUser = () => {
 const AppSidebar = () => {
   const { settings } = useSiteSettings();
   const pathname = usePathname();
+  const { isMobile, setOpenMobile } = useSidebar();
   const siteName = settings?.siteName || "Blue Ocean";
+
+  // Close mobile sidebar on navigation
+  const handleNavigate = () => {
+    if (isMobile) {
+      setTimeout(() => setOpenMobile(false), 100);
+    }
+  };
 
   return (
     <Sidebar collapsible="icon">
@@ -278,7 +287,7 @@ const AppSidebar = () => {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <Link href="/admin">
+              <Link href="/admin" onClick={handleNavigate}>
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
                   <Store className="size-4" />
                 </div>
@@ -304,7 +313,7 @@ const AppSidebar = () => {
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild isActive={isActive} tooltip={item.title}>
-                      <Link href={item.url}>
+                      <Link href={item.url} onClick={handleNavigate}>
                         <item.icon className="h-4 w-4" />
                         <span>{item.title}</span>
                       </Link>
@@ -317,16 +326,16 @@ const AppSidebar = () => {
         </SidebarGroup>
 
         {/* Content Management */}
-        <NavGroup label="Content" items={contentNavItems} />
+        <NavGroup label="Content" items={contentNavItems} onNavigate={handleNavigate} />
 
         {/* Marketing */}
-        <NavGroup label="Marketing" items={marketingNavItems} />
+        <NavGroup label="Marketing" items={marketingNavItems} onNavigate={handleNavigate} />
 
         {/* User Management */}
-        <NavGroup label="Management" items={managementNavItems} />
+        <NavGroup label="Management" items={managementNavItems} onNavigate={handleNavigate} />
 
         {/* Analytics & Reports */}
-        <NavGroup label="Analytics" items={analyticsNavItems} />
+        <NavGroup label="Analytics" items={analyticsNavItems} onNavigate={handleNavigate} />
 
         {/* Settings */}
         <SidebarGroup>
@@ -337,7 +346,7 @@ const AppSidebar = () => {
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild isActive={isActive} tooltip={item.title}>
-                      <Link href={item.url}>
+                      <Link href={item.url} onClick={handleNavigate}>
                         <item.icon className="h-4 w-4" />
                         <span>{item.title}</span>
                       </Link>

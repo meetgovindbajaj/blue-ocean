@@ -5,7 +5,7 @@
         border-top: 1px solid var(--border);
         border-bottom: 1px solid var(--border);
         overflow: hidden;
-        padding: 27px 0;
+        padding: 20px 0;
         position: relative;
 
         &::before,
@@ -32,22 +32,22 @@
 
     .loadingContainer {
         display: flex;
-        gap: 24px;
+        gap: 48px;
         justify-content: center;
         align-items: center;
         padding: 0 32px;
     }
 
-    .tagImage {
-        width: 24px;
-        height: 24px;
-        object-fit: contain;
+    .skeletonItem {
+        display: flex;
+        align-items: center;
+        gap: 12px;
     }
 
     .featuresTrack {
         display: flex;
         width: fit-content;
-        animation: scroll 20s linear infinite;
+        animation: scroll 30s linear infinite;
 
         &:hover {
             animation-play-state: paused;
@@ -56,8 +56,8 @@
 
     .featuresContent {
         display: flex;
-        gap: 64px;
-        padding: 0 32px;
+        gap: 48px;
+        padding: 0 24px;
         align-items: center;
     }
 
@@ -66,24 +66,60 @@
         align-items: center;
         gap: 12px;
         white-space: nowrap;
-        mix-blend-mode: normal;
         transition: all 250ms cubic-bezier(0.16, 1, 0.3, 1);
+        padding: 8px 12px;
+        border-radius: 12px;
+
+        &:hover {
+            background: var(--muted);
+        }
     }
 
-    .featureIcon {
-        font-size: 24px;
-        color: var(--text-primary);
+    .featureLogo {
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: color 250ms cubic-bezier(0.16, 1, 0.3, 1);
+        flex-shrink: 0;
+        width: 48px;
+        height: 48px;
+        border-radius: 10px;
+        overflow: hidden;
+        background: var(--muted);
     }
 
-    .featureText {
+    .tagImage {
+        width: 48px;
+        height: 48px;
+        object-fit: contain;
+        border-radius: 10px;
+    }
+
+    .featureContent {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
+        max-width: 200px;
+    }
+
+    .featureName {
         font-size: 14px;
-        font-weight: 500;
-        color: var(--text-primary);
-        letter-spacing: 0.025rem;
+        font-weight: 600;
+        color: var(--foreground);
+        letter-spacing: 0.01em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .featureDescription {
+        font-size: 12px;
+        font-weight: 400;
+        color: var(--muted-foreground);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 180px;
     }
 
     @keyframes scroll {
@@ -98,23 +134,44 @@
 
     @media (max-width: 768px) {
         .page {
-            padding: 0;
-        }
-
-        .featuresTrack {
             padding: 16px 0;
         }
 
+        .featuresTrack {
+            animation-duration: 25s;
+        }
+
         .featuresContent {
-            gap: 48px;
+            gap: 32px;
+            padding: 0 16px;
         }
 
-        .featureIcon {
-            font-size: 18px;
+        .featureItem {
+            gap: 10px;
+            padding: 6px 10px;
         }
 
-        .featureText {
-            font-size: 12px;
+        .featureLogo {
+            width: 40px;
+            height: 40px;
+        }
+
+        .tagImage {
+            width: 40px;
+            height: 40px;
+        }
+
+        .featureContent {
+            max-width: 160px;
+        }
+
+        .featureName {
+            font-size: 13px;
+        }
+
+        .featureDescription {
+            font-size: 11px;
+            max-width: 140px;
         }
     }
 }

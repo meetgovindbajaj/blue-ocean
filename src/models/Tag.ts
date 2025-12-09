@@ -20,14 +20,11 @@ interface ITag extends Document {
   name: string;
   slug: string;
   description?: string;
-  image?: IImage;
   logo?: IImage;
   website?: string;
   isActive: boolean;
-  isFeatured: boolean;
   order: number;
   clicks: number;
-  impressions: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -97,7 +94,6 @@ const TagSchema = new Schema<ITag>(
       trim: true,
       maxlength: 500,
     },
-    image: ImageSchema,
     logo: ImageSchema,
     website: {
       type: String,
@@ -106,11 +102,6 @@ const TagSchema = new Schema<ITag>(
     isActive: {
       type: Boolean,
       default: true,
-      index: true,
-    },
-    isFeatured: {
-      type: Boolean,
-      default: false,
       index: true,
     },
     order: {
@@ -122,21 +113,25 @@ const TagSchema = new Schema<ITag>(
       type: Number,
       default: 0,
     },
-    impressions: {
-      type: Number,
-      default: 0,
-    },
   },
   { timestamps: true }
 );
 
-TagSchema.pre("save", function () {
+// Auto-increment order for new tags
+TagSchema.pre("save", async function () {
   if (!this.id) {
     this.id = (this._id as Types.ObjectId).toString();
+  }
+
+  // Auto-set order for new tags
+  if (this.isNew && this.order === 0) {
+    const Tag = models.Tag || model<ITag>("Tag", TagSchema);
+    const maxOrderTag = await Tag.findOne({}).sort({ order: -1 }).select("order").lean();
+    this.order = maxOrderTag ? (maxOrderTag as any).order + 1 : 1;
   }
 });
 
 // Note: name and slug already have indexes via `unique: true` in schema definition
-TagSchema.index({ isActive: 1, isFeatured: 1, order: 1 });
+TagSchema.index({ isActive: 1, order: 1 });
 
 export default models.Tag || model<ITag>("Tag", TagSchema);
