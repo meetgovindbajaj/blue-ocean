@@ -4,6 +4,8 @@ import User from "@/models/User";
 import Profile from "@/models/Profile";
 import { getAuthUser, unauthorizedResponse, errorResponse, successResponse } from "@/lib/apiAuth";
 
+export const dynamic = "force-dynamic";
+
 // GET /api/user/profile - Get current user's profile
 export async function GET(request: NextRequest) {
   try {

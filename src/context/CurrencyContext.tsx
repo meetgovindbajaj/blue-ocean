@@ -124,8 +124,10 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
       try {
         const response = await fetch("/api/user/profile");
         const data = await response.json();
-        if (data.success && data.profile?.preferences?.currency) {
-          setUserCurrencyState(data.profile.preferences.currency);
+        // API returns { success, user: { profile: { preferences: { currency } } } }
+        const currency = data.user?.profile?.preferences?.currency;
+        if (data.success && currency) {
+          setUserCurrencyState(currency);
         }
       } catch (error) {
         console.error("Failed to fetch user currency preference:", error);

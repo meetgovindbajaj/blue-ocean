@@ -46,14 +46,19 @@
   gap: 10px;
   opacity: 0;
   visibility: hidden;
+  pointer-events: none;
   transform: translateY(20px);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  max-height: 0;
+  overflow: hidden;
 }
 
 .menuOpen {
   opacity: 1;
   visibility: visible;
+  pointer-events: auto;
   transform: translateY(0);
+  max-height: 500px;
 }
 
 .menuItemWrapper {
@@ -114,7 +119,6 @@
 .scrollTopClosed {
   background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%) !important;
   animation: fadeIn 0.3s ease;
-  margin-top: 8px;
 }
 
 .scrollTopClosed:hover {

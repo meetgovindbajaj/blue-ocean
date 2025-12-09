@@ -112,6 +112,17 @@ export default function FloatingActions() {
     <>
       {/* Main Floating Button Container */}
       <div className={styles.container}>
+        {/* Scroll to top button - shown above main button when menu is closed */}
+        {showScrollTop && !isOpen && (
+          <button
+            onClick={scrollToTop}
+            className={`${styles.menuItem} ${styles.scrollTopClosed}`}
+            aria-label="Scroll to top"
+          >
+            <ChevronUp size={20} />
+          </button>
+        )}
+
         {/* Expanded Menu Items */}
         <div className={`${styles.menu} ${isOpen ? styles.menuOpen : ""}`}>
           {/* Scroll to top - inside menu when open */}
@@ -231,17 +242,6 @@ export default function FloatingActions() {
         >
           {isOpen ? <X size={24} /> : <Share2 size={24} />}
         </button>
-
-        {/* Scroll to top button - shown outside menu when closed */}
-        {showScrollTop && !isOpen && (
-          <button
-            onClick={scrollToTop}
-            className={`${styles.menuItem} ${styles.scrollTopClosed}`}
-            aria-label="Scroll to top"
-          >
-            <ChevronUp size={20} />
-          </button>
-        )}
       </div>
 
       {/* Currency Selection Dialog */}
