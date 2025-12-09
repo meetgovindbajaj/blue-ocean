@@ -1,0 +1,935 @@
+@layer utilities {
+  /* Base Carousel Wrapper */
+  .carouselWrapper {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    outline: none;
+  }
+
+  /* ============================================
+     FULL WIDTH VARIANT (Hero Banner Style)
+     ============================================ */
+  .variantFullWidth {
+    background-color: black;
+    aspect-ratio: 5 / 2.2;
+    overflow: hidden;
+    color: white;
+  }
+
+  @media screen and (width <= 1000px) {
+    .variantFullWidth {
+      aspect-ratio: 1 / 0.6;
+    }
+  }
+
+  @media screen and (width <= 600px) {
+    .variantFullWidth {
+      aspect-ratio: unset;
+      height: 70vh;
+    }
+  }
+
+  .fullWidthWrapper {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .fullWidthImage {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .fullWidthOverlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(90deg, rgba(0, 0, 0, 0.87) 0%, rgba(255, 255, 255, 0) 70%);
+  }
+
+  @media screen and (width <= 800px) {
+    .fullWidthOverlay {
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.9) 0%, rgba(255, 255, 255, 0) 90%);
+    }
+  }
+
+  .fullWidthHeader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    padding: clamp(1rem, 3vw, 2rem);
+  }
+
+  .fullWidthContent {
+    position: relative;
+    z-index: 2;
+    max-width: 620px;
+    padding: clamp(2rem, 5vw, 5rem);
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.6);
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 70%;
+  }
+
+  @media screen and (width <= 800px) {
+    .fullWidthContent {
+      width: 80%;
+      padding-block: 2rem;
+      padding-inline: 1.2rem;
+      justify-content: flex-start;
+    }
+  }
+
+  /* Navigation Arrows */
+  .navArrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    transition: background-color 120ms ease, transform 120ms ease;
+  }
+
+  .navArrow:hover {
+    background-color: #ffffff;
+    transform: translateY(-50%) scale(1.04);
+  }
+
+  .navArrowLeft {
+    left: 1.2rem;
+  }
+
+  .navArrowRight {
+    right: 1.2rem;
+  }
+
+  .navArrowIcon {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .navArrowIcon {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+  }
+
+  @media screen and (width <= 800px) {
+    .navArrow {
+      display: none;
+    }
+  }
+
+  /* Control Dots / Pills */
+  .controlDots {
+    position: absolute;
+    left: 50%;
+    bottom: 1.5rem;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.6rem;
+    z-index: 3;
+  }
+
+  .dot {
+    position: relative;
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    border: none;
+    padding: 0;
+    background-color: rgba(255, 255, 255, 0.55);
+    cursor: pointer;
+    overflow: hidden;
+    transition: width 160ms ease, height 160ms ease, background-color 160ms ease;
+  }
+
+  .dotActive {
+    width: 46px;
+    height: 10px;
+    background-color: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+  }
+
+  .dotProgress {
+    position: absolute;
+    inset: 0;
+    transform-origin: left center;
+    background-color: #ffffff;
+    border-radius: inherit;
+    transition: transform 80ms linear;
+  }
+
+  /* ============================================
+     INSET VARIANT (Shop by Category Style)
+     ============================================ */
+  .variantInset {
+    background-color: transparent;
+    color: white;
+    padding: 32px 0;
+    overflow: hidden;
+  }
+
+  @media screen and (width <= 1000px) {
+    .variantInset {
+      padding: 24px 0;
+    }
+  }
+
+  @media screen and (width <= 600px) {
+    .variantInset {
+      padding: 12px 0;
+    }
+  }
+
+  .insetWrapper {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  @media screen and (width <= 1000px) {
+    .insetWrapper {
+      min-height: 450px;
+    }
+  }
+
+  @media screen and (width <= 600px) {
+    .insetWrapper {
+      min-height: 500px;
+    }
+  }
+
+  .insetBackground {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-color: #000;
+  }
+
+  .insetBackgroundImage {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    filter: blur(40px);
+    transform: scale(1.1);
+  }
+
+  .insetBackgroundOverlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+
+  .insetHeader {
+    position: relative;
+    z-index: 10;
+    padding-inline: 32px;
+  }
+
+  @media screen and (width <= 1000px) {
+    .insetHeader {
+      padding-inline: 24px;
+    }
+  }
+
+  @media screen and (width <= 600px) {
+    .insetHeader {
+      padding-inline: 12px;
+    }
+  }
+
+  .insetBody {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 100%;
+    position: relative;
+    z-index: 10;
+    padding-block: 1rem;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .insetCarouselWrapper {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .insetNavBtn {
+    position: absolute;
+    z-index: 20;
+    background-color: white;
+    border-radius: 9999px;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    transition: background-color 150ms ease, transform 150ms ease;
+  }
+
+  .insetNavBtn:hover {
+    background-color: rgba(255, 255, 255, 0.9);
+    transform: scale(1.05);
+  }
+
+  @media (min-width: 768px) {
+    .insetNavBtn {
+      width: 3rem;
+      height: 3rem;
+    }
+  }
+
+  .insetNavBtnPrev {
+    left: 0.75rem;
+  }
+
+  .insetNavBtnNext {
+    right: 0.75rem;
+  }
+
+  @media (min-width: 768px) {
+    .insetNavBtnPrev {
+      left: 1.5rem;
+    }
+
+    .insetNavBtnNext {
+      right: 1.5rem;
+    }
+  }
+
+  .insetNavIcon {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: black;
+  }
+
+  @media (min-width: 768px) {
+    .insetNavIcon {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+  }
+
+  .insetTrackContainer {
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+  }
+
+  .insetTrack {
+    display: flex;
+    align-items: center;
+    will-change: transform;
+  }
+
+  .insetCard {
+    position: relative;
+    flex-shrink: 0;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  }
+
+  @media (min-width: 768px) {
+    .insetCard {
+      border-radius: 1rem;
+    }
+  }
+
+  .insetCardImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .insetCardGradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent, transparent);
+  }
+
+  .insetCardContent {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1rem;
+    color: white;
+  }
+
+  .insetIndicators {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    padding-block: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .insetIndicators {
+      padding-bottom: 1.5rem;
+    }
+  }
+
+  .insetIndicator {
+    position: relative;
+    height: 0.5rem;
+    border-radius: 9999px;
+    transition: all 0.3s;
+    overflow: hidden;
+    background-color: rgba(255, 255, 255, 0.3);
+    border: none;
+    cursor: pointer;
+  }
+
+  .insetIndicatorActive {
+    width: 3rem;
+  }
+
+  .insetIndicatorInactive {
+    width: 0.5rem;
+  }
+
+  .insetIndicatorInactive:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+  }
+
+  .insetIndicatorProgress {
+    position: absolute;
+    inset: 0;
+    background-color: white;
+    border-radius: 9999px;
+    transition: width 100ms linear;
+  }
+
+  /* ============================================
+     DEFAULT VARIANT (Products Carousel Style)
+     ============================================ */
+  .variantDefault {
+    position: relative;
+  }
+
+  .defaultWrapper {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .defaultHeader {
+    margin-bottom: 1rem;
+  }
+
+  .defaultCarouselContainer {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .defaultTrack {
+    display: flex;
+    width: 100%;
+    touch-action: pan-y pinch-zoom;
+  }
+
+  .defaultItem {
+    padding: 0 8px;
+    box-sizing: border-box;
+  }
+
+  .defaultItemInner {
+    width: 100%;
+    height: 100%;
+    border-radius: 0.75rem;
+  }
+
+  .defaultItemImage {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 0.75rem;
+  }
+
+  .defaultItemContent {
+    padding: 0.75rem 0;
+  }
+
+  .defaultNavBtn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background-color: white;
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all 150ms ease;
+  }
+
+  .defaultNavBtn:hover:not(:disabled) {
+    background-color: #f9fafb;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    transform: translateY(-50%) scale(1.05);
+  }
+
+  .defaultNavBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .defaultNavBtnPrev {
+    left: 0;
+  }
+
+  .defaultNavBtnNext {
+    right: 0;
+  }
+
+  @media screen and (max-width: 600px) {
+    .defaultNavBtn {
+      width: 36px;
+      height: 36px;
+    }
+
+    .defaultNavBtn svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .defaultDots {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .defaultDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: none;
+    background-color: rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: all 200ms ease;
+  }
+
+  .defaultDot:hover {
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+
+  .defaultDotActive {
+    background-color: #111827;
+    width: 24px;
+    border-radius: 4px;
+  }
+
+  /* ============================================
+     PREVIEW CARDS
+     ============================================ */
+  .previewCardsWrapper {
+    position: relative;
+    z-index: 10;
+    margin-top: 1rem;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+  }
+
+  .previewCards {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding: 0.5rem;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+    max-width: 100%;
+  }
+
+  .previewCards::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .previewCards::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .previewCards::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+  }
+
+  /* Light theme scrollbar for default variant */
+  .variantDefault .previewCards {
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  }
+
+  .variantDefault .previewCards::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+  }
+
+  .previewCard {
+    flex-shrink: 0;
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 200ms ease;
+    background: none;
+    padding: 0;
+  }
+
+  .previewCard img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .previewCard:hover {
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+
+  .previewCardActive {
+    border-color: white;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+  }
+
+  /* Light theme for default variant */
+  .variantDefault .previewCard:hover {
+    border-color: rgba(0, 0, 0, 0.3);
+  }
+
+  .variantDefault .previewCardActive {
+    border-color: #111827;
+    box-shadow: 0 0 0 2px rgba(17, 24, 39, 0.2);
+  }
+
+  /* FullWidth Preview Cards - positioned at bottom */
+  .fullWidthPreviewCards {
+    position: absolute;
+    bottom: 4rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    max-width: 90vw;
+  }
+
+  .fullWidthPreviewCards .previewCards {
+    background-color: rgba(0, 0, 0, 0.4);
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+  }
+
+  /* ============================================
+     ACTION BUTTONS (Share, Preview)
+     ============================================ */
+  .actionButtons {
+    position: absolute;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .actionButtonsDefault {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 10;
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .actionBtn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 150ms ease;
+  }
+
+  .actionBtn:hover {
+    background-color: #ffffff;
+    transform: scale(1.05);
+  }
+
+  /* ============================================
+     FULLSCREEN PREVIEW
+     ============================================ */
+  .fullscreenOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background-color: rgba(0, 0, 0, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 200ms ease;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .fullscreenClose {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 10;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 150ms ease;
+  }
+
+  .fullscreenClose:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .fullscreenContent {
+    position: relative;
+    width: 90vw;
+    height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .fullscreenImage {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  .fullscreenNav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 150ms ease;
+  }
+
+  .fullscreenNav:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .fullscreenNavLeft {
+    left: 1rem;
+  }
+
+  .fullscreenNavRight {
+    right: 1rem;
+  }
+
+  .fullscreenCounter {
+    position: absolute;
+    bottom: 6rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    font-size: 0.875rem;
+  }
+
+  .fullscreenThumbnails {
+    position: absolute;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 0.5rem;
+    max-width: 90vw;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .fullscreenThumbnails::-webkit-scrollbar {
+    display: none;
+  }
+
+  .fullscreenThumb {
+    flex-shrink: 0;
+    width: 60px;
+    height: 60px;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 150ms ease;
+    background: none;
+    padding: 0;
+    opacity: 0.6;
+  }
+
+  .fullscreenThumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .fullscreenThumb:hover {
+    opacity: 0.8;
+  }
+
+  .fullscreenThumbActive {
+    border-color: white;
+    opacity: 1;
+  }
+
+  /* ============================================
+     SHARE DIALOG
+     ============================================ */
+  .shareDialog {
+    max-width: 400px;
+  }
+
+  .shareTitle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+
+  .shareContent {
+    padding-top: 1rem;
+  }
+
+  .shareLinks {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .shareLink {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.875rem;
+    transition: opacity 150ms ease, transform 150ms ease;
+  }
+
+  .shareLink:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+
+  .copyLinkSection {
+    display: flex;
+    gap: 0.5rem;
+    align-items: stretch;
+  }
+
+  .copyLinkInput {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background-color: #f3f4f6;
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+
+  .linkText {
+    flex: 1;
+    font-size: 0.75rem;
+    color: #6b7280;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .copyBtn {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    white-space: nowrap;
+  }
+}

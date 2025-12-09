@@ -6,13 +6,19 @@ import Footer from "@/components/Footer";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { AuthProvider } from "@/context/AuthContext";
 import { SiteSettingsProvider } from "@/context/SiteSettingsContext";
+import Anchor from "@/components/shared/Anchor";
 
 export default function NotFound() {
   const isMobile = useIsMobile();
+  const goBack = () => {
+    if (typeof window !== "undefined") {
+      window.history.back();
+    }
+  };
   return (
     <AuthProvider>
       <SiteSettingsProvider>
-        <Header />
+        {/* <Header /> */}
         <div
           style={{ display: "none" }}
           aria-label="page not found"
@@ -25,10 +31,14 @@ export default function NotFound() {
           style={{
             height: `calc(100dvh - var(${
               isMobile ? "--navbar-height-mobile" : "--navbar-height"
-            }))`,
+            }) - 10vh)`,
           }}
         />
-        <Footer />
+        <div style={{ textAlign: "center", marginBottom: "2rem" }}>
+          <Anchor href="#" content="Go Back" onClick={goBack} />
+          <Anchor href="/" content="Go to Home" />
+        </div>
+        {/* <Footer /> */}
       </SiteSettingsProvider>
     </AuthProvider>
   );

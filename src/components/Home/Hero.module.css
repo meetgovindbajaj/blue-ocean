@@ -57,7 +57,7 @@
         flex-direction: column;
         justify-content: center;
         height: 70%;
-        padding: 5rem;
+        /* padding: 5rem; */
     }
 
     .title {
@@ -388,5 +388,11 @@
             width: 1.5rem;
             height: 1.5rem;
         }
+    }
+
+    /* Hero Carousel Wrapper Override */
+    .heroCarousel {
+        width: 100%;
+        height: 100%;
     }
 }

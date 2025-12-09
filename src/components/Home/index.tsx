@@ -1,13 +1,17 @@
 "use client";
 
-import { LandingDataProvider, useLandingData } from "@/context/LandingDataContext";
+import {
+  LandingDataProvider,
+  useLandingData,
+} from "@/context/LandingDataContext";
 import FeaturedCategories from "./FeaturedCategories";
 import FeaturedProducts from "./FeaturedProducts";
 import FeaturedServices from "./FeaturedServices";
 import FeaturedTags from "./FeaturedTags";
-import HeroSection from "./Hero";
+import HeroSection, { HeroBanner } from "./Hero";
 import styles from "./index.module.css";
 import { Skeleton } from "@/components/ui/skeleton";
+import CarouselWrapper, { CarouselItem } from "../ui/CarouselWrapper";
 
 const HomeContent = () => {
   const { data, loading } = useLandingData();
@@ -54,8 +58,47 @@ const HomeContent = () => {
     );
   }
 
+  const getHeroBannerData = (): CarouselItem[] => {
+    const d = data?.heroBanners || [];
+    const carouselData: CarouselItem[] = d.map((banner) => ({
+      id: banner.id,
+      image: banner.image.url,
+      thumbnailImage: banner.image.url,
+    }));
+    return carouselData;
+  };
+
   return (
     <div className={styles.page}>
+      {/* <CarouselWrapper
+        data={getHeroBannerData()}
+        variant="inset"
+        options={{
+          // showPreviewCards: true,
+          // showPreviewBtn: true,
+          // showShareBtn: true,
+          // showControlBtns: false,
+          // showControlDots: true,
+          headerContent: (
+            <div style={{ textAlign: "center", marginBottom: "1rem" }}>
+              <h2
+                style={{
+                  fontSize: "1.5rem",
+                  fontWeight: 600,
+                  marginBottom: "0.5rem",
+                }}
+              >
+                Featured Banners
+              </h2>
+              <p style={{ color: "#6b7280", fontSize: "0.875rem" }}>
+                Explore our latest collections
+              </p>
+            </div>
+          ),
+        }}
+        // renderItem={(item) => <>{item.id}</>}
+      />
+      <br /> */}
       <HeroSection banners={data?.heroBanners || []} />
       <FeaturedTags />
       <FeaturedProducts products={data?.products || []} />
