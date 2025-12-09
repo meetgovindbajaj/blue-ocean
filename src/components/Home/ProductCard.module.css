@@ -302,4 +302,46 @@
     .card:focus:not(:focus-visible) {
         outline: none;
     }
+
+    /* Product Carousel Styles */
+    .productCarousel {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    .productCarousel [class*="fullWidthWrapper"] {
+        height: 100%;
+    }
+
+    .productCarousel [class*="fullWidthImage"] {
+        background-size: cover;
+        background-position: center;
+    }
+
+    .productCarousel [class*="fullWidthOverlay"] {
+        display: none;
+    }
+
+    /* Control dots styling for product cards */
+    .productCarousel [class*="controlDots"] {
+        bottom: 0.75rem;
+        gap: 0.4rem;
+    }
+
+    .productCarousel [class*="dot"] {
+        width: 6px;
+        height: 6px;
+    }
+
+    .productCarousel [class*="dotActive"] {
+        width: 20px;
+        height: 6px;
+    }
+
+    /* Hide nav arrows in product cards */
+    .productCarousel [class*="navArrow"] {
+        display: none !important;
+    }
 }

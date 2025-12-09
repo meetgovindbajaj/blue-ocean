@@ -4,9 +4,13 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Product } from "@/context/LandingDataContext";
 import styles from "./ProductCard.module.css";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useMemo } from "react";
 import { Route } from "next";
 import { useCurrency } from "@/context/CurrencyContext";
+import {
+  CarouselWrapper,
+  type CarouselItem,
+} from "@/components/ui/CarouselWrapper";
 
 interface ProductCardProps {
   product: Product;
@@ -17,10 +21,20 @@ const ProductCard = ({ product }: ProductCardProps) => {
   const visibleContentRef = useRef<HTMLDivElement>(null);
   const [collapsedHeight, setCollapsedHeight] = useState(75); // fallback
 
-  const thumbnail =
-    product.images?.find((img) => img.isThumbnail) || product.images?.[0];
-  const categoryName = product.category?.name || "";
   const hasDiscount = product.prices?.discount > 0;
+
+  // Convert product images to CarouselItem format
+  const carouselImages: CarouselItem[] = useMemo(() => {
+    if (!product.images || product.images.length === 0) return [];
+    return product.images.map((img) => ({
+      id: img.id,
+      image: img.url,
+      thumbnailImage: img.thumbnailUrl,
+      alt: product.name,
+    }));
+  }, [product.images, product.name]);
+
+  const hasMultipleImages = carouselImages.length > 1;
 
   // ResizeObserver for dynamic height calculation
   useEffect(() => {
@@ -91,14 +105,29 @@ const ProductCard = ({ product }: ProductCardProps) => {
       }
     >
       <div className={styles.imageContainer}>
-        <Image
-          src={thumbnail.url}
-          alt={product.name}
-          fill
-          className={styles.image}
-          // sizes="(max-width: 480px) 100vw, (max-width: 768px) 320px, (max-width: 1200px) 340px, 380px"
-          quality={85}
-        />
+        {hasMultipleImages ? (
+          <CarouselWrapper
+            variant="fullWidth"
+            data={carouselImages}
+            className={styles.productCarousel}
+            options={{
+              showControlBtns: false,
+              showControlDots: false,
+              // showDotsProgress: false,
+              autoPlay: true,
+              autoPlayInterval: 3000,
+              loop: true,
+            }}
+          />
+        ) : (
+          <Image
+            src={carouselImages[0]?.image || ""}
+            alt={product.name}
+            fill
+            className={styles.image}
+            quality={85}
+          />
+        )}
 
         {/* Glassmorphism info section that slides up on hover */}
         <div className={styles.infoSection} ref={visibleContentRef}>
@@ -123,7 +152,10 @@ const ProductCard = ({ product }: ProductCardProps) => {
               {hasDiscount ? (
                 <>
                   <span className={styles.price}>
-                    {formatPrice(product.prices.retail * (1 - product.prices.discount / 100))}
+                    {formatPrice(
+                      product.prices.retail *
+                        (1 - product.prices.discount / 100)
+                    )}
                   </span>
                   <span className={styles.originalPrice}>
                     {formatPrice(product.prices.retail)}
@@ -133,7 +165,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
                   </span>
                 </>
               ) : (
-                <span className={styles.price}>{formatPrice(product.prices.retail)}</span>
+                <span className={styles.price}>
+                  {formatPrice(product.prices.retail)}
+                </span>
               )}
             </div>
           </div>

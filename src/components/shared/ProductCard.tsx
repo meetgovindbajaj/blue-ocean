@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { ProductType } from "@/types/product";
 import Image from "next/image";
 import Link from "next/link";
@@ -7,6 +8,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useCurrency } from "@/context/CurrencyContext";
+import { CarouselWrapper, type CarouselItem } from "@/components/ui/CarouselWrapper";
+import styles from "./ProductCard.module.css";
 
 const ProductCard = ({ product }: { product: ProductType }) => {
   const { formatPrice } = useCurrency();
@@ -32,6 +35,19 @@ const ProductCard = ({ product }: { product: ProductType }) => {
   const thumbnailImage =
     product.images?.find((img) => img.isThumbnail) || product.images?.[0];
 
+  // Convert product images to CarouselItem format
+  const carouselImages: CarouselItem[] = useMemo(() => {
+    if (!product.images || product.images.length === 0) return [];
+    return product.images.map((img) => ({
+      id: img.id,
+      image: img.url,
+      thumbnailImage: img.thumbnailUrl,
+      alt: product.name,
+    }));
+  }, [product.images, product.name]);
+
+  const hasMultipleImages = carouselImages.length > 1;
+
   // Check if all dimensions are 0
   const allDimensionsZero =
     product.size.length === 0 &&
@@ -54,7 +70,21 @@ const ProductCard = ({ product }: { product: ProductType }) => {
       >
         {/* Product Image */}
         <div className="relative aspect-[4/3] overflow-hidden bg-muted flex-shrink-0">
-          {thumbnailImage?.url ? (
+          {hasMultipleImages ? (
+            <CarouselWrapper
+              variant="fullWidth"
+              data={carouselImages}
+              className={styles.productCarousel}
+              options={{
+                showControlBtns: false,
+                showControlDots: true,
+                showDotsProgress: false,
+                autoPlay: true,
+                autoPlayInterval: 3000,
+                loop: true,
+              }}
+            />
+          ) : thumbnailImage?.url ? (
             <Image
               src={thumbnailImage.url}
               alt={product.name}
@@ -69,7 +99,7 @@ const ProductCard = ({ product }: { product: ProductType }) => {
           {product.prices.discount > 0 && (
             <Badge
               variant="destructive"
-              className="absolute top-3 right-3 rounded-full px-2.5 py-1"
+              className="absolute top-3 right-3 rounded-full px-2.5 py-1 z-10"
             >
               -{product.prices.discount}%
             </Badge>

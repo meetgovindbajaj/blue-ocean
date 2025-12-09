@@ -171,6 +171,7 @@ export default function ProductDetailClient({
                 showControlDots: false,
                 showPreviewCards: images.length > 1,
                 showPreviewBtn: true,
+                showShareBtn: true,
                 showOverlay: false,
                 autoPlay: true,
                 autoPlayInterval: 5000,

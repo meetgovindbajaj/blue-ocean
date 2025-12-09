@@ -43,6 +43,7 @@ export interface CarouselItem {
 export interface CarouselOptions {
   showControlBtns?: boolean;
   showControlDots?: boolean;
+  showDotsProgress?: boolean;
   showPreviewCards?: boolean;
   showPreviewBtn?: boolean;
   showShareBtn?: boolean;
@@ -76,6 +77,7 @@ const getDefaultOptions = (variant: CarouselVariant): CarouselOptions => {
       return {
         showControlBtns: true,
         showControlDots: true,
+        showDotsProgress: true,
         showPreviewCards: false,
         showPreviewBtn: false,
         showShareBtn: false,
@@ -88,6 +90,7 @@ const getDefaultOptions = (variant: CarouselVariant): CarouselOptions => {
       return {
         showControlBtns: true,
         showControlDots: true,
+        showDotsProgress: true,
         showPreviewCards: false,
         showPreviewBtn: false,
         showShareBtn: false,
@@ -99,6 +102,7 @@ const getDefaultOptions = (variant: CarouselVariant): CarouselOptions => {
       return {
         showControlBtns: true,
         showControlDots: false,
+        showDotsProgress: true,
         showPreviewCards: false,
         showPreviewBtn: false,
         showShareBtn: false,
@@ -150,10 +154,18 @@ const ShareDialog = ({
   onClose: () => void;
 }) => {
   const [copied, setCopied] = useState(false);
+  const [currentUrl, setCurrentUrl] = useState("");
+
+  // Update URL when dialog opens to get the current page URL
+  useEffect(() => {
+    if (isOpen && typeof window !== "undefined") {
+      setCurrentUrl(window.location.href);
+    }
+  }, [isOpen]);
 
   const handleCopyLink = async () => {
     try {
-      await navigator.clipboard.writeText(window.location.href);
+      await navigator.clipboard.writeText(currentUrl);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
@@ -161,25 +173,27 @@ const ShareDialog = ({
     }
   };
 
+  const encodedUrl = encodeURIComponent(currentUrl);
+
   const shareLinks = [
     {
       name: "Facebook",
-      url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(typeof window !== "undefined" ? window.location.href : "")}`,
+      url: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
       color: "#1877F2",
     },
     {
       name: "Twitter",
-      url: `https://twitter.com/intent/tweet?url=${encodeURIComponent(typeof window !== "undefined" ? window.location.href : "")}`,
+      url: `https://twitter.com/intent/tweet?url=${encodedUrl}`,
       color: "#1DA1F2",
     },
     {
       name: "WhatsApp",
-      url: `https://wa.me/?text=${encodeURIComponent(typeof window !== "undefined" ? window.location.href : "")}`,
+      url: `https://wa.me/?text=${encodedUrl}`,
       color: "#25D366",
     },
     {
       name: "LinkedIn",
-      url: `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(typeof window !== "undefined" ? window.location.href : "")}`,
+      url: `https://www.linkedin.com/shareArticle?mini=true&url=${encodedUrl}`,
       color: "#0A66C2",
     },
   ];
@@ -211,9 +225,7 @@ const ShareDialog = ({
           <div className={styles.copyLinkSection}>
             <div className={styles.copyLinkInput}>
               <Link2 className="w-4 h-4" />
-              <span className={styles.linkText}>
-                {typeof window !== "undefined" ? window.location.href : ""}
-              </span>
+              <span className={styles.linkText}>{currentUrl}</span>
             </div>
             <Button
               onClick={handleCopyLink}
@@ -646,12 +658,13 @@ export const CarouselWrapper = ({
                 key={index}
                 className={cn(
                   styles.dot,
-                  activeIndex === index && styles.dotActive
+                  activeIndex === index && styles.dotActive,
+                  activeIndex === index && !options.showDotsProgress && styles.dotActiveNoProgress
                 )}
                 onClick={() => goTo(index)}
                 aria-label={`Go to slide ${index + 1}`}
               >
-                {activeIndex === index && (
+                {activeIndex === index && options.showDotsProgress && (
                   <span
                     className={styles.dotProgress}
                     style={{ transform: `scaleX(${progress / 100})` }}
