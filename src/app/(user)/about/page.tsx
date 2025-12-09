@@ -1,194 +1,63 @@
-"use client";
+import { Metadata } from "next";
+import AboutPageClient from "./AboutPageClient";
 
-import styles from "./page.module.css";
-import { useSiteSettings } from "@/context/SiteSettingsContext";
-import { Target, Eye, Building2, PencilRuler, Globe2, Headset, ShieldCheck, History, Users, User } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
-import Image from "next/image";
-
-const services = [
-  {
-    id: "custom-design",
-    title: "Custom Design",
-    description: "Tailored furniture built exactly to your vision with premium materials and professional AutoCAD support.",
-    icon: PencilRuler,
-    color: "#3b82f6",
-  },
-  {
-    id: "global-shipping",
-    title: "Global Shipping",
-    description: "Reliable worldwide delivery with trusted logistics partners and seamless customs handling.",
-    icon: Globe2,
-    color: "#10b981",
-  },
-  {
-    id: "expert-support",
-    title: "Expert Support",
-    description: "End-to-end guidance with clear communication and order updates shared at every stage.",
-    icon: Headset,
-    color: "#8b5cf6",
-  },
-  {
-    id: "quality-control",
-    title: "Quality Control",
-    description: "Strict inspections ensure world-class craftsmanship with internationally aligned QC processes.",
-    icon: ShieldCheck,
-    color: "#f59e0b",
-  },
-];
-
-const AboutPage = () => {
-  const { settings, loading } = useSiteSettings();
-
-  if (loading) {
-    return (
-      <div className={styles.page}>
-        <div className={styles.container}>
-          <section className={styles.hero}>
-            <Skeleton className="h-10 w-64 mx-auto mb-4" />
-            <Skeleton className="h-5 w-80 mx-auto" />
-          </section>
-          <section className={styles.section}>
-            <Skeleton className="h-24 w-full rounded-lg" />
-          </section>
-          <section className={styles.missionVision}>
-            <Skeleton className="h-48 w-full rounded-xl" />
-            <Skeleton className="h-48 w-full rounded-xl" />
-          </section>
-        </div>
-      </div>
-    );
+// Fetch site settings for metadata
+async function getSiteSettings() {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+    const res = await fetch(`${baseUrl}/api/settings`, {
+      next: { revalidate: 300 },
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.success ? data.settings : null;
+  } catch (error) {
+    console.error("Failed to fetch site settings:", error);
+    return null;
   }
+}
 
-  const about = settings?.about || {};
-  const siteName = settings?.siteName || "Our Company";
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings();
 
-  return (
-    <div className={styles.page}>
-      <div className={styles.container}>
-        {/* Hero Section */}
-        <section className={styles.hero}>
-          <h1 className={styles.title}>{about.title || `About ${siteName}`}</h1>
-          {settings?.tagline && (
-            <p className={styles.tagline}>{settings.tagline}</p>
-          )}
-        </section>
+  const siteName = settings?.siteName || "Blue Ocean";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://blueocean.com";
+  const aboutTitle = settings?.about?.title || `About ${siteName}`;
+  const title = `${aboutTitle} | ${siteName}`;
+  const description = settings?.about?.description ||
+    `Learn about ${siteName} - ${settings?.tagline || "Premium quality solid wood furniture crafted with precision and care."}`;
+  const ogImage = settings?.seo?.ogImage || settings?.logo?.url || `${siteUrl}/og-image.jpg`;
 
-        {/* Description */}
-        {about.description && (
-          <section className={styles.section}>
-            <p className={styles.description}>{about.description}</p>
-          </section>
-        )}
+  return {
+    title: aboutTitle,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `${siteUrl}/about`,
+      siteName,
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: `About ${siteName}`,
+        },
+      ],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [ogImage],
+    },
+    alternates: {
+      canonical: `${siteUrl}/about`,
+    },
+  };
+}
 
-        {/* Mission & Vision */}
-        {(about.mission || about.vision) && (
-          <section className={styles.missionVision}>
-            {about.mission && (
-              <div className={styles.card}>
-                <div className={styles.cardIcon}>
-                  <Target size={32} />
-                </div>
-                <h2 className={styles.cardTitle}>Our Mission</h2>
-                <p className={styles.cardText}>{about.mission}</p>
-              </div>
-            )}
-            {about.vision && (
-              <div className={styles.card}>
-                <div className={styles.cardIcon}>
-                  <Eye size={32} />
-                </div>
-                <h2 className={styles.cardTitle}>Our Vision</h2>
-                <p className={styles.cardText}>{about.vision}</p>
-              </div>
-            )}
-          </section>
-        )}
-
-        {/* History Section */}
-        {about.history && (
-          <section className={styles.historySection}>
-            <h2 className={styles.sectionTitle}>
-              <History size={24} style={{ display: "inline", marginRight: "0.5rem", verticalAlign: "middle" }} />
-              Our Story
-            </h2>
-            <div className={styles.historyContent}>
-              <p className={styles.historyText}>{about.history}</p>
-            </div>
-          </section>
-        )}
-
-        {/* Team Section */}
-        {about.team && about.team.length > 0 && (
-          <section className={styles.teamSection}>
-            <h2 className={styles.sectionTitle}>
-              <Users size={24} style={{ display: "inline", marginRight: "0.5rem", verticalAlign: "middle" }} />
-              Meet Our Team
-            </h2>
-            <div className={styles.teamGrid}>
-              {about.team.map((member, index) => (
-                <div key={index} className={styles.teamCard}>
-                  <div className={styles.teamImageWrapper}>
-                    {member.image ? (
-                      <Image
-                        src={member.image}
-                        alt={member.name}
-                        width={100}
-                        height={100}
-                        className={styles.teamImage}
-                      />
-                    ) : (
-                      <User size={40} className={styles.teamPlaceholder} />
-                    )}
-                  </div>
-                  <h3 className={styles.teamName}>{member.name}</h3>
-                  <p className={styles.teamRole}>{member.role}</p>
-                  {member.bio && <p className={styles.teamBio}>{member.bio}</p>}
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Services Section */}
-        <section className={styles.servicesSection}>
-          <h2 className={styles.sectionTitle}>What We Offer</h2>
-          <p className={styles.sectionSubtitle}>
-            Comprehensive solutions to bring your furniture dreams to life
-          </p>
-          <div className={styles.servicesGrid}>
-            {services.map((service) => {
-              const Icon = service.icon;
-              return (
-                <div key={service.id} className={styles.serviceCard}>
-                  <div
-                    className={styles.serviceIcon}
-                    style={{ backgroundColor: `${service.color}15`, color: service.color }}
-                  >
-                    <Icon size={28} />
-                  </div>
-                  <h3 className={styles.serviceTitle}>{service.title}</h3>
-                  <p className={styles.serviceDescription}>{service.description}</p>
-                </div>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* Contact CTA */}
-        <section className={styles.ctaSection}>
-          <Building2 size={48} className={styles.ctaIcon} />
-          <h2 className={styles.ctaTitle}>Get in Touch</h2>
-          <p className={styles.ctaText}>
-            Have questions? We&apos;d love to hear from you.
-          </p>
-          <a href="/contact" className={styles.ctaButton}>
-            Contact Us
-          </a>
-        </section>
-      </div>
-    </div>
-  );
-};
-
-export default AboutPage;
+export default function AboutPage() {
+  return <AboutPageClient />;
+}

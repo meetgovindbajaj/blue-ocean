@@ -340,10 +340,10 @@ const MobileNavSidebar = () => {
                   Login
                 </Link>
               </Button>
-              <Button className="flex-1" asChild>
-                <Link href="/register" onClick={handleNavigate}>
-                  <UserPlus className="h-4 w-4 mr-2" />
-                  Sign Up
+              <Button className="flex-1 text-white" style={{ color: "white" }} asChild>
+                <Link href="/register" onClick={handleNavigate} style={{ color: "white" }}>
+                  <UserPlus className="h-4 w-4 mr-2" style={{ color: "white" }} />
+                  <span style={{ color: "white" }}>Sign Up</span>
                 </Link>
               </Button>
             </div>

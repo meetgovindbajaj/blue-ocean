@@ -52,9 +52,12 @@ function convertPrice(
 }
 
 // GET site settings
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     await connectDB();
+
+    const { searchParams } = new URL(request.url);
+    const refreshRates = searchParams.get("refreshRates") === "true";
 
     let settings = await SiteSettings.findOne();
 
@@ -64,6 +67,40 @@ export async function GET() {
         siteName: "Furniture Store",
         contact: { email: "contact@example.com" },
       });
+    }
+
+    // If refreshRates is requested, fetch latest rates from external API and update
+    let ratesUpdated = false;
+    if (refreshRates) {
+      try {
+        const latestRates = await getExchangeRates();
+
+        // Filter to only include our supported currencies
+        const supportedCurrencies = ["USD", "INR", "EUR", "GBP", "AED", "SAR", "CAD", "AUD", "JPY", "CNY"];
+        const filteredRates: Record<string, number> = {};
+
+        for (const currency of supportedCurrencies) {
+          if (latestRates[currency]) {
+            filteredRates[currency] = Number(latestRates[currency].toFixed(4));
+          } else {
+            filteredRates[currency] = DEFAULT_EXCHANGE_RATES[currency] || 1;
+          }
+        }
+
+        // Update the settings with new exchange rates
+        settings.locale = {
+          ...settings.locale,
+          exchangeRates: filteredRates,
+        };
+        settings.markModified("locale");
+        settings.markModified("locale.exchangeRates");
+        await settings.save();
+
+        ratesUpdated = true;
+        console.log("Exchange rates updated from external API:", filteredRates);
+      } catch (rateError) {
+        console.error("Failed to refresh exchange rates:", rateError);
+      }
     }
 
     // Convert to plain object and handle Map conversion
@@ -84,6 +121,7 @@ export async function GET() {
         ...settingsObj,
         id: settingsObj._id?.toString(),
       },
+      ratesUpdated,
     });
   } catch (error) {
     console.error("Settings GET error:", error);

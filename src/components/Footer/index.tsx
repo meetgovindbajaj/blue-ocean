@@ -133,6 +133,7 @@ const Footer = () => {
               <Link href="/faq">FAQ</Link>
               <Link href="/contact">Help Center</Link>
               <Link href="/inquiries">My Inquiries</Link>
+              <Link href="/sitemap">Sitemap</Link>
               {settings?.support?.whatsappNumber && (
                 <a
                   href={`https://wa.me/${settings.support.whatsappNumber.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(settings.support.whatsappMessage || "Hello!")}`}

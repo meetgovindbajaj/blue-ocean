@@ -129,11 +129,11 @@ const MobileSidebar = () => {
             <SheetClose asChild>
               <Link
                 href="/register"
-                className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-primary rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-primary rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors [&]:text-white [&>*]:text-white"
                 style={{ color: "white" }}
               >
-                <UserPlus className="h-4 w-4" />
-                <span>Sign Up</span>
+                <UserPlus className="h-4 w-4" style={{ color: "white" }} />
+                <span style={{ color: "white" }}>Sign Up</span>
               </Link>
             </SheetClose>
           </div>

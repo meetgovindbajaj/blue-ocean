@@ -1,7 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -30,6 +36,7 @@ import {
   GripVertical,
   DollarSign,
   Clock,
+  RefreshCw,
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 
@@ -76,7 +83,13 @@ const DEFAULT_EXCHANGE_RATES: Record<string, number> = {
 };
 
 const DAYS_OF_WEEK = [
-  "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
 ];
 
 interface FAQItem {
@@ -144,6 +157,7 @@ export default function SettingsPage() {
   const [settings, setSettings] = useState<SiteSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [refreshingRates, setRefreshingRates] = useState(false);
 
   useEffect(() => {
     fetchSettings();
@@ -160,6 +174,28 @@ export default function SettingsPage() {
       toast.error("Failed to load settings");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleRefreshRates = async () => {
+    setRefreshingRates(true);
+    try {
+      const response = await fetch("/api/admin/settings?refreshRates=true");
+      const data = await response.json();
+      if (data.success) {
+        setSettings(data.settings);
+        if (data.ratesUpdated) {
+          toast.success("Exchange rates updated from live data");
+        } else {
+          toast.info("Exchange rates are already up to date");
+        }
+      } else {
+        throw new Error(data.error);
+      }
+    } catch (error) {
+      toast.error("Failed to refresh exchange rates");
+    } finally {
+      setRefreshingRates(false);
     }
   };
 
@@ -241,10 +277,13 @@ export default function SettingsPage() {
 
   const addFAQ = () => {
     if (!settings) return;
-    const newOrder = (settings.faq?.length || 0);
+    const newOrder = settings.faq?.length || 0;
     setSettings({
       ...settings,
-      faq: [...(settings.faq || []), { question: "", answer: "", order: newOrder, isActive: true }],
+      faq: [
+        ...(settings.faq || []),
+        { question: "", answer: "", order: newOrder, isActive: true },
+      ],
     });
   };
 
@@ -261,7 +300,9 @@ export default function SettingsPage() {
     if (newIndex < 0 || newIndex >= newFAQs.length) return;
     [newFAQs[index], newFAQs[newIndex]] = [newFAQs[newIndex], newFAQs[index]];
     // Update order values
-    newFAQs.forEach((faq, i) => { faq.order = i; });
+    newFAQs.forEach((faq, i) => {
+      faq.order = i;
+    });
     setSettings({ ...settings, faq: newFAQs });
   };
 
@@ -295,7 +336,11 @@ export default function SettingsPage() {
             Manage your website information and configuration
           </p>
         </div>
-        <Button onClick={handleSave} disabled={saving} className="w-full sm:w-auto">
+        <Button
+          onClick={handleSave}
+          disabled={saving}
+          className="w-full sm:w-auto"
+        >
           <Save className="w-4 h-4 mr-2" />
           {saving ? "Saving..." : "Save Changes"}
         </Button>
@@ -303,14 +348,30 @@ export default function SettingsPage() {
 
       <Tabs defaultValue="general" className="space-y-4">
         <TabsList className="flex flex-wrap h-auto gap-1 p-1 w-full sm:grid sm:grid-cols-4 md:grid-cols-8">
-          <TabsTrigger value="general" className="flex-1 min-w-[70px]">General</TabsTrigger>
-          <TabsTrigger value="locale" className="flex-1 min-w-[70px]">Currency</TabsTrigger>
-          <TabsTrigger value="about" className="flex-1 min-w-[70px]">About</TabsTrigger>
-          <TabsTrigger value="contact" className="flex-1 min-w-[70px]">Contact</TabsTrigger>
-          <TabsTrigger value="hours" className="flex-1 min-w-[70px]">Hours</TabsTrigger>
-          <TabsTrigger value="social" className="flex-1 min-w-[70px]">Social</TabsTrigger>
-          <TabsTrigger value="faq" className="flex-1 min-w-[70px]">FAQ</TabsTrigger>
-          <TabsTrigger value="seo" className="flex-1 min-w-[70px]">SEO</TabsTrigger>
+          <TabsTrigger value="general" className="flex-1 min-w-[70px]">
+            General
+          </TabsTrigger>
+          <TabsTrigger value="locale" className="flex-1 min-w-[70px]">
+            Currency
+          </TabsTrigger>
+          <TabsTrigger value="about" className="flex-1 min-w-[70px]">
+            About
+          </TabsTrigger>
+          <TabsTrigger value="contact" className="flex-1 min-w-[70px]">
+            Contact
+          </TabsTrigger>
+          <TabsTrigger value="hours" className="flex-1 min-w-[70px]">
+            Hours
+          </TabsTrigger>
+          <TabsTrigger value="social" className="flex-1 min-w-[70px]">
+            Social
+          </TabsTrigger>
+          <TabsTrigger value="faq" className="flex-1 min-w-[70px]">
+            FAQ
+          </TabsTrigger>
+          <TabsTrigger value="seo" className="flex-1 min-w-[70px]">
+            SEO
+          </TabsTrigger>
         </TabsList>
 
         {/* General Settings */}
@@ -358,7 +419,9 @@ export default function SettingsPage() {
                   <Input
                     id="footerCopyright"
                     value={settings.footer?.copyright || ""}
-                    onChange={(e) => updateSettings("footer.copyright", e.target.value)}
+                    onChange={(e) =>
+                      updateSettings("footer.copyright", e.target.value)
+                    }
                     placeholder="© 2024 Your Company"
                   />
                 </div>
@@ -367,7 +430,9 @@ export default function SettingsPage() {
                   <Input
                     id="footerDesc"
                     value={settings.footer?.description || ""}
-                    onChange={(e) => updateSettings("footer.description", e.target.value)}
+                    onChange={(e) =>
+                      updateSettings("footer.description", e.target.value)
+                    }
                   />
                 </div>
               </div>
@@ -389,7 +454,9 @@ export default function SettingsPage() {
                   <Input
                     id="whatsappNumber"
                     value={settings.support?.whatsappNumber || ""}
-                    onChange={(e) => updateSettings("support.whatsappNumber", e.target.value)}
+                    onChange={(e) =>
+                      updateSettings("support.whatsappNumber", e.target.value)
+                    }
                     placeholder="+91 9876543210"
                   />
                 </div>
@@ -398,7 +465,9 @@ export default function SettingsPage() {
                   <Input
                     id="whatsappMessage"
                     value={settings.support?.whatsappMessage || ""}
-                    onChange={(e) => updateSettings("support.whatsappMessage", e.target.value)}
+                    onChange={(e) =>
+                      updateSettings("support.whatsappMessage", e.target.value)
+                    }
                     placeholder="Hello! I have a question."
                   />
                 </div>
@@ -415,7 +484,9 @@ export default function SettingsPage() {
                 <DollarSign className="w-5 h-5" />
                 Currency & Locale
               </CardTitle>
-              <CardDescription>Configure currency and regional settings for your store</CardDescription>
+              <CardDescription>
+                Configure currency and regional settings for your store
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
@@ -424,10 +495,15 @@ export default function SettingsPage() {
                   <Select
                     value={settings.locale?.currency || "INR"}
                     onValueChange={(value) => {
-                      const currency = CURRENCIES.find(c => c.value === value);
+                      const currency = CURRENCIES.find(
+                        (c) => c.value === value
+                      );
                       if (currency) {
                         updateSettings("locale.currency", value);
-                        updateSettings("locale.currencySymbol", currency.symbol);
+                        updateSettings(
+                          "locale.currencySymbol",
+                          currency.symbol
+                        );
                       }
                     }}
                   >
@@ -451,7 +527,9 @@ export default function SettingsPage() {
                   <Input
                     id="currencySymbol"
                     value={settings.locale?.currencySymbol || "₹"}
-                    onChange={(e) => updateSettings("locale.currencySymbol", e.target.value)}
+                    onChange={(e) =>
+                      updateSettings("locale.currencySymbol", e.target.value)
+                    }
                     placeholder="₹"
                   />
                 </div>
@@ -461,11 +539,14 @@ export default function SettingsPage() {
                 <Input
                   id="localeCode"
                   value={settings.locale?.locale || "en-IN"}
-                  onChange={(e) => updateSettings("locale.locale", e.target.value)}
+                  onChange={(e) =>
+                    updateSettings("locale.locale", e.target.value)
+                  }
                   placeholder="en-IN"
                 />
                 <p className="text-xs text-muted-foreground">
-                  Used for formatting numbers and dates. Examples: en-IN, en-US, en-GB
+                  Used for formatting numbers and dates. Examples: en-IN, en-US,
+                  en-GB
                 </p>
               </div>
             </CardContent>
@@ -473,28 +554,51 @@ export default function SettingsPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Globe className="w-5 h-5" />
-                Exchange Rates
-              </CardTitle>
+              <div className="flex items-start justify-between md:flex-row flex-col gap-4">
+                <CardTitle className="flex items-center gap-2">
+                  <Globe className="w-5 h-5" />
+                  Exchange Rates
+                </CardTitle>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleRefreshRates}
+                  disabled={refreshingRates}
+                  className="gap-2"
+                >
+                  <RefreshCw
+                    className={`w-4 h-4 ${
+                      refreshingRates ? "animate-spin" : ""
+                    }`}
+                  />
+                  {refreshingRates ? "Updating..." : "Fetch Latest Rates"}
+                </Button>
+              </div>
               <CardDescription>
-                Set custom exchange rates relative to USD. These rates are used when users view prices in different currencies.
+                Set custom exchange rates relative to USD. These rates are used
+                when users view prices in different currencies.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {CURRENCIES.map((currency) => {
-                  const currentRate = settings.locale?.exchangeRates?.[currency.value]
-                    ?? DEFAULT_EXCHANGE_RATES[currency.value]
-                    ?? 1;
+                  const currentRate =
+                    settings.locale?.exchangeRates?.[currency.value] ??
+                    DEFAULT_EXCHANGE_RATES[currency.value] ??
+                    1;
 
                   return (
                     <div key={currency.value} className="space-y-2">
-                      <Label htmlFor={`rate-${currency.value}`} className="flex items-center gap-2">
+                      <Label
+                        htmlFor={`rate-${currency.value}`}
+                        className="flex items-center gap-2"
+                      >
                         <span className="text-lg">{currency.symbol}</span>
                         <span>{currency.value}</span>
                         {currency.value === "USD" && (
-                          <span className="text-xs text-muted-foreground">(Reference)</span>
+                          <span className="text-xs text-muted-foreground">
+                            (Reference)
+                          </span>
                         )}
                       </Label>
                       <Input
@@ -519,7 +623,8 @@ export default function SettingsPage() {
                 })}
               </div>
               <p className="text-xs text-muted-foreground mt-4">
-                All rates are relative to USD (1 USD = X currency). For example, if 1 USD = 83.5 INR, enter 83.5 for INR.
+                All rates are relative to USD (1 USD = X currency). For example,
+                if 1 USD = 83.5 INR, enter 83.5 for INR.
               </p>
             </CardContent>
           </Card>
@@ -533,7 +638,9 @@ export default function SettingsPage() {
                 <Info className="w-5 h-5" />
                 About Information
               </CardTitle>
-              <CardDescription>Information shown on the About page</CardDescription>
+              <CardDescription>
+                Information shown on the About page
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
@@ -541,7 +648,9 @@ export default function SettingsPage() {
                 <Input
                   id="aboutTitle"
                   value={settings.about?.title || ""}
-                  onChange={(e) => updateSettings("about.title", e.target.value)}
+                  onChange={(e) =>
+                    updateSettings("about.title", e.target.value)
+                  }
                   placeholder="About Our Company"
                 />
               </div>
@@ -550,7 +659,9 @@ export default function SettingsPage() {
                 <Textarea
                   id="aboutDescription"
                   value={settings.about?.description || ""}
-                  onChange={(e) => updateSettings("about.description", e.target.value)}
+                  onChange={(e) =>
+                    updateSettings("about.description", e.target.value)
+                  }
                   placeholder="Tell your story..."
                   rows={4}
                 />
@@ -561,7 +672,9 @@ export default function SettingsPage() {
                   <Textarea
                     id="mission"
                     value={settings.about?.mission || ""}
-                    onChange={(e) => updateSettings("about.mission", e.target.value)}
+                    onChange={(e) =>
+                      updateSettings("about.mission", e.target.value)
+                    }
                     placeholder="Our mission is..."
                     rows={3}
                   />
@@ -571,7 +684,9 @@ export default function SettingsPage() {
                   <Textarea
                     id="vision"
                     value={settings.about?.vision || ""}
-                    onChange={(e) => updateSettings("about.vision", e.target.value)}
+                    onChange={(e) =>
+                      updateSettings("about.vision", e.target.value)
+                    }
                     placeholder="Our vision is..."
                     rows={3}
                   />
@@ -599,7 +714,9 @@ export default function SettingsPage() {
                     id="email"
                     type="email"
                     value={settings.contact?.email || ""}
-                    onChange={(e) => updateSettings("contact.email", e.target.value)}
+                    onChange={(e) =>
+                      updateSettings("contact.email", e.target.value)
+                    }
                   />
                 </div>
                 <div className="space-y-2">
@@ -607,7 +724,9 @@ export default function SettingsPage() {
                   <Input
                     id="phone"
                     value={settings.contact?.phone || ""}
-                    onChange={(e) => updateSettings("contact.phone", e.target.value)}
+                    onChange={(e) =>
+                      updateSettings("contact.phone", e.target.value)
+                    }
                   />
                 </div>
               </div>
@@ -616,7 +735,9 @@ export default function SettingsPage() {
                 <Input
                   id="alternatePhone"
                   value={settings.contact?.alternatePhone || ""}
-                  onChange={(e) => updateSettings("contact.alternatePhone", e.target.value)}
+                  onChange={(e) =>
+                    updateSettings("contact.alternatePhone", e.target.value)
+                  }
                 />
               </div>
               <div className="space-y-2">
@@ -624,7 +745,9 @@ export default function SettingsPage() {
                 <Textarea
                   id="address"
                   value={settings.contact?.address || ""}
-                  onChange={(e) => updateSettings("contact.address", e.target.value)}
+                  onChange={(e) =>
+                    updateSettings("contact.address", e.target.value)
+                  }
                   rows={2}
                 />
               </div>
@@ -634,7 +757,9 @@ export default function SettingsPage() {
                   <Input
                     id="city"
                     value={settings.contact?.city || ""}
-                    onChange={(e) => updateSettings("contact.city", e.target.value)}
+                    onChange={(e) =>
+                      updateSettings("contact.city", e.target.value)
+                    }
                   />
                 </div>
                 <div className="space-y-2">
@@ -642,7 +767,9 @@ export default function SettingsPage() {
                   <Input
                     id="state"
                     value={settings.contact?.state || ""}
-                    onChange={(e) => updateSettings("contact.state", e.target.value)}
+                    onChange={(e) =>
+                      updateSettings("contact.state", e.target.value)
+                    }
                   />
                 </div>
                 <div className="space-y-2">
@@ -650,7 +777,9 @@ export default function SettingsPage() {
                   <Input
                     id="country"
                     value={settings.contact?.country || ""}
-                    onChange={(e) => updateSettings("contact.country", e.target.value)}
+                    onChange={(e) =>
+                      updateSettings("contact.country", e.target.value)
+                    }
                   />
                 </div>
                 <div className="space-y-2">
@@ -658,7 +787,9 @@ export default function SettingsPage() {
                   <Input
                     id="postalCode"
                     value={settings.contact?.postalCode || ""}
-                    onChange={(e) => updateSettings("contact.postalCode", e.target.value)}
+                    onChange={(e) =>
+                      updateSettings("contact.postalCode", e.target.value)
+                    }
                   />
                 </div>
               </div>
@@ -667,7 +798,9 @@ export default function SettingsPage() {
                 <Input
                   id="mapUrl"
                   value={settings.contact?.mapUrl || ""}
-                  onChange={(e) => updateSettings("contact.mapUrl", e.target.value)}
+                  onChange={(e) =>
+                    updateSettings("contact.mapUrl", e.target.value)
+                  }
                   placeholder="https://maps.google.com/..."
                 />
               </div>
@@ -687,32 +820,46 @@ export default function SettingsPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               {DAYS_OF_WEEK.map((day) => {
-                const hourEntry = settings.businessHours?.find(h => h.day === day) || {
+                const hourEntry = settings.businessHours?.find(
+                  (h) => h.day === day
+                ) || {
                   day,
                   open: "09:00",
                   close: "18:00",
-                  isClosed: false
+                  isClosed: false,
                 };
-                const dayIndex = settings.businessHours?.findIndex(h => h.day === day) ?? -1;
+                const dayIndex =
+                  settings.businessHours?.findIndex((h) => h.day === day) ?? -1;
 
                 const updateHour = (field: string, value: string | boolean) => {
                   const hours = [...(settings.businessHours || [])];
                   if (dayIndex >= 0) {
                     hours[dayIndex] = { ...hours[dayIndex], [field]: value };
                   } else {
-                    hours.push({ day, open: "09:00", close: "18:00", isClosed: false, [field]: value });
+                    hours.push({
+                      day,
+                      open: "09:00",
+                      close: "18:00",
+                      isClosed: false,
+                      [field]: value,
+                    });
                   }
                   updateSettings("businessHours", hours);
                 };
 
                 return (
-                  <div key={day} className="flex flex-col gap-2 p-3 border rounded-lg sm:flex-row sm:items-center sm:justify-between">
+                  <div
+                    key={day}
+                    className="flex flex-col gap-2 p-3 border rounded-lg sm:flex-row sm:items-center sm:justify-between"
+                  >
                     <div className="flex items-center gap-3">
                       <span className="font-medium w-24">{day}</span>
                       <div className="flex items-center gap-2">
                         <Switch
                           checked={!hourEntry.isClosed}
-                          onCheckedChange={(checked) => updateHour("isClosed", !checked)}
+                          onCheckedChange={(checked) =>
+                            updateHour("isClosed", !checked)
+                          }
                         />
                         <span className="text-xs text-muted-foreground">
                           {hourEntry.isClosed ? "Closed" : "Open"}
@@ -755,19 +902,27 @@ export default function SettingsPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               {settings.socialLinks?.map((link, index) => (
-                <div key={index} className="flex flex-col gap-3 p-3 border rounded-lg sm:flex-row sm:items-end sm:gap-4">
+                <div
+                  key={index}
+                  className="flex flex-col gap-3 p-3 border rounded-lg sm:flex-row sm:items-end sm:gap-4"
+                >
                   <div className="flex-1 space-y-2">
                     <Label>Platform</Label>
                     <Select
                       value={link.platform || ""}
-                      onValueChange={(value) => updateSocialLink(index, "platform", value)}
+                      onValueChange={(value) =>
+                        updateSocialLink(index, "platform", value)
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select platform" />
                       </SelectTrigger>
                       <SelectContent>
                         {SOCIAL_PLATFORMS.map((platform) => (
-                          <SelectItem key={platform.value} value={platform.value}>
+                          <SelectItem
+                            key={platform.value}
+                            value={platform.value}
+                          >
                             {platform.label}
                           </SelectItem>
                         ))}
@@ -778,7 +933,9 @@ export default function SettingsPage() {
                     <Label>URL</Label>
                     <Input
                       value={link.url}
-                      onChange={(e) => updateSocialLink(index, "url", e.target.value)}
+                      onChange={(e) =>
+                        updateSocialLink(index, "url", e.target.value)
+                      }
                       placeholder="https://..."
                     />
                   </div>
@@ -792,7 +949,11 @@ export default function SettingsPage() {
                   </Button>
                 </div>
               ))}
-              <Button variant="outline" onClick={addSocialLink} className="w-full sm:w-auto">
+              <Button
+                variant="outline"
+                onClick={addSocialLink}
+                className="w-full sm:w-auto"
+              >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Social Link
               </Button>
@@ -808,15 +969,22 @@ export default function SettingsPage() {
                 <HelpCircle className="w-5 h-5" />
                 Frequently Asked Questions
               </CardTitle>
-              <CardDescription>Manage FAQ items shown on your website</CardDescription>
+              <CardDescription>
+                Manage FAQ items shown on your website
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {(settings.faq || []).map((faq, index) => (
-                <div key={index} className="flex flex-col gap-3 p-4 border rounded-lg">
+                <div
+                  key={index}
+                  className="flex flex-col gap-3 p-4 border rounded-lg"
+                >
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
                       <GripVertical className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-sm font-medium text-muted-foreground">#{index + 1}</span>
+                      <span className="text-sm font-medium text-muted-foreground">
+                        #{index + 1}
+                      </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Button
@@ -838,9 +1006,13 @@ export default function SettingsPage() {
                       <div className="flex items-center gap-2">
                         <Switch
                           checked={faq.isActive !== false}
-                          onCheckedChange={(checked) => updateFAQ(index, "isActive", checked)}
+                          onCheckedChange={(checked) =>
+                            updateFAQ(index, "isActive", checked)
+                          }
                         />
-                        <span className="text-xs text-muted-foreground">Active</span>
+                        <span className="text-xs text-muted-foreground">
+                          Active
+                        </span>
                       </div>
                       <Button
                         variant="destructive"
@@ -855,7 +1027,9 @@ export default function SettingsPage() {
                     <Label>Question</Label>
                     <Input
                       value={faq.question}
-                      onChange={(e) => updateFAQ(index, "question", e.target.value)}
+                      onChange={(e) =>
+                        updateFAQ(index, "question", e.target.value)
+                      }
                       placeholder="Enter the question..."
                     />
                   </div>
@@ -863,14 +1037,20 @@ export default function SettingsPage() {
                     <Label>Answer</Label>
                     <Textarea
                       value={faq.answer}
-                      onChange={(e) => updateFAQ(index, "answer", e.target.value)}
+                      onChange={(e) =>
+                        updateFAQ(index, "answer", e.target.value)
+                      }
                       placeholder="Enter the answer..."
                       rows={3}
                     />
                   </div>
                 </div>
               ))}
-              <Button variant="outline" onClick={addFAQ} className="w-full sm:w-auto">
+              <Button
+                variant="outline"
+                onClick={addFAQ}
+                className="w-full sm:w-auto"
+              >
                 <Plus className="w-4 h-4 mr-2" />
                 Add FAQ Item
               </Button>
@@ -886,7 +1066,9 @@ export default function SettingsPage() {
                 <Globe className="w-5 h-5" />
                 SEO Settings
               </CardTitle>
-              <CardDescription>Search engine optimization defaults</CardDescription>
+              <CardDescription>
+                Search engine optimization defaults
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
@@ -894,16 +1076,22 @@ export default function SettingsPage() {
                 <Input
                   id="metaTitle"
                   value={settings.seo?.metaTitle || ""}
-                  onChange={(e) => updateSettings("seo.metaTitle", e.target.value)}
+                  onChange={(e) =>
+                    updateSettings("seo.metaTitle", e.target.value)
+                  }
                   placeholder="Your Site Name - Tagline"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="metaDescription">Default Meta Description</Label>
+                <Label htmlFor="metaDescription">
+                  Default Meta Description
+                </Label>
                 <Textarea
                   id="metaDescription"
                   value={settings.seo?.metaDescription || ""}
-                  onChange={(e) => updateSettings("seo.metaDescription", e.target.value)}
+                  onChange={(e) =>
+                    updateSettings("seo.metaDescription", e.target.value)
+                  }
                   placeholder="A brief description of your website..."
                   rows={3}
                 />
