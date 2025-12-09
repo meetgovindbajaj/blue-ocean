@@ -4,6 +4,8 @@ import connectDB from "@/lib/db";
 import SiteSettings from "@/models/SiteSettings";
 import Product from "@/models/Product";
 
+export const dynamic = "force-dynamic";
+
 // Exchange rates relative to USD (fallback if API fails)
 const DEFAULT_EXCHANGE_RATES: Record<string, number> = {
   USD: 1,

@@ -12,6 +12,8 @@ import {
   successResponse,
 } from "@/lib/apiAuth";
 
+export const dynamic = "force-dynamic";
+
 // GET /api/admin/inquiries - List all inquiries
 export async function GET(request: NextRequest) {
   try {

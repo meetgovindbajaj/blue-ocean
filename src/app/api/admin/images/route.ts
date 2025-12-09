@@ -7,6 +7,8 @@ import HeroBanner from "@/models/HeroBanner";
 import Tag from "@/models/Tag";
 import Profile from "@/models/Profile";
 
+export const dynamic = "force-dynamic";
+
 export interface ImageWithUsage extends CloudinaryImage {
   usedIn: {
     type: "product" | "category" | "banner" | "tag" | "avatar";

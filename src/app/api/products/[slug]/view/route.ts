@@ -6,6 +6,8 @@ import Profile from "@/models/Profile";
 import User from "@/models/User";
 import { trackEvent, getClientIp } from "@/lib/analytics";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }

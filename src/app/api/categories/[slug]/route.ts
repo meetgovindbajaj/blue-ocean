@@ -3,6 +3,8 @@ import dbConnect from "@/lib/db";
 import Category from "@/models/Category";
 import { trackEvent, getClientIp } from "@/lib/analytics";
 
+export const dynamic = "force-dynamic";
+
 const CACHE_HEADERS = {
   "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
 };

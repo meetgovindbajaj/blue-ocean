@@ -4,6 +4,8 @@ import Category from "@/models/Category";
 import { NextRequest, NextResponse } from "next/server";
 import mongoose, { Types } from "mongoose";
 
+export const dynamic = "force-dynamic";
+
 interface QueryFilter {
   isActive: boolean;
   category?: Types.ObjectId | { $in: Types.ObjectId[] };

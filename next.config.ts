@@ -2,7 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
-  cacheComponents: true,
+  // cacheComponents disabled - incompatible with dynamic route segment config
+  // cacheComponents: true,
   typedRoutes: true,
   reactStrictMode: true,
   poweredByHeader: false,

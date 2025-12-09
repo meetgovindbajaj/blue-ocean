@@ -3,6 +3,8 @@ import connectDB from "@/lib/db";
 import { trackEvent, getClientIp } from "@/lib/analytics";
 import { EventType, EntityType } from "@/models/Analytics";
 
+export const dynamic = "force-dynamic";
+
 // Track analytics events
 export async function POST(request: NextRequest) {
   try {

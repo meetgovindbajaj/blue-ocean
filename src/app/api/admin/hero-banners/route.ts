@@ -5,6 +5,8 @@ import Product from "@/models/Product";
 import dbConnect from "@/lib/db";
 import { generateCtaLink, transformBanner, transformBanners } from "@/lib/transformers/heroBanner";
 
+export const dynamic = "force-dynamic";
+
 // CREATE new banner
 export async function POST(request: NextRequest) {
   try {

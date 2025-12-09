@@ -9,6 +9,8 @@ import { PopulateOptions } from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 import mongoose, { Types } from "mongoose";
 
+export const dynamic = "force-dynamic";
+
 const CACHE_HEADERS = {
   "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
 };

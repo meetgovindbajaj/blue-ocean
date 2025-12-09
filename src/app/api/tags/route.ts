@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db";
 import Tag from "@/models/Tag";
 
+export const dynamic = "force-dynamic";
+
 // GET - List tags (public)
 export async function GET(request: NextRequest) {
   try {

@@ -3,6 +3,8 @@ import mongoose, { Types } from "mongoose";
 import Product from "@/models/Product";
 import Category from "@/models/Category";
 
+export const dynamic = "force-dynamic";
+
 type TrendingPeriod = "day" | "week" | "month" | "all";
 
 export async function GET(request: NextRequest) {

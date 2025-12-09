@@ -3,6 +3,8 @@ import { revalidatePath } from "next/cache";
 import connectDB from "@/lib/db";
 import Category from "@/models/Category";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: NextRequest) {
   try {
     await connectDB();

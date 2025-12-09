@@ -3,6 +3,8 @@ import connectDB from "@/lib/db";
 import Token from "@/models/Token";
 import { TokenType } from "@/lib/properties";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: NextRequest) {
   try {
     await connectDB();

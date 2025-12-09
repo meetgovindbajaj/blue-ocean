@@ -7,6 +7,8 @@ import { AnalyticsEvent } from "@/models/Analytics";
 import { trackEvent, getClientIp } from "@/lib/analytics";
 import { transformBanner } from "@/lib/transformers/heroBanner";
 
+export const dynamic = "force-dynamic";
+
 const CACHE_HEADERS = {
   "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
 };

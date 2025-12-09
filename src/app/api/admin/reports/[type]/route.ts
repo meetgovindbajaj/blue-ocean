@@ -5,6 +5,8 @@ import Category from "@/models/Category";
 import User from "@/models/User";
 import HeroBanner from "@/models/HeroBanner";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ type: string }> }

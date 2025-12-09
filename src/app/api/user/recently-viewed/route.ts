@@ -5,6 +5,8 @@ import Profile from "@/models/Profile";
 import Product from "@/models/Product";
 import { getAuthUser, unauthorizedResponse, errorResponse, successResponse } from "@/lib/apiAuth";
 
+export const dynamic = "force-dynamic";
+
 // GET /api/user/recently-viewed - Get user's recently viewed products
 export async function GET(request: NextRequest) {
   try {

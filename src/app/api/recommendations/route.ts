@@ -7,6 +7,8 @@ import Category from "@/models/Category";
 import { AnalyticsEvent } from "@/models/Analytics";
 import User from "@/models/User"; // 👈 Auth user model, which has profile ref
 
+export const dynamic = "force-dynamic";
+
 interface RecommendationQuery {
   userId?: string;
   limit?: number;

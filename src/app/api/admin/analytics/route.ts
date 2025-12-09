@@ -6,6 +6,8 @@ import User from "@/models/User";
 import HeroBanner from "@/models/HeroBanner";
 import { AnalyticsEvent } from "@/models/Analytics";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: NextRequest) {
   try {
     await connectDB();
