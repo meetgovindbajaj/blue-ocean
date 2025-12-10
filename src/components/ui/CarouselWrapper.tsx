@@ -28,6 +28,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { Route } from "next";
 
 // Types
 export type CarouselVariant = "fullWidth" | "inset" | "default";
@@ -35,6 +37,7 @@ export type CarouselVariant = "fullWidth" | "inset" | "default";
 export interface CarouselItem {
   id: string;
   image: string;
+  url?: string;
   thumbnailImage?: string;
   alt?: string;
   content?: ReactNode;
@@ -67,7 +70,11 @@ export interface CarouselWrapperProps {
   data: CarouselItem[];
   className?: string;
   onSlideChange?: (index: number) => void;
-  renderItem?: (item: CarouselItem, index: number, isActive: boolean) => ReactNode;
+  renderItem?: (
+    item: CarouselItem,
+    index: number,
+    isActive: boolean
+  ) => ReactNode;
 }
 
 // Default options per variant
@@ -126,7 +133,9 @@ const getDefaultOptions = (variant: CarouselVariant): CarouselOptions => {
 
 // Utility hooks
 const useScreenSize = () => {
-  const [screenSize, setScreenSize] = useState<"mobile" | "tablet" | "desktop" | "xl">("desktop");
+  const [screenSize, setScreenSize] = useState<
+    "mobile" | "tablet" | "desktop" | "xl"
+  >("desktop");
 
   useEffect(() => {
     const checkSize = () => {
@@ -332,7 +341,9 @@ const FullscreenPreview = ({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              onIndexChange(currentIndex > 0 ? currentIndex - 1 : data.length - 1);
+              onIndexChange(
+                currentIndex > 0 ? currentIndex - 1 : data.length - 1
+              );
             }}
             className={`${styles.fullscreenNav} ${styles.fullscreenNavLeft}`}
             aria-label="Previous image"
@@ -342,7 +353,9 @@ const FullscreenPreview = ({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              onIndexChange(currentIndex < data.length - 1 ? currentIndex + 1 : 0);
+              onIndexChange(
+                currentIndex < data.length - 1 ? currentIndex + 1 : 0
+              );
             }}
             className={`${styles.fullscreenNav} ${styles.fullscreenNavRight}`}
             aria-label="Next image"
@@ -390,6 +403,7 @@ export const CarouselWrapper = ({
   onSlideChange,
   renderItem,
 }: CarouselWrapperProps) => {
+  const router = useRouter();
   const defaultOptions = useMemo(() => getDefaultOptions(variant), [variant]);
   const options = useMemo(
     () => ({ ...defaultOptions, ...userOptions }),
@@ -438,7 +452,8 @@ export const CarouselWrapper = ({
 
   // Calculate max index based on variant
   const itemsPerView = getItemsPerView();
-  const maxIndex = variant === "default" ? Math.max(0, total - itemsPerView) : total - 1;
+  const maxIndex =
+    variant === "default" ? Math.max(0, total - itemsPerView) : total - 1;
 
   // Navigation functions
   const goTo = useCallback(
@@ -469,7 +484,12 @@ export const CarouselWrapper = ({
 
   // Auto-play logic
   useEffect(() => {
-    if (!options.autoPlay || total <= 1 || isFullscreen || (options.pauseOnInteraction && isPaused)) {
+    if (
+      !options.autoPlay ||
+      total <= 1 ||
+      isFullscreen ||
+      (options.pauseOnInteraction && isPaused)
+    ) {
       if (autoPlayRef.current) clearInterval(autoPlayRef.current);
       if (progressRef.current) clearInterval(progressRef.current);
       return;
@@ -495,7 +515,16 @@ export const CarouselWrapper = ({
       if (autoPlayRef.current) clearInterval(autoPlayRef.current);
       if (progressRef.current) clearInterval(progressRef.current);
     };
-  }, [activeIndex, total, options.autoPlay, options.autoPlayInterval, options.pauseOnInteraction, isFullscreen, isPaused, goNext]);
+  }, [
+    activeIndex,
+    total,
+    options.autoPlay,
+    options.autoPlayInterval,
+    options.pauseOnInteraction,
+    isFullscreen,
+    isPaused,
+    goNext,
+  ]);
 
   // Touch handlers
   const onTouchStart = (e: React.TouchEvent) => {
@@ -591,7 +620,8 @@ export const CarouselWrapper = ({
     const container = containerRef.current;
     if (container) {
       container.addEventListener("keydown", handleKeyDown as any);
-      return () => container.removeEventListener("keydown", handleKeyDown as any);
+      return () =>
+        container.removeEventListener("keydown", handleKeyDown as any);
     }
   }, [goPrev, goNext, isFullscreen]);
 
@@ -600,7 +630,8 @@ export const CarouselWrapper = ({
     (index: number) => {
       if (scrollContainerRef.current && variant === "inset") {
         const container = scrollContainerRef.current;
-        const cardWidth = screenSize === "mobile" ? 280 : screenSize === "tablet" ? 480 : 800;
+        const cardWidth =
+          screenSize === "mobile" ? 280 : screenSize === "tablet" ? 480 : 800;
         const gap = screenSize === "mobile" ? 16 : 24;
         const scrollPosition = index * (cardWidth + gap);
         container.scrollTo({ left: scrollPosition, behavior: "smooth" });
@@ -621,7 +652,8 @@ export const CarouselWrapper = ({
 
     const container = scrollContainerRef.current;
     const handleScroll = () => {
-      const cardWidth = screenSize === "mobile" ? 280 : screenSize === "tablet" ? 480 : 800;
+      const cardWidth =
+        screenSize === "mobile" ? 280 : screenSize === "tablet" ? 480 : 800;
       const gap = screenSize === "mobile" ? 16 : 24;
       const newIndex = Math.round(container.scrollLeft / (cardWidth + gap));
       if (newIndex !== activeIndex && newIndex >= 0 && newIndex < total) {
@@ -644,7 +676,7 @@ export const CarouselWrapper = ({
         const containerWidth = container.offsetWidth;
         const cardLeft = activeCard.offsetLeft;
         const cardWidth = activeCard.offsetWidth;
-        const scrollLeft = cardLeft - (containerWidth / 2) + (cardWidth / 2);
+        const scrollLeft = cardLeft - containerWidth / 2 + cardWidth / 2;
 
         container.scrollTo({
           left: scrollLeft,
@@ -734,7 +766,9 @@ export const CarouselWrapper = ({
                 className={cn(
                   styles.dot,
                   activeIndex === index && styles.dotActive,
-                  activeIndex === index && !options.showDotsProgress && styles.dotActiveNoProgress
+                  activeIndex === index &&
+                    !options.showDotsProgress &&
+                    styles.dotActiveNoProgress
                 )}
                 onClick={() => goTo(index)}
                 aria-label={`Go to slide ${index + 1}`}
@@ -799,20 +833,28 @@ export const CarouselWrapper = ({
   };
 
   const renderInsetVariant = () => {
-    const cardWidth = screenSize === "mobile" ? 280 : screenSize === "tablet" ? 480 : 800;
+    const cardWidth =
+      screenSize === "mobile" ? 280 : screenSize === "tablet" ? 480 : 800;
     const gap = screenSize === "mobile" ? 16 : 24;
-    const aspectRatio = screenSize === "mobile" ? "4/6" : screenSize === "tablet" ? "5/4" : "6/3";
+    const aspectRatio =
+      screenSize === "mobile" ? "4/6" : screenSize === "tablet" ? "5/4" : "6/3";
 
     // Handler for inset navigation - state based
     const handleInsetPrev = () => {
-      const newIndex = activeIndex > 0 ? activeIndex - 1 : (options.loop ? total - 1 : 0);
+      const newIndex =
+        activeIndex > 0 ? activeIndex - 1 : options.loop ? total - 1 : 0;
       setActiveIndex(newIndex);
       setProgress(0);
       onSlideChange?.(newIndex);
     };
 
     const handleInsetNext = () => {
-      const newIndex = activeIndex < total - 1 ? activeIndex + 1 : (options.loop ? 0 : total - 1);
+      const newIndex =
+        activeIndex < total - 1
+          ? activeIndex + 1
+          : options.loop
+          ? 0
+          : total - 1;
       setActiveIndex(newIndex);
       setProgress(0);
       onSlideChange?.(newIndex);
@@ -921,11 +963,20 @@ export const CarouselWrapper = ({
                     style={{
                       width: `${cardWidth}px`,
                       aspectRatio,
-                      cursor: index === activeIndex && options.showPreviewBtn ? "zoom-in" : "pointer",
+                      cursor:
+                        index === activeIndex && options.showPreviewBtn
+                          ? "zoom-in"
+                          : "pointer",
                     }}
                     onClick={() => {
                       if (index === activeIndex && options.showPreviewBtn) {
                         setIsFullscreen(true);
+                      } else if (
+                        index === activeIndex &&
+                        !options.showPreviewBtn &&
+                        item.url
+                      ) {
+                        router.push((item.url || "#") as Route);
                       } else {
                         handleInsetGoTo(index);
                       }
@@ -939,7 +990,9 @@ export const CarouselWrapper = ({
                     />
                     <div className={styles.insetCardGradient} />
                     {item.content && (
-                      <div className={styles.insetCardContent}>{item.content}</div>
+                      <div className={styles.insetCardContent}>
+                        {item.content}
+                      </div>
                     )}
                     {renderItem && (
                       <div className={styles.insetCardContent}>
@@ -1077,7 +1130,8 @@ export const CarouselWrapper = ({
           >
             {data.map((item, index) => {
               const isActive =
-                index >= currentSlideStart && index < currentSlideStart + itemsPerView;
+                index >= currentSlideStart &&
+                index < currentSlideStart + itemsPerView;
               return (
                 <div
                   key={item.id}

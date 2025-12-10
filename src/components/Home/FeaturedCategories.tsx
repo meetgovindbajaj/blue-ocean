@@ -18,6 +18,7 @@ const FeaturedCategories = ({ categories }: FeaturedCategoriesProps) => {
       id: category.id,
       image: category.image?.url || "",
       alt: category.name,
+      url: `/categories?slug=${category.slug}`,
       content: (
         <Link
           href={`/categories?slug=${category.slug}`}
