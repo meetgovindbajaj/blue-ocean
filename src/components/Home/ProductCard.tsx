@@ -22,10 +22,10 @@ const ProductCard = ({ product }: ProductCardProps) => {
   // Get the display image (thumbnail preferred, fallback to first image)
   const thumbnailImage = product.images?.find((img) => img.isThumbnail);
   const displayImage =
-    thumbnailImage?.thumbnailUrl ||
     thumbnailImage?.url ||
-    product.images?.[0]?.thumbnailUrl ||
+    thumbnailImage?.thumbnailUrl ||
     product.images?.[0]?.url ||
+    product.images?.[0]?.thumbnailUrl ||
     "";
 
   // ResizeObserver for dynamic height calculation

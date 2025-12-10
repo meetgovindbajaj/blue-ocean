@@ -92,7 +92,7 @@ export default function ProductDetailClient({
     return images.map((img, idx) => ({
       id: img.id || `img-${idx}`,
       image: img.url,
-      thumbnailImage: img.thumbnailUrl || img.url,
+      thumbnailImage: img.url || img.thumbnailUrl,
       alt: `${product.name} ${idx + 1}`,
     }));
   }, [images, product.name]);

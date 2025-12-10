@@ -62,8 +62,10 @@ function transformProduct(productData: any): BannerProduct | null {
       retail: productData.prices?.retail || 0,
       discount: productData.prices?.discount || 0,
     },
-    thumbnail: productData.images?.find((img: any) => img.isThumbnail) ||
-      productData.images?.[0] || undefined,
+    thumbnail:
+      productData.images?.find((img: any) => img.isThumbnail) ||
+      productData.images?.[0] ||
+      undefined,
   };
 }
 
@@ -92,7 +94,11 @@ function transformAutoProducts(products: any[]): AutoProduct[] | null {
       retail: p.prices?.retail || 0,
       discount: p.prices?.discount || 0,
     },
-    thumbnail: p.thumbnail || p.images?.find((img: any) => img.isThumbnail) || p.images?.[0] || undefined,
+    thumbnail:
+      p.thumbnail ||
+      p.images?.find((img: any) => img.isThumbnail) ||
+      p.images?.[0] ||
+      undefined,
     category: p.category
       ? {
           name: p.category.name || "",
@@ -102,9 +108,18 @@ function transformAutoProducts(products: any[]): AutoProduct[] | null {
   }));
 }
 
-export function transformBanner(banner: any, includeAdminFields: true): HeroBannerAdmin;
-export function transformBanner(banner: any, includeAdminFields?: false): HeroBanner;
-export function transformBanner(banner: any, includeAdminFields = false): HeroBanner | HeroBannerAdmin {
+export function transformBanner(
+  banner: any,
+  includeAdminFields: true
+): HeroBannerAdmin;
+export function transformBanner(
+  banner: any,
+  includeAdminFields?: false
+): HeroBanner;
+export function transformBanner(
+  banner: any,
+  includeAdminFields = false
+): HeroBanner | HeroBannerAdmin {
   const content = banner.content || {};
 
   const base: HeroBanner = {
@@ -140,14 +155,19 @@ export function transformBanner(banner: any, includeAdminFields = false): HeroBa
       alt: banner.image?.alt || "Hero Banner",
       mobileUrl: banner.mobileImage?.url || undefined,
     },
-    mobileImage: banner.mobileImage?.url ? {
-      id: banner.mobileImage.id || undefined,
-      url: banner.mobileImage.url,
-      thumbnailUrl: banner.mobileImage.thumbnailUrl || banner.mobileImage.url,
-    } : undefined,
+    mobileImage: banner.mobileImage?.url
+      ? {
+          id: banner.mobileImage.id || undefined,
+          url: banner.mobileImage.url,
+          thumbnailUrl:
+            banner.mobileImage.url || banner.mobileImage.thumbnailUrl || "",
+        }
+      : undefined,
     order: banner.order ?? 0,
     isActive: banner.isActive ?? true,
-    startDate: banner.startDate ? new Date(banner.startDate).toISOString() : null,
+    startDate: banner.startDate
+      ? new Date(banner.startDate).toISOString()
+      : null,
     endDate: banner.endDate ? new Date(banner.endDate).toISOString() : null,
   };
 
@@ -160,16 +180,29 @@ export function transformBanner(banner: any, includeAdminFields = false): HeroBa
     ...base,
     clicks: banner.clicks ?? 0,
     impressions: banner.impressions ?? 0,
-    createdAt: banner.createdAt ? new Date(banner.createdAt).toISOString() : new Date().toISOString(),
-    updatedAt: banner.updatedAt ? new Date(banner.updatedAt).toISOString() : new Date().toISOString(),
+    createdAt: banner.createdAt
+      ? new Date(banner.createdAt).toISOString()
+      : new Date().toISOString(),
+    updatedAt: banner.updatedAt
+      ? new Date(banner.updatedAt).toISOString()
+      : new Date().toISOString(),
   };
 
   return admin;
 }
 
-export function transformBanners(banners: any[], includeAdminFields: true): HeroBannerAdmin[];
-export function transformBanners(banners: any[], includeAdminFields?: false): HeroBanner[];
-export function transformBanners(banners: any[], includeAdminFields = false): HeroBanner[] | HeroBannerAdmin[] {
+export function transformBanners(
+  banners: any[],
+  includeAdminFields: true
+): HeroBannerAdmin[];
+export function transformBanners(
+  banners: any[],
+  includeAdminFields?: false
+): HeroBanner[];
+export function transformBanners(
+  banners: any[],
+  includeAdminFields = false
+): HeroBanner[] | HeroBannerAdmin[] {
   if (includeAdminFields) {
     return banners.map((banner) => transformBanner(banner, true));
   }
