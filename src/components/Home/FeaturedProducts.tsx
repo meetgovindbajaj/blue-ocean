@@ -64,14 +64,16 @@ const FeaturedProducts = ({ products }: FeaturedProductsProps) => {
         )}
         className={styles.productsCarousel}
       />
-      <div className={styles.mobileViewAll}>
-        <Anchor
-          href="/products?sort=trending"
-          className="viewAllLink"
-          content="View All"
-          rootStyle={{ display: "flex", alignItems: "center", gap: "8px" }}
-        />
-      </div>
+      {carouselData.length !== 0 && (
+        <div className={styles.mobileViewAll}>
+          <Anchor
+            href="/products?sort=trending"
+            className="viewAllLink"
+            content="View All"
+            rootStyle={{ display: "flex", alignItems: "center", gap: "8px" }}
+          />
+        </div>
+      )}
     </div>
   );
 };

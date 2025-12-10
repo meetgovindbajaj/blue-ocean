@@ -58,7 +58,7 @@ type PreviewState =
 const getImageUrl = (image: any): string => {
   if (!image) return "";
   if (typeof image === "string") return image;
-  return image.thumbnailUrl || image.url || "";
+  return image.url || image.thumbnailUrl || "";
 };
 
 const CategoryDropdown = ({ id }: { id: string }) => {
@@ -440,6 +440,8 @@ const CategoryDropdown = ({ id }: { id: string }) => {
                 backgroundImage: category.image
                   ? `url(${getImageUrl(category.image)})`
                   : undefined,
+                backgroundSize: "fill",
+                backgroundRepeat: "no-repeat",
               }}
             >
               {!category.image && (
