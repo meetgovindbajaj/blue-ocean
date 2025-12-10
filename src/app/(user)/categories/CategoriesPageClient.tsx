@@ -298,7 +298,9 @@ const CategoryListPageInner = () => {
         const minPrice = searchParams.get("minPrice");
         const maxPrice = searchParams.get("maxPrice");
         const page = searchParams.get("page");
+        const priceCurrency = searchParams.get("priceCurrency");
 
+        if (priceCurrency) params.set("priceCurrency", priceCurrency);
         if (search) params.set("search", search);
         if (sort) params.set("sort", sort);
         if (minPrice) params.set("minPrice", minPrice);

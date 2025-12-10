@@ -61,6 +61,7 @@ const SearchContent = ({
   const currentSort = searchParams.get("sort") || "newest";
   const currentMinPrice = searchParams.get("minPrice") || "";
   const currentMaxPrice = searchParams.get("maxPrice") || "";
+  const currentPriceCurrency = searchParams.get("priceCurrency") || "";
 
   // Sync query to URL when debounced query changes
   useEffect(() => {
@@ -116,6 +117,8 @@ const SearchContent = ({
         params.set("sort", currentSort);
       if (currentMinPrice) params.set("minPrice", currentMinPrice);
       if (currentMaxPrice) params.set("maxPrice", currentMaxPrice);
+      if (currentPriceCurrency)
+        params.set("priceCurrency", currentPriceCurrency);
       params.set("limit", "12");
 
       const response = await fetch(`/api/products?${params.toString()}`);
@@ -153,6 +156,7 @@ const SearchContent = ({
     currentSort,
     currentMinPrice,
     currentMaxPrice,
+    currentPriceCurrency,
     categories,
   ]);
 

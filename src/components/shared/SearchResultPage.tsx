@@ -25,7 +25,9 @@ interface SearchResultPageProps {
 }
 
 // Inner component that uses useSearchParams
-const SearchResultPageInner = ({ showFilters = true }: SearchResultPageProps) => {
+const SearchResultPageInner = ({
+  showFilters = true,
+}: SearchResultPageProps) => {
   const searchParams = useSearchParams();
 
   const [products, setProducts] = useState<ProductType[]>([]);
@@ -69,6 +71,7 @@ const SearchResultPageInner = ({ showFilters = true }: SearchResultPageProps) =>
       const minPrice = searchParams.get("minPrice");
       const maxPrice = searchParams.get("maxPrice");
       const page = searchParams.get("page");
+      const priceCurrency = searchParams.get("priceCurrency");
 
       if (search) params.set("search", search);
       if (category) params.set("category", category);
@@ -76,6 +79,7 @@ const SearchResultPageInner = ({ showFilters = true }: SearchResultPageProps) =>
       if (minPrice) params.set("minPrice", minPrice);
       if (maxPrice) params.set("maxPrice", maxPrice);
       if (page) params.set("page", page);
+      if (priceCurrency) params.set("priceCurrency", priceCurrency);
 
       const response = await fetch(`/api/products?${params.toString()}`);
       const data = await response.json();

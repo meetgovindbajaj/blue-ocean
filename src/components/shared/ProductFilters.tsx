@@ -23,6 +23,7 @@ import {
 import { SlidersHorizontal, X, Search } from "lucide-react";
 import styles from "./ProductFilters.module.css";
 import { Route } from "next";
+import { useCurrency } from "@/context/CurrencyContext";
 
 export type SortOption =
   | "newest"
@@ -84,6 +85,7 @@ export default function ProductFilters({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const isInitialMount = useRef(true);
+  const { currency, currencySymbol } = useCurrency();
 
   // Initialize state from URL params
   const [filters, setFilters] = useState<FilterValues>({
@@ -141,6 +143,13 @@ export default function ProductFilters({
         params.delete("maxPrice");
       }
 
+      // Add currency for price conversion in backend
+      if (newFilters.minPrice || newFilters.maxPrice) {
+        params.set("priceCurrency", currency);
+      } else {
+        params.delete("priceCurrency");
+      }
+
       // Remove page when filters change
       params.delete("page");
 
@@ -152,7 +161,7 @@ export default function ProductFilters({
         scroll: false,
       });
     },
-    [router, pathname, searchParams]
+    [router, pathname, searchParams, currency]
   );
 
   // Update filters when debounced values change
@@ -202,10 +211,10 @@ export default function ProductFilters({
   if (filters.minPrice || filters.maxPrice) {
     const priceLabel =
       filters.minPrice && filters.maxPrice
-        ? `$${filters.minPrice} - $${filters.maxPrice}`
+        ? `${currencySymbol}${filters.minPrice} - ${currencySymbol}${filters.maxPrice}`
         : filters.minPrice
-        ? `Min: $${filters.minPrice}`
-        : `Max: $${filters.maxPrice}`;
+        ? `Min: ${currencySymbol}${filters.minPrice}`
+        : `Max: ${currencySymbol}${filters.maxPrice}`;
     activeFilters.push({ key: "minPrice", label: priceLabel });
   }
 
@@ -386,7 +395,7 @@ export default function ProductFilters({
           <div className={styles.priceRange}>
             <Input
               type="number"
-              placeholder="Min $"
+              placeholder={`Min ${currencySymbol}`}
               value={minPriceInput}
               onChange={(e) => setMinPriceInput(e.target.value)}
               className={styles.priceInput}
@@ -395,7 +404,7 @@ export default function ProductFilters({
             <span className={styles.priceSeparator}>-</span>
             <Input
               type="number"
-              placeholder="Max $"
+              placeholder={`Max ${currencySymbol}`}
               value={maxPriceInput}
               onChange={(e) => setMaxPriceInput(e.target.value)}
               className={styles.priceInput}
@@ -501,11 +510,11 @@ export default function ProductFilters({
 
                 {/* Price Range */}
                 <div className={styles.mobileFilterGroup}>
-                  <label className={styles.filterLabel}>Price Range</label>
+                  <label className={styles.filterLabel}>Price Range ({currencySymbol})</label>
                   <div className={styles.mobilePriceRange}>
                     <Input
                       type="number"
-                      placeholder="Min $"
+                      placeholder={`Min ${currencySymbol}`}
                       value={minPriceInput}
                       onChange={(e) => setMinPriceInput(e.target.value)}
                       min={0}
@@ -513,7 +522,7 @@ export default function ProductFilters({
                     <span className={styles.priceSeparator}>-</span>
                     <Input
                       type="number"
-                      placeholder="Max $"
+                      placeholder={`Max ${currencySymbol}`}
                       value={maxPriceInput}
                       onChange={(e) => setMaxPriceInput(e.target.value)}
                       min={0}

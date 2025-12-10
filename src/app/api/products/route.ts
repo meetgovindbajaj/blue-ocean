@@ -1,6 +1,7 @@
 import dbConnect from "@/lib/db";
 import Product from "@/models/Product";
 import Category from "@/models/Category";
+import SiteSettings from "@/models/SiteSettings";
 import { NextRequest, NextResponse } from "next/server";
 import mongoose, { Types } from "mongoose";
 
@@ -22,7 +23,13 @@ const CACHE_HEADERS = {
   "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
 };
 
-const VALID_SORTS: SortOption[] = ["name", "price-low", "price-high", "newest", "trending"];
+const VALID_SORTS: SortOption[] = [
+  "name",
+  "price-low",
+  "price-high",
+  "newest",
+  "trending",
+];
 
 const SORT_MAP: Record<SortOption, Record<string, 1 | -1>> = {
   name: { name: 1 },
@@ -31,6 +38,24 @@ const SORT_MAP: Record<SortOption, Record<string, 1 | -1>> = {
   trending: { score: -1, createdAt: -1 },
   newest: { createdAt: -1 },
 };
+
+// Convert price from user currency to base currency (for filtering)
+// Exchange rates are relative to USD
+function convertToBaseCurrency(
+  price: number,
+  fromCurrency: string,
+  baseCurrency: string,
+  exchangeRates: Record<string, number>
+): number {
+  if (fromCurrency === baseCurrency) return price;
+
+  const fromRate = exchangeRates[fromCurrency] || 1;
+  const toRate = exchangeRates[baseCurrency] || 1;
+
+  // Convert: fromCurrency -> USD -> baseCurrency
+  const priceInUSD = price / fromRate;
+  return priceInUSD * toRate;
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -43,10 +68,30 @@ export async function GET(request: NextRequest) {
     const sort = searchParams.get("sort");
     const minPrice = searchParams.get("minPrice");
     const maxPrice = searchParams.get("maxPrice");
+    const priceCurrency = searchParams.get("priceCurrency"); // Currency user entered price in
+    console.log(priceCurrency);
 
-    const limitNum = Math.min(Math.max(parseInt(searchParams.get("limit") || "20", 10), 1), 100);
+    const limitNum = Math.min(
+      Math.max(parseInt(searchParams.get("limit") || "20", 10), 1),
+      100
+    );
     const pageNum = Math.max(parseInt(searchParams.get("page") || "1", 10), 1);
     const skip = (pageNum - 1) * limitNum;
+
+    // Get site settings for base currency and exchange rates
+    let baseCurrency = "USD";
+    let exchangeRates: Record<string, number> = {};
+
+    if (priceCurrency && (minPrice || maxPrice)) {
+      const settings = await SiteSettings.findOne().select("locale").lean();
+      if (settings?.locale) {
+        baseCurrency =
+          (settings.locale as { currency?: string }).currency || "USD";
+        exchangeRates =
+          (settings.locale as { exchangeRates?: Record<string, number> })
+            .exchangeRates || {};
+      }
+    }
 
     const query: QueryFilter = { isActive: true };
 
@@ -59,7 +104,10 @@ export async function GET(request: NextRequest) {
       } else {
         // Try slug first, then name (case-insensitive)
         const baseCategory = await Category.findOne({
-          $or: [{ slug: trimmed }, { name: { $regex: `^${trimmed}$`, $options: "i" } }],
+          $or: [
+            { slug: trimmed },
+            { name: { $regex: `^${trimmed}$`, $options: "i" } },
+          ],
           isActive: true,
         })
           .select("_id children")
@@ -70,7 +118,12 @@ export async function GET(request: NextRequest) {
             {
               success: true,
               products: [],
-              pagination: { total: 0, page: pageNum, limit: limitNum, pages: 0 },
+              pagination: {
+                total: 0,
+                page: pageNum,
+                limit: limitNum,
+                pages: 0,
+              },
               filters: { category, search, sort: "newest", minPrice, maxPrice },
             },
             { headers: CACHE_HEADERS }
@@ -95,9 +148,38 @@ export async function GET(request: NextRequest) {
       ];
     }
 
-    // Price filter
-    const minPriceNum = minPrice ? Number(minPrice) : null;
-    const maxPriceNum = maxPrice ? Number(maxPrice) : null;
+    // Price filter - convert from user's currency to base currency if needed
+    let minPriceNum = minPrice ? Number(minPrice) : null;
+    let maxPriceNum = maxPrice ? Number(maxPrice) : null;
+
+    // Convert prices from user's currency to base currency
+    if (priceCurrency && (minPriceNum !== null || maxPriceNum !== null)) {
+      if (priceCurrency !== baseCurrency) {
+        if (minPriceNum !== null) {
+          minPriceNum = convertToBaseCurrency(
+            minPriceNum,
+            priceCurrency,
+            baseCurrency,
+            exchangeRates
+          );
+        }
+        if (maxPriceNum !== null) {
+          maxPriceNum = convertToBaseCurrency(
+            maxPriceNum,
+            priceCurrency,
+            baseCurrency,
+            exchangeRates
+          );
+        }
+      }
+    }
+    console.log({
+      minPriceNum,
+      maxPriceNum,
+      priceCurrency,
+      baseCurrency,
+      exchangeRates,
+    });
 
     if (minPriceNum !== null || maxPriceNum !== null) {
       query["prices.retail"] = {
@@ -114,7 +196,9 @@ export async function GET(request: NextRequest) {
     const [totalCount, products] = await Promise.all([
       Product.countDocuments(query),
       Product.find(query)
-        .select("id name slug description prices images category isActive createdAt size score totalViews")
+        .select(
+          "id name slug description prices images category isActive createdAt size score totalViews"
+        )
         .populate("category", "id name slug")
         .sort(SORT_MAP[sortOption])
         .skip(skip)
@@ -149,7 +233,10 @@ export async function GET(request: NextRequest) {
       {
         success: false,
         error: "Failed to fetch products",
-        message: process.env.NODE_ENV === "development" ? (error as Error).message : undefined,
+        message:
+          process.env.NODE_ENV === "development"
+            ? (error as Error).message
+            : undefined,
       },
       { status: 500 }
     );
