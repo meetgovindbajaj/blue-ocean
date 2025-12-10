@@ -440,7 +440,7 @@ const CategoryDropdown = ({ id }: { id: string }) => {
                 backgroundImage: category.image
                   ? `url(${getImageUrl(category.image)})`
                   : undefined,
-                backgroundSize: "fill",
+                backgroundSize: "cover",
                 backgroundRepeat: "no-repeat",
               }}
             >
