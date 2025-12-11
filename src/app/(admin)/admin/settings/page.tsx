@@ -37,8 +37,16 @@ import {
   DollarSign,
   Clock,
   RefreshCw,
+  Users,
+  History,
+  Briefcase,
+  PencilRuler,
+  Globe2,
+  Headset,
+  ShieldCheck,
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
+import ImagePicker, { ImageData } from "@/components/admin/ImagePicker";
 
 const SOCIAL_PLATFORMS = [
   { value: "Facebook", label: "Facebook" },
@@ -106,6 +114,18 @@ interface BusinessHour {
   isClosed?: boolean;
 }
 
+interface TeamMember {
+  name: string;
+  role: string;
+  image?: string;
+  bio?: string;
+}
+
+interface ServiceContent {
+  description?: string;
+  features?: string[];
+}
+
 interface SiteSettings {
   siteName: string;
   tagline?: string;
@@ -115,6 +135,14 @@ interface SiteSettings {
     description?: string;
     mission?: string;
     vision?: string;
+    history?: string;
+    team?: TeamMember[];
+    services?: {
+      customDesign?: ServiceContent;
+      globalShipping?: ServiceContent;
+      expertSupport?: ServiceContent;
+      qualityControl?: ServiceContent;
+    };
   };
   contact: {
     email: string;
@@ -304,6 +332,132 @@ export default function SettingsPage() {
       faq.order = i;
     });
     setSettings({ ...settings, faq: newFAQs });
+  };
+
+  // Team Functions
+  const updateTeamMember = (index: number, field: string, value: string) => {
+    if (!settings) return;
+    const newTeam = [...(settings.about?.team || [])];
+    newTeam[index] = { ...newTeam[index], [field]: value };
+    setSettings({
+      ...settings,
+      about: { ...settings.about, team: newTeam },
+    });
+  };
+
+  const addTeamMember = () => {
+    if (!settings) return;
+    setSettings({
+      ...settings,
+      about: {
+        ...settings.about,
+        team: [
+          ...(settings.about?.team || []),
+          { name: "", role: "", image: "", bio: "" },
+        ],
+      },
+    });
+  };
+
+  const removeTeamMember = (index: number) => {
+    if (!settings) return;
+    const newTeam = (settings.about?.team || []).filter((_, i) => i !== index);
+    setSettings({
+      ...settings,
+      about: { ...settings.about, team: newTeam },
+    });
+  };
+
+  // Service Functions
+  const updateServiceDescription = (
+    serviceKey: "customDesign" | "globalShipping" | "expertSupport" | "qualityControl",
+    value: string
+  ) => {
+    if (!settings) return;
+    const currentServices = settings.about?.services || {};
+    const currentService = currentServices[serviceKey] || {};
+    setSettings({
+      ...settings,
+      about: {
+        ...settings.about,
+        services: {
+          ...currentServices,
+          [serviceKey]: {
+            ...currentService,
+            description: value,
+          },
+        },
+      },
+    });
+  };
+
+  const updateServiceFeature = (
+    serviceKey: "customDesign" | "globalShipping" | "expertSupport" | "qualityControl",
+    featureIndex: number,
+    value: string
+  ) => {
+    if (!settings) return;
+    const currentServices = settings.about?.services || {};
+    const currentService = currentServices[serviceKey] || {};
+    const features = [...(currentService.features || [])];
+    features[featureIndex] = value;
+    setSettings({
+      ...settings,
+      about: {
+        ...settings.about,
+        services: {
+          ...currentServices,
+          [serviceKey]: {
+            ...currentService,
+            features,
+          },
+        },
+      },
+    });
+  };
+
+  const addServiceFeature = (
+    serviceKey: "customDesign" | "globalShipping" | "expertSupport" | "qualityControl"
+  ) => {
+    if (!settings) return;
+    const currentServices = settings.about?.services || {};
+    const currentService = currentServices[serviceKey] || {};
+    setSettings({
+      ...settings,
+      about: {
+        ...settings.about,
+        services: {
+          ...currentServices,
+          [serviceKey]: {
+            ...currentService,
+            features: [...(currentService.features || []), ""],
+          },
+        },
+      },
+    });
+  };
+
+  const removeServiceFeature = (
+    serviceKey: "customDesign" | "globalShipping" | "expertSupport" | "qualityControl",
+    featureIndex: number
+  ) => {
+    if (!settings) return;
+    const currentServices = settings.about?.services || {};
+    const currentService = currentServices[serviceKey] || {};
+    const features = (currentService.features || []).filter((_, i) => i !== featureIndex);
+    setSettings({
+      ...settings,
+      about: {
+        ...settings.about,
+        services: {
+          ...currentServices,
+          [serviceKey]: {
+            ...currentService,
+            features,
+          },
+        },
+      },
+    });
   };
 
   if (loading) {
@@ -690,6 +844,347 @@ export default function SettingsPage() {
                     placeholder="Our vision is..."
                     rows={3}
                   />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <History className="w-5 h-5" />
+                Company History
+              </CardTitle>
+              <CardDescription>
+                Share your company&apos;s story and journey
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <Label htmlFor="history">Our Story</Label>
+                <Textarea
+                  id="history"
+                  value={settings.about?.history || ""}
+                  onChange={(e) =>
+                    updateSettings("about.history", e.target.value)
+                  }
+                  placeholder="Share your company's history and journey..."
+                  rows={6}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="w-5 h-5" />
+                Team Members
+              </CardTitle>
+              <CardDescription>
+                Add team members to display on the About page
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {(settings.about?.team || []).map((member, index) => (
+                <div
+                  key={index}
+                  className="flex flex-col gap-3 p-4 border rounded-lg"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-muted-foreground">
+                      Team Member #{index + 1}
+                    </span>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => removeTeamMember(index)}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label>Name</Label>
+                      <Input
+                        value={member.name}
+                        onChange={(e) =>
+                          updateTeamMember(index, "name", e.target.value)
+                        }
+                        placeholder="John Doe"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Role</Label>
+                      <Input
+                        value={member.role}
+                        onChange={(e) =>
+                          updateTeamMember(index, "role", e.target.value)
+                        }
+                        placeholder="CEO / Founder"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Profile Image</Label>
+                    <ImagePicker
+                      value={
+                        member.image
+                          ? {
+                              id: member.image,
+                              name: "Profile Image",
+                              url: member.image,
+                              thumbnailUrl: member.image,
+                            }
+                          : null
+                      }
+                      onChange={(image: ImageData | ImageData[] | null) => {
+                        const singleImage = Array.isArray(image) ? image[0] : image;
+                        updateTeamMember(index, "image", singleImage?.url || "");
+                      }}
+                      multiple={false}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Bio</Label>
+                    <Textarea
+                      value={member.bio || ""}
+                      onChange={(e) =>
+                        updateTeamMember(index, "bio", e.target.value)
+                      }
+                      placeholder="Brief bio or description..."
+                      rows={2}
+                    />
+                  </div>
+                </div>
+              ))}
+              <Button
+                variant="outline"
+                onClick={addTeamMember}
+                className="w-full sm:w-auto"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add Team Member
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Briefcase className="w-5 h-5" />
+                Our Services
+              </CardTitle>
+              <CardDescription>
+                Edit the descriptions and features for each service shown on the website
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Custom Design */}
+              <div className="p-4 border rounded-lg space-y-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-blue-500/15 text-blue-500">
+                    <PencilRuler size={20} />
+                  </div>
+                  <h4 className="font-semibold">Custom Design</h4>
+                </div>
+                <div className="space-y-2">
+                  <Label>Description</Label>
+                  <Textarea
+                    value={settings.about?.services?.customDesign?.description || ""}
+                    onChange={(e) =>
+                      updateServiceDescription("customDesign", e.target.value)
+                    }
+                    placeholder="Tailored furniture built exactly to your vision..."
+                    rows={2}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Features</Label>
+                  <div className="space-y-2">
+                    {(settings.about?.services?.customDesign?.features || []).map((feature, idx) => (
+                      <div key={idx} className="flex gap-2">
+                        <Input
+                          value={feature}
+                          onChange={(e) => updateServiceFeature("customDesign", idx, e.target.value)}
+                          placeholder={`Feature ${idx + 1}`}
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => removeServiceFeature("customDesign", idx)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => addServiceFeature("customDesign")}
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Feature
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Global Shipping */}
+              <div className="p-4 border rounded-lg space-y-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-green-500/15 text-green-500">
+                    <Globe2 size={20} />
+                  </div>
+                  <h4 className="font-semibold">Global Shipping</h4>
+                </div>
+                <div className="space-y-2">
+                  <Label>Description</Label>
+                  <Textarea
+                    value={settings.about?.services?.globalShipping?.description || ""}
+                    onChange={(e) =>
+                      updateServiceDescription("globalShipping", e.target.value)
+                    }
+                    placeholder="Reliable worldwide delivery with trusted logistics partners..."
+                    rows={2}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Features</Label>
+                  <div className="space-y-2">
+                    {(settings.about?.services?.globalShipping?.features || []).map((feature, idx) => (
+                      <div key={idx} className="flex gap-2">
+                        <Input
+                          value={feature}
+                          onChange={(e) => updateServiceFeature("globalShipping", idx, e.target.value)}
+                          placeholder={`Feature ${idx + 1}`}
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => removeServiceFeature("globalShipping", idx)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => addServiceFeature("globalShipping")}
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Feature
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Expert Support */}
+              <div className="p-4 border rounded-lg space-y-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-purple-500/15 text-purple-500">
+                    <Headset size={20} />
+                  </div>
+                  <h4 className="font-semibold">Expert Support</h4>
+                </div>
+                <div className="space-y-2">
+                  <Label>Description</Label>
+                  <Textarea
+                    value={settings.about?.services?.expertSupport?.description || ""}
+                    onChange={(e) =>
+                      updateServiceDescription("expertSupport", e.target.value)
+                    }
+                    placeholder="End-to-end guidance with clear communication..."
+                    rows={2}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Features</Label>
+                  <div className="space-y-2">
+                    {(settings.about?.services?.expertSupport?.features || []).map((feature, idx) => (
+                      <div key={idx} className="flex gap-2">
+                        <Input
+                          value={feature}
+                          onChange={(e) => updateServiceFeature("expertSupport", idx, e.target.value)}
+                          placeholder={`Feature ${idx + 1}`}
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => removeServiceFeature("expertSupport", idx)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => addServiceFeature("expertSupport")}
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Feature
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Quality Control */}
+              <div className="p-4 border rounded-lg space-y-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-amber-500/15 text-amber-500">
+                    <ShieldCheck size={20} />
+                  </div>
+                  <h4 className="font-semibold">Quality Control</h4>
+                </div>
+                <div className="space-y-2">
+                  <Label>Description</Label>
+                  <Textarea
+                    value={settings.about?.services?.qualityControl?.description || ""}
+                    onChange={(e) =>
+                      updateServiceDescription("qualityControl", e.target.value)
+                    }
+                    placeholder="Strict inspections ensure world-class craftsmanship..."
+                    rows={2}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Features</Label>
+                  <div className="space-y-2">
+                    {(settings.about?.services?.qualityControl?.features || []).map((feature, idx) => (
+                      <div key={idx} className="flex gap-2">
+                        <Input
+                          value={feature}
+                          onChange={(e) => updateServiceFeature("qualityControl", idx, e.target.value)}
+                          placeholder={`Feature ${idx + 1}`}
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => removeServiceFeature("qualityControl", idx)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => addServiceFeature("qualityControl")}
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Feature
+                    </Button>
+                  </div>
                 </div>
               </div>
             </CardContent>

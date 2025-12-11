@@ -8,7 +8,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useCurrency } from "@/context/CurrencyContext";
-import { CarouselWrapper, type CarouselItem } from "@/components/ui/CarouselWrapper";
+import {
+  CarouselWrapper,
+  type CarouselItem,
+} from "@/components/ui/CarouselWrapper";
 import styles from "./ProductCard.module.css";
 
 const ProductCard = ({ product }: { product: ProductType }) => {
@@ -61,7 +64,10 @@ const ProductCard = ({ product }: { product: ProductType }) => {
       : null;
 
   return (
-    <Link href={`/products/${product.slug}`} className="block no-underline h-full">
+    <Link
+      href={`/products/${product.slug}`}
+      className="block no-underline h-full"
+    >
       <Card
         className={cn(
           "group overflow-hidden p-0 gap-0 transition-all duration-200 h-full flex flex-col",
@@ -90,6 +96,9 @@ const ProductCard = ({ product }: { product: ProductType }) => {
               alt={product.name}
               fill
               className="object-cover transition-transform duration-300 group-hover:scale-105"
+              quality={85}
+              placeholder="blur"
+              blurDataURL={thumbnailImage.thumbnailUrl || thumbnailImage.url}
             />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center text-muted-foreground text-sm">
@@ -132,7 +141,10 @@ const ProductCard = ({ product }: { product: ProductType }) => {
                   {product.size.height} {product.size.unit}
                 </span>
                 {!product.size.fixedSize && (
-                  <Badge variant="secondary" className="text-[11px] font-medium">
+                  <Badge
+                    variant="secondary"
+                    className="text-[11px] font-medium"
+                  >
                     Custom
                   </Badge>
                 )}

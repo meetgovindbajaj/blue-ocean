@@ -4,10 +4,21 @@ import dbConnect from "@/lib/db";
 import Product from "@/models/Product";
 import Profile from "@/models/Profile";
 import User from "@/models/User";
-import { trackEvent, getClientIp } from "@/lib/analytics";
 
 export const dynamic = "force-dynamic";
 
+/**
+ * Product View Tracking API
+ *
+ * NOTE: Primary view tracking is now done client-side via /api/analytics/track
+ * which provides better user identification (userId from AuthContext, sessionId
+ * from localStorage). This endpoint is kept for:
+ * 1. Updating the user's "recently viewed" list
+ * 2. Legacy support / direct API calls
+ *
+ * The client-side tracking in ProductDetailClient uses debounce (500ms) to
+ * prevent rapid duplicate views and properly identifies users.
+ */
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
@@ -17,35 +28,23 @@ export async function POST(
     await dbConnect();
 
     // ────────────────────────────────
-    // Parse body (for userId, sessionId, etc.)
+    // Parse body (for userId)
     // ────────────────────────────────
     let userId: string | null = null;
-    let sessionId: string | null = null;
     try {
       const body = await request.json().catch(() => null);
-
       if (body && typeof body.userId === "string") {
         userId = body.userId;
-      }
-      if (body && typeof body.sessionId === "string") {
-        sessionId = body.sessionId;
       }
     } catch {
       // ignore body errors; treat as anonymous
     }
 
     // ────────────────────────────────
-    // Get client IP and metadata
-    // ────────────────────────────────
-    const ip = getClientIp(request);
-    const userAgent = request.headers.get("user-agent") || "";
-    const referer = request.headers.get("referer") || "";
-
-    // ────────────────────────────────
     // Find product
     // ────────────────────────────────
     const product = await Product.findOne({ slug, isActive: true })
-      .select("_id name slug")
+      .select("_id")
       .lean();
 
     if (!product) {
@@ -55,30 +54,11 @@ export async function POST(
       );
     }
 
-    let userObjectId: Types.ObjectId | null = null;
-    if (userId && mongoose.isValidObjectId(userId)) {
-      userObjectId = new Types.ObjectId(userId);
-    }
-
-    // ────────────────────────────────
-    // Track view using unified analytics
-    // ────────────────────────────────
-    await trackEvent({
-      eventType: "product_view",
-      entityType: "product",
-      entityId: (product._id as Types.ObjectId).toString(),
-      entitySlug: (product as any).slug,
-      entityName: (product as any).name,
-      sessionId: sessionId || request.headers.get("x-session-id") || undefined,
-      userId: userObjectId?.toString(),
-      ip,
-      metadata: { userAgent, referrer: referer },
-    });
-
     // ────────────────────────────────
     // Recently viewed (via User → Profile)
     // ────────────────────────────────
-    if (userObjectId) {
+    if (userId && mongoose.isValidObjectId(userId)) {
+      const userObjectId = new Types.ObjectId(userId);
       updateRecentlyViewed(userObjectId, product._id as Types.ObjectId).catch(
         (err) => console.error("recentlyViewed update error:", err)
       );

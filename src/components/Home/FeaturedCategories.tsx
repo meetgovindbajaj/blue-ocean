@@ -17,6 +17,7 @@ const FeaturedCategories = ({ categories }: FeaturedCategoriesProps) => {
     return categories.map((category) => ({
       id: category.id,
       image: category.image?.url || "",
+      thumbnailImage: category.image?.thumbnailUrl || category.image?.url || "",
       alt: category.name,
       url: `/categories?slug=${category.slug}`,
       content: (

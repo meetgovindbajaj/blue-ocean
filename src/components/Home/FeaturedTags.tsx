@@ -75,6 +75,7 @@ const FeaturedTags = () => {
 
   const renderTag = (tag: any, index: number, keyPrefix = "") => {
     const logoUrl = tag.logo?.url || tag.logo?.thumbnailUrl;
+    const logoThumbnailUrl = tag.logo?.thumbnailUrl || tag.logo?.url;
     const href = tag.website || `/products?tag=${tag.slug}`;
     const isExternal = tag.website && tag.website.startsWith("http");
     const description = truncateDescription(tag.description);
@@ -96,6 +97,8 @@ const FeaturedTags = () => {
               width={48}
               height={48}
               className={styles.tagImage}
+              placeholder="blur"
+              blurDataURL={logoThumbnailUrl}
             />
           </span>
         )}

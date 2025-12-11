@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import styles from "./Hero.module.css";
 import type { HeroBanner } from "@/types/heroBanner";
 import CarouselWrapper, { CarouselItem } from "@/components/ui/CarouselWrapper";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export type { HeroBanner };
 
@@ -54,12 +55,14 @@ const trackBannerClick = async (bannerId: string) => {
 
 const HeroSection = ({ banners }: HeroSectionProps) => {
   const slides = useMemo(() => banners?.filter(Boolean) || [], [banners]);
-
+  const isMobile = useIsMobile();
   // Convert banners to CarouselItem format
   const carouselData: CarouselItem[] = useMemo(() => {
     return slides.map((banner) => ({
       id: banner.id,
-      image: banner.image.mobileUrl || banner.image.url,
+      image: isMobile
+        ? banner.image.mobileUrl || banner.image.url || ""
+        : banner.image.url || banner.image.mobileUrl || "",
       alt: banner.title || "Hero banner",
       content: <BannerContent banner={banner} />,
     }));
@@ -101,98 +104,6 @@ const BannerContent = ({ banner }: { banner: HeroBanner }) => {
     );
   };
 
-  // Render linked product preview
-  const renderProductPreview = () => {
-    if (!banner.product) return null;
-
-    const { product } = banner;
-    const hasDiscount = product.prices.discount > 0;
-    const finalPrice = hasDiscount
-      ? product.prices.retail * (1 - product.prices.discount / 100)
-      : product.prices.retail;
-
-    return (
-      <a href={`/products/${product.slug}`} className={styles.linkedItem}>
-        {product.thumbnail && (
-          <img
-            src={getImageUrl(product.thumbnail)}
-            alt={product.name}
-            className={styles.linkedItemImage}
-          />
-        )}
-        <div className={styles.linkedItemInfo}>
-          <span className={styles.linkedItemName}>{product.name}</span>
-          <span className={styles.linkedItemPrice}>
-            {hasDiscount && (
-              <span className={styles.linkedItemOriginal}>
-                {formatPrice(product.prices.retail)}
-              </span>
-            )}
-            {formatPrice(finalPrice)}
-          </span>
-        </div>
-      </a>
-    );
-  };
-
-  // Render linked category preview
-  const renderCategoryPreview = () => {
-    if (!banner.category || banner.product) return null;
-
-    const { category } = banner;
-
-    return (
-      <a href={`/category/${category.slug}`} className={styles.linkedItem}>
-        {category.image && (
-          <img
-            src={getImageUrl(category.image)}
-            alt={category.name}
-            className={styles.linkedItemImage}
-          />
-        )}
-        <div className={styles.linkedItemInfo}>
-          <span className={styles.linkedItemName}>{category.name}</span>
-        </div>
-      </a>
-    );
-  };
-
-  // Render auto products carousel (for trending/new_arrivals/offer auto types)
-  const renderAutoProducts = () => {
-    if (!banner.autoProducts || banner.autoProducts.length === 0) return null;
-
-    return (
-      <div className={styles.autoProducts}>
-        {banner.autoProducts.slice(0, 5).map((product) => {
-          const hasDiscount = product.prices.discount > 0;
-          const finalPrice = hasDiscount
-            ? product.prices.retail * (1 - product.prices.discount / 100)
-            : product.prices.retail;
-
-          return (
-            <a
-              key={product.id}
-              href={`/products/${product.slug}`}
-              className={styles.autoProductCard}
-            >
-              {product.thumbnail && (
-                <img
-                  src={getImageUrl(product.thumbnail)}
-                  alt={product.name}
-                  className={styles.autoProductImage}
-                />
-              )}
-              <div className={styles.autoProductName}>{product.name}</div>
-              <div className={styles.autoProductPrice}>
-                {formatPrice(finalPrice)}
-              </div>
-            </a>
-          );
-        })}
-      </div>
-    );
-  };
-
   // Render offer expiry date
   const renderOfferExpiry = () => {
     if (!banner.offerValidUntil) return null;
@@ -213,9 +124,6 @@ const BannerContent = ({ banner }: { banner: HeroBanner }) => {
         <p className={styles.description}>{banner.description}</p>
       )}
       {renderOfferExpiry()}
-      {/* {renderProductPreview()}
-      {renderCategoryPreview()}
-      {renderAutoProducts()} */}
       {banner.ctaText && (
         <a
           href={banner.ctaLink || "#"}

@@ -29,8 +29,8 @@ export function getDayBucket(date = new Date()): Date {
   return d;
 }
 
-// Deduplication window in milliseconds (5 minutes)
-const DEDUP_WINDOW_MS = 5 * 60 * 1000;
+// Deduplication window in milliseconds (10 minutes)
+const DEDUP_WINDOW_MS = 10 * 60 * 1000;
 
 // Track analytics event with full IP tracking and daily aggregation
 export async function trackEvent(data: {

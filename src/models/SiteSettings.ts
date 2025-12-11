@@ -48,6 +48,24 @@ interface ISiteSettings extends Document {
       image?: string;
       bio?: string;
     }[];
+    services?: {
+      customDesign?: {
+        description?: string;
+        features?: string[];
+      };
+      globalShipping?: {
+        description?: string;
+        features?: string[];
+      };
+      expertSupport?: {
+        description?: string;
+        features?: string[];
+      };
+      qualityControl?: {
+        description?: string;
+        features?: string[];
+      };
+    };
   };
 
   // Contact Information
@@ -141,6 +159,24 @@ const SiteSettingsSchema = new Schema<ISiteSettings>(
           bio: String,
         },
       ],
+      services: {
+        customDesign: {
+          description: String,
+          features: [String],
+        },
+        globalShipping: {
+          description: String,
+          features: [String],
+        },
+        expertSupport: {
+          description: String,
+          features: [String],
+        },
+        qualityControl: {
+          description: String,
+          features: [String],
+        },
+      },
     },
 
     contact: {

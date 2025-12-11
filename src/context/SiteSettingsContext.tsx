@@ -29,6 +29,24 @@ export interface SiteSettings {
       image?: string;
       bio?: string;
     }[];
+    services?: {
+      customDesign?: {
+        description?: string;
+        features?: string[];
+      };
+      globalShipping?: {
+        description?: string;
+        features?: string[];
+      };
+      expertSupport?: {
+        description?: string;
+        features?: string[];
+      };
+      qualityControl?: {
+        description?: string;
+        features?: string[];
+      };
+    };
   };
   contact: {
     email?: string;

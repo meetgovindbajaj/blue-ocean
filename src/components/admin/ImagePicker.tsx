@@ -63,7 +63,9 @@ export default function ImagePicker({
   maxImages = 10,
 }: ImagePickerProps) {
   const [open, setOpen] = useState(false);
-  const [cloudinaryImages, setCloudinaryImages] = useState<CloudinaryImage[]>([]);
+  const [cloudinaryImages, setCloudinaryImages] = useState<CloudinaryImage[]>(
+    []
+  );
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -169,7 +171,9 @@ export default function ImagePicker({
   };
 
   const handleConfirm = () => {
-    const selected = cloudinaryImages.filter((img) => selectedImages.has(img.id));
+    const selected = cloudinaryImages.filter((img) =>
+      selectedImages.has(img.id)
+    );
     const imageData: ImageData[] = selected.map((img) => ({
       id: img.id,
       name: img.name,
@@ -276,7 +280,9 @@ export default function ImagePicker({
               className={`relative group w-24 h-24 rounded-lg overflow-hidden border-2 bg-muted transition-all ${
                 img.isThumbnail ? "border-primary" : "border-muted"
               } ${draggedIndex === index ? "opacity-50" : ""} ${
-                dragOverIndex === index ? "ring-2 ring-primary ring-offset-2" : ""
+                dragOverIndex === index
+                  ? "ring-2 ring-primary ring-offset-2"
+                  : ""
               } ${multiple ? "cursor-grab active:cursor-grabbing" : ""}`}
             >
               {/* Drag handle indicator */}
@@ -292,11 +298,13 @@ export default function ImagePicker({
                 </div>
               )}
               <Image
-                src={img.thumbnailUrl || img.url}
+                src={img.url || img.thumbnailUrl}
                 alt={img.name}
                 fill
                 className="object-contain p-1"
                 draggable={false}
+                placeholder="blur"
+                blurDataURL={img.thumbnailUrl || img.url}
               />
               {img.isThumbnail && (
                 <div className="absolute top-1 left-1 bg-primary text-primary-foreground text-xs px-1 rounded">
@@ -378,18 +386,26 @@ export default function ImagePicker({
         <DialogHeader>
           <DialogTitle>Select {multiple ? "Images" : "Image"}</DialogTitle>
           <DialogDescription>
-            Choose from your library or upload new {multiple ? "images" : "image"}
+            Choose from your library or upload new{" "}
+            {multiple ? "images" : "image"}
             {multiple && ` (max ${maxImages})`}
           </DialogDescription>
         </DialogHeader>
 
-        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "library" | "upload")} className="flex-1 flex flex-col overflow-hidden">
+        <Tabs
+          value={activeTab}
+          onValueChange={(v) => setActiveTab(v as "library" | "upload")}
+          className="flex-1 flex flex-col overflow-hidden"
+        >
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="library">Image Library</TabsTrigger>
             <TabsTrigger value="upload">Upload New</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="library" className="flex-1 flex flex-col overflow-hidden mt-4">
+          <TabsContent
+            value="library"
+            className="flex-1 flex flex-col overflow-hidden mt-4"
+          >
             {/* Search & Refresh */}
             <div className="flex items-center gap-2 mb-4">
               <div className="relative flex-1">
@@ -408,7 +424,9 @@ export default function ImagePicker({
                 onClick={fetchImages}
                 disabled={loading}
               >
-                <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+                <RefreshCw
+                  className={`h-4 w-4 ${loading ? "animate-spin" : ""}`}
+                />
               </Button>
             </div>
 
@@ -439,10 +457,12 @@ export default function ImagePicker({
                       }`}
                     >
                       <Image
-                        src={image.thumbnailUrl || image.url}
+                        src={image.url || image.thumbnailUrl}
                         alt={image.name}
                         fill
                         className="object-contain p-1"
+                        placeholder="blur"
+                        blurDataURL={image.thumbnailUrl || image.url}
                       />
                       {selectedImages.has(image.id) && (
                         <div className="absolute top-1 right-1 w-5 h-5 rounded-full bg-primary flex items-center justify-center">
@@ -462,7 +482,11 @@ export default function ImagePicker({
                 {multiple && ` (max ${maxImages})`}
               </span>
               <div className="flex gap-2">
-                <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setOpen(false)}
+                >
                   Cancel
                 </Button>
                 <Button
@@ -476,7 +500,10 @@ export default function ImagePicker({
             </div>
           </TabsContent>
 
-          <TabsContent value="upload" className="flex-1 flex flex-col items-center justify-center">
+          <TabsContent
+            value="upload"
+            className="flex-1 flex flex-col items-center justify-center"
+          >
             <div className="text-center">
               <label className="cursor-pointer">
                 <input
@@ -491,7 +518,9 @@ export default function ImagePicker({
                   {uploading ? (
                     <>
                       <RefreshCw className="h-10 w-10 text-muted-foreground animate-spin" />
-                      <span className="text-sm text-muted-foreground">Uploading...</span>
+                      <span className="text-sm text-muted-foreground">
+                        Uploading...
+                      </span>
                     </>
                   ) : (
                     <>

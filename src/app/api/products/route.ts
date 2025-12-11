@@ -69,7 +69,6 @@ export async function GET(request: NextRequest) {
     const minPrice = searchParams.get("minPrice");
     const maxPrice = searchParams.get("maxPrice");
     const priceCurrency = searchParams.get("priceCurrency"); // Currency user entered price in
-    console.log(priceCurrency);
 
     const limitNum = Math.min(
       Math.max(parseInt(searchParams.get("limit") || "20", 10), 1),
@@ -173,13 +172,6 @@ export async function GET(request: NextRequest) {
         }
       }
     }
-    console.log({
-      minPriceNum,
-      maxPriceNum,
-      priceCurrency,
-      baseCurrency,
-      exchangeRates,
-    });
 
     if (minPriceNum !== null || maxPriceNum !== null) {
       query["prices.retail"] = {

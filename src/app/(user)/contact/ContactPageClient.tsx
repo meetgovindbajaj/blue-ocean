@@ -57,6 +57,7 @@ const ContactPageInner = () => {
   const [showProductDropdown, setShowProductDropdown] = useState(false);
   const productDropdownRef = useRef<HTMLDivElement>(null);
   const productInputRef = useRef<HTMLInputElement>(null);
+  const formSectionRef = useRef<HTMLElement>(null);
 
   // Fetch products for the dropdown
   const fetchProducts = useCallback(async () => {
@@ -119,6 +120,25 @@ const ContactPageInner = () => {
 
     setParamsInitialized(true);
   }, [searchParams, paramsInitialized, fetchProducts]);
+
+  // Auto-scroll to form section when there are search params
+  useEffect(() => {
+    const hasScrollParams = searchParams.has("product") ||
+                           searchParams.has("productId") ||
+                           searchParams.has("subject") ||
+                           searchParams.has("message") ||
+                           searchParams.has("scroll");
+
+    if (hasScrollParams && !loading && formSectionRef.current) {
+      // Small delay to ensure DOM is ready
+      setTimeout(() => {
+        formSectionRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      }, 100);
+    }
+  }, [searchParams, loading]);
 
   // Auto-select product from URL after products are loaded
   useEffect(() => {
@@ -398,7 +418,7 @@ const ContactPageInner = () => {
           </section>
 
           {/* Contact Form */}
-          <section className={styles.formSection}>
+          <section ref={formSectionRef} className={styles.formSection}>
             <h2 className={styles.sectionTitle}>Send Us a Message</h2>
             <form onSubmit={handleSubmit} className={styles.form}>
               <div className={styles.formRow}>

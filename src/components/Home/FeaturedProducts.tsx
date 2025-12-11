@@ -18,6 +18,8 @@ const FeaturedProducts = ({ products }: FeaturedProductsProps) => {
       id: product.id,
       image:
         product.images?.[0]?.url || product.images?.[0]?.thumbnailUrl || "",
+      thumbnailImage:
+        product.images?.[0]?.thumbnailUrl || product.images?.[0]?.url || "",
       alt: product.name,
       content: <ProductCard product={product} />,
     }));

@@ -27,6 +27,12 @@ const ProductCard = ({ product }: ProductCardProps) => {
     product.images?.[0]?.url ||
     product.images?.[0]?.thumbnailUrl ||
     "";
+  const displayImageThumbnail =
+    thumbnailImage?.thumbnailUrl ||
+    thumbnailImage?.url ||
+    product.images?.[0]?.thumbnailUrl ||
+    product.images?.[0]?.url ||
+    "";
 
   // ResizeObserver for dynamic height calculation
   useEffect(() => {
@@ -55,7 +61,6 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
         // Calculate total visible height
         const totalHeight = paddingTop + sizeInfoHeight + margin + titleHeight;
-        console.log(totalHeight);
 
         setCollapsedHeight(totalHeight);
       }
@@ -103,6 +108,8 @@ const ProductCard = ({ product }: ProductCardProps) => {
           fill
           className={styles.image}
           quality={85}
+          placeholder="blur"
+          blurDataURL={displayImageThumbnail}
         />
 
         {/* Glassmorphism info section that slides up on hover */}

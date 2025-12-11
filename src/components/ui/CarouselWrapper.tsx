@@ -14,6 +14,8 @@ import {
   ChevronRight,
   X,
   ZoomIn,
+  ZoomOut,
+  RotateCcw,
   Share2,
   Copy,
   Check,
@@ -258,7 +260,7 @@ const ShareDialog = ({
   );
 };
 
-// Fullscreen Preview Component
+// Fullscreen Preview Component with Zoom
 const FullscreenPreview = ({
   isOpen,
   onClose,
@@ -273,20 +275,209 @@ const FullscreenPreview = ({
   onIndexChange: (index: number) => void;
 }) => {
   const thumbnailsRef = useRef<HTMLDivElement>(null);
+  const imageContainerRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
 
+  // Zoom state
+  const [scale, setScale] = useState(1);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
+  // Pinch zoom state
+  const [initialPinchDistance, setInitialPinchDistance] = useState<
+    number | null
+  >(null);
+  const [initialScale, setInitialScale] = useState(1);
+
+  const MIN_SCALE = 1;
+  const MAX_SCALE = 4;
+  const ZOOM_STEP = 0.5;
+
+  // Reset zoom when image changes
+  useEffect(() => {
+    setScale(1);
+    setPosition({ x: 0, y: 0 });
+  }, [currentIndex]);
+
+  // Zoom functions
+  const zoomIn = useCallback(() => {
+    setScale((prev) => Math.min(prev + ZOOM_STEP, MAX_SCALE));
+  }, []);
+
+  const zoomOut = useCallback(() => {
+    setScale((prev) => {
+      const newScale = Math.max(prev - ZOOM_STEP, MIN_SCALE);
+      if (newScale === MIN_SCALE) {
+        setPosition({ x: 0, y: 0 });
+      }
+      return newScale;
+    });
+  }, []);
+
+  const resetZoom = useCallback(() => {
+    setScale(1);
+    setPosition({ x: 0, y: 0 });
+  }, []);
+
+  // Handle wheel zoom
+  const handleWheel = useCallback(
+    (e: React.WheelEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const delta = e.deltaY > 0 ? -0.1 : 0.1;
+      setScale((prev) => {
+        const newScale = Math.max(MIN_SCALE, Math.min(prev + delta, MAX_SCALE));
+        if (newScale === MIN_SCALE) {
+          setPosition({ x: 0, y: 0 });
+        }
+        return newScale;
+      });
+    },
+    []
+  );
+
+  // Mouse drag handlers for panning
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      if (scale <= 1) return;
+      e.preventDefault();
+      setIsDragging(true);
+      setDragStart({
+        x: e.clientX - position.x,
+        y: e.clientY - position.y,
+      });
+    },
+    [scale, position]
+  );
+
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      if (!isDragging || scale <= 1) return;
+      e.preventDefault();
+
+      const newX = e.clientX - dragStart.x;
+      const newY = e.clientY - dragStart.y;
+
+      // Limit panning to reasonable bounds
+      const maxPan = (scale - 1) * 200;
+      setPosition({
+        x: Math.max(-maxPan, Math.min(maxPan, newX)),
+        y: Math.max(-maxPan, Math.min(maxPan, newY)),
+      });
+    },
+    [isDragging, scale, dragStart]
+  );
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  // Touch handlers for pinch zoom and pan
+  const getTouchDistance = (touches: React.TouchList) => {
+    return Math.hypot(
+      touches[0].clientX - touches[1].clientX,
+      touches[0].clientY - touches[1].clientY
+    );
+  };
+
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      if (e.touches.length === 2) {
+        // Pinch start
+        e.preventDefault();
+        const distance = getTouchDistance(e.touches);
+        setInitialPinchDistance(distance);
+        setInitialScale(scale);
+      } else if (e.touches.length === 1 && scale > 1) {
+        // Pan start
+        setIsDragging(true);
+        setDragStart({
+          x: e.touches[0].clientX - position.x,
+          y: e.touches[0].clientY - position.y,
+        });
+      }
+    },
+    [scale, position]
+  );
+
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent) => {
+      if (e.touches.length === 2 && initialPinchDistance !== null) {
+        // Pinch zoom
+        e.preventDefault();
+        const distance = getTouchDistance(e.touches);
+        const scaleChange = distance / initialPinchDistance;
+        const newScale = Math.max(
+          MIN_SCALE,
+          Math.min(initialScale * scaleChange, MAX_SCALE)
+        );
+        setScale(newScale);
+        if (newScale === MIN_SCALE) {
+          setPosition({ x: 0, y: 0 });
+        }
+      } else if (e.touches.length === 1 && isDragging && scale > 1) {
+        // Pan
+        e.preventDefault();
+        const newX = e.touches[0].clientX - dragStart.x;
+        const newY = e.touches[0].clientY - dragStart.y;
+
+        const maxPan = (scale - 1) * 200;
+        setPosition({
+          x: Math.max(-maxPan, Math.min(maxPan, newX)),
+          y: Math.max(-maxPan, Math.min(maxPan, newY)),
+        });
+      }
+    },
+    [initialPinchDistance, initialScale, isDragging, scale, dragStart]
+  );
+
+  const handleTouchEnd = useCallback(() => {
+    setInitialPinchDistance(null);
+    setIsDragging(false);
+  }, []);
+
+  // Keyboard handlers
   useEffect(() => {
     if (!isOpen) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       switch (e.key) {
         case "Escape":
-          onClose();
+          if (scale > 1) {
+            resetZoom();
+          } else {
+            onClose();
+          }
           break;
         case "ArrowLeft":
-          onIndexChange(currentIndex > 0 ? currentIndex - 1 : data.length - 1);
+          if (scale === 1) {
+            onIndexChange(
+              currentIndex > 0 ? currentIndex - 1 : data.length - 1
+            );
+          }
           break;
         case "ArrowRight":
-          onIndexChange(currentIndex < data.length - 1 ? currentIndex + 1 : 0);
+          if (scale === 1) {
+            onIndexChange(
+              currentIndex < data.length - 1 ? currentIndex + 1 : 0
+            );
+          }
+          break;
+        case "+":
+        case "=":
+          e.preventDefault();
+          zoomIn();
+          break;
+        case "-":
+        case "_":
+          e.preventDefault();
+          zoomOut();
+          break;
+        case "0":
+          e.preventDefault();
+          resetZoom();
           break;
       }
     };
@@ -298,7 +489,17 @@ const FullscreenPreview = ({
       document.body.style.overflow = "";
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isOpen, currentIndex, data.length, onClose, onIndexChange]);
+  }, [
+    isOpen,
+    currentIndex,
+    data.length,
+    onClose,
+    onIndexChange,
+    scale,
+    zoomIn,
+    zoomOut,
+    resetZoom,
+  ]);
 
   // Scroll thumbnail into view
   useEffect(() => {
@@ -316,7 +517,10 @@ const FullscreenPreview = ({
   const currentItem = data[currentIndex];
 
   return (
-    <div className={styles.fullscreenOverlay} onClick={onClose}>
+    <div
+      className={styles.fullscreenOverlay}
+      onClick={scale === 1 ? onClose : undefined}
+    >
       <button
         className={styles.fullscreenClose}
         onClick={onClose}
@@ -325,18 +529,69 @@ const FullscreenPreview = ({
         <X className="w-6 h-6" />
       </button>
 
+      {/* Zoom Controls */}
+      <div className={styles.zoomControls} onClick={(e) => e.stopPropagation()}>
+        <button
+          className={styles.zoomBtn}
+          onClick={zoomIn}
+          disabled={scale >= MAX_SCALE}
+          aria-label="Zoom in"
+          title="Zoom in (+)"
+        >
+          <ZoomIn className="w-5 h-5" />
+        </button>
+        <button
+          className={styles.zoomBtn}
+          onClick={zoomOut}
+          disabled={scale <= MIN_SCALE}
+          aria-label="Zoom out"
+          title="Zoom out (-)"
+        >
+          <ZoomOut className="w-5 h-5" />
+        </button>
+        <button
+          className={styles.zoomBtn}
+          onClick={resetZoom}
+          disabled={scale === 1}
+          aria-label="Reset zoom"
+          title="Reset zoom (0)"
+        >
+          <RotateCcw className="w-5 h-5" />
+        </button>
+        <span className={styles.zoomLevel}>{Math.round(scale * 100)}%</span>
+      </div>
+
       <div
-        className={styles.fullscreenContent}
+        ref={imageContainerRef}
+        className={cn(
+          styles.fullscreenContent,
+          scale > 1 && styles.fullscreenContentZoomed,
+          isDragging && styles.fullscreenContentDragging
+        )}
         onClick={(e) => e.stopPropagation()}
+        onWheel={handleWheel}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
         <img
-          src={currentItem?.image}
+          ref={imageRef}
+          src={currentItem?.image || currentItem?.thumbnailImage || ""}
           alt={currentItem?.alt || `Image ${currentIndex + 1}`}
           className={styles.fullscreenImage}
+          style={{
+            transform: `scale(${scale}) translate(${position.x / scale}px, ${position.y / scale}px)`,
+            cursor: scale > 1 ? (isDragging ? "grabbing" : "grab") : "default",
+          }}
+          draggable={false}
         />
       </div>
 
-      {data.length > 1 && (
+      {data.length > 1 && scale === 1 && (
         <>
           <button
             onClick={(e) => {
@@ -368,7 +623,7 @@ const FullscreenPreview = ({
         </>
       )}
 
-      {data.length > 1 && (
+      {data.length > 1 && scale === 1 && (
         <div className={styles.fullscreenThumbnails} ref={thumbnailsRef}>
           {data.map((item, idx) => (
             <button
@@ -383,7 +638,7 @@ const FullscreenPreview = ({
               )}
             >
               <img
-                src={item.thumbnailImage || item.image}
+                src={item?.thumbnailImage || item?.image || ""}
                 alt={item.alt || `Thumbnail ${idx + 1}`}
               />
             </button>
@@ -798,7 +1053,7 @@ export const CarouselWrapper = ({
                   )}
                 >
                   <img
-                    src={item.thumbnailImage || item.image}
+                    src={item?.thumbnailImage || item?.image || ""}
                     alt={item.alt || `Preview ${index + 1}`}
                   />
                 </button>
@@ -983,7 +1238,7 @@ export const CarouselWrapper = ({
                     }}
                   >
                     <img
-                      src={item.image}
+                      src={item?.image || item?.thumbnailImage || ""}
                       alt={item.alt || `Slide ${index + 1}`}
                       className={styles.insetCardImage}
                       draggable={false}
@@ -1054,7 +1309,7 @@ export const CarouselWrapper = ({
                     )}
                   >
                     <img
-                      src={item.thumbnailImage || item.image}
+                      src={item?.thumbnailImage || item?.image || ""}
                       alt={item.alt || `Preview ${index + 1}`}
                     />
                   </button>
@@ -1158,7 +1413,7 @@ export const CarouselWrapper = ({
                     ) : (
                       <>
                         <img
-                          src={item.image}
+                          src={item?.image || item?.thumbnailImage || ""}
                           alt={item.alt || `Item ${index + 1}`}
                           className={styles.defaultItemImage}
                         />
@@ -1212,7 +1467,7 @@ export const CarouselWrapper = ({
                   )}
                 >
                   <img
-                    src={item.thumbnailImage || item.image}
+                    src={item?.thumbnailImage || item?.image || ""}
                     alt={item.alt || `Preview ${index + 1}`}
                   />
                 </button>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import parse from "html-react-parser";
 import { ProductType } from "@/types/product";
@@ -8,7 +8,20 @@ import ProductCard from "./ProductCard";
 import styles from "./ProductDetailClient.module.css";
 import { Route } from "next";
 import { useCurrency } from "@/context/CurrencyContext";
+import { useAuth } from "@/context/AuthContext";
 import CarouselWrapper, { CarouselItem } from "@/components/ui/CarouselWrapper";
+
+// Get or create a session ID for anonymous users
+function getSessionId(): string {
+  if (typeof window === "undefined") return "";
+
+  let sessionId = localStorage.getItem("analytics_session_id");
+  if (!sessionId) {
+    sessionId = `sess_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
+    localStorage.setItem("analytics_session_id", sessionId);
+  }
+  return sessionId;
+}
 
 interface Breadcrumb {
   id: string;
@@ -73,6 +86,72 @@ export default function ProductDetailClient({
   recommendedProducts = [],
 }: ProductDetailClientProps) {
   const { formatPrice } = useCurrency();
+  const { user } = useAuth();
+  const viewTrackingTimeout = useRef<NodeJS.Timeout | null>(null);
+  const hasTrackedView = useRef(false);
+
+  // Track product view with debounce (500ms delay to ensure user actually views the product)
+  const trackProductView = useCallback(() => {
+    // Prevent duplicate tracking for same product
+    if (hasTrackedView.current) return;
+
+    // Clear existing timeout
+    if (viewTrackingTimeout.current) {
+      clearTimeout(viewTrackingTimeout.current);
+    }
+
+    // Debounce - wait 500ms before tracking to ensure user is actually viewing
+    viewTrackingTimeout.current = setTimeout(() => {
+      const sessionId = getSessionId();
+
+      // Track analytics event (for all users)
+      fetch("/api/analytics/track", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          eventType: "product_view",
+          entityType: "product",
+          entityId: product.id,
+          entitySlug: product.slug,
+          entityName: product.name,
+          sessionId,
+          userId: user?.userId,
+        }),
+      })
+        .then(() => {
+          hasTrackedView.current = true;
+        })
+        .catch(console.error);
+
+      // Update recently viewed list (for logged-in users only)
+      if (user?.userId) {
+        fetch(`/api/products/${product.slug}/view`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: user.userId }),
+        }).catch(console.error);
+      }
+
+      viewTrackingTimeout.current = null;
+    }, 500);
+  }, [product.id, product.slug, product.name, user?.userId]);
+
+  // Track view on mount
+  useEffect(() => {
+    trackProductView();
+
+    // Cleanup timeout on unmount
+    return () => {
+      if (viewTrackingTimeout.current) {
+        clearTimeout(viewTrackingTimeout.current);
+      }
+    };
+  }, [trackProductView]);
+
+  // Reset tracking flag when product changes
+  useEffect(() => {
+    hasTrackedView.current = false;
+  }, [product.id]);
 
   const hasDiscount = product.prices.discount > 0;
   const discountedPrice = hasDiscount
@@ -92,7 +171,7 @@ export default function ProductDetailClient({
     return images.map((img, idx) => ({
       id: img.id || `img-${idx}`,
       image: img.url,
-      thumbnailImage: img.url || img.thumbnailUrl,
+      thumbnailImage: img.thumbnailUrl || img.url,
       alt: `${product.name} ${idx + 1}`,
     }));
   }, [images, product.name]);
@@ -102,6 +181,7 @@ export default function ProductDetailClient({
     return relatedProducts.map((p) => ({
       id: p.id,
       image: p.images?.[0]?.url || p.images?.[0]?.thumbnailUrl || "",
+      thumbnailImage: p.images?.[0]?.thumbnailUrl || p.images?.[0]?.url || "",
       alt: p.name,
       content: <ProductCard product={p} />,
     }));
@@ -111,8 +191,14 @@ export default function ProductDetailClient({
   const recommendedCarouselData: CarouselItem[] = useMemo(() => {
     return recommendedProducts.map((rec) => ({
       id: rec.id,
-      image: rec.thumbnail?.url || rec.images?.[0]?.url || "",
+      image: rec.images?.[0]?.url || rec.thumbnail?.url || "",
+      thumbnailImage:
+        rec.images?.[0]?.thumbnailUrl ||
+        rec.thumbnail?.thumbnailUrl ||
+        rec.thumbnail?.url ||
+        "",
       alt: rec.name,
+
       content: (
         <ProductCard
           product={{

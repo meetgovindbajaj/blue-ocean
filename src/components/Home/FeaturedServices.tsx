@@ -3,11 +3,11 @@
 import Link from "next/link";
 import styles from "./FeaturedServices.module.css";
 import { PencilRuler, Globe2, Headset, ShieldCheck, ArrowRight } from "lucide-react";
+import { useSiteSettings } from "@/context/SiteSettingsContext";
 
-const services = [
-  {
-    id: "custom-design",
-    title: "Custom Design",
+// Default services data (fallback when no dynamic data exists)
+const DEFAULT_SERVICES = {
+  customDesign: {
     description: "Tailored furniture built exactly to your vision with premium materials and professional AutoCAD support.",
     features: [
       "Choose from premium solid woods",
@@ -15,12 +15,8 @@ const services = [
       "Full custom dimensions",
       "Professional AutoCAD designs",
     ],
-    icon: <PencilRuler size={28} />,
-    color: "#3b82f6",
   },
-  {
-    id: "global-shipping",
-    title: "Global Shipping",
+  globalShipping: {
     description: "Reliable worldwide delivery with trusted logistics partners and seamless customs handling.",
     features: [
       "FCL and LCL shipments",
@@ -28,12 +24,8 @@ const services = [
       "Real-time container tracking",
       "Trusted logistics partners",
     ],
-    icon: <Globe2 size={28} />,
-    color: "#10b981",
   },
-  {
-    id: "expert-support",
-    title: "Expert Support",
+  expertSupport: {
     description: "End-to-end guidance with clear communication and order updates shared at every stage.",
     features: [
       "Timely communication",
@@ -41,12 +33,8 @@ const services = [
       "Customer approval process",
       "Quick query assistance",
     ],
-    icon: <Headset size={28} />,
-    color: "#8b5cf6",
   },
-  {
-    id: "quality-control",
-    title: "Quality Control",
+  qualityControl: {
     description: "Strict inspections ensure world-class craftsmanship with internationally aligned QC processes.",
     features: [
       "Strict inspections",
@@ -54,12 +42,63 @@ const services = [
       "Color and finish verification",
       "Internationally aligned QC",
     ],
-    icon: <ShieldCheck size={28} />,
-    color: "#f59e0b",
   },
-];
+};
 
 const FeaturedServices = () => {
+  const { settings } = useSiteSettings();
+  const services = settings?.about?.services;
+
+  // Get service data with fallback to defaults
+  const getServiceData = (key: keyof typeof DEFAULT_SERVICES) => {
+    const dynamicData = services?.[key];
+    const defaultData = DEFAULT_SERVICES[key];
+    return {
+      description: dynamicData?.description || defaultData.description,
+      features: dynamicData?.features?.length ? dynamicData.features : defaultData.features,
+    };
+  };
+
+  const customDesign = getServiceData("customDesign");
+  const globalShipping = getServiceData("globalShipping");
+  const expertSupport = getServiceData("expertSupport");
+  const qualityControl = getServiceData("qualityControl");
+
+  const servicesList = [
+    {
+      id: "custom-design",
+      title: "Custom Design",
+      description: customDesign.description,
+      features: customDesign.features,
+      icon: <PencilRuler size={28} />,
+      color: "#3b82f6",
+    },
+    {
+      id: "global-shipping",
+      title: "Global Shipping",
+      description: globalShipping.description,
+      features: globalShipping.features,
+      icon: <Globe2 size={28} />,
+      color: "#10b981",
+    },
+    {
+      id: "expert-support",
+      title: "Expert Support",
+      description: expertSupport.description,
+      features: expertSupport.features,
+      icon: <Headset size={28} />,
+      color: "#8b5cf6",
+    },
+    {
+      id: "quality-control",
+      title: "Quality Control",
+      description: qualityControl.description,
+      features: qualityControl.features,
+      icon: <ShieldCheck size={28} />,
+      color: "#f59e0b",
+    },
+  ];
+
   return (
     <section className={styles.section}>
       <div className={styles.container}>
@@ -74,7 +113,7 @@ const FeaturedServices = () => {
         </div>
 
         <div className={styles.grid}>
-          {services.map((service) => (
+          {servicesList.map((service) => (
             <div key={service.id} className={styles.card}>
               <div
                 className={styles.iconWrapper}

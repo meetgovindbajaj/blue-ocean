@@ -68,7 +68,7 @@ const Breadcrumbs = ({ breadcrumbs }: { breadcrumbs: Breadcrumb[] }) => {
 // Category Header Component with gradient overlay
 const CategoryHeader = ({ category }: { category: Category }) => {
   const imageUrl = category.image?.url || category.image?.thumbnailUrl;
-
+  const thumbnailUrl = category.image?.thumbnailUrl || category.image?.url;
   return (
     <div className={styles.categoryHeader}>
       {/* Desktop: Full background image with overlay */}
@@ -81,6 +81,8 @@ const CategoryHeader = ({ category }: { category: Category }) => {
               fill
               style={{ objectFit: "cover" }}
               priority
+              placeholder="blur"
+              blurDataURL={thumbnailUrl}
             />
           ) : (
             <div className={styles.categoryHeaderPlaceholder}>
@@ -106,6 +108,8 @@ const CategoryHeader = ({ category }: { category: Category }) => {
               fill
               style={{ objectFit: "cover" }}
               priority
+              placeholder="blur"
+              blurDataURL={thumbnailUrl}
             />
           ) : (
             <div className={styles.categoryHeaderMobilePlaceholder}>
@@ -176,10 +180,16 @@ const CategoryTree = ({ categories }: { categories: Category[] }) => {
               <div className={styles.categoryTreeImage}>
                 {category.image?.url ? (
                   <Image
-                    src={category.image.thumbnailUrl || category.image.url}
+                    src={
+                      category.image.url || category.image.thumbnailUrl || ""
+                    }
                     alt={category.name}
                     fill
                     style={{ objectFit: "cover" }}
+                    placeholder="blur"
+                    blurDataURL={
+                      category.image.thumbnailUrl || category.image.url || ""
+                    }
                   />
                 ) : (
                   <FolderTree className="w-8 h-8 text-muted-foreground" />

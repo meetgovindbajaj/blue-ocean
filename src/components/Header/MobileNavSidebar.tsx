@@ -74,21 +74,16 @@ const shopNavItems = [
 ];
 
 const sortOptions = [
-  { title: "Newest First", url: "/products?sort=newest" as Route, icon: Clock },
+  { title: "Newest First", url: "/products" as Route, icon: Clock },
   {
     title: "Price: Low to High",
-    url: "/products?sort=price_asc" as Route,
+    url: "/products?sort=price-low" as Route,
     icon: DollarSign,
   },
   {
     title: "Price: High to Low",
-    url: "/products?sort=price_desc" as Route,
+    url: "/products?sort=price-high" as Route,
     icon: DollarSign,
-  },
-  {
-    title: "Best Discount",
-    url: "/products?sort=discount" as Route,
-    icon: Percent,
   },
   {
     title: "Trending",
@@ -101,6 +96,7 @@ const supportNavItems = [
   { title: "About Us", url: "/about" as Route, icon: Info },
   { title: "Contact", url: "/contact" as Route, icon: Mail },
   { title: "FAQ", url: "/faq" as Route, icon: HelpCircle },
+  { title: "Sitemap", url: "/sitemap" as Route, icon: ArrowUpDown },
 ];
 
 const accountNavItems = [
@@ -216,8 +212,29 @@ const MobileNavSidebar = () => {
           </SheetTitle>
         </SheetHeader>
 
-        <ScrollArea className="h-[calc(100vh-180px)]">
+        <ScrollArea className="h-[calc(100svh-180px)]">
           <div className="py-2">
+            {/* Admin Link for admin users */}
+            {isAdmin && (
+              <>
+                <div className="px-2 py-2">
+                  <Link
+                    href="/admin"
+                    onClick={handleNavigate}
+                    className={cn(
+                      "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
+                      pathname.startsWith("/admin")
+                        ? "bg-primary/10 text-primary font-medium"
+                        : "text-foreground hover:bg-muted"
+                    )}
+                  >
+                    <Shield className="h-4 w-4" />
+                    <span>Admin Panel</span>
+                  </Link>
+                </div>
+                <Separator className="my-2" />
+              </>
+            )}
             {/* Main Navigation */}
             <div className="space-y-1 px-2 py-2">
               {mainNavItems.map((item) => {
@@ -254,15 +271,6 @@ const MobileNavSidebar = () => {
               onNavigate={handleNavigate}
             />
 
-            <Separator className="my-2" />
-
-            {/* Support Section */}
-            <NavGroup
-              label="Support"
-              items={supportNavItems}
-              onNavigate={handleNavigate}
-            />
-
             {/* Account Section - Only for logged-in users */}
             {user && (
               <>
@@ -274,28 +282,14 @@ const MobileNavSidebar = () => {
                 />
               </>
             )}
+            <Separator className="my-2" />
 
-            {/* Admin Link for admin users */}
-            {isAdmin && (
-              <>
-                <Separator className="my-2" />
-                <div className="px-2 py-2">
-                  <Link
-                    href="/admin"
-                    onClick={handleNavigate}
-                    className={cn(
-                      "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
-                      pathname.startsWith("/admin")
-                        ? "bg-primary/10 text-primary font-medium"
-                        : "text-foreground hover:bg-muted"
-                    )}
-                  >
-                    <Shield className="h-4 w-4" />
-                    <span>Admin Panel</span>
-                  </Link>
-                </div>
-              </>
-            )}
+            {/* Support Section */}
+            <NavGroup
+              label="Support"
+              items={supportNavItems}
+              onNavigate={handleNavigate}
+            />
           </div>
         </ScrollArea>
 
@@ -336,9 +330,20 @@ const MobileNavSidebar = () => {
                   Login
                 </Link>
               </Button>
-              <Button className="flex-1 text-white" style={{ color: "white" }} asChild>
-                <Link href="/register" onClick={handleNavigate} style={{ color: "white" }}>
-                  <UserPlus className="h-4 w-4 mr-2" style={{ color: "white" }} />
+              <Button
+                className="flex-1 text-white"
+                style={{ color: "white" }}
+                asChild
+              >
+                <Link
+                  href="/register"
+                  onClick={handleNavigate}
+                  style={{ color: "white" }}
+                >
+                  <UserPlus
+                    className="h-4 w-4 mr-2"
+                    style={{ color: "white" }}
+                  />
                   <span style={{ color: "white" }}>Sign Up</span>
                 </Link>
               </Button>

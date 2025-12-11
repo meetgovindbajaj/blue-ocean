@@ -165,6 +165,13 @@ export async function PUT(request: NextRequest) {
         settings.markModified("locale.exchangeRates");
       }
 
+      // Mark about as modified to ensure nested object changes are detected
+      if (updateBody.about) {
+        settings.markModified("about");
+        settings.markModified("about.services");
+        settings.markModified("about.team");
+      }
+
       await settings.save();
     }
 

@@ -6,36 +6,25 @@ import { Target, Eye, Building2, PencilRuler, Globe2, Headset, ShieldCheck, Hist
 import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
 
-const services = [
-  {
-    id: "custom-design",
-    title: "Custom Design",
+// Default services data (fallback when no dynamic data exists)
+const DEFAULT_SERVICES = {
+  customDesign: {
     description: "Tailored furniture built exactly to your vision with premium materials and professional AutoCAD support.",
-    icon: PencilRuler,
-    color: "#3b82f6",
+    features: [],
   },
-  {
-    id: "global-shipping",
-    title: "Global Shipping",
+  globalShipping: {
     description: "Reliable worldwide delivery with trusted logistics partners and seamless customs handling.",
-    icon: Globe2,
-    color: "#10b981",
+    features: [],
   },
-  {
-    id: "expert-support",
-    title: "Expert Support",
+  expertSupport: {
     description: "End-to-end guidance with clear communication and order updates shared at every stage.",
-    icon: Headset,
-    color: "#8b5cf6",
+    features: [],
   },
-  {
-    id: "quality-control",
-    title: "Quality Control",
+  qualityControl: {
     description: "Strict inspections ensure world-class craftsmanship with internationally aligned QC processes.",
-    icon: ShieldCheck,
-    color: "#f59e0b",
+    features: [],
   },
-];
+};
 
 const AboutPageClient = () => {
   const { settings, loading } = useSiteSettings();
@@ -157,21 +146,61 @@ const AboutPageClient = () => {
             Comprehensive solutions to bring your furniture dreams to life
           </p>
           <div className={styles.servicesGrid}>
-            {services.map((service) => {
-              const Icon = service.icon;
-              return (
-                <div key={service.id} className={styles.serviceCard}>
-                  <div
-                    className={styles.serviceIcon}
-                    style={{ backgroundColor: `${service.color}15`, color: service.color }}
-                  >
-                    <Icon size={28} />
-                  </div>
-                  <h3 className={styles.serviceTitle}>{service.title}</h3>
-                  <p className={styles.serviceDescription}>{service.description}</p>
-                </div>
-              );
-            })}
+            {/* Custom Design */}
+            <div className={styles.serviceCard}>
+              <div
+                className={styles.serviceIcon}
+                style={{ backgroundColor: "#3b82f615", color: "#3b82f6" }}
+              >
+                <PencilRuler size={28} />
+              </div>
+              <h3 className={styles.serviceTitle}>Custom Design</h3>
+              <p className={styles.serviceDescription}>
+                {about.services?.customDesign?.description || DEFAULT_SERVICES.customDesign.description}
+              </p>
+            </div>
+
+            {/* Global Shipping */}
+            <div className={styles.serviceCard}>
+              <div
+                className={styles.serviceIcon}
+                style={{ backgroundColor: "#10b98115", color: "#10b981" }}
+              >
+                <Globe2 size={28} />
+              </div>
+              <h3 className={styles.serviceTitle}>Global Shipping</h3>
+              <p className={styles.serviceDescription}>
+                {about.services?.globalShipping?.description || DEFAULT_SERVICES.globalShipping.description}
+              </p>
+            </div>
+
+            {/* Expert Support */}
+            <div className={styles.serviceCard}>
+              <div
+                className={styles.serviceIcon}
+                style={{ backgroundColor: "#8b5cf615", color: "#8b5cf6" }}
+              >
+                <Headset size={28} />
+              </div>
+              <h3 className={styles.serviceTitle}>Expert Support</h3>
+              <p className={styles.serviceDescription}>
+                {about.services?.expertSupport?.description || DEFAULT_SERVICES.expertSupport.description}
+              </p>
+            </div>
+
+            {/* Quality Control */}
+            <div className={styles.serviceCard}>
+              <div
+                className={styles.serviceIcon}
+                style={{ backgroundColor: "#f59e0b15", color: "#f59e0b" }}
+              >
+                <ShieldCheck size={28} />
+              </div>
+              <h3 className={styles.serviceTitle}>Quality Control</h3>
+              <p className={styles.serviceDescription}>
+                {about.services?.qualityControl?.description || DEFAULT_SERVICES.qualityControl.description}
+              </p>
+            </div>
           </div>
         </section>
 
