@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import styles from "./page.module.css";
 import {
   Settings,
@@ -19,7 +20,6 @@ import {
   MapPin,
   User,
   Phone,
-  Shield,
   Clock,
   Eye,
   ShieldCheck,
@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useCurrency, CURRENCIES } from "@/context/CurrencyContext";
+import CarouselWrapper from "@/components/ui/CarouselWrapper";
 
 interface Address {
   street?: string;
@@ -73,7 +74,12 @@ interface UserProfile {
 
 const SettingsPage = () => {
   const router = useRouter();
-  const { currency, setUserCurrency, siteCurrency, loading: currencyLoading } = useCurrency();
+  const {
+    currency,
+    setUserCurrency,
+    siteCurrency,
+    loading: currencyLoading,
+  } = useCurrency();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -208,7 +214,10 @@ const SettingsPage = () => {
     const updatedPreferences = { ...preferences };
 
     if (key.startsWith("notifications.")) {
-      const notificationKey = key.replace("notifications.", "") as keyof typeof preferences.notifications;
+      const notificationKey = key.replace(
+        "notifications.",
+        ""
+      ) as keyof typeof preferences.notifications;
       updatedPreferences.notifications = {
         ...updatedPreferences.notifications,
         [notificationKey]: value,
@@ -340,7 +349,9 @@ const SettingsPage = () => {
           {/* Sidebar */}
           <nav className={styles.sidebar}>
             <button
-              className={`${styles.navItem} ${activeSection === "account" ? styles.active : ""}`}
+              className={`${styles.navItem} ${
+                activeSection === "account" ? styles.active : ""
+              }`}
               onClick={() => setActiveSection("account")}
             >
               <User size={20} />
@@ -348,7 +359,9 @@ const SettingsPage = () => {
               <ChevronRight size={16} className={styles.chevron} />
             </button>
             <button
-              className={`${styles.navItem} ${activeSection === "notifications" ? styles.active : ""}`}
+              className={`${styles.navItem} ${
+                activeSection === "notifications" ? styles.active : ""
+              }`}
               onClick={() => setActiveSection("notifications")}
             >
               <Bell size={20} />
@@ -356,7 +369,9 @@ const SettingsPage = () => {
               <ChevronRight size={16} className={styles.chevron} />
             </button>
             <button
-              className={`${styles.navItem} ${activeSection === "preferences" ? styles.active : ""}`}
+              className={`${styles.navItem} ${
+                activeSection === "preferences" ? styles.active : ""
+              }`}
               onClick={() => setActiveSection("preferences")}
             >
               <Globe size={20} />
@@ -364,7 +379,9 @@ const SettingsPage = () => {
               <ChevronRight size={16} className={styles.chevron} />
             </button>
             <button
-              className={`${styles.navItem} ${activeSection === "address" ? styles.active : ""}`}
+              className={`${styles.navItem} ${
+                activeSection === "address" ? styles.active : ""
+              }`}
               onClick={() => setActiveSection("address")}
             >
               <MapPin size={20} />
@@ -372,7 +389,9 @@ const SettingsPage = () => {
               <ChevronRight size={16} className={styles.chevron} />
             </button>
             <button
-              className={`${styles.navItem} ${activeSection === "security" ? styles.active : ""}`}
+              className={`${styles.navItem} ${
+                activeSection === "security" ? styles.active : ""
+              }`}
               onClick={() => setActiveSection("security")}
             >
               <Lock size={20} />
@@ -380,7 +399,9 @@ const SettingsPage = () => {
               <ChevronRight size={16} className={styles.chevron} />
             </button>
             <button
-              className={`${styles.navItem} ${activeSection === "activity" ? styles.active : ""}`}
+              className={`${styles.navItem} ${
+                activeSection === "activity" ? styles.active : ""
+              }`}
               onClick={() => setActiveSection("activity")}
             >
               <Eye size={20} />
@@ -437,7 +458,10 @@ const SettingsPage = () => {
                 <div className={styles.settingsGroup}>
                   <h3 className={styles.groupTitle}>Phone Number</h3>
 
-                  <form onSubmit={handlePhoneSave} className={styles.addressForm}>
+                  <form
+                    onSubmit={handlePhoneSave}
+                    className={styles.addressForm}
+                  >
                     <div className={styles.formGroup}>
                       <label htmlFor="phone" className={styles.label}>
                         Phone Number
@@ -518,7 +542,9 @@ const SettingsPage = () => {
                       <div>
                         <h3 className={styles.settingLabel}>Login Method</h3>
                         <p className={styles.settingDescription}>
-                          {user?.authType === "google" ? "Google Account" : "Email & Password"}
+                          {user?.authType === "google"
+                            ? "Google Account"
+                            : "Email & Password"}
                         </p>
                       </div>
                     </div>
@@ -542,9 +568,12 @@ const SettingsPage = () => {
                         <Mail size={20} />
                       </div>
                       <div>
-                        <h3 className={styles.settingLabel}>Email Notifications</h3>
+                        <h3 className={styles.settingLabel}>
+                          Email Notifications
+                        </h3>
                         <p className={styles.settingDescription}>
-                          Receive order updates and important notifications via email
+                          Receive order updates and important notifications via
+                          email
                         </p>
                       </div>
                     </div>
@@ -553,7 +582,10 @@ const SettingsPage = () => {
                         type="checkbox"
                         checked={preferences.notifications.email}
                         onChange={(e) =>
-                          handlePreferencesChange("notifications.email", e.target.checked)
+                          handlePreferencesChange(
+                            "notifications.email",
+                            e.target.checked
+                          )
                         }
                       />
                       <span className={styles.toggleSlider}></span>
@@ -566,7 +598,9 @@ const SettingsPage = () => {
                         <Smartphone size={20} />
                       </div>
                       <div>
-                        <h3 className={styles.settingLabel}>SMS Notifications</h3>
+                        <h3 className={styles.settingLabel}>
+                          SMS Notifications
+                        </h3>
                         <p className={styles.settingDescription}>
                           Receive order updates via text message
                         </p>
@@ -577,7 +611,10 @@ const SettingsPage = () => {
                         type="checkbox"
                         checked={preferences.notifications.sms}
                         onChange={(e) =>
-                          handlePreferencesChange("notifications.sms", e.target.checked)
+                          handlePreferencesChange(
+                            "notifications.sms",
+                            e.target.checked
+                          )
                         }
                       />
                       <span className={styles.toggleSlider}></span>
@@ -590,7 +627,9 @@ const SettingsPage = () => {
                         <BellRing size={20} />
                       </div>
                       <div>
-                        <h3 className={styles.settingLabel}>Push Notifications</h3>
+                        <h3 className={styles.settingLabel}>
+                          Push Notifications
+                        </h3>
                         <p className={styles.settingDescription}>
                           Receive notifications in your browser
                         </p>
@@ -601,7 +640,10 @@ const SettingsPage = () => {
                         type="checkbox"
                         checked={preferences.notifications.push}
                         onChange={(e) =>
-                          handlePreferencesChange("notifications.push", e.target.checked)
+                          handlePreferencesChange(
+                            "notifications.push",
+                            e.target.checked
+                          )
                         }
                       />
                       <span className={styles.toggleSlider}></span>
@@ -626,7 +668,10 @@ const SettingsPage = () => {
                         type="checkbox"
                         checked={preferences.newsletter}
                         onChange={(e) =>
-                          handlePreferencesChange("newsletter", e.target.checked)
+                          handlePreferencesChange(
+                            "newsletter",
+                            e.target.checked
+                          )
                         }
                       />
                       <span className={styles.toggleSlider}></span>
@@ -647,7 +692,10 @@ const SettingsPage = () => {
                         type="checkbox"
                         checked={preferences.promotions}
                         onChange={(e) =>
-                          handlePreferencesChange("promotions", e.target.checked)
+                          handlePreferencesChange(
+                            "promotions",
+                            e.target.checked
+                          )
                         }
                       />
                       <span className={styles.toggleSlider}></span>
@@ -716,7 +764,9 @@ const SettingsPage = () => {
                     <select
                       className={styles.select}
                       value={preferences.language}
-                      onChange={(e) => handlePreferencesChange("language", e.target.value)}
+                      onChange={(e) =>
+                        handlePreferencesChange("language", e.target.value)
+                      }
                     >
                       <option value="en">English</option>
                       <option value="hi">Hindi</option>
@@ -734,7 +784,10 @@ const SettingsPage = () => {
                   Manage your shipping and billing address
                 </p>
 
-                <form onSubmit={handleAddressSave} className={styles.addressForm}>
+                <form
+                  onSubmit={handleAddressSave}
+                  className={styles.addressForm}
+                >
                   <div className={styles.formGroup}>
                     <label htmlFor="street" className={styles.label}>
                       Street Address
@@ -743,7 +796,9 @@ const SettingsPage = () => {
                       type="text"
                       id="street"
                       value={address.street || ""}
-                      onChange={(e) => setAddress({ ...address, street: e.target.value })}
+                      onChange={(e) =>
+                        setAddress({ ...address, street: e.target.value })
+                      }
                       className={styles.input}
                       placeholder="123 Main Street, Apt 4B"
                     />
@@ -758,7 +813,9 @@ const SettingsPage = () => {
                         type="text"
                         id="city"
                         value={address.city || ""}
-                        onChange={(e) => setAddress({ ...address, city: e.target.value })}
+                        onChange={(e) =>
+                          setAddress({ ...address, city: e.target.value })
+                        }
                         className={styles.input}
                         placeholder="Mumbai"
                       />
@@ -772,7 +829,9 @@ const SettingsPage = () => {
                         type="text"
                         id="state"
                         value={address.state || ""}
-                        onChange={(e) => setAddress({ ...address, state: e.target.value })}
+                        onChange={(e) =>
+                          setAddress({ ...address, state: e.target.value })
+                        }
                         className={styles.input}
                         placeholder="Maharashtra"
                       />
@@ -788,7 +847,9 @@ const SettingsPage = () => {
                         type="text"
                         id="postalCode"
                         value={address.postalCode || ""}
-                        onChange={(e) => setAddress({ ...address, postalCode: e.target.value })}
+                        onChange={(e) =>
+                          setAddress({ ...address, postalCode: e.target.value })
+                        }
                         className={styles.input}
                         placeholder="400001"
                       />
@@ -802,7 +863,9 @@ const SettingsPage = () => {
                         type="text"
                         id="country"
                         value={address.country || ""}
-                        onChange={(e) => setAddress({ ...address, country: e.target.value })}
+                        onChange={(e) =>
+                          setAddress({ ...address, country: e.target.value })
+                        }
                         className={styles.input}
                         placeholder="India"
                       />
@@ -840,7 +903,9 @@ const SettingsPage = () => {
 
                 {/* Two-Factor Authentication */}
                 <div className={styles.settingsGroup}>
-                  <h3 className={styles.groupTitle}>Two-Factor Authentication</h3>
+                  <h3 className={styles.groupTitle}>
+                    Two-Factor Authentication
+                  </h3>
 
                   <div className={styles.settingItem}>
                     <div className={styles.settingInfo}>
@@ -862,7 +927,9 @@ const SettingsPage = () => {
                     </div>
                     <span
                       className={`${styles.statusBadge} ${
-                        user?.twoFactorEnabled ? styles.statusEnabled : styles.statusDisabled
+                        user?.twoFactorEnabled
+                          ? styles.statusEnabled
+                          : styles.statusDisabled
                       }`}
                     >
                       {user?.twoFactorEnabled ? "Enabled" : "Disabled"}
@@ -870,7 +937,8 @@ const SettingsPage = () => {
                   </div>
 
                   <p className={styles.hint} style={{ marginTop: "0.5rem" }}>
-                    Two-factor authentication setup is coming soon. This will add an extra layer of security to your account.
+                    Two-factor authentication setup is coming soon. This will
+                    add an extra layer of security to your account.
                   </p>
                 </div>
 
@@ -881,15 +949,25 @@ const SettingsPage = () => {
                   </h3>
 
                   {user?.authType === "google" && !user?.hasPassword && (
-                    <p className={styles.settingDescription} style={{ marginBottom: "1rem" }}>
-                      Your account is linked to Google. You can add a password to also login with email and password.
+                    <p
+                      className={styles.settingDescription}
+                      style={{ marginBottom: "1rem" }}
+                    >
+                      Your account is linked to Google. You can add a password
+                      to also login with email and password.
                     </p>
                   )}
 
-                  <form onSubmit={handleChangePassword} className={styles.passwordForm}>
+                  <form
+                    onSubmit={handleChangePassword}
+                    className={styles.passwordForm}
+                  >
                     {user?.hasPassword && (
                       <div className={styles.formGroup}>
-                        <label htmlFor="currentPassword" className={styles.label}>
+                        <label
+                          htmlFor="currentPassword"
+                          className={styles.label}
+                        >
                           Current Password
                         </label>
                         <input
@@ -897,7 +975,10 @@ const SettingsPage = () => {
                           id="currentPassword"
                           value={passwordData.currentPassword}
                           onChange={(e) =>
-                            setPasswordData({ ...passwordData, currentPassword: e.target.value })
+                            setPasswordData({
+                              ...passwordData,
+                              currentPassword: e.target.value,
+                            })
                           }
                           className={styles.input}
                           required={user?.hasPassword}
@@ -914,7 +995,10 @@ const SettingsPage = () => {
                         id="newPassword"
                         value={passwordData.newPassword}
                         onChange={(e) =>
-                          setPasswordData({ ...passwordData, newPassword: e.target.value })
+                          setPasswordData({
+                            ...passwordData,
+                            newPassword: e.target.value,
+                          })
                         }
                         className={styles.input}
                         required
@@ -932,7 +1016,10 @@ const SettingsPage = () => {
                         id="confirmPassword"
                         value={passwordData.confirmPassword}
                         onChange={(e) =>
-                          setPasswordData({ ...passwordData, confirmPassword: e.target.value })
+                          setPasswordData({
+                            ...passwordData,
+                            confirmPassword: e.target.value,
+                          })
                         }
                         className={styles.input}
                         required
@@ -952,7 +1039,9 @@ const SettingsPage = () => {
                       ) : (
                         <>
                           <Lock size={18} />
-                          {user?.hasPassword ? "Change Password" : "Add Password"}
+                          {user?.hasPassword
+                            ? "Change Password"
+                            : "Add Password"}
                         </>
                       )}
                     </button>
@@ -970,54 +1059,85 @@ const SettingsPage = () => {
                 </p>
 
                 <div className={styles.settingsGroup}>
-                  <h3 className={styles.groupTitle}>Recently Viewed Products</h3>
+                  <h3 className={styles.groupTitle}>
+                    Recently Viewed Products
+                  </h3>
 
                   {loadingRecent ? (
-                    <div className={styles.loading} style={{ minHeight: "200px" }}>
+                    <div
+                      className={styles.loading}
+                      style={{ minHeight: "200px" }}
+                    >
                       <Loader2 className={styles.spinner} size={24} />
                       <span>Loading...</span>
                     </div>
                   ) : recentlyViewed.length > 0 ? (
-                    <div className={styles.recentlyViewedGrid}>
-                      {recentlyViewed.map((product) => (
-                        <Link
-                          key={product._id}
-                          href={`/products/${product.slug}`}
-                          className={styles.recentProduct}
-                        >
-                          <div className={styles.recentProductImage}>
-                            {product.image ? (
-                              <img
-                                src={product.image}
-                                alt={product.name}
-                              />
-                            ) : (
-                              <div className={styles.noImage}>
-                                <Eye size={24} />
-                              </div>
-                            )}
-                          </div>
-                          <div className={styles.recentProductInfo}>
-                            <h4>{product.name}</h4>
-                            {product.price && (
-                              <p className={styles.recentProductPrice}>
-                                {product.salePrice ? (
-                                  <>
-                                    <span className={styles.salePrice}>
-                                      ₹{product.salePrice.toLocaleString()}
-                                    </span>
-                                    <span className={styles.originalPrice}>
-                                      ₹{product.price.toLocaleString()}
-                                    </span>
-                                  </>
+                    <div className={styles.recentlyViewedCarousel}>
+                      <CarouselWrapper
+                        variant="default"
+                        data={recentlyViewed.map((product) => ({
+                          id: product._id,
+                          image: product.image || "",
+                          alt: product.name,
+                          url: `/products/${product.slug}`,
+                          content: (
+                            <Link
+                              href={`/products/${product.slug}`}
+                              className={styles.recentProduct}
+                            >
+                              <div className={styles.recentProductImage}>
+                                {product.image ? (
+                                  <Image
+                                    src={product.image}
+                                    alt={product.name}
+                                    width={200}
+                                    height={200}
+                                    className={styles.recentProductImg}
+                                  />
                                 ) : (
-                                  <span>₹{product.price.toLocaleString()}</span>
+                                  <div className={styles.noImage}>
+                                    <Eye size={24} />
+                                  </div>
                                 )}
-                              </p>
-                            )}
-                          </div>
-                        </Link>
-                      ))}
+                              </div>
+                              <div className={styles.recentProductInfo}>
+                                <h4>{product.name}</h4>
+                                {product.price && (
+                                  <p className={styles.recentProductPrice}>
+                                    {product.salePrice ? (
+                                      <>
+                                        <span className={styles.salePrice}>
+                                          ₹{product.salePrice.toLocaleString()}
+                                        </span>
+                                        <span className={styles.originalPrice}>
+                                          ₹{product.price.toLocaleString()}
+                                        </span>
+                                      </>
+                                    ) : (
+                                      <span>
+                                        ₹{product.price.toLocaleString()}
+                                      </span>
+                                    )}
+                                  </p>
+                                )}
+                              </div>
+                            </Link>
+                          ),
+                        }))}
+                        options={{
+                          showControlBtns: true,
+                          showControlDots: false,
+                          autoPlay: false,
+                          loop: true,
+                          itemsPerView: {
+                            mobile: 1,
+                            tablet: 2,
+                            desktop: 3,
+                            xl: 4,
+                          },
+                        }}
+                        renderItem={(item) => item.content}
+                      />
                     </div>
                   ) : (
                     <div className={styles.emptyState}>

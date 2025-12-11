@@ -1,14 +1,19 @@
 {
-  "name": "Blue Ocean Export",
+  "name": "Blue Ocean Export - Premium Solid Wood Furniture",
   "short_name": "Blue Ocean",
-  "description": "Quality Solid Wood Furniture",
+  "description": "Quality Solid Wood Furniture - Custom designs, global shipping, and expert craftsmanship for homes and businesses worldwide.",
   "id": "/",
   "version": "1.0.0",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
   "background_color": "#ffffff",
-  "sitemap": "/sitemap",
   "lang": "en-US",
+  "dir": "ltr",
+  "categories": ["shopping", "lifestyle", "business", "furniture"],
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/api/images/android-chrome-192x192.png",
@@ -21,6 +26,36 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
+    },
+    {
+      "src": "/api/images/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
-  ]
+  ],
+  "shortcuts": [
+    {
+      "name": "Browse Products",
+      "short_name": "Products",
+      "description": "View our furniture collection",
+      "url": "/products"
+    },
+    {
+      "name": "Categories",
+      "short_name": "Categories",
+      "description": "Browse by category",
+      "url": "/categories"
+    },
+    {
+      "name": "Contact Us",
+      "short_name": "Contact",
+      "description": "Get in touch with us",
+      "url": "/contact"
+    }
+  ],
+  "handle_links": "preferred",
+  "launch_handler": {
+    "client_mode": ["navigate-existing", "auto"]
+  }
 }

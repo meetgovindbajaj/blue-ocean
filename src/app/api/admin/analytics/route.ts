@@ -105,7 +105,31 @@ export async function GET(request: NextRequest) {
       percentage: Math.round(((p.views || 0) / maxViews) * 100),
     }));
 
-    // Get categories with views from analytics
+    // Get all active categories with their product counts and total product views
+    const allCategories = await Category.aggregate([
+      { $match: { isActive: true } },
+      {
+        $lookup: {
+          from: "products",
+          let: { categoryId: "$_id" },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$category", "$$categoryId"] }, isActive: true } },
+          ],
+          as: "products",
+        },
+      },
+      {
+        $project: {
+          id: { $toString: "$_id" },
+          name: 1,
+          slug: 1,
+          productCount: { $size: "$products" },
+          totalProductViews: { $sum: "$products.totalViews" },
+        },
+      },
+    ]);
+
+    // Get category views from analytics events
     const categoryViews = await AnalyticsEvent.aggregate([
       {
         $match: {
@@ -118,93 +142,35 @@ export async function GET(request: NextRequest) {
         $group: {
           _id: "$entityId",
           views: { $sum: 1 },
-          entityName: { $first: "$entityName" },
-        },
-      },
-      { $sort: { views: -1 } },
-      { $limit: 5 },
-    ]);
-
-    // Get category product counts
-    const categoryProductCounts = await Category.aggregate([
-      { $match: { isActive: true } },
-      {
-        $lookup: {
-          from: "products",
-          localField: "_id",
-          foreignField: "category",
-          as: "products",
-        },
-      },
-      {
-        $project: {
-          id: { $toString: "$_id" },
-          name: 1,
-          productCount: { $size: "$products" },
         },
       },
     ]);
 
-    // Merge category data - deduplicate by id
-    const categoryMap = new Map(
-      categoryProductCounts.map((c: any) => [c.id, c])
-    );
-
-    // Create a set to track unique category IDs
-    const seenCategoryIds = new Set<string>();
-    const topCategories: Array<{id: string; name: string; productCount: number; views: number}> = [];
-
-    // First add categories from analytics views
+    // Create a map of category views by ID
+    const categoryViewsMap = new Map<string, number>();
     for (const cv of categoryViews) {
-      if (cv._id && !seenCategoryIds.has(cv._id)) {
-        seenCategoryIds.add(cv._id);
-        const catInfo = categoryMap.get(cv._id) || {};
-        topCategories.push({
-          id: cv._id,
-          name: cv.entityName || (catInfo as any).name || "Unknown",
-          productCount: (catInfo as any).productCount || 0,
-          views: cv.views || 0,
-        });
+      if (cv._id) {
+        categoryViewsMap.set(cv._id, cv.views || 0);
       }
     }
 
-    // If no category views or need more, show categories by product count
-    if (topCategories.length < 5) {
-      const fallbackCategories = await Category.aggregate([
-        { $match: { isActive: true } },
-        {
-          $lookup: {
-            from: "products",
-            localField: "_id",
-            foreignField: "category",
-            as: "products",
-          },
-        },
-        {
-          $project: {
-            id: { $toString: "$_id" },
-            name: 1,
-            productCount: { $size: "$products" },
-            views: { $sum: "$products.totalViews" },
-          },
-        },
-        { $sort: { productCount: -1 } },
-        { $limit: 10 },
-      ]);
-
-      // Only add categories not already in the list
-      for (const fc of fallbackCategories) {
-        if (!seenCategoryIds.has(fc.id) && topCategories.length < 5) {
-          seenCategoryIds.add(fc.id);
-          topCategories.push({
-            id: fc.id,
-            name: fc.name,
-            productCount: fc.productCount,
-            views: fc.views || 0,
-          });
-        }
-      }
-    }
+    // Merge category data with views and sort
+    const topCategories = allCategories
+      .map((cat: any) => ({
+        id: cat.id,
+        name: cat.name,
+        slug: cat.slug,
+        productCount: cat.productCount || 0,
+        views: categoryViewsMap.get(cat.id) || 0,
+        totalProductViews: cat.totalProductViews || 0,
+      }))
+      .sort((a: any, b: any) => {
+        // Sort by views first, then by product count, then by total product views
+        if (b.views !== a.views) return b.views - a.views;
+        if (b.productCount !== a.productCount) return b.productCount - a.productCount;
+        return b.totalProductViews - a.totalProductViews;
+      })
+      .slice(0, 10); // Show top 10 categories
 
     // Get banner stats with analytics data - show all banners
     const [bannerStats, bannerAnalytics] = await Promise.all([

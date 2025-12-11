@@ -23,26 +23,20 @@ async function getProduct(slug: string) {
   }
 }
 
-async function getRelatedProducts(
-  categorySlug?: string,
-  currentProductId?: string
-) {
+async function getRelatedProducts(productSlug: string) {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-    const params = new URLSearchParams({ limit: "5" });
-    if (categorySlug) params.set("category", categorySlug);
+    const params = new URLSearchParams({ limit: "8" });
 
-    const res = await fetch(`${baseUrl}/api/products?${params.toString()}`, {
-      cache: "no-store",
-    });
+    // Use the new related products API that fetches from parent and sibling categories
+    const res = await fetch(
+      `${baseUrl}/api/products/${productSlug}/related?${params.toString()}`,
+      { cache: "no-store" }
+    );
     if (!res.ok) return [];
     const data = await res.json();
 
-    // Filter out the current product
-    const products = data.products || [];
-    return products
-      .filter((p: { id: string }) => p.id !== currentProductId)
-      .slice(0, 4);
+    return data.success ? data.products || [] : [];
   } catch (error) {
     console.error("Failed to fetch related products:", error);
     return [];
@@ -182,15 +176,10 @@ export default async function ProductDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  // Get category slug from breadcrumbs
-  const categorySlug =
-    data.breadcrumbs?.length > 1
-      ? data.breadcrumbs[data.breadcrumbs.length - 1]?.slug
-      : undefined;
-
   // Fetch related and recommended products in parallel
+  // Related products now come from parent and sibling categories
   const [relatedProducts, recommendedProducts] = await Promise.all([
-    getRelatedProducts(categorySlug, data.product.id),
+    getRelatedProducts(slug),
     getRecommendedProducts(data.product.id),
   ]);
 

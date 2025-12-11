@@ -227,6 +227,10 @@
     padding: 2rem 0;
   }
 
+  .teamCarouselWrapper {
+    margin-top: 1.5rem;
+  }
+
   .teamGrid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));

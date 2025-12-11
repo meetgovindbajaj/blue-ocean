@@ -51,11 +51,12 @@ const ProductCard = ({ product }: { product: ProductType }) => {
 
   const hasMultipleImages = carouselImages.length > 1;
 
-  // Check if all dimensions are 0
+  // Check if all dimensions are 0 or size is not defined
   const allDimensionsZero =
-    product.size.length === 0 &&
-    product.size.width === 0 &&
-    product.size.height === 0;
+    !product.size ||
+    (product.size.length === 0 &&
+      product.size.width === 0 &&
+      product.size.height === 0);
 
   // Get category name from breadcrumbs (last item is the category)
   const categoryName =

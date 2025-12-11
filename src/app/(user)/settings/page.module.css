@@ -479,6 +479,16 @@
     margin-top: 1rem;
   }
 
+  .recentlyViewedCarousel {
+    margin-top: 1rem;
+  }
+
+  .recentProductImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
   .recentProduct {
     display: flex;
     flex-direction: column;

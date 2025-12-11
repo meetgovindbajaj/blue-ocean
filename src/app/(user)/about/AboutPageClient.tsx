@@ -5,6 +5,7 @@ import { useSiteSettings } from "@/context/SiteSettingsContext";
 import { Target, Eye, Building2, PencilRuler, Globe2, Headset, ShieldCheck, History, Users, User } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
+import CarouselWrapper from "@/components/ui/CarouselWrapper";
 
 // Default services data (fallback when no dynamic data exists)
 const DEFAULT_SERVICES = {
@@ -114,28 +115,75 @@ const AboutPageClient = () => {
               <Users size={24} style={{ display: "inline", marginRight: "0.5rem", verticalAlign: "middle" }} />
               Meet Our Team
             </h2>
-            <div className={styles.teamGrid}>
-              {about.team.map((member: any, index: number) => (
-                <div key={index} className={styles.teamCard}>
-                  <div className={styles.teamImageWrapper}>
-                    {member.image ? (
-                      <Image
-                        src={member.image}
-                        alt={member.name}
-                        width={100}
-                        height={100}
-                        className={styles.teamImage}
-                      />
-                    ) : (
-                      <User size={40} className={styles.teamPlaceholder} />
-                    )}
+            {about.team.length > 3 ? (
+              <div className={styles.teamCarouselWrapper}>
+                <CarouselWrapper
+                  variant="default"
+                  data={about.team.map((member: any, index: number) => ({
+                    id: `team-${index}`,
+                    image: member.image || "",
+                    alt: member.name,
+                    content: (
+                      <div className={styles.teamCard}>
+                        <div className={styles.teamImageWrapper}>
+                          {member.image ? (
+                            <Image
+                              src={member.image}
+                              alt={member.name}
+                              width={100}
+                              height={100}
+                              className={styles.teamImage}
+                            />
+                          ) : (
+                            <User size={40} className={styles.teamPlaceholder} />
+                          )}
+                        </div>
+                        <h3 className={styles.teamName}>{member.name}</h3>
+                        <p className={styles.teamRole}>{member.role}</p>
+                        {member.bio && <p className={styles.teamBio}>{member.bio}</p>}
+                      </div>
+                    ),
+                  }))}
+                  options={{
+                    showControlBtns: true,
+                    showControlDots: false,
+                    autoPlay: true,
+                    autoPlayInterval: 4000,
+                    loop: true,
+                    itemsPerView: {
+                      mobile: 1,
+                      tablet: 2,
+                      desktop: 3,
+                      xl: 4,
+                    },
+                  }}
+                  renderItem={(item) => item.content}
+                />
+              </div>
+            ) : (
+              <div className={styles.teamGrid}>
+                {about.team.map((member: any, index: number) => (
+                  <div key={index} className={styles.teamCard}>
+                    <div className={styles.teamImageWrapper}>
+                      {member.image ? (
+                        <Image
+                          src={member.image}
+                          alt={member.name}
+                          width={100}
+                          height={100}
+                          className={styles.teamImage}
+                        />
+                      ) : (
+                        <User size={40} className={styles.teamPlaceholder} />
+                      )}
+                    </div>
+                    <h3 className={styles.teamName}>{member.name}</h3>
+                    <p className={styles.teamRole}>{member.role}</p>
+                    {member.bio && <p className={styles.teamBio}>{member.bio}</p>}
                   </div>
-                  <h3 className={styles.teamName}>{member.name}</h3>
-                  <p className={styles.teamRole}>{member.role}</p>
-                  {member.bio && <p className={styles.teamBio}>{member.bio}</p>}
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </section>
         )}
 
