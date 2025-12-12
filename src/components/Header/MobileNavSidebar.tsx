@@ -76,7 +76,7 @@ const shopNavItems = [
 ];
 
 const sortOptions = [
-  { title: "Newest First", url: "/products" as Route, icon: Clock },
+  { title: "Newest First", url: "/products?" as Route, icon: Clock },
   {
     title: "Price: Low to High",
     url: "/products?sort=price-low" as Route,
@@ -178,7 +178,11 @@ interface LegalNavGroupProps {
   onNavigate: () => void;
 }
 
-const LegalNavGroup = ({ legalDocs, pathname, onNavigate }: LegalNavGroupProps) => {
+const LegalNavGroup = ({
+  legalDocs,
+  pathname,
+  onNavigate,
+}: LegalNavGroupProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (

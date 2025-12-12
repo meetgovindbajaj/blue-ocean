@@ -23,6 +23,7 @@ import {
   X,
 } from "lucide-react";
 import { toast } from "sonner";
+import { Route } from "next";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -44,7 +45,12 @@ interface Inquiry {
   phone?: string;
   subject?: string;
   message: string;
-  status: "pending" | "in-progress" | "customer-feedback" | "resolved" | "closed";
+  status:
+    | "pending"
+    | "in-progress"
+    | "customer-feedback"
+    | "resolved"
+    | "closed";
   priority?: string;
   product?: {
     id: string;
@@ -58,10 +64,17 @@ interface Inquiry {
   updatedAt: string;
 }
 
-const statusConfig: Record<string, { label: string; icon: any; color: string }> = {
+const statusConfig: Record<
+  string,
+  { label: string; icon: any; color: string }
+> = {
   pending: { label: "Pending", icon: AlertCircle, color: "#f59e0b" },
   "in-progress": { label: "In Progress", icon: Clock, color: "#3b82f6" },
-  "customer-feedback": { label: "Awaiting Your Feedback", icon: MessageCircle, color: "#a855f7" },
+  "customer-feedback": {
+    label: "Awaiting Your Feedback",
+    icon: MessageCircle,
+    color: "#a855f7",
+  },
   resolved: { label: "Resolved", icon: CheckCircle, color: "#22c55e" },
   closed: { label: "Closed", icon: CheckCircle, color: "#6b7280" },
 };
@@ -72,7 +85,9 @@ const InquiriesPage = () => {
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [loading, setLoading] = useState(true);
   const [commentText, setCommentText] = useState<Record<string, string>>({});
-  const [submittingComment, setSubmittingComment] = useState<string | null>(null);
+  const [submittingComment, setSubmittingComment] = useState<string | null>(
+    null
+  );
   const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
 
   // Get page from URL or default to 1
@@ -94,7 +109,7 @@ const InquiriesPage = () => {
     } else {
       url.searchParams.set("page", page.toString());
     }
-    router.push(url.pathname + url.search, { scroll: false });
+    router.push(`${url.pathname}${url.search}` as Route, { scroll: false });
   };
 
   useEffect(() => {
@@ -191,7 +206,9 @@ const InquiriesPage = () => {
           <MessageSquare size={28} />
           <div>
             <h1 className={styles.title}>My Inquiries</h1>
-            <p className={styles.subtitle}>Track the status of your inquiries</p>
+            <p className={styles.subtitle}>
+              Track the status of your inquiries
+            </p>
           </div>
         </div>
 
@@ -209,25 +226,35 @@ const InquiriesPage = () => {
             {/* Results summary */}
             <div className={styles.resultsSummary}>
               <span>
-                Showing {startIndex + 1}-{Math.min(endIndex, inquiries.length)} of {inquiries.length} {inquiries.length === 1 ? "inquiry" : "inquiries"}
+                Showing {startIndex + 1}-{Math.min(endIndex, inquiries.length)}{" "}
+                of {inquiries.length}{" "}
+                {inquiries.length === 1 ? "inquiry" : "inquiries"}
                 {totalPages > 1 && ` (Page ${validPage} of ${totalPages})`}
               </span>
             </div>
 
             <div className={styles.inquiriesList}>
               {paginatedInquiries.map((inquiry) => {
-                const status = statusConfig[inquiry.status] || statusConfig.pending;
+                const status =
+                  statusConfig[inquiry.status] || statusConfig.pending;
                 const StatusIcon = status.icon;
-                const conversationCount = (inquiry.userComments?.length || 0) + (inquiry.notes?.length || 0);
+                const conversationCount =
+                  (inquiry.userComments?.length || 0) +
+                  (inquiry.notes?.length || 0);
 
                 return (
                   <div key={inquiry.id} className={styles.inquiryCard}>
                     <div className={styles.inquiryHeader}>
-                      <div className={styles.statusBadge} style={{ backgroundColor: status.color }}>
+                      <div
+                        className={styles.statusBadge}
+                        style={{ backgroundColor: status.color }}
+                      >
                         <StatusIcon size={14} />
                         {status.label}
                       </div>
-                      <span className={styles.date}>{formatDate(inquiry.createdAt)}</span>
+                      <span className={styles.date}>
+                        {formatDate(inquiry.createdAt)}
+                      </span>
                     </div>
 
                     {inquiry.product && (
@@ -250,7 +277,9 @@ const InquiriesPage = () => {
                     )}
 
                     {inquiry.subject && (
-                      <h3 className={styles.inquirySubject}>{inquiry.subject}</h3>
+                      <h3 className={styles.inquirySubject}>
+                        {inquiry.subject}
+                      </h3>
                     )}
 
                     <p className={styles.inquiryMessagePreview}>
@@ -264,7 +293,8 @@ const InquiriesPage = () => {
                         {conversationCount > 0 && (
                           <span className={styles.statBadge}>
                             <MessageCircle size={12} />
-                            {conversationCount} {conversationCount === 1 ? "message" : "messages"}
+                            {conversationCount}{" "}
+                            {conversationCount === 1 ? "message" : "messages"}
                           </span>
                         )}
                         {inquiry.status === "customer-feedback" && (
@@ -299,19 +329,25 @@ const InquiriesPage = () => {
                   Previous
                 </button>
                 <div className={styles.paginationPages}>
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                    <button
-                      key={page}
-                      className={`${styles.paginationPage} ${validPage === page ? styles.paginationPageActive : ""}`}
-                      onClick={() => setCurrentPage(page)}
-                    >
-                      {page}
-                    </button>
-                  ))}
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                    (page) => (
+                      <button
+                        key={page}
+                        className={`${styles.paginationPage} ${
+                          validPage === page ? styles.paginationPageActive : ""
+                        }`}
+                        onClick={() => setCurrentPage(page)}
+                      >
+                        {page}
+                      </button>
+                    )
+                  )}
                 </div>
                 <button
                   className={styles.paginationButton}
-                  onClick={() => setCurrentPage(Math.min(totalPages, validPage + 1))}
+                  onClick={() =>
+                    setCurrentPage(Math.min(totalPages, validPage + 1))
+                  }
                   disabled={validPage === totalPages}
                 >
                   Next
@@ -323,13 +359,21 @@ const InquiriesPage = () => {
         )}
 
         <div className={styles.helpSection}>
-          <p>Need help? <Link href="/contact" className={styles.link}>Submit a new inquiry</Link></p>
+          <p>
+            Need help?{" "}
+            <Link href="/contact" className={styles.link}>
+              Submit a new inquiry
+            </Link>
+          </p>
         </div>
       </div>
 
       {/* Detail Modal */}
       {selectedInquiry && (
-        <div className={styles.modalOverlay} onClick={() => setSelectedInquiry(null)}>
+        <div
+          className={styles.modalOverlay}
+          onClick={() => setSelectedInquiry(null)}
+        >
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <div className={styles.modalHeader}>
               <div>
@@ -351,10 +395,15 @@ const InquiriesPage = () => {
               {/* Status Badge */}
               <div className={styles.modalStatusRow}>
                 {(() => {
-                  const status = statusConfig[selectedInquiry.status] || statusConfig.pending;
+                  const status =
+                    statusConfig[selectedInquiry.status] ||
+                    statusConfig.pending;
                   const StatusIcon = status.icon;
                   return (
-                    <div className={styles.statusBadge} style={{ backgroundColor: status.color }}>
+                    <div
+                      className={styles.statusBadge}
+                      style={{ backgroundColor: status.color }}
+                    >
                       <StatusIcon size={14} />
                       {status.label}
                     </div>
@@ -389,7 +438,9 @@ const InquiriesPage = () => {
 
               {/* Subject */}
               {selectedInquiry.subject && (
-                <h3 className={styles.modalSubject}>{selectedInquiry.subject}</h3>
+                <h3 className={styles.modalSubject}>
+                  {selectedInquiry.subject}
+                </h3>
               )}
 
               {/* Original Message */}
@@ -406,7 +457,8 @@ const InquiriesPage = () => {
                     Your Feedback is Needed
                   </h4>
                   <p className={styles.feedbackDescription}>
-                    Please provide additional information to help us resolve your inquiry.
+                    Please provide additional information to help us resolve
+                    your inquiry.
                   </p>
                   <div className={styles.commentForm}>
                     <textarea
@@ -431,7 +483,10 @@ const InquiriesPage = () => {
                         onClick={() => {
                           handleSubmitComment(selectedInquiry.id);
                         }}
-                        disabled={submittingComment === selectedInquiry.id || !commentText[selectedInquiry.id]?.trim()}
+                        disabled={
+                          submittingComment === selectedInquiry.id ||
+                          !commentText[selectedInquiry.id]?.trim()
+                        }
                       >
                         {submittingComment === selectedInquiry.id ? (
                           <>
@@ -453,7 +508,7 @@ const InquiriesPage = () => {
               {/* Conversation Timeline */}
               {(() => {
                 type TimelineItem = {
-                  type: 'user' | 'admin' | 'email';
+                  type: "user" | "admin" | "email";
                   content: string;
                   timestamp: string;
                 };
@@ -461,16 +516,18 @@ const InquiriesPage = () => {
 
                 selectedInquiry.userComments?.forEach((comment) => {
                   timelineItems.push({
-                    type: 'user',
+                    type: "user",
                     content: comment.comment,
                     timestamp: comment.timestamp,
                   });
                 });
 
                 selectedInquiry.notes?.forEach((note) => {
-                  const isEmailResponse = note.note.startsWith("[Email Response Sent]");
+                  const isEmailResponse = note.note.startsWith(
+                    "[Email Response Sent]"
+                  );
                   timelineItems.push({
-                    type: isEmailResponse ? 'email' : 'admin',
+                    type: isEmailResponse ? "email" : "admin",
                     content: isEmailResponse
                       ? note.note.replace("[Email Response Sent]\n", "")
                       : note.note,
@@ -478,8 +535,10 @@ const InquiriesPage = () => {
                   });
                 });
 
-                timelineItems.sort((a, b) =>
-                  new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+                timelineItems.sort(
+                  (a, b) =>
+                    new Date(a.timestamp).getTime() -
+                    new Date(b.timestamp).getTime()
                 );
 
                 if (timelineItems.length === 0) return null;
@@ -492,8 +551,8 @@ const InquiriesPage = () => {
                     </h4>
                     <div className={styles.timeline}>
                       {timelineItems.map((item, index) => {
-                        const isUser = item.type === 'user';
-                        const isEmail = item.type === 'email';
+                        const isUser = item.type === "user";
+                        const isEmail = item.type === "email";
 
                         return (
                           <div
@@ -540,7 +599,9 @@ const InquiriesPage = () => {
 
               {/* Footer Info */}
               <div className={styles.modalFooterInfo}>
-                <span>Submitted as: {selectedInquiry.name} ({selectedInquiry.email})</span>
+                <span>
+                  Submitted as: {selectedInquiry.name} ({selectedInquiry.email})
+                </span>
               </div>
             </div>
           </div>
