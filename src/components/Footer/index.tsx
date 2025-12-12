@@ -1,12 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import styles from "./index.module.css";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
+import { useAuth } from "@/context/AuthContext";
 import { Facebook, Instagram, Twitter, Linkedin, Youtube, Mail, Phone, MapPin, Send, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
+
+interface LegalDocument {
+  _id: string;
+  title: string;
+  slug: string;
+  type: string;
+}
 
 const socialIcons: Record<string, React.ReactNode> = {
   facebook: <Facebook size={20} />,
@@ -18,8 +26,33 @@ const socialIcons: Record<string, React.ReactNode> = {
 
 const Footer = () => {
   const { settings, loading } = useSiteSettings();
+  const { user } = useAuth();
   const [email, setEmail] = useState("");
   const [subscribing, setSubscribing] = useState(false);
+  const [legalDocs, setLegalDocs] = useState<LegalDocument[]>([]);
+
+  // Auto-fill email when user is logged in
+  useEffect(() => {
+    if (user?.email) {
+      setEmail(user.email);
+    }
+  }, [user?.email]);
+
+  useEffect(() => {
+    const fetchLegalDocs = async () => {
+      try {
+        const response = await fetch("/api/legal-documents");
+        const data = await response.json();
+        if (data.success) {
+          setLegalDocs(data.documents);
+        }
+      } catch (error) {
+        console.error("Failed to fetch legal documents:", error);
+      }
+    };
+
+    fetchLegalDocs();
+  }, []);
 
   const handleNewsletterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -146,6 +179,20 @@ const Footer = () => {
             </nav>
           </div>
 
+          {/* Legal Links */}
+          {legalDocs.length > 0 && (
+            <div className={styles.section}>
+              <h4 className={styles.sectionTitle}>Legal</h4>
+              <nav className={styles.links}>
+                {legalDocs.map((doc, index) => (
+                  <Link key={doc._id || `legal-${index}`} href={`/legal/${doc.slug}`}>
+                    {doc.title}
+                  </Link>
+                ))}
+              </nav>
+            </div>
+          )}
+
           {/* Contact Info */}
           <div className={styles.section}>
             <h4 className={styles.sectionTitle}>Contact</h4>
@@ -174,37 +221,43 @@ const Footer = () => {
               )}
             </div>
           </div>
-
-          {/* Newsletter */}
-          <div className={styles.section}>
-            <h4 className={styles.sectionTitle}>Newsletter</h4>
-            <p className={styles.newsletterText}>
-              Subscribe to get updates on new products and offers.
-            </p>
-            <form onSubmit={handleNewsletterSubmit} className={styles.newsletterForm}>
-              <input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className={styles.newsletterInput}
-                disabled={subscribing}
-              />
-              <button
-                type="submit"
-                className={styles.newsletterButton}
-                disabled={subscribing}
-                aria-label="Subscribe"
-              >
-                {subscribing ? (
-                  <Loader2 size={18} className={styles.spinner} />
-                ) : (
-                  <Send size={18} />
-                )}
-              </button>
-            </form>
-          </div>
         </div>
+
+        {/* Newsletter - Only show when user is logged in */}
+        {user && (
+          <div className={styles.newsletterSection}>
+            <div className={styles.newsletterContent}>
+              <div className={styles.newsletterInfo}>
+                <h4 className={styles.newsletterTitle}>Subscribe to Our Newsletter</h4>
+                <p className={styles.newsletterText}>
+                  Get updates on new products, exclusive offers, and more.
+                </p>
+              </div>
+              <form onSubmit={handleNewsletterSubmit} className={styles.newsletterForm}>
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className={styles.newsletterInput}
+                  disabled={subscribing}
+                />
+                <button
+                  type="submit"
+                  className={styles.newsletterButton}
+                  disabled={subscribing}
+                  aria-label="Subscribe"
+                >
+                  {subscribing ? (
+                    <Loader2 size={18} className={styles.spinner} />
+                  ) : (
+                    <Send size={18} />
+                  )}
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
 
         {/* Social Links */}
         {settings?.socialLinks && settings.socialLinks.length > 0 && (

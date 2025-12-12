@@ -46,6 +46,11 @@ import {
   ShieldCheck,
   ChevronLeft,
   ChevronRight,
+  Factory,
+  Image as ImageIcon,
+  Video,
+  X,
+  MapPin,
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import ImagePicker, { ImageData } from "@/components/admin/ImagePicker";
@@ -128,6 +133,18 @@ interface ServiceContent {
   features?: string[];
 }
 
+interface FactoryImage {
+  url: string;
+  alt?: string;
+  order?: number;
+}
+
+interface FactoryVideo {
+  title?: string;
+  url: string;
+  order?: number;
+}
+
 interface SiteSettings {
   siteName: string;
   tagline?: string;
@@ -144,6 +161,12 @@ interface SiteSettings {
       globalShipping?: ServiceContent;
       expertSupport?: ServiceContent;
       qualityControl?: ServiceContent;
+    };
+    factory?: {
+      title?: string;
+      description?: string;
+      images?: FactoryImage[];
+      videos?: FactoryVideo[];
     };
   };
   contact: {
@@ -467,6 +490,74 @@ export default function SettingsPage() {
         },
       },
     });
+  };
+
+  // Factory Functions
+  const addFactoryVideo = () => {
+    if (!settings) return;
+    const currentFactory = settings.about?.factory || {};
+    const currentVideos = currentFactory.videos || [];
+    setSettings({
+      ...settings,
+      about: {
+        ...settings.about,
+        factory: {
+          ...currentFactory,
+          videos: [
+            ...currentVideos,
+            { title: "", url: "", order: currentVideos.length },
+          ],
+        },
+      },
+    });
+  };
+
+  const updateFactoryVideo = (index: number, field: string, value: string) => {
+    if (!settings) return;
+    const currentFactory = settings.about?.factory || {};
+    const currentVideos = [...(currentFactory.videos || [])];
+    currentVideos[index] = { ...currentVideos[index], [field]: value };
+    setSettings({
+      ...settings,
+      about: {
+        ...settings.about,
+        factory: {
+          ...currentFactory,
+          videos: currentVideos,
+        },
+      },
+    });
+  };
+
+  const removeFactoryVideo = (index: number) => {
+    if (!settings) return;
+    const currentFactory = settings.about?.factory || {};
+    const currentVideos = (currentFactory.videos || []).filter((_, i) => i !== index);
+    setSettings({
+      ...settings,
+      about: {
+        ...settings.about,
+        factory: {
+          ...currentFactory,
+          videos: currentVideos,
+        },
+      },
+    });
+  };
+
+  // Helper to extract Google Maps URL from embed HTML
+  const extractMapUrl = (input: string): string => {
+    if (!input) return "";
+    // Check if it's an iframe embed code
+    const srcMatch = input.match(/src=["']([^"']+)["']/);
+    if (srcMatch) {
+      return srcMatch[1];
+    }
+    // If it's already a URL, return as is
+    if (input.startsWith("http")) {
+      return input;
+    }
+    return input;
   };
 
   if (loading) {
@@ -1255,6 +1346,148 @@ export default function SettingsPage() {
                     </Button>
                   </div>
                 </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Factory Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Factory className="w-5 h-5" />
+                Factory & Production
+              </CardTitle>
+              <CardDescription>
+                Showcase your factory, production facilities, and videos
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="factoryTitle">Section Title</Label>
+                  <Input
+                    id="factoryTitle"
+                    value={settings.about?.factory?.title || ""}
+                    onChange={(e) =>
+                      updateSettings("about.factory.title", e.target.value)
+                    }
+                    placeholder="Our Factory"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="factoryDescription">Description</Label>
+                <Textarea
+                  id="factoryDescription"
+                  value={settings.about?.factory?.description || ""}
+                  onChange={(e) =>
+                    updateSettings("about.factory.description", e.target.value)
+                  }
+                  placeholder="Describe your production facilities, craftsmanship, and manufacturing process..."
+                  rows={4}
+                />
+              </div>
+
+              {/* Factory Images */}
+              <div className="space-y-4">
+                <Label className="flex items-center gap-2">
+                  <ImageIcon className="w-4 h-4" />
+                  Factory Images
+                </Label>
+                <ImagePicker
+                  value={(settings.about?.factory?.images || []).map((img, index) => ({
+                    id: img.url,
+                    name: img.alt || `Factory image ${index + 1}`,
+                    url: img.url,
+                    thumbnailUrl: img.url,
+                  }))}
+                  onChange={(images) => {
+                    if (!settings) return;
+                    const imageArray = Array.isArray(images) ? images : images ? [images] : [];
+                    const currentFactory = settings.about?.factory || {};
+                    setSettings({
+                      ...settings,
+                      about: {
+                        ...settings.about,
+                        factory: {
+                          ...currentFactory,
+                          images: imageArray.map((img, index) => ({
+                            url: img.url,
+                            alt: img.name || "",
+                            order: index,
+                          })),
+                        },
+                      },
+                    });
+                  }}
+                  multiple
+                  maxImages={20}
+                />
+              </div>
+
+              {/* Factory Videos */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Label className="flex items-center gap-2">
+                    <Video className="w-4 h-4" />
+                    YouTube Videos
+                    {(settings.about?.factory?.videos?.length || 0) > 0 && (
+                      <span className="text-xs text-muted-foreground">
+                        ({settings.about?.factory?.videos?.length} videos)
+                      </span>
+                    )}
+                  </Label>
+                  <Button variant="outline" size="sm" onClick={addFactoryVideo}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Video
+                  </Button>
+                </div>
+                {(settings.about?.factory?.videos?.length || 0) > 0 ? (
+                  <div className="space-y-3">
+                    {settings.about?.factory?.videos?.map((video, index) => (
+                      <div key={index} className="flex gap-3 p-3 border rounded-lg">
+                        <div className="flex-1 grid gap-3 md:grid-cols-2">
+                          <div className="space-y-1">
+                            <Label className="text-xs">Video Title</Label>
+                            <Input
+                              value={video.title || ""}
+                              onChange={(e) =>
+                                updateFactoryVideo(index, "title", e.target.value)
+                              }
+                              placeholder="Factory Tour"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <Label className="text-xs">YouTube URL</Label>
+                            <Input
+                              value={video.url || ""}
+                              onChange={(e) =>
+                                updateFactoryVideo(index, "url", e.target.value)
+                              }
+                              placeholder="https://youtube.com/watch?v=... or embed URL"
+                            />
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-destructive"
+                          onClick={() => removeFactoryVideo(index)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 border-2 border-dashed rounded-lg">
+                    <Video className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                    <p className="text-sm text-muted-foreground">No videos added yet</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Add YouTube URLs (watch or embed format)
+                    </p>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>

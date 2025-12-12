@@ -16,6 +16,12 @@ import {
   FileText,
   Users,
   ExternalLink,
+  Scale,
+  Shield,
+  ScrollText,
+  RefreshCcw,
+  FileCheck,
+  Award,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import styles from "./page.module.css";
@@ -39,10 +45,18 @@ interface Product {
   };
 }
 
+interface LegalDocument {
+  id: string;
+  title: string;
+  slug: string;
+  type: string;
+}
+
 interface SitemapPageClientProps {
   categories: Category[];
   products: Product[];
   settings: any;
+  legalDocuments: LegalDocument[];
 }
 
 // Static pages configuration
@@ -80,10 +94,33 @@ const staticPages = [
   },
 ];
 
+// Helper function to get icon for legal document type
+const getLegalIcon = (type: string) => {
+  switch (type) {
+    case "terms-and-conditions":
+      return FileText;
+    case "privacy-policy":
+      return Shield;
+    case "terms-of-service":
+      return ScrollText;
+    case "refund-policy":
+      return RefreshCcw;
+    case "warranty":
+      return FileCheck;
+    case "trade-contracts":
+      return Scale;
+    case "certificates":
+      return Award;
+    default:
+      return FileText;
+  }
+};
+
 export default function SitemapPageClient({
   categories,
   products,
   settings,
+  legalDocuments,
 }: SitemapPageClientProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeSection, setActiveSection] = useState<string | null>(null);
@@ -118,7 +155,8 @@ export default function SitemapPageClient({
     staticPages.length +
     categories.length +
     categories.reduce((acc, cat) => acc + (cat.children?.length || 0), 0) +
-    products.length;
+    products.length +
+    legalDocuments.length;
 
   return (
     <div className={styles.page}>
@@ -146,6 +184,12 @@ export default function SitemapPageClient({
               <Package size={20} />
               <span>{products.length} Products</span>
             </div>
+            {legalDocuments.length > 0 && (
+              <div className={styles.statItem}>
+                <Scale size={20} />
+                <span>{legalDocuments.length} Legal</span>
+              </div>
+            )}
           </div>
         </section>
 
@@ -335,6 +379,61 @@ export default function SitemapPageClient({
             </div>
           )}
         </section>
+
+        {/* Legal Documents */}
+        {legalDocuments.length > 0 && (
+          <section className={styles.section}>
+            <div className={styles.sectionHeader}>
+              <div className={styles.sectionIcon}>
+                <Scale size={24} />
+              </div>
+              <div>
+                <h2 className={styles.sectionTitle}>Legal Documents</h2>
+                <p className={styles.sectionDescription}>
+                  Policies, terms, and legal information
+                </p>
+              </div>
+            </div>
+            <div className={styles.pagesGrid}>
+              <Link
+                href={"/legal" as Route}
+                className={styles.pageCard}
+              >
+                <div className={styles.pageCardIcon}>
+                  <Scale size={24} />
+                </div>
+                <div className={styles.pageCardContent}>
+                  <h3 className={styles.pageCardTitle}>All Legal Documents</h3>
+                  <p className={styles.pageCardDescription}>
+                    View all policies and legal information
+                  </p>
+                </div>
+                <ChevronRight size={20} className={styles.pageCardArrow} />
+              </Link>
+              {legalDocuments.map((doc) => {
+                const Icon = getLegalIcon(doc.type);
+                return (
+                  <Link
+                    key={doc.id}
+                    href={`/legal/${doc.slug}` as Route}
+                    className={styles.pageCard}
+                  >
+                    <div className={styles.pageCardIcon}>
+                      <Icon size={24} />
+                    </div>
+                    <div className={styles.pageCardContent}>
+                      <h3 className={styles.pageCardTitle}>{doc.title}</h3>
+                      <p className={styles.pageCardDescription}>
+                        {doc.type.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}
+                      </p>
+                    </div>
+                    <ChevronRight size={20} className={styles.pageCardArrow} />
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+        )}
 
         {/* Footer Info */}
         <section className={styles.footerInfo}>

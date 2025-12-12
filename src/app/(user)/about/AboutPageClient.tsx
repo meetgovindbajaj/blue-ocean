@@ -2,10 +2,11 @@
 
 import styles from "./page.module.css";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
-import { Target, Eye, Building2, PencilRuler, Globe2, Headset, ShieldCheck, History, Users, User } from "lucide-react";
+import { Target, Eye, Building2, PencilRuler, Globe2, Headset, ShieldCheck, History, Users, User, Factory, Play } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
 import CarouselWrapper from "@/components/ui/CarouselWrapper";
+import { useState, useCallback, useMemo } from "react";
 
 // Default services data (fallback when no dynamic data exists)
 const DEFAULT_SERVICES = {
@@ -27,8 +28,61 @@ const DEFAULT_SERVICES = {
   },
 };
 
+// Helper to extract YouTube video ID from various URL formats
+const getYouTubeVideoId = (url: string): string | null => {
+  if (!url) return null;
+
+  // Handle embed URLs
+  const embedMatch = url.match(/youtube\.com\/embed\/([^?&]+)/);
+  if (embedMatch) return embedMatch[1];
+
+  // Handle watch URLs
+  const watchMatch = url.match(/youtube\.com\/watch\?v=([^&]+)/);
+  if (watchMatch) return watchMatch[1];
+
+  // Handle short URLs
+  const shortMatch = url.match(/youtu\.be\/([^?&]+)/);
+  if (shortMatch) return shortMatch[1];
+
+  return null;
+};
+
 const AboutPageClient = () => {
   const { settings, loading } = useSiteSettings();
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [playingVideo, setPlayingVideo] = useState<string | null>(null);
+
+  const handleImageClick = useCallback((imageUrl: string | undefined) => {
+    if (imageUrl) {
+      setSelectedImage(imageUrl);
+    }
+  }, []);
+
+  const closeImageModal = useCallback(() => {
+    setSelectedImage(null);
+  }, []);
+
+  // Memoize sorted factory images to avoid re-sorting on every render
+  const sortedFactoryImages = useMemo(() => {
+    const images = settings?.about?.factory?.images;
+    if (!images || !Array.isArray(images) || images.length === 0) {
+      return [];
+    }
+    return [...images]
+      .filter((img) => img?.url)
+      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  }, [settings?.about?.factory?.images]);
+
+  // Memoize sorted factory videos to avoid re-sorting on every render
+  const sortedFactoryVideos = useMemo(() => {
+    const videos = settings?.about?.factory?.videos;
+    if (!videos || !Array.isArray(videos) || videos.length === 0) {
+      return [];
+    }
+    return [...videos]
+      .filter((vid) => vid?.url)
+      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  }, [settings?.about?.factory?.videos]);
 
   if (loading) {
     return (
@@ -185,6 +239,109 @@ const AboutPageClient = () => {
               </div>
             )}
           </section>
+        )}
+
+        {/* Factory Section */}
+        {about?.factory && (sortedFactoryImages.length > 0 || sortedFactoryVideos.length > 0 || about.factory.description) && (
+          <section className={styles.factorySection}>
+            <h2 className={styles.sectionTitle}>
+              <Factory size={24} style={{ display: "inline", marginRight: "0.5rem", verticalAlign: "middle" }} />
+              {about.factory.title || "Our Factory"}
+            </h2>
+
+            {about.factory.description && (
+              <p className={styles.factoryDescription}>{about.factory.description}</p>
+            )}
+
+            {/* Factory Images - Masonry Grid */}
+            {sortedFactoryImages.length > 0 && (
+              <div className={styles.factoryImagesSection}>
+                <h3 className={styles.factorySubtitle}>Factory Gallery</h3>
+                <div className={styles.masonryGrid}>
+                  {sortedFactoryImages.map((image, index) => (
+                    <div
+                      key={`factory-img-${index}`}
+                      className={styles.masonryItem}
+                      onClick={() => handleImageClick(image.url)}
+                    >
+                      <Image
+                        src={image.url}
+                        alt={image.alt || `Factory image ${index + 1}`}
+                        width={400}
+                        height={300}
+                        className={styles.masonryImage}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Factory Videos */}
+            {sortedFactoryVideos.length > 0 && (
+              <div className={styles.factoryVideosSection}>
+                <h3 className={styles.factorySubtitle}>Factory Videos</h3>
+                <div className={styles.videosGrid}>
+                  {sortedFactoryVideos.map((video, index) => {
+                    const videoId = getYouTubeVideoId(video.url);
+                    if (!videoId) return null;
+
+                    return (
+                      <div key={`factory-vid-${index}`} className={styles.videoCard}>
+                        {video.title && (
+                          <h4 className={styles.videoTitle}>{video.title}</h4>
+                        )}
+                        <div className={styles.videoWrapper}>
+                          {playingVideo === videoId ? (
+                            <iframe
+                              src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
+                              title={video.title || `Factory video ${index + 1}`}
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                              className={styles.videoIframe}
+                            />
+                          ) : (
+                            <div
+                              className={styles.videoThumbnail}
+                              onClick={() => setPlayingVideo(videoId)}
+                            >
+                              <Image
+                                src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
+                                alt={video.title || `Factory video ${index + 1}`}
+                                fill
+                                className={styles.thumbnailImage}
+                              />
+                              <div className={styles.playButton}>
+                                <Play size={48} fill="white" />
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* Image Modal for zoom */}
+        {selectedImage && (
+          <div className={styles.imageModal} onClick={closeImageModal}>
+            <div className={styles.imageModalContent} onClick={(e) => e.stopPropagation()}>
+              <button className={styles.closeModalButton} onClick={closeImageModal}>
+                &times;
+              </button>
+              <Image
+                src={selectedImage}
+                alt="Full size view"
+                width={1200}
+                height={800}
+                className={styles.modalImage}
+              />
+            </div>
+          </div>
         )}
 
         {/* Services Section */}

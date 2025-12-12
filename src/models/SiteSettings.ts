@@ -66,6 +66,21 @@ interface ISiteSettings extends Document {
         features?: string[];
       };
     };
+    // Factory section
+    factory?: {
+      title?: string;
+      description?: string;
+      images?: {
+        url: string;
+        alt?: string;
+        order?: number;
+      }[];
+      videos?: {
+        title?: string;
+        url: string; // YouTube URL (will be converted to embed)
+        order?: number;
+      }[];
+    };
   };
 
   // Contact Information
@@ -176,6 +191,24 @@ const SiteSettingsSchema = new Schema<ISiteSettings>(
           description: String,
           features: [String],
         },
+      },
+      factory: {
+        title: String,
+        description: String,
+        images: [
+          {
+            url: String,
+            alt: String,
+            order: { type: Number, default: 0 },
+          },
+        ],
+        videos: [
+          {
+            title: String,
+            url: String,
+            order: { type: Number, default: 0 },
+          },
+        ],
       },
     },
 

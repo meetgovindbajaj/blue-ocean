@@ -47,6 +47,20 @@ export interface SiteSettings {
         features?: string[];
       };
     };
+    factory?: {
+      title?: string;
+      description?: string;
+      images?: {
+        url: string;
+        alt?: string;
+        order?: number;
+      }[];
+      videos?: {
+        title?: string;
+        url: string;
+        order?: number;
+      }[];
+    };
   };
   contact: {
     email?: string;

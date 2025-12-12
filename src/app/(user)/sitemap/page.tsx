@@ -3,6 +3,7 @@ import dbConnect from "@/lib/db";
 import Category from "@/models/Category";
 import Product from "@/models/Product";
 import SiteSettings from "@/models/SiteSettings";
+import LegalDocument from "@/models/LegalDocument";
 import SitemapPageClient from "./SitemapPageClient";
 
 // Force dynamic rendering to fetch fresh data from database
@@ -14,7 +15,7 @@ async function getSitemapData() {
   try {
     await dbConnect();
 
-    const [categories, products, settings] = await Promise.all([
+    const [categories, products, settings, legalDocs] = await Promise.all([
       // Fetch categories with children
       Category.find({ isActive: true })
         .select("id name slug description image children isActive")
@@ -38,6 +39,11 @@ async function getSitemapData() {
         .lean(),
       // Fetch site settings
       SiteSettings.findOne().lean(),
+      // Fetch legal documents
+      LegalDocument.find({ isVisible: true })
+        .select("title slug type")
+        .sort({ order: 1, title: 1 })
+        .lean(),
     ]);
 
     // Transform categories
@@ -66,15 +72,24 @@ async function getSitemapData() {
       } : undefined,
     }));
 
+    // Transform legal documents
+    const transformedLegalDocs = legalDocs.map((doc: any) => ({
+      id: doc._id?.toString(),
+      title: doc.title,
+      slug: doc.slug,
+      type: doc.type,
+    }));
+
     // Serialize to plain objects (removes Mongoose special properties like _id buffers)
     return JSON.parse(JSON.stringify({
       categories: transformedCategories,
       products: transformedProducts,
       settings: settings ? { siteName: settings.siteName } : null,
+      legalDocuments: transformedLegalDocs,
     }));
   } catch (error) {
     console.error("Failed to fetch sitemap data:", error);
-    return { categories: [], products: [], settings: null };
+    return { categories: [], products: [], settings: null, legalDocuments: [] };
   }
 }
 
@@ -90,13 +105,14 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function SitemapPage() {
-  const { categories, products, settings } = await getSitemapData();
+  const { categories, products, settings, legalDocuments } = await getSitemapData();
 
   return (
     <SitemapPageClient
       categories={categories}
       products={products}
       settings={settings}
+      legalDocuments={legalDocuments}
     />
   );
 }

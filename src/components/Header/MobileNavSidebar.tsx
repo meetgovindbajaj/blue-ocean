@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Route } from "next";
@@ -30,6 +30,8 @@ import {
   DollarSign,
   Percent,
   X,
+  FileText,
+  Scale,
 } from "lucide-react";
 
 import {
@@ -163,6 +165,67 @@ const NavGroup = ({
   );
 };
 
+interface LegalDocument {
+  _id: string;
+  title: string;
+  slug: string;
+  type: string;
+}
+
+interface LegalNavGroupProps {
+  legalDocs: LegalDocument[];
+  pathname: string;
+  onNavigate: () => void;
+}
+
+const LegalNavGroup = ({ legalDocs, pathname, onNavigate }: LegalNavGroupProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <CollapsibleTrigger className="flex w-full items-center justify-between px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+        <span>Legal</span>
+        <ChevronDown
+          className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")}
+        />
+      </CollapsibleTrigger>
+      <CollapsibleContent>
+        <div className="space-y-1 px-2">
+          <Link
+            href={"/legal" as Route}
+            onClick={onNavigate}
+            className={cn(
+              "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
+              pathname === "/legal"
+                ? "bg-primary/10 text-primary font-medium"
+                : "text-foreground hover:bg-muted"
+            )}
+          >
+            <Scale className="h-4 w-4" />
+            <span>All Documents</span>
+          </Link>
+          {legalDocs.map((doc) => (
+            <Link
+              key={doc._id}
+              href={`/legal/${doc.slug}` as Route}
+              onClick={onNavigate}
+              className={cn(
+                "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
+                pathname === `/legal/${doc.slug}`
+                  ? "bg-primary/10 text-primary font-medium"
+                  : "text-foreground hover:bg-muted"
+              )}
+            >
+              <FileText className="h-4 w-4" />
+              <span>{doc.title}</span>
+            </Link>
+          ))}
+        </div>
+      </CollapsibleContent>
+    </Collapsible>
+  );
+};
+
 const MobileNavSidebar = () => {
   const [open, setOpen] = useState(false);
   const { settings } = useSiteSettings();
@@ -170,6 +233,23 @@ const MobileNavSidebar = () => {
   const pathname = usePathname();
   const router = useRouter();
   const siteName = settings?.siteName || "Blue Ocean";
+  const [legalDocs, setLegalDocs] = useState<LegalDocument[]>([]);
+
+  useEffect(() => {
+    const fetchLegalDocs = async () => {
+      try {
+        const response = await fetch("/api/legal-documents");
+        const data = await response.json();
+        if (data.success) {
+          setLegalDocs(data.documents);
+        }
+      } catch (error) {
+        console.error("Failed to fetch legal documents:", error);
+      }
+    };
+
+    fetchLegalDocs();
+  }, []);
 
   const isAdmin =
     user?.role && ["admin", "super_admin", "moderator"].includes(user.role);
@@ -290,6 +370,18 @@ const MobileNavSidebar = () => {
               items={supportNavItems}
               onNavigate={handleNavigate}
             />
+
+            {/* Legal Section */}
+            {legalDocs.length > 0 && (
+              <>
+                <Separator className="my-2" />
+                <LegalNavGroup
+                  legalDocs={legalDocs}
+                  pathname={pathname}
+                  onNavigate={handleNavigate}
+                />
+              </>
+            )}
           </div>
         </ScrollArea>
 

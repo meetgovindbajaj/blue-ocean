@@ -11,6 +11,7 @@ import {
   ChevronRight,
   ChevronsUpDown,
   FileSpreadsheet,
+  FileText,
   Home,
   ImageIcon,
   LayoutList,
@@ -132,6 +133,11 @@ const settingsNavItems = [
     title: "Settings",
     url: "/admin/settings" as Route,
     icon: Settings,
+  },
+  {
+    title: "Legal Documents",
+    url: "/admin/legal-documents" as Route,
+    icon: FileText,
   },
 ];
 
