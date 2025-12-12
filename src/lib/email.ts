@@ -21,18 +21,37 @@ const SUPPORT_EMAIL =
   "support@furniture-store.com";
 
 interface EmailOptions {
-  to: string;
+  to: string | string[]; // Can be a single email or array of emails
   subject: string;
   html: string;
   text?: string;
+  bcc?: string | string[]; // BCC for bulk sends (privacy)
 }
 
 export async function sendEmail(options: EmailOptions) {
   try {
-    await transporter.sendMail({
+    // If 'to' is an array with multiple recipients, use BCC for privacy
+    // and send to the first recipient (or a noreply address)
+    let mailOptions: any = {
       from: FROM_EMAIL,
-      ...options,
-    });
+      subject: options.subject,
+      html: options.html,
+      text: options.text,
+    };
+
+    if (Array.isArray(options.to) && options.to.length > 1) {
+      // Bulk send: use BCC for privacy, put all recipients in BCC
+      mailOptions.to = FROM_EMAIL; // Send to self (or could use a noreply address)
+      mailOptions.bcc = options.to; // All recipients in BCC
+    } else {
+      // Single recipient
+      mailOptions.to = options.to;
+      if (options.bcc) {
+        mailOptions.bcc = options.bcc;
+      }
+    }
+
+    await transporter.sendMail(mailOptions);
     return { success: true };
   } catch (error) {
     console.error("Email sending error:", error);

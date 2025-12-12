@@ -137,26 +137,48 @@ function generateProductEmailHtml(
   `;
 }
 
-// GET - Get subscribers count and list
+// GET - Get subscribers count and list, or check send status
 export async function GET(request: NextRequest) {
   try {
     const user = await getAuthUser(request);
     if (!user) return unauthorizedResponse();
     if (!isAdmin(user.role)) return forbiddenResponse();
 
+    const { searchParams } = new URL(request.url);
+
+    // Check if this is a status check request
+    const trackingId = searchParams.get("trackingId");
+    if (trackingId) {
+      const result = emailSendResults.get(trackingId);
+      if (!result) {
+        return NextResponse.json({
+          success: false,
+          error: "Tracking ID not found or expired",
+        }, { status: 404 });
+      }
+      return NextResponse.json({
+        success: true,
+        trackingId,
+        ...result,
+        duration: result.completedAt
+          ? result.completedAt - result.startedAt
+          : Date.now() - result.startedAt,
+      });
+    }
+
     await connectDB();
 
-    const { searchParams } = new URL(request.url);
     const emailType = searchParams.get("emailType") || "newsletter";
 
     // Filter based on email type
+    // Use $ne: false to also match profiles where the field doesn't exist (defaults to true)
     const query = emailType === "newsletter"
-      ? { "preferences.newsletter": true }
-      : { "preferences.promotions": true };
+      ? { "preferences.newsletter": { $ne: false } }
+      : { "preferences.promotions": { $ne: false } };
 
-    // Get all profiles with the specified preference enabled
+    // Get all profiles with the specified preference enabled (or not explicitly disabled)
     const subscribedProfiles = await Profile.find(query)
-      .select("name email")
+      .select("name email preferences")
       .lean();
 
     return NextResponse.json({
@@ -177,32 +199,108 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// Fire-and-forget email sending function
+// Email send results tracking
+interface EmailSendResult {
+  status: "in_progress" | "completed";
+  total: number;
+  sent: number;
+  failed: number;
+  errors: string[];
+  startedAt: number;
+  completedAt?: number;
+}
+
+// Global tracking for background email sending (keyed by tracking ID)
+const emailSendResults = new Map<string, EmailSendResult>();
+
+// Clean up old results after 1 hour
+function cleanupOldResults() {
+  const oneHourAgo = Date.now() - 60 * 60 * 1000;
+  for (const [key, value] of emailSendResults) {
+    if (value.startedAt < oneHourAgo) {
+      emailSendResults.delete(key);
+    }
+  }
+}
+
+// Get send results by tracking ID
+export function getEmailSendResult(trackingId: string): EmailSendResult | null {
+  return emailSendResults.get(trackingId) || null;
+}
+
+// Fire-and-forget email sending function with tracking
+// Sends a single email with all recipients in BCC for efficiency and privacy
 async function sendEmailsInBackground(
   profiles: any[],
   products: any[],
   subject: string,
-  message: string
+  message: string,
+  trackingId: string
 ) {
-  for (const profile of profiles) {
-    try {
+  const result: EmailSendResult = {
+    status: "in_progress",
+    total: profiles.length,
+    sent: 0,
+    failed: 0,
+    errors: [],
+    startedAt: Date.now(),
+  };
+  emailSendResults.set(trackingId, result);
+
+  try {
+    // Extract all email addresses
+    const recipients = profiles.map((p: any) => p.email).filter(Boolean);
+
+    if (recipients.length === 0) {
+      result.failed = profiles.length;
+      result.errors.push("No valid email addresses found");
+    } else {
+      // Generate HTML with generic greeting (since we're sending to multiple recipients)
       const html = generateProductEmailHtml(
         products as unknown as ProductInfo[],
         subject,
         message,
-        profile.name || "Valued Customer"
+        "Valued Customer"
       );
 
-      await sendEmail({
-        to: profile.email,
+      // Send single email with all recipients in BCC for privacy
+      const emailResult = await sendEmail({
+        to: recipients, // Pass array of all recipients
         subject,
         html,
         text: `${message}\n\nView products at: ${APP_URL}/products`,
       });
-    } catch (err) {
-      console.error(`Failed to send email to ${profile.email}:`, err);
+
+      if (emailResult.success) {
+        result.sent = recipients.length;
+        result.failed = 0;
+      } else {
+        result.sent = 0;
+        result.failed = recipients.length;
+        const errorMsg = emailResult.error instanceof Error
+          ? emailResult.error.message
+          : String(emailResult.error || "Unknown error");
+        result.errors.push(`Bulk send failed: ${errorMsg}`);
+      }
     }
+  } catch (err) {
+    result.failed = profiles.length;
+    result.errors.push(`Bulk send error: ${err instanceof Error ? err.message : "Unknown error"}`);
+    console.error("Failed to send bulk email:", err);
   }
+
+  // Mark as completed
+  result.status = "completed";
+  result.completedAt = Date.now();
+
+  // Log final results
+  console.log(`Email send complete [${trackingId}]: ${result.sent} sent, ${result.failed} failed out of ${result.total}`);
+  if (result.errors.length > 0) {
+    console.log(`Email errors [${trackingId}]:`, result.errors);
+  }
+
+  // Cleanup old results periodically
+  cleanupOldResults();
 }
 
 // POST - Send product notification email (fire and forget)
@@ -247,11 +345,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Filter based on email type - newsletter or promotion subscribers
+    // Use $ne: false to also match profiles where the field doesn't exist (defaults to true)
     const query = emailType === "newsletter"
-      ? { "preferences.newsletter": true }
-      : { "preferences.promotions": true };
+      ? { "preferences.newsletter": { $ne: false } }
+      : { "preferences.promotions": { $ne: false } };
 
-    // Get all profiles with the specified preference enabled
+    // Get all profiles with the specified preference enabled (or not explicitly disabled)
     const subscribedProfiles = await Profile.find(query)
       .select("name email")
       .lean();
@@ -264,18 +363,22 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    // Generate a tracking ID for this send batch
+    const trackingId = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+
     // Fire and forget - start sending emails in background without awaiting
-    sendEmailsInBackground(subscribedProfiles, products, subject, message).catch(
+    sendEmailsInBackground(subscribedProfiles, products, subject, message, trackingId).catch(
       (err) => console.error("Background email sending error:", err)
     );
 
-    // Return immediately with queued count
+    // Return immediately with queued count and tracking ID
     return NextResponse.json({
       success: true,
       message: `Emails queued for ${subscribedProfiles.length} ${emailType} subscriber(s)`,
       queued: subscribedProfiles.length,
       products: products.length,
       emailType,
+      trackingId, // Return tracking ID so frontend can poll for status
     });
   } catch (error) {
     console.error("Send notification error:", error);

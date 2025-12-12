@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
+import { Progress } from "@/components/ui/progress";
 import {
   Send,
   Users,
@@ -43,6 +44,9 @@ import {
   Loader2,
   Mail,
   Megaphone,
+  CheckCircle2,
+  XCircle,
+  AlertCircle,
 } from "lucide-react";
 
 interface Product {
@@ -78,6 +82,15 @@ export default function NotificationsPage() {
   const [message, setMessage] = useState(
     "We are excited to share some amazing new products with you. Take a look at what we have in store!"
   );
+  const [trackingId, setTrackingId] = useState<string | null>(null);
+  const [sendStatus, setSendStatus] = useState<{
+    status: "in_progress" | "completed";
+    total: number;
+    sent: number;
+    failed: number;
+    errors: string[];
+    duration?: number;
+  } | null>(null);
 
   // Fetch products
   const fetchProducts = useCallback(async () => {
@@ -119,6 +132,50 @@ export default function NotificationsPage() {
     loadData();
   }, [fetchProducts, fetchSubscribers]);
 
+  // Poll for send status when we have a tracking ID
+  useEffect(() => {
+    if (!trackingId) return;
+
+    const pollStatus = async () => {
+      try {
+        const response = await fetch(`/api/admin/notifications?trackingId=${trackingId}`);
+        const data = await response.json();
+        if (data.success) {
+          setSendStatus({
+            status: data.status,
+            total: data.total,
+            sent: data.sent,
+            failed: data.failed,
+            errors: data.errors || [],
+            duration: data.duration,
+          });
+
+          // Stop polling when completed
+          if (data.status === "completed") {
+            setTrackingId(null);
+            setSending(false);
+            if (data.failed === 0) {
+              toast.success(`All ${data.sent} emails sent successfully!`);
+            } else if (data.sent > 0) {
+              toast.warning(`${data.sent} sent, ${data.failed} failed`);
+            } else {
+              toast.error(`All ${data.failed} emails failed to send`);
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch send status:", error);
+      }
+    };
+
+    // Initial fetch
+    pollStatus();
+
+    // Poll every 2 seconds while in progress
+    const interval = setInterval(pollStatus, 2000);
+    return () => clearInterval(interval);
+  }, [trackingId]);
+
   const toggleProduct = (productId: string) => {
     setSelectedProducts((prev) =>
       prev.includes(productId)
@@ -154,6 +211,7 @@ export default function NotificationsPage() {
   const confirmSend = async () => {
     setShowConfirm(false);
     setSending(true);
+    setSendStatus(null);
 
     try {
       const response = await fetch("/api/admin/notifications", {
@@ -170,14 +228,27 @@ export default function NotificationsPage() {
       const data = await response.json();
 
       if (data.success) {
-        toast.success(`Emails queued for ${data.queued} subscriber(s)`);
+        if (data.trackingId) {
+          setTrackingId(data.trackingId);
+          setSendStatus({
+            status: "in_progress",
+            total: data.queued,
+            sent: 0,
+            failed: 0,
+            errors: [],
+          });
+          toast.info(`Sending ${data.queued} emails...`);
+        } else {
+          toast.success(`Emails queued for ${data.queued} subscriber(s)`);
+          setSending(false);
+        }
       } else {
         toast.error(data.error || "Failed to send emails");
+        setSending(false);
       }
     } catch (error) {
       console.error("Failed to send emails:", error);
       toast.error("Failed to send emails");
-    } finally {
       setSending(false);
     }
   };
@@ -271,6 +342,91 @@ export default function NotificationsPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Send Status Card - shown when sending or after completion */}
+      {sendStatus && (
+        <Card className={sendStatus.status === "completed" ? (sendStatus.failed === 0 ? "border-green-500" : sendStatus.sent === 0 ? "border-red-500" : "border-yellow-500") : "border-blue-500"}>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              {sendStatus.status === "in_progress" ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin text-blue-500" />
+                  Sending Emails...
+                </>
+              ) : sendStatus.failed === 0 ? (
+                <>
+                  <CheckCircle2 className="h-4 w-4 text-green-500" />
+                  All Emails Sent Successfully
+                </>
+              ) : sendStatus.sent === 0 ? (
+                <>
+                  <XCircle className="h-4 w-4 text-red-500" />
+                  All Emails Failed
+                </>
+              ) : (
+                <>
+                  <AlertCircle className="h-4 w-4 text-yellow-500" />
+                  Emails Sent with Errors
+                </>
+              )}
+            </CardTitle>
+            {sendStatus.status === "completed" && (
+              <button
+                onClick={() => setSendStatus(null)}
+                className="text-xs text-muted-foreground hover:text-foreground"
+              >
+                Dismiss
+              </button>
+            )}
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="space-y-1">
+              <div className="flex justify-between text-sm">
+                <span>Progress</span>
+                <span>{sendStatus.sent + sendStatus.failed} / {sendStatus.total}</span>
+              </div>
+              <Progress
+                value={sendStatus.total > 0 ? ((sendStatus.sent + sendStatus.failed) / sendStatus.total) * 100 : 0}
+                className="h-2"
+              />
+            </div>
+            <div className="grid grid-cols-3 gap-4 text-center">
+              <div>
+                <p className="text-2xl font-bold text-green-600">{sendStatus.sent}</p>
+                <p className="text-xs text-muted-foreground">Sent</p>
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-red-600">{sendStatus.failed}</p>
+                <p className="text-xs text-muted-foreground">Failed</p>
+              </div>
+              <div>
+                <p className="text-2xl font-bold">{sendStatus.total - sendStatus.sent - sendStatus.failed}</p>
+                <p className="text-xs text-muted-foreground">Pending</p>
+              </div>
+            </div>
+            {sendStatus.duration && sendStatus.status === "completed" && (
+              <p className="text-xs text-muted-foreground text-center">
+                Completed in {(sendStatus.duration / 1000).toFixed(1)} seconds
+              </p>
+            )}
+            {sendStatus.errors.length > 0 && sendStatus.status === "completed" && (
+              <div className="mt-2">
+                <p className="text-xs font-medium text-red-600 mb-1">
+                  Failed recipients ({sendStatus.errors.length}):
+                </p>
+                <div className="max-h-24 overflow-y-auto text-xs text-muted-foreground bg-muted p-2 rounded">
+                  {sendStatus.errors.slice(0, 5).map((err, i) => (
+                    <p key={i} className="truncate">{err}</p>
+                  ))}
+                  {sendStatus.errors.length > 5 && (
+                    <p className="text-muted-foreground">...and {sendStatus.errors.length - 5} more</p>
+                  )}
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Email Compose Section */}
       <Card>
