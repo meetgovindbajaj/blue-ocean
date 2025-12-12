@@ -13,12 +13,16 @@ export interface IInquiry extends Document {
   email: string;
   phone?: string;
   message: string;
-  status: "pending" | "in-progress" | "resolved" | "closed";
+  status: "pending" | "in-progress" | "customer-feedback" | "resolved" | "closed";
   priority: "low" | "medium" | "high";
   assignedTo?: mongoose.Types.ObjectId;
   notes?: Array<{
     adminId: mongoose.Types.ObjectId;
     note: string;
+    timestamp: Date;
+  }>;
+  userComments?: Array<{
+    comment: string;
     timestamp: Date;
   }>;
   createdAt: Date;
@@ -69,7 +73,7 @@ const InquirySchema: Schema<IInquiry> = new Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "in-progress", "resolved", "closed"],
+      enum: ["pending", "in-progress", "customer-feedback", "resolved", "closed"],
       default: "pending",
       index: true,
     },
@@ -93,6 +97,19 @@ const InquirySchema: Schema<IInquiry> = new Schema(
         note: {
           type: String,
           required: true,
+        },
+        timestamp: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
+    userComments: [
+      {
+        comment: {
+          type: String,
+          required: true,
+          maxlength: [1000, "Comment cannot exceed 1000 characters"],
         },
         timestamp: {
           type: Date,
@@ -147,7 +164,7 @@ InquirySchema.statics.getPendingCount = async function (): Promise<number> {
 
 // Static method to get inquiries by status
 InquirySchema.statics.getByStatus = async function (
-  status: "pending" | "in-progress" | "resolved" | "closed",
+  status: "pending" | "in-progress" | "customer-feedback" | "resolved" | "closed",
   limit: number = 50
 ): Promise<IInquiry[]> {
   return await this.find({ status })

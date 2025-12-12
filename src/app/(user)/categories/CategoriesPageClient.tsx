@@ -7,6 +7,7 @@ import Link from "next/link";
 import { ProductType } from "@/types/product";
 import ProductCard from "@/components/shared/ProductCard";
 import ProductFilters from "@/components/shared/ProductFilters";
+import { CarouselWrapper, CarouselItem } from "@/components/ui/CarouselWrapper";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ChevronRight, FolderTree } from "lucide-react";
 import styles from "./page.module.css";
@@ -225,6 +226,11 @@ const CategoryTree = ({ categories }: { categories: Category[] }) => {
   );
 };
 
+// Extended Category interface with product count
+interface CategoryWithCount extends Category {
+  productCount?: number;
+}
+
 // Main Category List Page Inner Component
 const CategoryListPageInner = () => {
   const searchParams = useSearchParams();
@@ -235,6 +241,10 @@ const CategoryListPageInner = () => {
   const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
   const [allCategories, setAllCategories] = useState<Category[]>([]);
   const [products, setProducts] = useState<ProductType[]>([]);
+  const [relatedProducts, setRelatedProducts] = useState<ProductType[]>([]);
+  const [lessRelevantProducts, setLessRelevantProducts] = useState<ProductType[]>([]);
+  const [recommendedProducts, setRecommendedProducts] = useState<ProductType[]>([]);
+  const [subcategoriesWithProducts, setSubcategoriesWithProducts] = useState<CategoryWithCount[]>([]);
   const [loading, setLoading] = useState(true);
   const [productsLoading, setProductsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -243,6 +253,22 @@ const CategoryListPageInner = () => {
     page: 1,
     limit: 20,
     pages: 0,
+  });
+
+  // Check if current category is a subcategory (has a parent)
+  const isSubcategory = Boolean(category?.parent);
+
+  // Convert products to carousel items
+  const productToCarouselItem = (product: ProductType): CarouselItem => ({
+    id: product.id || "",
+    image: product.images?.[0]?.url || "/placeholder.jpg",
+    url: `/products/${product.slug}`,
+    alt: product.name,
+    content: (
+      <div className={styles.carouselProductCard}>
+        <ProductCard product={product} />
+      </div>
+    ),
   });
 
   // Fetch all categories for tree view
@@ -270,12 +296,37 @@ const CategoryListPageInner = () => {
         if (data.success) {
           setCategory(data.category);
           setBreadcrumbs(data.breadcrumbs || []);
+
+          // If category has children (is a parent category), fetch subcategories with product counts
+          if (data.category.children && data.category.children.length > 0) {
+            try {
+              const subcatResponse = await fetch(
+                `/api/categories?withCounts=true&onlyWithProducts=true&limit=100`
+              );
+              const subcatData = await subcatResponse.json();
+              if (subcatData.success) {
+                // Filter to only show children of this category that have products
+                const childSlugs = data.category.children.map((c: Category) => c.slug);
+                const filteredSubcats = subcatData.categories.filter(
+                  (cat: CategoryWithCount) => childSlugs.includes(cat.slug) && (cat.productCount || 0) > 0
+                );
+                setSubcategoriesWithProducts(filteredSubcats);
+              }
+            } catch {
+              // If fails, use the children from category response
+              setSubcategoriesWithProducts(data.category.children);
+            }
+          } else {
+            setSubcategoriesWithProducts([]);
+          }
+
           setLoading(false);
           return data.category;
         } else {
           setError(data.error || "Category not found");
           setCategory(null);
           setBreadcrumbs([]);
+          setSubcategoriesWithProducts([]);
           await fetchAllCategories();
           setLoading(false);
           return null;
@@ -285,6 +336,7 @@ const CategoryListPageInner = () => {
         setError("Failed to load category");
         setCategory(null);
         setBreadcrumbs([]);
+        setSubcategoriesWithProducts([]);
         await fetchAllCategories();
         setLoading(false);
         return null;
@@ -317,18 +369,32 @@ const CategoryListPageInner = () => {
         if (maxPrice) params.set("maxPrice", maxPrice);
         if (page) params.set("page", page);
 
+        // Always request carousels (related, less relevant, recommended)
+        params.set("includeRelated", "true");
+        params.set("includeLessRelevant", "true");
+        params.set("includeRecommended", "true");
+
         const response = await fetch(`/api/products?${params.toString()}`);
         const data = await response.json();
 
         if (data.success) {
           setProducts(data.products);
           setPagination(data.pagination);
+          setRelatedProducts(data.relatedProducts || []);
+          setLessRelevantProducts(data.lessRelevantProducts || []);
+          setRecommendedProducts(data.recommendedProducts || []);
         } else {
           setProducts([]);
+          setRelatedProducts([]);
+          setLessRelevantProducts([]);
+          setRecommendedProducts([]);
         }
       } catch (err) {
         console.error("Failed to fetch products:", err);
         setProducts([]);
+        setRelatedProducts([]);
+        setLessRelevantProducts([]);
+        setRecommendedProducts([]);
       } finally {
         setProductsLoading(false);
       }
@@ -407,16 +473,16 @@ const CategoryListPageInner = () => {
       {/* Category Header with gradient */}
       <CategoryHeader category={category} />
 
-      {/* Subcategories Pills */}
-      {category.children && category.children.length > 0 && (
+      {/* Subcategories Pills - Only show for parent categories with subcategories that have products */}
+      {!isSubcategory && subcategoriesWithProducts.length > 0 && (
         <SubcategoriesPills
-          subcategories={category.children}
+          subcategories={subcategoriesWithProducts}
           activeSlug=""
           onSelect={handleSubcategorySelect}
         />
       )}
 
-      {/* Filters (without category filter since we're already in a category) */}
+      {/* Filters - hide category filter completely on category pages */}
       <div className={styles.filtersSection}>
         <ProductFilters
           categories={[]} // Don't show category filter on category page
@@ -449,6 +515,78 @@ const CategoryListPageInner = () => {
 
           {/* Pagination */}
           {pagination.pages > 1 && <Pagination pagination={pagination} />}
+
+          {/* Related Products Carousel */}
+          {relatedProducts.length > 0 && (
+            <div className={styles.carouselSection}>
+              <h2 className={styles.carouselTitle}>Related Products</h2>
+              <CarouselWrapper
+                variant="default"
+                data={relatedProducts.map(productToCarouselItem)}
+                options={{
+                  showControlBtns: true,
+                  showControlDots: false,
+                  loop: true,
+                  autoPlay: false,
+                  itemsPerView: {
+                    mobile: 1,
+                    tablet: 2,
+                    desktop: 4,
+                    xl: 5,
+                  },
+                }}
+                renderItem={(item) => item.content}
+              />
+            </div>
+          )}
+
+          {/* You Might Also Like Carousel (Less Relevant) */}
+          {lessRelevantProducts.length > 0 && (
+            <div className={styles.carouselSection}>
+              <h2 className={styles.carouselTitle}>You Might Also Like</h2>
+              <CarouselWrapper
+                variant="default"
+                data={lessRelevantProducts.map(productToCarouselItem)}
+                options={{
+                  showControlBtns: true,
+                  showControlDots: false,
+                  loop: true,
+                  autoPlay: false,
+                  itemsPerView: {
+                    mobile: 1,
+                    tablet: 2,
+                    desktop: 4,
+                    xl: 5,
+                  },
+                }}
+                renderItem={(item) => item.content}
+              />
+            </div>
+          )}
+
+          {/* Recommended Products Carousel */}
+          {recommendedProducts.length > 0 && (
+            <div className={styles.carouselSection}>
+              <h2 className={styles.carouselTitle}>Recommended For You</h2>
+              <CarouselWrapper
+                variant="default"
+                data={recommendedProducts.map(productToCarouselItem)}
+                options={{
+                  showControlBtns: true,
+                  showControlDots: false,
+                  loop: true,
+                  autoPlay: false,
+                  itemsPerView: {
+                    mobile: 1,
+                    tablet: 2,
+                    desktop: 4,
+                    xl: 5,
+                  },
+                }}
+                renderItem={(item) => item.content}
+              />
+            </div>
+          )}
         </>
       )}
     </div>

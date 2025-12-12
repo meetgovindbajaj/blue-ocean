@@ -8,6 +8,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { Toaster } from "@/components/ui/sonner";
 import FloatingActions from "@/components/shared/FloatingActions";
 import GoogleAnalytics from "@/components/shared/GoogleAnalytics";
+import CookieConsent from "@/components/CookieConsent";
 import { getSiteSettings } from "@/lib/siteMetadata";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://blueocean.com";
@@ -95,6 +96,7 @@ export default function UserLayout({
           <Suspense>{children}</Suspense>
           <Footer />
           <FloatingActions />
+          <CookieConsent />
           <Toaster position="top-right" />
         </CurrencyProvider>
       </SiteSettingsProvider>

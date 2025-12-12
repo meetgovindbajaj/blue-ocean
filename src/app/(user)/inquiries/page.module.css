@@ -302,6 +302,106 @@
     border-radius: 8px;
   }
 
+  /* User Comments */
+  .userComment {
+    border-left-color: #a855f7;
+  }
+
+  .userComment .responseHeader {
+    color: #a855f7;
+  }
+
+  /* Feedback Section */
+  .feedbackSection {
+    margin: 1rem 0;
+    padding: 1rem;
+    background-color: rgba(168, 85, 247, 0.08);
+    border: 1px solid rgba(168, 85, 247, 0.2);
+    border-radius: 12px;
+  }
+
+  .feedbackTitle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #a855f7;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .feedbackDescription {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0 0 1rem 0;
+  }
+
+  .commentForm {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .commentTextarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    resize: vertical;
+    min-height: 100px;
+    background-color: var(--background);
+    color: var(--text-primary);
+    font-family: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .commentTextarea:focus {
+    outline: none;
+    border-color: #a855f7;
+    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+  }
+
+  .commentTextarea::placeholder {
+    color: var(--text-secondary);
+  }
+
+  .commentFormFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .charCount {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+  }
+
+  .submitButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    background-color: #a855f7;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s, opacity 0.2s;
+  }
+
+  .submitButton:hover:not(:disabled) {
+    background-color: #9333ea;
+  }
+
+  .submitButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
   @media (max-width: 768px) {
     .page {
       padding: 1.5rem 1rem;

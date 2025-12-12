@@ -66,6 +66,8 @@ import {
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
+  MessageCircle,
+  User,
 } from "lucide-react";
 
 type SortField = "name" | "email" | "status" | "product" | "createdAt";
@@ -75,6 +77,11 @@ import { toast } from "sonner";
 interface Note {
   adminId: string;
   note: string;
+  timestamp: string;
+}
+
+interface UserComment {
+  comment: string;
   timestamp: string;
 }
 
@@ -96,6 +103,7 @@ interface Inquiry {
     email: string;
   };
   notes?: Note[];
+  userComments?: UserComment[];
   createdAt: string;
   updatedAt: string;
 }
@@ -104,6 +112,7 @@ interface StatusCounts {
   total: number;
   pending: number;
   "in-progress": number;
+  "customer-feedback": number;
   resolved: number;
   closed: number;
 }
@@ -111,6 +120,7 @@ interface StatusCounts {
 const STATUSES = [
   { value: "pending", label: "Pending", color: "bg-yellow-100 text-yellow-800" },
   { value: "in-progress", label: "In Progress", color: "bg-blue-100 text-blue-800" },
+  { value: "customer-feedback", label: "Customer Feedback", color: "bg-purple-100 text-purple-800" },
   { value: "resolved", label: "Resolved", color: "bg-green-100 text-green-800" },
   { value: "closed", label: "Closed", color: "bg-gray-100 text-gray-800" },
 ];
@@ -357,7 +367,7 @@ export default function InquiriesPage() {
 
       {/* Status Cards */}
       {counts && (
-        <div className="grid gap-4 md:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-5">
           <Card className="cursor-pointer hover:bg-muted/50" onClick={() => setStatusFilter("")}>
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
@@ -393,6 +403,19 @@ export default function InquiriesPage() {
                 <div>
                   <p className="text-2xl font-bold">{counts["in-progress"]}</p>
                   <p className="text-xs text-muted-foreground">In Progress</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="cursor-pointer hover:bg-muted/50" onClick={() => setStatusFilter("customer-feedback")}>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-purple-100">
+                  <MessageCircle className="h-5 w-5 text-purple-600" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold">{counts["customer-feedback"] || 0}</p>
+                  <p className="text-xs text-muted-foreground">Feedback</p>
                 </div>
               </div>
             </CardContent>
@@ -582,6 +605,12 @@ export default function InquiriesPage() {
                               Mark In Progress
                             </DropdownMenuItem>
                             <DropdownMenuItem
+                              onClick={() => handleUpdateStatus(inquiry.id, "customer-feedback")}
+                            >
+                              <MessageCircle className="h-4 w-4 mr-2" />
+                              Request Feedback
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
                               onClick={() => handleUpdateStatus(inquiry.id, "resolved")}
                             >
                               <CheckCircle className="h-4 w-4 mr-2" />
@@ -681,10 +710,33 @@ export default function InquiriesPage() {
                 </p>
               </div>
 
+              {/* User Comments */}
+              {selectedInquiry.userComments && selectedInquiry.userComments.length > 0 && (
+                <div>
+                  <Label className="text-muted-foreground flex items-center gap-2">
+                    <User className="h-4 w-4" />
+                    Customer Comments
+                  </Label>
+                  <div className="mt-2 space-y-2 max-h-48 overflow-y-auto">
+                    {selectedInquiry.userComments.map((comment, index) => (
+                      <div
+                        key={index}
+                        className="p-3 rounded-lg text-sm bg-purple-50 border border-purple-200"
+                      >
+                        <p className="whitespace-pre-wrap">{comment.comment}</p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {formatDate(comment.timestamp)}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Existing Notes */}
               {selectedInquiry.notes && selectedInquiry.notes.length > 0 && (
                 <div>
-                  <Label className="text-muted-foreground">Notes History</Label>
+                  <Label className="text-muted-foreground">Admin Notes History</Label>
                   <div className="mt-2 space-y-2 max-h-48 overflow-y-auto">
                     {selectedInquiry.notes.map((note, index) => (
                       <div

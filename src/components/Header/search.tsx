@@ -7,6 +7,7 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import styles from "./search.module.css";
 import ProductFilters from "../shared/ProductFilters";
 import ProductCard from "../shared/ProductCard";
+import { CarouselWrapper, CarouselItem } from "@/components/ui/CarouselWrapper";
 import { ProductType } from "@/types/product";
 import { Route } from "next";
 
@@ -43,6 +44,9 @@ const SearchContent = ({
   const searchParams = useSearchParams();
 
   const [products, setProducts] = useState<ProductType[]>([]);
+  const [relatedProducts, setRelatedProducts] = useState<ProductType[]>([]);
+  const [lessRelevantProducts, setLessRelevantProducts] = useState<ProductType[]>([]);
+  const [recommendedProducts, setRecommendedProducts] = useState<ProductType[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -52,6 +56,19 @@ const SearchContent = ({
     page: 1,
     limit: 12,
     pages: 0,
+  });
+
+  // Convert products to carousel items
+  const productToCarouselItem = (product: ProductType): CarouselItem => ({
+    id: product.id || "",
+    image: product.images?.[0]?.url || "/placeholder.jpg",
+    url: `/products/${product.slug}`,
+    alt: product.name,
+    content: (
+      <div className={styles.carouselProductCard}>
+        <ProductCard product={product} />
+      </div>
+    ),
   });
 
   const debouncedQuery = useDebounce(query, 300);
@@ -121,12 +138,20 @@ const SearchContent = ({
         params.set("priceCurrency", currentPriceCurrency);
       params.set("limit", "12");
 
+      // Always request carousels (same as products page)
+      params.set("includeRelated", "true");
+      params.set("includeLessRelevant", "true");
+      params.set("includeRecommended", "true");
+
       const response = await fetch(`/api/products?${params.toString()}`);
       const data = await response.json();
 
       if (data.success) {
         setProducts(data.products);
         setPagination(data.pagination);
+        setRelatedProducts(data.relatedProducts || []);
+        setLessRelevantProducts(data.lessRelevantProducts || []);
+        setRecommendedProducts(data.recommendedProducts || []);
 
         // Generate suggestions from product names
         const productSuggestions = data.products
@@ -147,6 +172,9 @@ const SearchContent = ({
     } catch {
       console.error("Failed to fetch products");
       setProducts([]);
+      setRelatedProducts([]);
+      setLessRelevantProducts([]);
+      setRecommendedProducts([]);
     } finally {
       setLoading(false);
     }
@@ -318,13 +346,87 @@ const SearchContent = ({
 
         {/* Results Grid */}
         {!loading && products.length > 0 && (
-          <div className={styles.quickResults}>
-            <div className={styles.quickResultsGrid}>
-              {products.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
+          <>
+            <div className={styles.quickResults}>
+              <div className={styles.quickResultsGrid}>
+                {products.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
             </div>
-          </div>
+
+            {/* Related Products Carousel */}
+            {relatedProducts.length > 0 && (
+              <div className={styles.carouselSection}>
+                <h3 className={styles.carouselTitle}>Related Products</h3>
+                <CarouselWrapper
+                  variant="default"
+                  data={relatedProducts.map(productToCarouselItem)}
+                  options={{
+                    showControlBtns: true,
+                    showControlDots: false,
+                    loop: true,
+                    autoPlay: false,
+                    itemsPerView: {
+                      mobile: 1,
+                      tablet: 2,
+                      desktop: 4,
+                      xl: 5,
+                    },
+                  }}
+                  renderItem={(item) => item.content}
+                />
+              </div>
+            )}
+
+            {/* You Might Also Like Carousel */}
+            {lessRelevantProducts.length > 0 && (
+              <div className={styles.carouselSection}>
+                <h3 className={styles.carouselTitle}>You Might Also Like</h3>
+                <CarouselWrapper
+                  variant="default"
+                  data={lessRelevantProducts.map(productToCarouselItem)}
+                  options={{
+                    showControlBtns: true,
+                    showControlDots: false,
+                    loop: true,
+                    autoPlay: false,
+                    itemsPerView: {
+                      mobile: 1,
+                      tablet: 2,
+                      desktop: 4,
+                      xl: 5,
+                    },
+                  }}
+                  renderItem={(item) => item.content}
+                />
+              </div>
+            )}
+
+            {/* Recommended Products Carousel */}
+            {recommendedProducts.length > 0 && (
+              <div className={styles.carouselSection}>
+                <h3 className={styles.carouselTitle}>Recommended For You</h3>
+                <CarouselWrapper
+                  variant="default"
+                  data={recommendedProducts.map(productToCarouselItem)}
+                  options={{
+                    showControlBtns: true,
+                    showControlDots: false,
+                    loop: true,
+                    autoPlay: false,
+                    itemsPerView: {
+                      mobile: 1,
+                      tablet: 2,
+                      desktop: 4,
+                      xl: 5,
+                    },
+                  }}
+                  renderItem={(item) => item.content}
+                />
+              </div>
+            )}
+          </>
         )}
 
         {/* No Results */}

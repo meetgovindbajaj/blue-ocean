@@ -15,12 +15,19 @@ import {
   Package,
   Mail,
   MessageCircle,
+  Send,
+  User,
 } from "lucide-react";
 import { toast } from "sonner";
 
 interface Note {
   adminId: string;
   note: string;
+  timestamp: string;
+}
+
+interface UserComment {
+  comment: string;
   timestamp: string;
 }
 
@@ -31,7 +38,7 @@ interface Inquiry {
   phone?: string;
   subject?: string;
   message: string;
-  status: "pending" | "in-progress" | "resolved" | "closed";
+  status: "pending" | "in-progress" | "customer-feedback" | "resolved" | "closed";
   priority?: string;
   product?: {
     id: string;
@@ -40,6 +47,7 @@ interface Inquiry {
     image?: string;
   } | null;
   notes?: Note[];
+  userComments?: UserComment[];
   createdAt: string;
   updatedAt: string;
 }
@@ -47,6 +55,7 @@ interface Inquiry {
 const statusConfig: Record<string, { label: string; icon: any; color: string }> = {
   pending: { label: "Pending", icon: AlertCircle, color: "#f59e0b" },
   "in-progress": { label: "In Progress", icon: Clock, color: "#3b82f6" },
+  "customer-feedback": { label: "Awaiting Your Feedback", icon: MessageCircle, color: "#a855f7" },
   resolved: { label: "Resolved", icon: CheckCircle, color: "#22c55e" },
   closed: { label: "Closed", icon: CheckCircle, color: "#6b7280" },
 };
@@ -55,6 +64,8 @@ const InquiriesPage = () => {
   const router = useRouter();
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [commentText, setCommentText] = useState<Record<string, string>>({});
+  const [submittingComment, setSubmittingComment] = useState<string | null>(null);
 
   useEffect(() => {
     fetchInquiries();
@@ -89,6 +100,38 @@ const InquiriesPage = () => {
       hour: "2-digit",
       minute: "2-digit",
     });
+  };
+
+  const handleSubmitComment = async (inquiryId: string) => {
+    const comment = commentText[inquiryId]?.trim();
+    if (!comment) {
+      toast.error("Please enter a comment");
+      return;
+    }
+
+    setSubmittingComment(inquiryId);
+    try {
+      const response = await fetch(`/api/user/inquiries/${inquiryId}/comment`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ comment }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to submit comment");
+      }
+
+      toast.success("Comment submitted successfully");
+      setCommentText((prev) => ({ ...prev, [inquiryId]: "" }));
+      // Refresh inquiries to get updated status
+      fetchInquiries();
+    } catch (error: any) {
+      toast.error(error.message || "Failed to submit comment");
+    } finally {
+      setSubmittingComment(null);
+    }
   };
 
   if (loading) {
@@ -166,6 +209,82 @@ const InquiriesPage = () => {
                   )}
 
                   <p className={styles.inquiryMessage}>{inquiry.message}</p>
+
+                  {/* Comment Form for customer-feedback status */}
+                  {inquiry.status === "customer-feedback" && (
+                    <div className={styles.feedbackSection}>
+                      <h4 className={styles.feedbackTitle}>
+                        <MessageCircle size={16} />
+                        Your Feedback is Needed
+                      </h4>
+                      <p className={styles.feedbackDescription}>
+                        Please provide additional information to help us resolve your inquiry.
+                      </p>
+                      <div className={styles.commentForm}>
+                        <textarea
+                          className={styles.commentTextarea}
+                          placeholder="Type your response here..."
+                          value={commentText[inquiry.id] || ""}
+                          onChange={(e) =>
+                            setCommentText((prev) => ({
+                              ...prev,
+                              [inquiry.id]: e.target.value,
+                            }))
+                          }
+                          rows={4}
+                          maxLength={1000}
+                        />
+                        <div className={styles.commentFormFooter}>
+                          <span className={styles.charCount}>
+                            {(commentText[inquiry.id] || "").length}/1000
+                          </span>
+                          <button
+                            className={styles.submitButton}
+                            onClick={() => handleSubmitComment(inquiry.id)}
+                            disabled={submittingComment === inquiry.id || !commentText[inquiry.id]?.trim()}
+                          >
+                            {submittingComment === inquiry.id ? (
+                              <>
+                                <Loader2 size={14} className={styles.spinner} />
+                                Submitting...
+                              </>
+                            ) : (
+                              <>
+                                <Send size={14} />
+                                Submit Feedback
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* User Comments */}
+                  {inquiry.userComments && inquiry.userComments.length > 0 && (
+                    <div className={styles.responsesSection}>
+                      <h4 className={styles.responsesTitle}>
+                        <User size={16} />
+                        Your Comments ({inquiry.userComments.length})
+                      </h4>
+                      <div className={styles.responsesList}>
+                        {inquiry.userComments.map((comment, index) => (
+                          <div key={index} className={`${styles.responseItem} ${styles.userComment}`}>
+                            <div className={styles.responseHeader}>
+                              <User size={14} />
+                              <span>Your Comment</span>
+                              <span className={styles.responseDate}>
+                                {formatDate(comment.timestamp)}
+                              </span>
+                            </div>
+                            <p className={styles.responseContent}>
+                              {comment.comment}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   {/* Admin Responses/Notes */}
                   {inquiry.notes && inquiry.notes.length > 0 && (

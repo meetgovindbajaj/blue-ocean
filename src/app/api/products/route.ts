@@ -10,10 +10,17 @@ export const dynamic = "force-dynamic";
 interface QueryFilter {
   isActive: boolean;
   category?: Types.ObjectId | { $in: Types.ObjectId[] };
+  _id?: { $nin: Types.ObjectId[] };
   "prices.retail"?: { $gte?: number; $lte?: number };
   $or?: Array<{
     name?: { $regex: string; $options: string };
     description?: { $regex: string; $options: string };
+  }>;
+  $and?: Array<{
+    $or?: Array<{
+      name?: { $regex: string; $options: string };
+      description?: { $regex: string; $options: string };
+    }>;
   }>;
 }
 
@@ -63,12 +70,19 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
 
-    const category = searchParams.get("category");
+    // Support both single category and multiple categories (comma-separated)
+    const categoriesParam = searchParams.get("categories");
+    const category = searchParams.get("category"); // Legacy support
     const search = searchParams.get("search");
     const sort = searchParams.get("sort");
     const minPrice = searchParams.get("minPrice");
     const maxPrice = searchParams.get("maxPrice");
     const priceCurrency = searchParams.get("priceCurrency"); // Currency user entered price in
+
+    // Additional response options
+    const includeRelated = searchParams.get("includeRelated") === "true";
+    const includeLessRelevant = searchParams.get("includeLessRelevant") === "true";
+    const includeRecommended = searchParams.get("includeRecommended") === "true";
 
     const limitNum = Math.min(
       Math.max(parseInt(searchParams.get("limit") || "20", 10), 1),
@@ -94,48 +108,70 @@ export async function GET(request: NextRequest) {
 
     const query: QueryFilter = { isActive: true };
 
-    // Category filter (id, slug, or name - includes children)
-    if (category?.trim()) {
-      const trimmed = category.trim();
+    // Collect all category IDs (for related products lookup later)
+    let matchedCategoryIds: Types.ObjectId[] = [];
+    let parentCategoryIds: Types.ObjectId[] = [];
 
-      if (mongoose.isValidObjectId(trimmed)) {
-        query.category = new Types.ObjectId(trimmed);
-      } else {
-        // Try slug first, then name (case-insensitive)
-        const baseCategory = await Category.findOne({
-          $or: [
-            { slug: trimmed },
-            { name: { $regex: `^${trimmed}$`, $options: "i" } },
-          ],
-          isActive: true,
-        })
-          .select("_id children")
-          .lean();
+    // Category filter - support multiple categories (comma-separated) or single legacy category
+    const categoryList = categoriesParam
+      ? categoriesParam.split(",").map((c) => c.trim()).filter(Boolean)
+      : category?.trim()
+      ? [category.trim()]
+      : [];
 
-        if (!baseCategory) {
-          return NextResponse.json(
-            {
-              success: true,
-              products: [],
-              pagination: {
-                total: 0,
-                page: pageNum,
-                limit: limitNum,
-                pages: 0,
-              },
-              filters: { category, search, sort: "newest", minPrice, maxPrice },
-            },
-            { headers: CACHE_HEADERS }
-          );
+    if (categoryList.length > 0) {
+      const allCategoryIds: Types.ObjectId[] = [];
+
+      for (const cat of categoryList) {
+        if (mongoose.isValidObjectId(cat)) {
+          const catId = new Types.ObjectId(cat);
+          allCategoryIds.push(catId);
+          matchedCategoryIds.push(catId);
+        } else {
+          // Try slug first, then name (case-insensitive)
+          const baseCategory = await Category.findOne({
+            $or: [
+              { slug: cat },
+              { name: { $regex: `^${cat}$`, $options: "i" } },
+            ],
+            isActive: true,
+          })
+            .select("_id children parent")
+            .lean();
+
+          if (baseCategory) {
+            allCategoryIds.push(baseCategory._id);
+            matchedCategoryIds.push(baseCategory._id);
+            if (baseCategory.children?.length) {
+              allCategoryIds.push(...baseCategory.children);
+            }
+            // Track parent categories for related products
+            if (baseCategory.parent) {
+              parentCategoryIds.push(baseCategory.parent);
+            }
+          }
         }
-
-        const categoryIds: Types.ObjectId[] = [baseCategory._id];
-        if (baseCategory.children?.length) {
-          categoryIds.push(...baseCategory.children);
-        }
-
-        query.category = { $in: categoryIds };
       }
+
+      if (allCategoryIds.length === 0) {
+        // No valid categories found
+        return NextResponse.json(
+          {
+            success: true,
+            products: [],
+            pagination: {
+              total: 0,
+              page: pageNum,
+              limit: limitNum,
+              pages: 0,
+            },
+            filters: { categories: categoryList, search, sort: "newest", minPrice, maxPrice },
+          },
+          { headers: CACHE_HEADERS }
+        );
+      }
+
+      query.category = { $in: allCategoryIds };
     }
 
     // Search filter
@@ -198,6 +234,161 @@ export async function GET(request: NextRequest) {
         .lean(),
     ]);
 
+    // Get product IDs from main results to exclude from additional queries
+    const mainProductIds = products.map((p: any) => p._id);
+
+    // Initialize additional arrays
+    let relatedProducts: any[] = [];
+    let lessRelevantProducts: any[] = [];
+    let recommendedProducts: any[] = [];
+
+    // Get related products from parent/sibling categories (max 20)
+    if (includeRelated) {
+      try {
+        // Get categories from matched products
+        const productCategories = products
+          .map((p: any) => p.category?._id || p.category)
+          .filter(Boolean);
+
+        // Get parent categories
+        const categories = await Category.find({
+          _id: { $in: productCategories },
+        })
+          .select("parent")
+          .lean();
+
+        const parentIds = categories
+          .map((c: any) => c.parent)
+          .filter(Boolean);
+
+        // Combine with already found parent category IDs
+        const allParentIds = [...new Set([...parentIds, ...parentCategoryIds])];
+
+        if (allParentIds.length > 0) {
+          // Get sibling categories (children of parent)
+          const siblingCategories = await Category.find({
+            parent: { $in: allParentIds },
+            isActive: true,
+          })
+            .select("_id")
+            .lean();
+
+          const siblingCategoryIds = siblingCategories.map((c: any) => c._id);
+
+          // Get products from sibling categories
+          relatedProducts = await Product.find({
+            isActive: true,
+            category: { $in: [...siblingCategoryIds, ...allParentIds] },
+            _id: { $nin: mainProductIds },
+          })
+            .select("id name slug description prices images category size breadcrumbs")
+            .populate("category", "id name slug")
+            .sort({ score: -1 })
+            .limit(20)
+            .lean();
+        }
+
+        // If no related products found, get products from same categories
+        if (relatedProducts.length === 0 && productCategories.length > 0) {
+          relatedProducts = await Product.find({
+            isActive: true,
+            category: { $in: productCategories },
+            _id: { $nin: mainProductIds },
+          })
+            .select("id name slug description prices images category size breadcrumbs")
+            .populate("category", "id name slug")
+            .sort({ score: -1 })
+            .limit(20)
+            .lean();
+        }
+      } catch (error) {
+        console.error("Error fetching related products:", error);
+      }
+    }
+
+    // Get less relevant products using partial word matches (max 20)
+    if (includeLessRelevant) {
+      try {
+        const excludeIds = [
+          ...mainProductIds,
+          ...relatedProducts.map((p: any) => p._id).filter(Boolean),
+        ].filter(Boolean);
+
+        if (search?.trim()) {
+          // Split search into words and create partial match patterns
+          const searchTerms = search.trim().split(/\s+/).filter((t) => t.length >= 2);
+
+          if (searchTerms.length > 0) {
+            // Create partial patterns - match any word in name or description
+            const orConditions: any[] = [];
+            for (const term of searchTerms) {
+              // Try partial/fuzzy matching by checking if any term partially appears
+              const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+              orConditions.push(
+                { name: { $regex: escapedTerm, $options: "i" } },
+                { description: { $regex: escapedTerm, $options: "i" } }
+              );
+            }
+
+            lessRelevantProducts = await Product.find({
+              isActive: true,
+              _id: { $nin: excludeIds },
+              $or: orConditions,
+            })
+              .select("id name slug description prices images category size breadcrumbs")
+              .populate("category", "id name slug")
+              .sort({ score: -1 })
+              .limit(20)
+              .lean();
+          }
+        }
+
+        // If no search or no results, get products from similar price range or recent products
+        if (lessRelevantProducts.length === 0 && products.length > 0) {
+          // Get average price from main results
+          const avgPrice = products.reduce((sum: number, p: any) => sum + (p.prices?.retail || 0), 0) / products.length;
+          const priceRange = avgPrice * 0.3; // 30% range
+
+          lessRelevantProducts = await Product.find({
+            isActive: true,
+            _id: { $nin: excludeIds },
+            "prices.retail": { $gte: avgPrice - priceRange, $lte: avgPrice + priceRange },
+          })
+            .select("id name slug description prices images category size breadcrumbs")
+            .populate("category", "id name slug")
+            .sort({ score: -1, createdAt: -1 })
+            .limit(20)
+            .lean();
+        }
+      } catch (error) {
+        console.error("Error fetching less relevant products:", error);
+      }
+    }
+
+    // Get recommended products (trending/popular products)
+    // Only exclude main results, allow overlap with related/less relevant
+    if (includeRecommended) {
+      try {
+        const recommendedQuery: any = {
+          isActive: true,
+        };
+
+        // Only exclude main product results
+        if (mainProductIds.length > 0) {
+          recommendedQuery._id = { $nin: mainProductIds };
+        }
+
+        recommendedProducts = await Product.find(recommendedQuery)
+          .select("id name slug description prices images category size breadcrumbs")
+          .populate("category", "id name slug")
+          .sort({ score: -1, totalViews: -1 })
+          .limit(20)
+          .lean();
+      } catch (error) {
+        console.error("Error fetching recommended products:", error);
+      }
+    }
+
     return NextResponse.json(
       {
         success: true,
@@ -209,12 +400,16 @@ export async function GET(request: NextRequest) {
           pages: Math.ceil(totalCount / limitNum),
         },
         filters: {
-          category,
+          categories: categoryList.length > 0 ? categoryList : undefined,
+          category: categoryList.length === 0 ? category : undefined,
           search,
           sort: sortOption,
           minPrice: minPriceNum,
           maxPrice: maxPriceNum,
         },
+        ...(includeRelated && { relatedProducts }),
+        ...(includeLessRelevant && { lessRelevantProducts }),
+        ...(includeRecommended && { recommendedProducts }),
       },
       { headers: CACHE_HEADERS }
     );

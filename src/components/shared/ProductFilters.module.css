@@ -85,6 +85,8 @@
 
   .categorySelect {
     flex: 2.5;
+    min-width: 0;
+    max-width: 300px;
   }
 
   .sortSelect {

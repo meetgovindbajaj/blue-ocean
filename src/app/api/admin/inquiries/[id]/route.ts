@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/db";
 import Inquiry from "@/models/Inquiry";
+import Profile from "@/models/Profile";
 import { getAuthUser, isAdmin, unauthorizedResponse, forbiddenResponse, errorResponse, successResponse } from "@/lib/apiAuth";
 import { sendEmail } from "@/lib/email";
 
@@ -51,6 +52,7 @@ export async function GET(
             }
           : null,
         notes: (inquiry as any).notes || [],
+        userComments: (inquiry as any).userComments || [],
         createdAt: (inquiry as any).createdAt,
         updatedAt: (inquiry as any).updatedAt,
       },
@@ -83,6 +85,8 @@ export async function PUT(
       return errorResponse("Inquiry not found", 404);
     }
 
+    const previousStatus = inquiry.status;
+
     // Update fields
     if (status) inquiry.status = status;
 
@@ -94,6 +98,56 @@ export async function PUT(
         note: adminNotes,
         timestamp: new Date(),
       });
+    }
+
+    // Send notification email when status changes to customer-feedback
+    // Only send if user has email notifications enabled in preferences
+    if (status === "customer-feedback" && previousStatus !== "customer-feedback") {
+      try {
+        // Check if user has email notifications enabled
+        let shouldSendEmail = true;
+
+        // Look up user profile by userId or email to check notification preferences
+        const userProfile = inquiry.userId
+          ? await Profile.findOne({ userId: inquiry.userId }).lean()
+          : await Profile.findOne({ email: inquiry.email }).lean();
+
+        if (userProfile && (userProfile as any).preferences?.notifications?.email === false) {
+          shouldSendEmail = false;
+        }
+
+        if (shouldSendEmail) {
+          const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+          await sendEmail({
+            to: inquiry.email,
+            subject: `Action Required: We Need Your Feedback - Inquiry #${inquiry._id.toString().slice(-6)}`,
+            html: `
+              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #333;">Your Feedback is Needed</h2>
+                <p>Dear ${inquiry.name},</p>
+                <p>We have reviewed your inquiry and need additional information from you to proceed.</p>
+                ${adminNotes ? `
+                <div style="background-color: #f5f5f5; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                  <p style="margin: 0 0 10px 0; font-weight: bold;">Message from our team:</p>
+                  <p style="margin: 0;">${adminNotes}</p>
+                </div>
+                ` : ""}
+                <p>Please visit your inquiries page to provide your feedback:</p>
+                <p style="text-align: center; margin: 25px 0;">
+                  <a href="${siteUrl}/inquiries" style="display: inline-block; background-color: #3b82f6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 500;">
+                    View My Inquiries
+                  </a>
+                </p>
+                <p>If you have any questions, please don't hesitate to contact us.</p>
+                <p>Best regards,<br>Customer Support Team</p>
+              </div>
+            `,
+          });
+        }
+      } catch (emailError) {
+        console.error("Failed to send customer-feedback notification email:", emailError);
+        // Continue with update even if email fails
+      }
     }
 
     // Send response email if requested
@@ -137,6 +191,7 @@ export async function PUT(
         id: inquiry._id?.toString(),
         status: inquiry.status,
         notes: inquiry.notes,
+        userComments: inquiry.userComments || [],
       },
     });
   } catch (error) {

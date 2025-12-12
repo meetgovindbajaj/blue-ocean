@@ -33,6 +33,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import {
   Send,
@@ -40,6 +41,8 @@ import {
   Package,
   Search,
   Loader2,
+  Mail,
+  Megaphone,
 } from "lucide-react";
 
 interface Product {
@@ -59,6 +62,8 @@ interface Product {
   createdAt: string;
 }
 
+type EmailType = "newsletter" | "promotion";
+
 export default function NotificationsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
@@ -67,6 +72,7 @@ export default function NotificationsPage() {
   const [sending, setSending] = useState(false);
   const [search, setSearch] = useState("");
   const [showConfirm, setShowConfirm] = useState(false);
+  const [emailType, setEmailType] = useState<EmailType>("newsletter");
 
   const [subject, setSubject] = useState("Check out our latest products!");
   const [message, setMessage] = useState(
@@ -91,10 +97,10 @@ export default function NotificationsPage() {
     }
   }, [search]);
 
-  // Fetch subscribers
+  // Fetch subscribers based on email type
   const fetchSubscribers = useCallback(async () => {
     try {
-      const response = await fetch("/api/admin/notifications");
+      const response = await fetch(`/api/admin/notifications?emailType=${emailType}`);
       const data = await response.json();
       if (data.success) {
         setSubscriberCount(data.count);
@@ -102,7 +108,7 @@ export default function NotificationsPage() {
     } catch (error) {
       console.error("Failed to fetch subscribers:", error);
     }
-  }, []);
+  }, [emailType]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -157,6 +163,7 @@ export default function NotificationsPage() {
           productIds: selectedProducts,
           subject,
           message,
+          emailType,
         }),
       });
 
@@ -199,18 +206,51 @@ export default function NotificationsPage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
+        {/* Email Type Selection */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Email Type
+            </CardTitle>
+            {emailType === "newsletter" ? (
+              <Mail className="h-4 w-4 text-muted-foreground" />
+            ) : (
+              <Megaphone className="h-4 w-4 text-muted-foreground" />
+            )}
+          </CardHeader>
+          <CardContent>
+            <Tabs value={emailType} onValueChange={(v) => setEmailType(v as EmailType)}>
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="newsletter" className="gap-2">
+                  <Mail className="h-3.5 w-3.5" />
+                  Newsletter
+                </TabsTrigger>
+                <TabsTrigger value="promotion" className="gap-2">
+                  <Megaphone className="h-3.5 w-3.5" />
+                  Promotion
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+            <p className="text-xs text-muted-foreground mt-2">
+              {emailType === "newsletter"
+                ? "Send to newsletter subscribers"
+                : "Send to promotion subscribers"}
+            </p>
+          </CardContent>
+        </Card>
+
         {/* Subscriber Stats */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Email Subscribers
+              {emailType === "newsletter" ? "Newsletter" : "Promotion"} Subscribers
             </CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{subscriberCount}</div>
             <p className="text-xs text-muted-foreground">
-              customers with email notifications enabled
+              customers subscribed to {emailType === "newsletter" ? "newsletters" : "promotions"}
             </p>
           </CardContent>
         </Card>
@@ -230,8 +270,7 @@ export default function NotificationsPage() {
             </p>
           </CardContent>
         </Card>
-
-        </div>
+      </div>
 
       {/* Email Compose Section */}
       <Card>
@@ -398,7 +437,7 @@ export default function NotificationsPage() {
           ) : (
             <>
               <Send className="h-4 w-4 mr-2" />
-              Send to {subscriberCount} Subscribers
+              Send {emailType === "newsletter" ? "Newsletter" : "Promotion"} to {subscriberCount} Subscribers
             </>
           )}
         </Button>
@@ -408,10 +447,13 @@ export default function NotificationsPage() {
       <AlertDialog open={showConfirm} onOpenChange={setShowConfirm}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Send Notification Emails</AlertDialogTitle>
+            <AlertDialogTitle>
+              Send {emailType === "newsletter" ? "Newsletter" : "Promotion"} Email
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              You are about to send an email to{" "}
-              <strong>{subscriberCount}</strong> subscribers about{" "}
+              You are about to send a{" "}
+              <strong>{emailType === "newsletter" ? "newsletter" : "promotion"}</strong> email to{" "}
+              <strong>{subscriberCount}</strong> {emailType} subscribers about{" "}
               <strong>{selectedProducts.length}</strong> product(s).
               <br />
               <br />
@@ -424,7 +466,7 @@ export default function NotificationsPage() {
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={confirmSend}>
-              Send Emails
+              Send {emailType === "newsletter" ? "Newsletter" : "Promotion"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -183,4 +183,35 @@
             gap: 0.75rem;
         }
     }
+
+    /* Carousel Sections */
+    .carouselSection {
+        margin-top: 2rem;
+        padding: 1.5rem 1rem;
+        border-top: 1px solid var(--border, #e5e7eb);
+    }
+
+    .carouselTitle {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary, #111827);
+        margin: 0 0 1rem 0;
+    }
+
+    .carouselProductCard {
+        padding: 0.5rem;
+        height: 100%;
+    }
+
+    @media screen and (width <= 600px) {
+        .carouselSection {
+            margin-top: 1.5rem;
+            padding: 1rem 0.5rem;
+        }
+
+        .carouselTitle {
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+        }
+    }
 }

@@ -24,6 +24,7 @@ import { SlidersHorizontal, X, Search } from "lucide-react";
 import styles from "./ProductFilters.module.css";
 import { Route } from "next";
 import { useCurrency } from "@/context/CurrencyContext";
+import CategoryMultiSelect from "./CategoryMultiSelect";
 
 export type SortOption =
   | "newest"
@@ -33,7 +34,7 @@ export type SortOption =
   | "trending";
 
 export interface FilterValues {
-  category: string;
+  categories: string[];
   search: string;
   sort: SortOption;
   minPrice: string;
@@ -47,7 +48,7 @@ interface Category {
 }
 
 interface ProductFiltersProps {
-  categories: Category[];
+  categories?: Category[]; // Optional - used for displaying filter chips with names
   totalResults?: number;
   onFiltersChange?: (filters: FilterValues) => void;
   hideSearch?: boolean;
@@ -75,7 +76,7 @@ function useDebounce<T>(value: T, delay: number): T {
 }
 
 export default function ProductFilters({
-  categories,
+  categories = [],
   totalResults,
   onFiltersChange,
   hideSearch = false,
@@ -88,8 +89,9 @@ export default function ProductFilters({
   const { currency, currencySymbol } = useCurrency();
 
   // Initialize state from URL params
+  const categoriesParam = searchParams.get("categories");
   const [filters, setFilters] = useState<FilterValues>({
-    category: searchParams.get("category") || "",
+    categories: categoriesParam ? categoriesParam.split(",").filter(Boolean) : [],
     search: searchParams.get("search") || "",
     sort: (searchParams.get("sort") as SortOption) || "newest",
     minPrice: searchParams.get("minPrice") || "",
@@ -119,10 +121,10 @@ export default function ProductFilters({
         params.delete("search");
       }
 
-      if (newFilters.category) {
-        params.set("category", newFilters.category);
+      if (newFilters.categories.length > 0) {
+        params.set("categories", newFilters.categories.join(","));
       } else {
-        params.delete("category");
+        params.delete("categories");
       }
 
       if (newFilters.sort && newFilters.sort !== "newest") {
@@ -189,15 +191,18 @@ export default function ProductFilters({
   }, [debouncedSearch, debouncedMinPrice, debouncedMaxPrice]);
 
   // Get active filters for chips
-  const activeFilters: { key: keyof FilterValues; label: string }[] = [];
+  const activeFilters: { key: keyof FilterValues; label: string; value?: string }[] = [];
   if (filters.search) {
     activeFilters.push({ key: "search", label: `Search: ${filters.search}` });
   }
-  if (filters.category) {
-    const cat = categories.find((c) => c.slug === filters.category);
-    activeFilters.push({
-      key: "category",
-      label: `Category: ${cat?.name || filters.category}`,
+  if (filters.categories.length > 0) {
+    filters.categories.forEach((catSlug) => {
+      const cat = categories.find((c) => c.slug === catSlug);
+      activeFilters.push({
+        key: "categories",
+        label: cat?.name || catSlug,
+        value: catSlug,
+      });
     });
   }
   // Show sort in pills except for "newest" (default)
@@ -220,8 +225,19 @@ export default function ProductFilters({
 
   // Handle filter change (immediate for selects)
   const handleFilterChange = useCallback(
-    (key: keyof FilterValues, value: string) => {
+    (key: keyof FilterValues, value: string | string[]) => {
       const newFilters = { ...filters, [key]: value };
+      setFilters(newFilters);
+      updateURL(newFilters);
+      onFiltersChange?.(newFilters);
+    },
+    [filters, updateURL, onFiltersChange]
+  );
+
+  // Handle categories change from multiselect
+  const handleCategoriesChange = useCallback(
+    (selectedCategories: string[]) => {
+      const newFilters = { ...filters, categories: selectedCategories };
       setFilters(newFilters);
       updateURL(newFilters);
       onFiltersChange?.(newFilters);
@@ -231,7 +247,7 @@ export default function ProductFilters({
 
   // Remove single filter
   const handleRemoveFilter = useCallback(
-    (key: keyof FilterValues) => {
+    (key: keyof FilterValues, value?: string) => {
       const newFilters = { ...filters };
       if (key === "minPrice") {
         newFilters.minPrice = "";
@@ -243,8 +259,14 @@ export default function ProductFilters({
         setSearchInput("");
       } else if (key === "sort") {
         newFilters.sort = "newest";
-      } else if (key === "category") {
-        newFilters.category = "";
+      } else if (key === "categories") {
+        if (value) {
+          // Remove specific category
+          newFilters.categories = newFilters.categories.filter((c) => c !== value);
+        } else {
+          // Clear all categories
+          newFilters.categories = [];
+        }
       } else {
         newFilters.maxPrice = "";
         setMaxPriceInput("");
@@ -259,7 +281,7 @@ export default function ProductFilters({
   // Clear all filters
   const handleClearFilters = useCallback(() => {
     const clearedFilters: FilterValues = {
-      category: "",
+      categories: [],
       search: "",
       sort: "newest",
       minPrice: "",
@@ -290,8 +312,9 @@ export default function ProductFilters({
 
   // Sync state with URL params on mount and URL changes
   useEffect(() => {
+    const urlCategories = searchParams.get("categories");
     const newFilters: FilterValues = {
-      category: searchParams.get("category") || "",
+      categories: urlCategories ? urlCategories.split(",").filter(Boolean) : [],
       search: searchParams.get("search") || "",
       sort: (searchParams.get("sort") as SortOption) || "newest",
       minPrice: searchParams.get("minPrice") || "",
@@ -352,25 +375,13 @@ export default function ProductFilters({
             </form>
           )}
 
-          {/* Category Select */}
-          <Select
-            value={filters.category || "all"}
-            onValueChange={(value) =>
-              handleFilterChange("category", value === "all" ? "" : value)
-            }
-          >
-            <SelectTrigger className={`${styles.selectTrigger} ${styles.categorySelect}`}>
-              <SelectValue placeholder="All Categories" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
-              {categories.map((cat) => (
-                <SelectItem key={cat.id} value={cat.slug}>
-                  {cat.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          {/* Category MultiSelect */}
+          <CategoryMultiSelect
+            selectedCategories={filters.categories}
+            onSelectionChange={handleCategoriesChange}
+            placeholder="Select categories..."
+            className={styles.categorySelect}
+          />
 
           {/* Sort Select */}
           <Select
@@ -424,11 +435,11 @@ export default function ProductFilters({
             )}
 
             {/* Active Filter Chips */}
-            {activeFilters.map((filter) => (
+            {activeFilters.map((filter, index) => (
               <button
-                key={filter.key}
+                key={`${filter.key}-${filter.value || index}`}
                 className={styles.filterChip}
-                onClick={() => handleRemoveFilter(filter.key)}
+                onClick={() => handleRemoveFilter(filter.key, filter.value)}
               >
                 {filter.label}
                 <X className="h-3 w-3" />
@@ -482,30 +493,19 @@ export default function ProductFilters({
                   </div>
                 )}
 
-                {/* Category */}
+                {/* Categories */}
                 <div className={styles.mobileFilterGroup}>
-                  <label className={styles.filterLabel}>Category</label>
-                  <Select
-                    value={filters.category || "all"}
-                    onValueChange={(value) =>
+                  <label className={styles.filterLabel}>Categories</label>
+                  <CategoryMultiSelect
+                    selectedCategories={filters.categories}
+                    onSelectionChange={(categories) =>
                       setFilters((f) => ({
                         ...f,
-                        category: value === "all" ? "" : value,
+                        categories,
                       }))
                     }
-                  >
-                    <SelectTrigger className={styles.mobileSelectTrigger}>
-                      <SelectValue placeholder="All Categories" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Categories</SelectItem>
-                      {categories.map((cat) => (
-                        <SelectItem key={cat.id} value={cat.slug}>
-                          {cat.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    placeholder="Select categories..."
+                  />
                 </div>
 
                 {/* Price Range */}
@@ -589,18 +589,13 @@ export default function ProductFilters({
 
         {/* Mobile Results & Active Filters */}
         <div className={styles.mobileActiveFilters}>
-          {totalResults !== undefined && (
-            <span className={styles.mobileResultsCount}>
-              {totalResults} {totalResults === 1 ? "product" : "products"} found
-            </span>
-          )}
           {activeFilters.length > 0 && (
             <div className={styles.mobileChips}>
-              {activeFilters.map((filter) => (
+              {activeFilters.map((filter, index) => (
                 <button
-                  key={filter.key}
+                  key={`${filter.key}-${filter.value || index}`}
                   className={styles.filterChip}
-                  onClick={() => handleRemoveFilter(filter.key)}
+                  onClick={() => handleRemoveFilter(filter.key, filter.value)}
                 >
                   {filter.label}
                   <X className="h-3 w-3" />
@@ -613,6 +608,11 @@ export default function ProductFilters({
                 Clear All
               </button>
             </div>
+          )}
+          {totalResults !== undefined && (
+            <span className={styles.mobileResultsCount}>
+              {totalResults} {totalResults === 1 ? "product" : "products"} found
+            </span>
           )}
         </div>
       </div>

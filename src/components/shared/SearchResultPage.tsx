@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { ProductType } from "@/types/product";
 import ProductCard from "./ProductCard";
 import ProductFilters from "./ProductFilters";
+import { CarouselWrapper, CarouselItem } from "@/components/ui/CarouselWrapper";
 import styles from "./SearchResultPage.module.css";
 
 interface Category {
@@ -31,6 +32,9 @@ const SearchResultPageInner = ({
   const searchParams = useSearchParams();
 
   const [products, setProducts] = useState<ProductType[]>([]);
+  const [relatedProducts, setRelatedProducts] = useState<ProductType[]>([]);
+  const [lessRelevantProducts, setLessRelevantProducts] = useState<ProductType[]>([]);
+  const [recommendedProducts, setRecommendedProducts] = useState<ProductType[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -66,7 +70,8 @@ const SearchResultPageInner = ({
       const params = new URLSearchParams();
 
       const search = searchParams.get("search");
-      const category = searchParams.get("category");
+      const categories = searchParams.get("categories");
+      const category = searchParams.get("category"); // Legacy support
       const sort = searchParams.get("sort");
       const minPrice = searchParams.get("minPrice");
       const maxPrice = searchParams.get("maxPrice");
@@ -74,12 +79,18 @@ const SearchResultPageInner = ({
       const priceCurrency = searchParams.get("priceCurrency");
 
       if (search) params.set("search", search);
-      if (category) params.set("category", category);
+      if (categories) params.set("categories", categories);
+      if (category && !categories) params.set("category", category);
       if (sort) params.set("sort", sort);
       if (minPrice) params.set("minPrice", minPrice);
       if (maxPrice) params.set("maxPrice", maxPrice);
       if (page) params.set("page", page);
       if (priceCurrency) params.set("priceCurrency", priceCurrency);
+
+      // Always request additional products for carousels
+      params.set("includeRelated", "true");
+      params.set("includeLessRelevant", "true");
+      params.set("includeRecommended", "true");
 
       const response = await fetch(`/api/products?${params.toString()}`);
       const data = await response.json();
@@ -87,13 +98,22 @@ const SearchResultPageInner = ({
       if (data.success) {
         setProducts(data.products);
         setPagination(data.pagination);
+        setRelatedProducts(data.relatedProducts || []);
+        setLessRelevantProducts(data.lessRelevantProducts || []);
+        setRecommendedProducts(data.recommendedProducts || []);
       } else {
         setError(data.error || "Failed to fetch products");
         setProducts([]);
+        setRelatedProducts([]);
+        setLessRelevantProducts([]);
+        setRecommendedProducts([]);
       }
     } catch {
       setError("Failed to fetch products");
       setProducts([]);
+      setRelatedProducts([]);
+      setLessRelevantProducts([]);
+      setRecommendedProducts([]);
     } finally {
       setLoading(false);
     }
@@ -105,6 +125,19 @@ const SearchResultPageInner = ({
   }, [fetchProducts]);
 
   const query = searchParams.get("search") || "";
+
+  // Convert products to carousel items
+  const productToCarouselItem = (product: ProductType): CarouselItem => ({
+    id: product.id || "",
+    image: product.images?.[0]?.url || "/placeholder.jpg",
+    url: `/products/${product.slug}`,
+    alt: product.name,
+    content: (
+      <div className={styles.carouselProductCard}>
+        <ProductCard product={product} />
+      </div>
+    ),
+  });
 
   return (
     <div className={styles.navSearchResults}>
@@ -156,6 +189,78 @@ const SearchResultPageInner = ({
 
           {/* Pagination */}
           {pagination.pages > 1 && <Pagination pagination={pagination} />}
+
+          {/* Related Products Carousel */}
+          {relatedProducts.length > 0 && (
+            <div className={styles.carouselSection}>
+              <h2 className={styles.carouselTitle}>Related Products</h2>
+              <CarouselWrapper
+                variant="default"
+                data={relatedProducts.map(productToCarouselItem)}
+                options={{
+                  showControlBtns: true,
+                  showControlDots: false,
+                  loop: true,
+                  autoPlay: false,
+                  itemsPerView: {
+                    mobile: 1,
+                    tablet: 2,
+                    desktop: 4,
+                    xl: 5,
+                  },
+                }}
+                renderItem={(item) => item.content}
+              />
+            </div>
+          )}
+
+          {/* You Might Also Like Carousel (Less Relevant) */}
+          {lessRelevantProducts.length > 0 && (
+            <div className={styles.carouselSection}>
+              <h2 className={styles.carouselTitle}>You Might Also Like</h2>
+              <CarouselWrapper
+                variant="default"
+                data={lessRelevantProducts.map(productToCarouselItem)}
+                options={{
+                  showControlBtns: true,
+                  showControlDots: false,
+                  loop: true,
+                  autoPlay: false,
+                  itemsPerView: {
+                    mobile: 1,
+                    tablet: 2,
+                    desktop: 4,
+                    xl: 5,
+                  },
+                }}
+                renderItem={(item) => item.content}
+              />
+            </div>
+          )}
+
+          {/* Recommended Products Carousel */}
+          {recommendedProducts.length > 0 && (
+            <div className={styles.carouselSection}>
+              <h2 className={styles.carouselTitle}>Recommended For You</h2>
+              <CarouselWrapper
+                variant="default"
+                data={recommendedProducts.map(productToCarouselItem)}
+                options={{
+                  showControlBtns: true,
+                  showControlDots: false,
+                  loop: true,
+                  autoPlay: false,
+                  itemsPerView: {
+                    mobile: 1,
+                    tablet: 2,
+                    desktop: 4,
+                    xl: 5,
+                  },
+                }}
+                renderItem={(item) => item.content}
+              />
+            </div>
+          )}
         </>
       )}
     </div>

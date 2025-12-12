@@ -163,6 +163,25 @@
     font-size: 0.875rem;
   }
 
+  /* Carousel Sections */
+  .carouselSection {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border, #e5e7eb);
+  }
+
+  .carouselTitle {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary, #111827);
+    margin: 0 0 1.5rem 0;
+  }
+
+  .carouselProductCard {
+    padding: 0.5rem;
+    height: 100%;
+  }
+
   /* Mobile adjustments */
   @media screen and (max-width: 600px) {
     .productsGrid {
@@ -184,6 +203,16 @@
 
     .pageDots {
       min-width: 1.5rem;
+    }
+
+    .carouselSection {
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+    }
+
+    .carouselTitle {
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
     }
   }
 }

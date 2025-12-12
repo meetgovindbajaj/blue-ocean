@@ -64,6 +64,7 @@ export async function GET(request: NextRequest) {
       total,
       pending: 0,
       "in-progress": 0,
+      "customer-feedback": 0,
       resolved: 0,
       closed: 0,
     };
@@ -98,6 +99,7 @@ export async function GET(request: NextRequest) {
             }
           : null,
         notes: inquiry.notes || [],
+        userComments: inquiry.userComments || [],
         createdAt: inquiry.createdAt,
         updatedAt: inquiry.updatedAt,
       })),

@@ -45,6 +45,7 @@ export async function GET(request: NextRequest) {
             }
           : null,
         notes: inquiry.notes || [],
+        userComments: inquiry.userComments || [],
         createdAt: inquiry.createdAt,
         updatedAt: inquiry.updatedAt,
       })),

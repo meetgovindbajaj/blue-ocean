@@ -146,16 +146,23 @@ export async function GET(request: NextRequest) {
 
     await connectDB();
 
-    // Get all profiles with email notifications enabled
-    const subscribedProfiles = await Profile.find({
-      "preferences.notifications.email": true,
-    })
+    const { searchParams } = new URL(request.url);
+    const emailType = searchParams.get("emailType") || "newsletter";
+
+    // Filter based on email type
+    const query = emailType === "newsletter"
+      ? { "preferences.newsletter": true }
+      : { "preferences.promotions": true };
+
+    // Get all profiles with the specified preference enabled
+    const subscribedProfiles = await Profile.find(query)
       .select("name email")
       .lean();
 
     return NextResponse.json({
       success: true,
       count: subscribedProfiles.length,
+      emailType,
       subscribers: subscribedProfiles.map((p: any) => ({
         name: p.name,
         email: p.email,
@@ -208,7 +215,7 @@ export async function POST(request: NextRequest) {
     await connectDB();
 
     const body = await request.json();
-    const { productIds, subject, message } = body;
+    const { productIds, subject, message, emailType = "newsletter" } = body;
 
     if (!productIds || !Array.isArray(productIds) || productIds.length === 0) {
       return NextResponse.json(
@@ -239,17 +246,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get all profiles with email notifications enabled
-    const subscribedProfiles = await Profile.find({
-      "preferences.notifications.email": true,
-    })
+    // Filter based on email type - newsletter or promotion subscribers
+    const query = emailType === "newsletter"
+      ? { "preferences.newsletter": true }
+      : { "preferences.promotions": true };
+
+    // Get all profiles with the specified preference enabled
+    const subscribedProfiles = await Profile.find(query)
       .select("name email")
       .lean();
 
     if (subscribedProfiles.length === 0) {
       return NextResponse.json({
         success: true,
-        message: "No subscribers to send emails to",
+        message: `No ${emailType} subscribers to send emails to`,
         queued: 0,
       });
     }
@@ -262,9 +272,10 @@ export async function POST(request: NextRequest) {
     // Return immediately with queued count
     return NextResponse.json({
       success: true,
-      message: `Emails queued for ${subscribedProfiles.length} subscriber(s)`,
+      message: `Emails queued for ${subscribedProfiles.length} ${emailType} subscriber(s)`,
       queued: subscribedProfiles.length,
       products: products.length,
+      emailType,
     });
   } catch (error) {
     console.error("Send notification error:", error);
