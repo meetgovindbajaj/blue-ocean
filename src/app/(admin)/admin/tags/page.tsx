@@ -44,7 +44,13 @@ import {
   Tag,
   MousePointerClick,
   ExternalLink,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
 } from "lucide-react";
+
+type SortField = "name" | "status" | "clicks" | "createdAt";
+type SortDirection = "asc" | "desc";
 
 interface IImage {
   id?: string;
@@ -92,6 +98,28 @@ export default function TagsPage() {
   const [saving, setSaving] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [sortField, setSortField] = useState<SortField>("createdAt");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortDirection("asc");
+    }
+  };
+
+  const getSortIcon = (field: SortField) => {
+    if (sortField !== field) {
+      return <ArrowUpDown className="ml-1 h-3 w-3" />;
+    }
+    return sortDirection === "asc" ? (
+      <ArrowUp className="ml-1 h-3 w-3" />
+    ) : (
+      <ArrowDown className="ml-1 h-3 w-3" />
+    );
+  };
 
   const fetchTags = useCallback(async () => {
     setLoading(true);
@@ -114,6 +142,37 @@ export default function TagsPage() {
   useEffect(() => {
     fetchTags();
   }, [fetchTags]);
+
+  // Client-side sorting
+  const sortedTags = [...tags].sort((a, b) => {
+    let aValue: any;
+    let bValue: any;
+
+    switch (sortField) {
+      case "name":
+        aValue = a.name.toLowerCase();
+        bValue = b.name.toLowerCase();
+        break;
+      case "status":
+        aValue = a.isActive ? 1 : 0;
+        bValue = b.isActive ? 1 : 0;
+        break;
+      case "clicks":
+        aValue = a.clicks || 0;
+        bValue = b.clicks || 0;
+        break;
+      case "createdAt":
+        aValue = new Date(a.createdAt).getTime();
+        bValue = new Date(b.createdAt).getTime();
+        break;
+      default:
+        return 0;
+    }
+
+    if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
+    if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
+    return 0;
+  });
 
   const handleOpenDialog = (tag?: TagItem) => {
     if (tag) {
@@ -259,16 +318,46 @@ export default function TagsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Tag</TableHead>
+                  <TableHead>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 px-2 -ml-2 hover:bg-transparent"
+                      onClick={() => handleSort("name")}
+                    >
+                      Tag
+                      {getSortIcon("name")}
+                    </Button>
+                  </TableHead>
                   <TableHead>Description</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Clicks</TableHead>
+                  <TableHead>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 px-2 -ml-2 hover:bg-transparent"
+                      onClick={() => handleSort("status")}
+                    >
+                      Status
+                      {getSortIcon("status")}
+                    </Button>
+                  </TableHead>
+                  <TableHead>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 px-2 -ml-2 hover:bg-transparent"
+                      onClick={() => handleSort("clicks")}
+                    >
+                      Clicks
+                      {getSortIcon("clicks")}
+                    </Button>
+                  </TableHead>
                   <TableHead>Website</TableHead>
                   <TableHead className="w-24">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {tags.map((tag) => (
+                {sortedTags.map((tag) => (
                   <TableRow key={tag.id}>
                     <TableCell>
                       <div className="flex items-center gap-3">

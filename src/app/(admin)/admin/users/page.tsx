@@ -72,7 +72,13 @@ import {
   Copy,
   Mail,
   KeyRound,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
 } from "lucide-react";
+
+type SortField = "name" | "email" | "role" | "status" | "verified" | "lastLogin" | "createdAt";
+type SortDirection = "asc" | "desc";
 import { toast } from "sonner";
 
 interface Profile {
@@ -159,6 +165,28 @@ export default function UsersPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [sortField, setSortField] = useState<SortField>("createdAt");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortDirection("asc");
+    }
+  };
+
+  const getSortIcon = (field: SortField) => {
+    if (sortField !== field) {
+      return <ArrowUpDown className="ml-1 h-3 w-3" />;
+    }
+    return sortDirection === "asc" ? (
+      <ArrowUp className="ml-1 h-3 w-3" />
+    ) : (
+      <ArrowDown className="ml-1 h-3 w-3" />
+    );
+  };
 
   // View/Edit user states
   const [viewUser, setViewUser] = useState<User | null>(null);
@@ -209,6 +237,49 @@ export default function UsersPage() {
   useEffect(() => {
     fetchUsers();
   }, [fetchUsers]);
+
+  // Client-side sorting
+  const sortedUsers = [...users].sort((a, b) => {
+    let aValue: any;
+    let bValue: any;
+
+    switch (sortField) {
+      case "name":
+        aValue = a.name.toLowerCase();
+        bValue = b.name.toLowerCase();
+        break;
+      case "email":
+        aValue = a.email.toLowerCase();
+        bValue = b.email.toLowerCase();
+        break;
+      case "role":
+        aValue = a.role.toLowerCase();
+        bValue = b.role.toLowerCase();
+        break;
+      case "status":
+        aValue = a.status.toLowerCase();
+        bValue = b.status.toLowerCase();
+        break;
+      case "verified":
+        aValue = a.isVerified ? 1 : 0;
+        bValue = b.isVerified ? 1 : 0;
+        break;
+      case "lastLogin":
+        aValue = a.lastLogin ? new Date(a.lastLogin).getTime() : 0;
+        bValue = b.lastLogin ? new Date(b.lastLogin).getTime() : 0;
+        break;
+      case "createdAt":
+        aValue = new Date(a.createdAt).getTime();
+        bValue = new Date(b.createdAt).getTime();
+        break;
+      default:
+        return 0;
+    }
+
+    if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
+    if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
+    return 0;
+  });
 
   const fetchUserDetails = async (userId: string): Promise<User | null> => {
     setLoadingUser(true);
@@ -550,17 +621,77 @@ export default function UsersPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>User</TableHead>
-                    <TableHead>Role</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Verified</TableHead>
-                    <TableHead>Last Login</TableHead>
-                    <TableHead>Joined</TableHead>
+                    <TableHead>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 px-2 -ml-2 hover:bg-transparent"
+                        onClick={() => handleSort("name")}
+                      >
+                        User
+                        {getSortIcon("name")}
+                      </Button>
+                    </TableHead>
+                    <TableHead>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 px-2 -ml-2 hover:bg-transparent"
+                        onClick={() => handleSort("role")}
+                      >
+                        Role
+                        {getSortIcon("role")}
+                      </Button>
+                    </TableHead>
+                    <TableHead>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 px-2 -ml-2 hover:bg-transparent"
+                        onClick={() => handleSort("status")}
+                      >
+                        Status
+                        {getSortIcon("status")}
+                      </Button>
+                    </TableHead>
+                    <TableHead>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 px-2 -ml-2 hover:bg-transparent"
+                        onClick={() => handleSort("verified")}
+                      >
+                        Verified
+                        {getSortIcon("verified")}
+                      </Button>
+                    </TableHead>
+                    <TableHead>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 px-2 -ml-2 hover:bg-transparent"
+                        onClick={() => handleSort("lastLogin")}
+                      >
+                        Last Login
+                        {getSortIcon("lastLogin")}
+                      </Button>
+                    </TableHead>
+                    <TableHead>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 px-2 -ml-2 hover:bg-transparent"
+                        onClick={() => handleSort("createdAt")}
+                      >
+                        Joined
+                        {getSortIcon("createdAt")}
+                      </Button>
+                    </TableHead>
                     <TableHead className="w-12"></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {users.map((user) => (
+                  {sortedUsers.map((user) => (
                     <TableRow key={user.id}>
                       <TableCell>
                         <div className="flex items-center gap-3">

@@ -40,7 +40,13 @@ import {
   Pencil,
   Trash2,
   FolderTree,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
 } from "lucide-react";
+
+type SortField = "name" | "slug" | "parent" | "status" | "createdAt";
+type SortDirection = "asc" | "desc";
 
 interface Category {
   id: string;
@@ -62,6 +68,28 @@ export default function CategoriesPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [sortField, setSortField] = useState<SortField>("createdAt");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortDirection("asc");
+    }
+  };
+
+  const getSortIcon = (field: SortField) => {
+    if (sortField !== field) {
+      return <ArrowUpDown className="ml-1 h-3 w-3" />;
+    }
+    return sortDirection === "asc" ? (
+      <ArrowUp className="ml-1 h-3 w-3" />
+    ) : (
+      <ArrowDown className="ml-1 h-3 w-3" />
+    );
+  };
 
   const fetchCategories = useCallback(async () => {
     setLoading(true);
@@ -87,6 +115,41 @@ export default function CategoriesPage() {
   useEffect(() => {
     fetchCategories();
   }, [fetchCategories]);
+
+  // Client-side sorting
+  const sortedCategories = [...categories].sort((a, b) => {
+    let aValue: any;
+    let bValue: any;
+
+    switch (sortField) {
+      case "name":
+        aValue = a.name.toLowerCase();
+        bValue = b.name.toLowerCase();
+        break;
+      case "slug":
+        aValue = a.slug.toLowerCase();
+        bValue = b.slug.toLowerCase();
+        break;
+      case "parent":
+        aValue = a.parent?.name?.toLowerCase() || "";
+        bValue = b.parent?.name?.toLowerCase() || "";
+        break;
+      case "status":
+        aValue = a.isActive ? 1 : 0;
+        bValue = b.isActive ? 1 : 0;
+        break;
+      case "createdAt":
+        aValue = new Date(a.createdAt).getTime();
+        bValue = new Date(b.createdAt).getTime();
+        break;
+      default:
+        return 0;
+    }
+
+    if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
+    if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
+    return 0;
+  });
 
   const handleDelete = async () => {
     if (!deleteId) return;
@@ -170,15 +233,55 @@ export default function CategoriesPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-16">Image</TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Slug</TableHead>
-                    <TableHead>Parent</TableHead>
-                    <TableHead>Status</TableHead>
+                    <TableHead>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 px-2 -ml-2 hover:bg-transparent"
+                        onClick={() => handleSort("name")}
+                      >
+                        Name
+                        {getSortIcon("name")}
+                      </Button>
+                    </TableHead>
+                    <TableHead>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 px-2 -ml-2 hover:bg-transparent"
+                        onClick={() => handleSort("slug")}
+                      >
+                        Slug
+                        {getSortIcon("slug")}
+                      </Button>
+                    </TableHead>
+                    <TableHead>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 px-2 -ml-2 hover:bg-transparent"
+                        onClick={() => handleSort("parent")}
+                      >
+                        Parent
+                        {getSortIcon("parent")}
+                      </Button>
+                    </TableHead>
+                    <TableHead>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 px-2 -ml-2 hover:bg-transparent"
+                        onClick={() => handleSort("status")}
+                      >
+                        Status
+                        {getSortIcon("status")}
+                      </Button>
+                    </TableHead>
                     <TableHead className="w-12"></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {categories.map((category) => (
+                  {sortedCategories.map((category) => (
                     <TableRow key={category.id}>
                       <TableCell>
                         {category.image?.url ? (

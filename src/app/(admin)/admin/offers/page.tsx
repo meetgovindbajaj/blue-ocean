@@ -45,7 +45,14 @@ import {
   Eye,
   MousePointer,
   Percent,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
 } from "lucide-react";
+
+type BannerSortField = "name" | "type" | "order" | "impressions" | "clicks" | "status";
+type ProductSortField = "name" | "category" | "discount" | "status";
+type SortDirection = "asc" | "desc";
 
 interface HeroBanner {
   id: string;
@@ -77,6 +84,50 @@ export default function OffersPage() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleteType, setDeleteType] = useState<"banner" | "product">("banner");
   const [deleting, setDeleting] = useState(false);
+  const [bannerSortField, setBannerSortField] = useState<BannerSortField>("order");
+  const [bannerSortDirection, setBannerSortDirection] = useState<SortDirection>("asc");
+  const [productSortField, setProductSortField] = useState<ProductSortField>("discount");
+  const [productSortDirection, setProductSortDirection] = useState<SortDirection>("desc");
+
+  const handleBannerSort = (field: BannerSortField) => {
+    if (bannerSortField === field) {
+      setBannerSortDirection(bannerSortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setBannerSortField(field);
+      setBannerSortDirection("asc");
+    }
+  };
+
+  const getBannerSortIcon = (field: BannerSortField) => {
+    if (bannerSortField !== field) {
+      return <ArrowUpDown className="ml-1 h-3 w-3" />;
+    }
+    return bannerSortDirection === "asc" ? (
+      <ArrowUp className="ml-1 h-3 w-3" />
+    ) : (
+      <ArrowDown className="ml-1 h-3 w-3" />
+    );
+  };
+
+  const handleProductSort = (field: ProductSortField) => {
+    if (productSortField === field) {
+      setProductSortDirection(productSortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setProductSortField(field);
+      setProductSortDirection("asc");
+    }
+  };
+
+  const getProductSortIcon = (field: ProductSortField) => {
+    if (productSortField !== field) {
+      return <ArrowUpDown className="ml-1 h-3 w-3" />;
+    }
+    return productSortDirection === "asc" ? (
+      <ArrowUp className="ml-1 h-3 w-3" />
+    ) : (
+      <ArrowDown className="ml-1 h-3 w-3" />
+    );
+  };
 
   const fetchBanners = useCallback(async () => {
     try {
@@ -117,6 +168,76 @@ export default function OffersPage() {
     };
     fetchData();
   }, [fetchBanners, fetchDiscountedProducts]);
+
+  // Client-side sorting for banners
+  const sortedBanners = [...banners].sort((a, b) => {
+    let aValue: any;
+    let bValue: any;
+
+    switch (bannerSortField) {
+      case "name":
+        aValue = a.name.toLowerCase();
+        bValue = b.name.toLowerCase();
+        break;
+      case "type":
+        aValue = a.contentType.toLowerCase();
+        bValue = b.contentType.toLowerCase();
+        break;
+      case "order":
+        aValue = a.order;
+        bValue = b.order;
+        break;
+      case "impressions":
+        aValue = a.impressions || 0;
+        bValue = b.impressions || 0;
+        break;
+      case "clicks":
+        aValue = a.clicks || 0;
+        bValue = b.clicks || 0;
+        break;
+      case "status":
+        aValue = a.isActive ? 1 : 0;
+        bValue = b.isActive ? 1 : 0;
+        break;
+      default:
+        return 0;
+    }
+
+    if (aValue < bValue) return bannerSortDirection === "asc" ? -1 : 1;
+    if (aValue > bValue) return bannerSortDirection === "asc" ? 1 : -1;
+    return 0;
+  });
+
+  // Client-side sorting for discounted products
+  const sortedDiscountedProducts = [...discountedProducts].sort((a, b) => {
+    let aValue: any;
+    let bValue: any;
+
+    switch (productSortField) {
+      case "name":
+        aValue = a.name.toLowerCase();
+        bValue = b.name.toLowerCase();
+        break;
+      case "category":
+        aValue = a.category?.name?.toLowerCase() || "";
+        bValue = b.category?.name?.toLowerCase() || "";
+        break;
+      case "discount":
+        aValue = a.prices.discount || 0;
+        bValue = b.prices.discount || 0;
+        break;
+      case "status":
+        aValue = a.isActive ? 1 : 0;
+        bValue = b.isActive ? 1 : 0;
+        break;
+      default:
+        return 0;
+    }
+
+    if (aValue < bValue) return productSortDirection === "asc" ? -1 : 1;
+    if (aValue > bValue) return productSortDirection === "asc" ? 1 : -1;
+    return 0;
+  });
 
   const handleDeleteBanner = async () => {
     if (!deleteId || deleteType !== "banner") return;
@@ -228,16 +349,66 @@ export default function OffersPage() {
                   <TableHeader>
                     <TableRow>
                       <TableHead className="w-24">Image</TableHead>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Type</TableHead>
-                      <TableHead>Order</TableHead>
-                      <TableHead>Stats</TableHead>
-                      <TableHead>Active</TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 px-2 -ml-2 hover:bg-transparent"
+                          onClick={() => handleBannerSort("name")}
+                        >
+                          Name
+                          {getBannerSortIcon("name")}
+                        </Button>
+                      </TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 px-2 -ml-2 hover:bg-transparent"
+                          onClick={() => handleBannerSort("type")}
+                        >
+                          Type
+                          {getBannerSortIcon("type")}
+                        </Button>
+                      </TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 px-2 -ml-2 hover:bg-transparent"
+                          onClick={() => handleBannerSort("order")}
+                        >
+                          Order
+                          {getBannerSortIcon("order")}
+                        </Button>
+                      </TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 px-2 -ml-2 hover:bg-transparent"
+                          onClick={() => handleBannerSort("impressions")}
+                        >
+                          Stats
+                          {getBannerSortIcon("impressions")}
+                        </Button>
+                      </TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 px-2 -ml-2 hover:bg-transparent"
+                          onClick={() => handleBannerSort("status")}
+                        >
+                          Active
+                          {getBannerSortIcon("status")}
+                        </Button>
+                      </TableHead>
                       <TableHead className="w-12"></TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {banners.map((banner) => (
+                    {sortedBanners.map((banner) => (
                       <TableRow key={banner.id}>
                         <TableCell>
                           {banner.image?.url ? (
@@ -366,15 +537,55 @@ export default function OffersPage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Product</TableHead>
-                      <TableHead>Category</TableHead>
-                      <TableHead>Discount</TableHead>
-                      <TableHead>Status</TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 px-2 -ml-2 hover:bg-transparent"
+                          onClick={() => handleProductSort("name")}
+                        >
+                          Product
+                          {getProductSortIcon("name")}
+                        </Button>
+                      </TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 px-2 -ml-2 hover:bg-transparent"
+                          onClick={() => handleProductSort("category")}
+                        >
+                          Category
+                          {getProductSortIcon("category")}
+                        </Button>
+                      </TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 px-2 -ml-2 hover:bg-transparent"
+                          onClick={() => handleProductSort("discount")}
+                        >
+                          Discount
+                          {getProductSortIcon("discount")}
+                        </Button>
+                      </TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 px-2 -ml-2 hover:bg-transparent"
+                          onClick={() => handleProductSort("status")}
+                        >
+                          Status
+                          {getProductSortIcon("status")}
+                        </Button>
+                      </TableHead>
                       <TableHead className="w-12"></TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {discountedProducts.map((product) => (
+                    {sortedDiscountedProducts.map((product) => (
                       <TableRow key={product.id}>
                         <TableCell>
                           <p className="font-medium">{product.name}</p>

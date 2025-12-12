@@ -41,7 +41,13 @@ import {
   Trash2,
   Eye,
   Package,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
 } from "lucide-react";
+
+type SortField = "name" | "price" | "category" | "status" | "views" | "createdAt";
+type SortDirection = "asc" | "desc";
 
 interface Product {
   id: string;
@@ -75,6 +81,28 @@ export default function ProductsPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [sortField, setSortField] = useState<SortField>("createdAt");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortDirection("asc");
+    }
+  };
+
+  const getSortIcon = (field: SortField) => {
+    if (sortField !== field) {
+      return <ArrowUpDown className="ml-1 h-3 w-3" />;
+    }
+    return sortDirection === "asc" ? (
+      <ArrowUp className="ml-1 h-3 w-3" />
+    ) : (
+      <ArrowDown className="ml-1 h-3 w-3" />
+    );
+  };
 
   const fetchProducts = useCallback(async () => {
     setLoading(true);
@@ -96,6 +124,45 @@ export default function ProductsPage() {
       setLoading(false);
     }
   }, [page, search]);
+
+  // Client-side sorting
+  const sortedProducts = [...products].sort((a, b) => {
+    let aValue: any;
+    let bValue: any;
+
+    switch (sortField) {
+      case "name":
+        aValue = a.name.toLowerCase();
+        bValue = b.name.toLowerCase();
+        break;
+      case "price":
+        aValue = a.prices?.retail || 0;
+        bValue = b.prices?.retail || 0;
+        break;
+      case "category":
+        aValue = a.category?.name?.toLowerCase() || "";
+        bValue = b.category?.name?.toLowerCase() || "";
+        break;
+      case "status":
+        aValue = a.isActive ? 1 : 0;
+        bValue = b.isActive ? 1 : 0;
+        break;
+      case "views":
+        aValue = a.totalViews || 0;
+        bValue = b.totalViews || 0;
+        break;
+      case "createdAt":
+        aValue = new Date(a.createdAt).getTime();
+        bValue = new Date(b.createdAt).getTime();
+        break;
+      default:
+        return 0;
+    }
+
+    if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
+    if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
+    return 0;
+  });
 
   useEffect(() => {
     fetchProducts();
@@ -198,16 +265,66 @@ export default function ProductsPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-16">Image</TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Price</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Views</TableHead>
+                    <TableHead>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 px-2 -ml-2 hover:bg-transparent"
+                        onClick={() => handleSort("name")}
+                      >
+                        Name
+                        {getSortIcon("name")}
+                      </Button>
+                    </TableHead>
+                    <TableHead>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 px-2 -ml-2 hover:bg-transparent"
+                        onClick={() => handleSort("category")}
+                      >
+                        Category
+                        {getSortIcon("category")}
+                      </Button>
+                    </TableHead>
+                    <TableHead>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 px-2 -ml-2 hover:bg-transparent"
+                        onClick={() => handleSort("price")}
+                      >
+                        Price
+                        {getSortIcon("price")}
+                      </Button>
+                    </TableHead>
+                    <TableHead>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 px-2 -ml-2 hover:bg-transparent"
+                        onClick={() => handleSort("status")}
+                      >
+                        Status
+                        {getSortIcon("status")}
+                      </Button>
+                    </TableHead>
+                    <TableHead>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 px-2 -ml-2 hover:bg-transparent"
+                        onClick={() => handleSort("views")}
+                      >
+                        Views
+                        {getSortIcon("views")}
+                      </Button>
+                    </TableHead>
                     <TableHead className="w-12"></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {products.map((product) => (
+                  {sortedProducts.map((product) => (
                     <TableRow key={product.id}>
                       <TableCell>
                         {getThumbnail(product) ? (

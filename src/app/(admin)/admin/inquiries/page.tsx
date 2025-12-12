@@ -63,7 +63,13 @@ import {
   Loader2,
   Send,
   AlertCircle,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
 } from "lucide-react";
+
+type SortField = "name" | "email" | "status" | "product" | "createdAt";
+type SortDirection = "asc" | "desc";
 import { toast } from "sonner";
 
 interface Note {
@@ -117,6 +123,8 @@ export default function InquiriesPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [counts, setCounts] = useState<StatusCounts | null>(null);
+  const [sortField, setSortField] = useState<SortField>("createdAt");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 
   const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
@@ -127,6 +135,26 @@ export default function InquiriesPage() {
   const [adminNotes, setAdminNotes] = useState("");
   const [responding, setResponding] = useState(false);
   const [deleting, setDeleting] = useState(false);
+
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortDirection("asc");
+    }
+  };
+
+  const getSortIcon = (field: SortField) => {
+    if (sortField !== field) {
+      return <ArrowUpDown className="ml-1 h-3 w-3" />;
+    }
+    return sortDirection === "asc" ? (
+      <ArrowUp className="ml-1 h-3 w-3" />
+    ) : (
+      <ArrowDown className="ml-1 h-3 w-3" />
+    );
+  };
 
   const fetchInquiries = useCallback(async () => {
     setLoading(true);
@@ -155,6 +183,41 @@ export default function InquiriesPage() {
   useEffect(() => {
     fetchInquiries();
   }, [fetchInquiries]);
+
+  // Client-side sorting
+  const sortedInquiries = [...inquiries].sort((a, b) => {
+    let aValue: any;
+    let bValue: any;
+
+    switch (sortField) {
+      case "name":
+        aValue = a.name.toLowerCase();
+        bValue = b.name.toLowerCase();
+        break;
+      case "email":
+        aValue = a.email.toLowerCase();
+        bValue = b.email.toLowerCase();
+        break;
+      case "status":
+        aValue = a.status.toLowerCase();
+        bValue = b.status.toLowerCase();
+        break;
+      case "product":
+        aValue = a.product?.name?.toLowerCase() || "";
+        bValue = b.product?.name?.toLowerCase() || "";
+        break;
+      case "createdAt":
+        aValue = new Date(a.createdAt).getTime();
+        bValue = new Date(b.createdAt).getTime();
+        break;
+      default:
+        return 0;
+    }
+
+    if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
+    if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
+    return 0;
+  });
 
   const handleView = (inquiry: Inquiry) => {
     setSelectedInquiry(inquiry);
@@ -408,16 +471,56 @@ export default function InquiriesPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Customer</TableHead>
+                    <TableHead>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 px-2 -ml-2 hover:bg-transparent"
+                        onClick={() => handleSort("name")}
+                      >
+                        Customer
+                        {getSortIcon("name")}
+                      </Button>
+                    </TableHead>
                     <TableHead>Message</TableHead>
-                    <TableHead>Product</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Date</TableHead>
+                    <TableHead>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 px-2 -ml-2 hover:bg-transparent"
+                        onClick={() => handleSort("product")}
+                      >
+                        Product
+                        {getSortIcon("product")}
+                      </Button>
+                    </TableHead>
+                    <TableHead>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 px-2 -ml-2 hover:bg-transparent"
+                        onClick={() => handleSort("status")}
+                      >
+                        Status
+                        {getSortIcon("status")}
+                      </Button>
+                    </TableHead>
+                    <TableHead>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 px-2 -ml-2 hover:bg-transparent"
+                        onClick={() => handleSort("createdAt")}
+                      >
+                        Date
+                        {getSortIcon("createdAt")}
+                      </Button>
+                    </TableHead>
                     <TableHead className="w-12"></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {inquiries.map((inquiry) => (
+                  {sortedInquiries.map((inquiry) => (
                     <TableRow key={inquiry.id}>
                       <TableCell>
                         <div>
