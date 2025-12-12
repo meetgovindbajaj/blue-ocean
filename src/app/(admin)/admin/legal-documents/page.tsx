@@ -119,7 +119,7 @@ export default function LegalDocumentsPage() {
     title: string;
     format: ContentFormat;
     content: string;
-    file: { url: string; name: string } | null;
+    file: { url: string; name: string; size?: number; mimeType?: string } | null;
     images: { url: string; name: string; order: number }[];
     isVisible: boolean;
     order: number;
