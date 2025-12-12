@@ -43,8 +43,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if user is logged in
+    // Check if user is logged in - require authentication
     const currentUser = await getCurrentUser();
+
+    if (!currentUser) {
+      return NextResponse.json(
+        { success: false, error: "Please login to send a message" },
+        { status: 401 }
+      );
+    }
 
     // Create inquiry in database
     const inquiry = new Inquiry({

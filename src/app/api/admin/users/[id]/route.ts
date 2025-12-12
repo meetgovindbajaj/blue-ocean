@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import connectDB from "@/lib/db";
 import User from "@/models/User";
+import Profile from "@/models/Profile";
 import Token from "@/models/Token";
 import { Types } from "mongoose";
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -125,7 +126,7 @@ export async function PUT(
 }
 
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -148,13 +149,21 @@ export async function DELETE(
       );
     }
 
+    // Delete associated Profile
+    if (user.profile) {
+      await Profile.findByIdAndDelete(user.profile);
+    }
+
+    // Delete associated Tokens (verification, password reset, etc.)
+    await Token.deleteMany({ user: user._id });
+
     // Revalidate paths
     revalidatePath("/admin/users");
     revalidatePath("/api/admin/users");
 
     return NextResponse.json({
       success: true,
-      message: "User deleted successfully",
+      message: "User and associated data deleted successfully",
     });
   } catch (error) {
     console.error("Admin User DELETE error:", error);

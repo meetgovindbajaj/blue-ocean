@@ -18,14 +18,6 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Download,
@@ -35,7 +27,7 @@ import {
   Users,
   FolderTree,
   Image,
-  ShoppingCart,
+  MessageSquare,
   TrendingUp,
   Eye,
   Loader2,
@@ -55,49 +47,50 @@ const REPORT_TYPES: ReportType[] = [
   {
     id: "products",
     name: "Products Report",
-    description: "Export all products with details, pricing, and inventory",
+    description:
+      "Products with pricing, dimensions, views, and performance data",
     icon: Package,
     formats: ["csv", "xlsx", "json"],
   },
   {
     id: "categories",
     name: "Categories Report",
-    description: "Export category hierarchy and product counts",
+    description: "Categories with product counts and hierarchy",
     icon: FolderTree,
     formats: ["csv", "xlsx", "json"],
   },
   {
     id: "users",
     name: "Users Report",
-    description: "Export user accounts and registration data",
+    description: "User accounts with profiles, preferences, and activity",
     icon: Users,
-    formats: ["csv", "xlsx"],
+    formats: ["csv", "xlsx", "json"],
   },
   {
-    id: "orders",
-    name: "Orders Report",
-    description: "Export order history and transaction details",
-    icon: ShoppingCart,
+    id: "inquiries",
+    name: "Inquiries Report",
+    description: "Customer inquiries with status, priority, and products",
+    icon: MessageSquare,
     formats: ["csv", "xlsx", "json"],
   },
   {
     id: "banners",
     name: "Banners Report",
-    description: "Export hero banner performance metrics",
+    description: "Banner performance with impressions, clicks, and CTR",
     icon: Image,
-    formats: ["csv", "xlsx"],
+    formats: ["csv", "xlsx", "json"],
   },
   {
     id: "tags",
     name: "Tags Report",
-    description: "Export tags with click analytics",
+    description: "Tags with click analytics and engagement",
     icon: Tag,
     formats: ["csv", "xlsx", "json"],
   },
   {
     id: "analytics",
-    name: "Analytics Report",
-    description: "Export views, clicks, and engagement data",
+    name: "Analytics Summary",
+    description: "Comprehensive metrics across all data types",
     icon: TrendingUp,
     formats: ["csv", "xlsx", "json"],
   },
@@ -123,8 +116,9 @@ export default function ReportsPage() {
     "products",
     "categories",
     "users",
-    "orders",
+    "inquiries",
     "tags",
+    "banners",
   ];
 
   const handlePreview = async () => {
@@ -399,92 +393,92 @@ export default function ReportsPage() {
             </Card>
           )}
         </div>
-      </div>
 
-      {/* Preview Section */}
-      {(previewing || previewData) && (
-        <div className="min-w-0 w-[100%]">
-          <Card className="w-full">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 flex-wrap text-base">
-                <Eye className="h-5 w-5 flex-shrink-0" />
-                <span>Report Preview</span>
-                {previewData && (
-                  <Badge variant="secondary" className="text-xs">
-                    {previewData.rows.length} of {previewData.total}
-                  </Badge>
-                )}
-              </CardTitle>
-              <CardDescription className="text-xs">
-                Preview of the data that will be included in the report
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-0">
-              {previewing ? (
-                <div className="space-y-3 p-4">
-                  <Skeleton className="h-10 w-full" />
-                  {[...Array(5)].map((_, i) => (
-                    <Skeleton key={i} className="h-8 w-full" />
-                  ))}
-                </div>
-              ) : previewData && previewData.rows.length > 0 ? (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-xs">
-                    <thead className="bg-muted/50">
-                      <tr>
-                        {previewData.headers.map((header) => (
-                          <th
-                            key={header}
-                            className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap"
-                          >
-                            {header
-                              .replace(/([A-Z])/g, " $1")
-                              .replace(/^./, (str) => str.toUpperCase())
-                              .trim()}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y">
-                      {previewData.rows.map((row, rowIndex) => (
-                        <tr key={rowIndex} className="hover:bg-muted/30">
-                          {row.map((cell, cellIndex) => (
-                            <td
-                              key={cellIndex}
-                              className="px-3 py-2 whitespace-nowrap max-w-[120px] truncate"
-                              title={
-                                cell === null || cell === undefined
-                                  ? "-"
-                                  : typeof cell === "object"
-                                  ? JSON.stringify(cell)
-                                  : String(cell)
-                              }
+        {/* Preview Section - Inside Grid */}
+        {(previewing || previewData) && (
+          <div className="lg:col-span-3 min-w-0 overflow-hidden">
+            <Card className="w-full overflow-hidden">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 flex-wrap text-base">
+                  <Eye className="h-5 w-5 flex-shrink-0" />
+                  <span>Report Preview</span>
+                  {previewData && (
+                    <Badge variant="secondary" className="text-xs">
+                      {previewData.rows.length} of {previewData.total}
+                    </Badge>
+                  )}
+                </CardTitle>
+                <CardDescription className="text-xs">
+                  Preview of the data that will be included in the report
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-0 overflow-hidden">
+                {previewing ? (
+                  <div className="space-y-3 p-4">
+                    <Skeleton className="h-10 w-full" />
+                    {[...Array(5)].map((_, i) => (
+                      <Skeleton key={i} className="h-8 w-full" />
+                    ))}
+                  </div>
+                ) : previewData && previewData.rows.length > 0 ? (
+                  <div className="overflow-x-auto max-w-full">
+                    <table className="min-w-full text-xs">
+                      <thead className="bg-muted/50">
+                        <tr>
+                          {previewData.headers.map((header) => (
+                            <th
+                              key={header}
+                              className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap"
                             >
-                              {cell === null || cell === undefined
-                                ? "-"
-                                : typeof cell === "boolean"
-                                ? cell
-                                  ? "Yes"
-                                  : "No"
-                                : typeof cell === "object"
-                                ? JSON.stringify(cell)
-                                : String(cell)}
-                            </td>
+                              {header
+                                .replace(/([A-Z])/g, " $1")
+                                .replace(/^./, (str) => str.toUpperCase())
+                                .trim()}
+                            </th>
                           ))}
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ) : previewData ? (
-                <p className="text-sm text-muted-foreground text-center py-8">
-                  No data available for the selected report and date range
-                </p>
-              ) : null}
-            </CardContent>
-          </Card>
-        </div>
-      )}
+                      </thead>
+                      <tbody className="divide-y">
+                        {previewData.rows.map((row, rowIndex) => (
+                          <tr key={rowIndex} className="hover:bg-muted/30">
+                            {row.map((cell, cellIndex) => (
+                              <td
+                                key={cellIndex}
+                                className="px-3 py-2 whitespace-nowrap max-w-[120px] truncate"
+                                title={
+                                  cell === null || cell === undefined
+                                    ? "-"
+                                    : typeof cell === "object"
+                                    ? JSON.stringify(cell)
+                                    : String(cell)
+                                }
+                              >
+                                {cell === null || cell === undefined
+                                  ? "-"
+                                  : typeof cell === "boolean"
+                                  ? cell
+                                    ? "Yes"
+                                    : "No"
+                                  : typeof cell === "object"
+                                  ? JSON.stringify(cell)
+                                  : String(cell)}
+                              </td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : previewData ? (
+                  <p className="text-sm text-muted-foreground text-center py-8">
+                    No data available for the selected report and date range
+                  </p>
+                ) : null}
+              </CardContent>
+            </Card>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

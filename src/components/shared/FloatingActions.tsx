@@ -15,6 +15,7 @@ import {
   Twitter,
   Linkedin,
   Link as LinkIcon,
+  Menu,
 } from "lucide-react";
 import {
   Dialog,
@@ -240,7 +241,7 @@ export default function FloatingActions() {
           className={`${styles.mainButton} ${isOpen ? styles.mainButtonOpen : ""}`}
           aria-label={isOpen ? "Close menu" : "Open menu"}
         >
-          {isOpen ? <X size={24} /> : <Share2 size={24} />}
+          {isOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 

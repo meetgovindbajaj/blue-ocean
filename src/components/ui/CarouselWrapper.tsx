@@ -321,22 +321,19 @@ const FullscreenPreview = ({
   }, []);
 
   // Handle wheel zoom
-  const handleWheel = useCallback(
-    (e: React.WheelEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
+  const handleWheel = useCallback((e: React.WheelEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
 
-      const delta = e.deltaY > 0 ? -0.1 : 0.1;
-      setScale((prev) => {
-        const newScale = Math.max(MIN_SCALE, Math.min(prev + delta, MAX_SCALE));
-        if (newScale === MIN_SCALE) {
-          setPosition({ x: 0, y: 0 });
-        }
-        return newScale;
-      });
-    },
-    []
-  );
+    const delta = e.deltaY > 0 ? -0.1 : 0.1;
+    setScale((prev) => {
+      const newScale = Math.max(MIN_SCALE, Math.min(prev + delta, MAX_SCALE));
+      if (newScale === MIN_SCALE) {
+        setPosition({ x: 0, y: 0 });
+      }
+      return newScale;
+    });
+  }, []);
 
   // Mouse drag handlers for panning
   const handleMouseDown = useCallback(
@@ -579,12 +576,15 @@ const FullscreenPreview = ({
         onTouchEnd={handleTouchEnd}
       >
         <img
+          key={`FullscreenPreviewImage-${currentItem.id}`}
           ref={imageRef}
           src={currentItem?.image || currentItem?.thumbnailImage || ""}
           alt={currentItem?.alt || `Image ${currentIndex + 1}`}
           className={styles.fullscreenImage}
           style={{
-            transform: `scale(${scale}) translate(${position.x / scale}px, ${position.y / scale}px)`,
+            transform: `scale(${scale}) translate(${position.x / scale}px, ${
+              position.y / scale
+            }px)`,
             cursor: scale > 1 ? (isDragging ? "grabbing" : "grab") : "default",
           }}
           draggable={false}
@@ -638,6 +638,7 @@ const FullscreenPreview = ({
               )}
             >
               <img
+                key={`FullscreenPreview2Image-${item.id}`}
                 src={item?.thumbnailImage || item?.image || ""}
                 alt={item.alt || `Thumbnail ${idx + 1}`}
               />
@@ -1053,6 +1054,7 @@ export const CarouselWrapper = ({
                   )}
                 >
                   <img
+                    key={`RenderFullWidthVariantImage-${item.id}`}
                     src={item?.thumbnailImage || item?.image || ""}
                     alt={item.alt || `Preview ${index + 1}`}
                   />
@@ -1238,6 +1240,7 @@ export const CarouselWrapper = ({
                     }}
                   >
                     <img
+                      key={`RenderInsetVariantImage-${item.id}`}
                       src={item?.image || item?.thumbnailImage || ""}
                       alt={item.alt || `Slide ${index + 1}`}
                       className={styles.insetCardImage}
@@ -1309,6 +1312,7 @@ export const CarouselWrapper = ({
                     )}
                   >
                     <img
+                      key={`RenderInsetVariantPreviewImage-${item.id}`}
                       src={item?.thumbnailImage || item?.image || ""}
                       alt={item.alt || `Preview ${index + 1}`}
                     />
@@ -1413,6 +1417,7 @@ export const CarouselWrapper = ({
                     ) : (
                       <>
                         <img
+                          key={`RenderDefaultVariantImage-${item.id}`}
                           src={item?.image || item?.thumbnailImage || ""}
                           alt={item.alt || `Item ${index + 1}`}
                           className={styles.defaultItemImage}
@@ -1467,6 +1472,7 @@ export const CarouselWrapper = ({
                   )}
                 >
                   <img
+                    key={`RenderDefaultVariantPreviewImage-${item.id}`}
                     src={item?.thumbnailImage || item?.image || ""}
                     alt={item.alt || `Preview ${index + 1}`}
                   />

@@ -44,6 +44,8 @@ import {
   Globe2,
   Headset,
   ShieldCheck,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import ImagePicker, { ImageData } from "@/components/admin/ImagePicker";
@@ -181,11 +183,18 @@ interface SiteSettings {
   businessHours?: BusinessHour[];
 }
 
+const ITEMS_PER_PAGE = 5;
+
 export default function SettingsPage() {
   const [settings, setSettings] = useState<SiteSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [refreshingRates, setRefreshingRates] = useState(false);
+
+  // Pagination state
+  const [faqPage, setFaqPage] = useState(1);
+  const [teamPage, setTeamPage] = useState(1);
+  const [socialPage, setSocialPage] = useState(1);
 
   useEffect(() => {
     fetchSettings();
@@ -883,84 +892,144 @@ export default function SettingsPage() {
               </CardTitle>
               <CardDescription>
                 Add team members to display on the About page
+                {(settings.about?.team?.length || 0) > 0 && (
+                  <span className="ml-2 text-xs">
+                    ({settings.about?.team?.length} total)
+                  </span>
+                )}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {(settings.about?.team || []).map((member, index) => (
-                <div
-                  key={index}
-                  className="flex flex-col gap-3 p-4 border rounded-lg"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-muted-foreground">
-                      Team Member #{index + 1}
-                    </span>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => removeTeamMember(index)}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label>Name</Label>
-                      <Input
-                        value={member.name}
-                        onChange={(e) =>
-                          updateTeamMember(index, "name", e.target.value)
-                        }
-                        placeholder="John Doe"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Role</Label>
-                      <Input
-                        value={member.role}
-                        onChange={(e) =>
-                          updateTeamMember(index, "role", e.target.value)
-                        }
-                        placeholder="CEO / Founder"
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Profile Image</Label>
-                    <ImagePicker
-                      value={
-                        member.image
-                          ? {
-                              id: member.image,
-                              name: "Profile Image",
-                              url: member.image,
-                              thumbnailUrl: member.image,
-                            }
-                          : null
-                      }
-                      onChange={(image: ImageData | ImageData[] | null) => {
-                        const singleImage = Array.isArray(image) ? image[0] : image;
-                        updateTeamMember(index, "image", singleImage?.url || "");
-                      }}
-                      multiple={false}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Bio</Label>
-                    <Textarea
-                      value={member.bio || ""}
-                      onChange={(e) =>
-                        updateTeamMember(index, "bio", e.target.value)
-                      }
-                      placeholder="Brief bio or description..."
-                      rows={2}
-                    />
-                  </div>
-                </div>
-              ))}
+              {(() => {
+                const team = settings.about?.team || [];
+                const totalPages = Math.ceil(team.length / ITEMS_PER_PAGE);
+                const startIndex = (teamPage - 1) * ITEMS_PER_PAGE;
+                const paginatedTeam = team.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+                return (
+                  <>
+                    {paginatedTeam.map((member, paginatedIndex) => {
+                      const index = startIndex + paginatedIndex;
+                      return (
+                        <div
+                          key={index}
+                          className="flex flex-col gap-3 p-4 border rounded-lg"
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium text-muted-foreground">
+                              Team Member #{index + 1}
+                            </span>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => {
+                                removeTeamMember(index);
+                                // Adjust page if needed
+                                const newTotal = team.length - 1;
+                                const newTotalPages = Math.ceil(newTotal / ITEMS_PER_PAGE);
+                                if (teamPage > newTotalPages && newTotalPages > 0) {
+                                  setTeamPage(newTotalPages);
+                                }
+                              }}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                          <div className="grid gap-4 md:grid-cols-2">
+                            <div className="space-y-2">
+                              <Label>Name</Label>
+                              <Input
+                                value={member.name}
+                                onChange={(e) =>
+                                  updateTeamMember(index, "name", e.target.value)
+                                }
+                                placeholder="John Doe"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label>Role</Label>
+                              <Input
+                                value={member.role}
+                                onChange={(e) =>
+                                  updateTeamMember(index, "role", e.target.value)
+                                }
+                                placeholder="CEO / Founder"
+                              />
+                            </div>
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Profile Image</Label>
+                            <ImagePicker
+                              value={
+                                member.image
+                                  ? {
+                                      id: member.image,
+                                      name: "Profile Image",
+                                      url: member.image,
+                                      thumbnailUrl: member.image,
+                                    }
+                                  : null
+                              }
+                              onChange={(image: ImageData | ImageData[] | null) => {
+                                const singleImage = Array.isArray(image) ? image[0] : image;
+                                updateTeamMember(index, "image", singleImage?.url || "");
+                              }}
+                              multiple={false}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Bio</Label>
+                            <Textarea
+                              value={member.bio || ""}
+                              onChange={(e) =>
+                                updateTeamMember(index, "bio", e.target.value)
+                              }
+                              placeholder="Brief bio or description..."
+                              rows={2}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
+
+                    {/* Pagination Controls */}
+                    {totalPages > 1 && (
+                      <div className="flex items-center justify-between pt-2">
+                        <p className="text-sm text-muted-foreground">
+                          Page {teamPage} of {totalPages}
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setTeamPage((p) => Math.max(1, p - 1))}
+                            disabled={teamPage === 1}
+                          >
+                            <ChevronLeft className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setTeamPage((p) => Math.min(totalPages, p + 1))}
+                            disabled={teamPage === totalPages}
+                          >
+                            <ChevronRight className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
               <Button
                 variant="outline"
-                onClick={addTeamMember}
+                onClick={() => {
+                  addTeamMember();
+                  // Navigate to last page after adding
+                  const newTotal = (settings.about?.team?.length || 0) + 1;
+                  const newTotalPages = Math.ceil(newTotal / ITEMS_PER_PAGE);
+                  setTeamPage(newTotalPages);
+                }}
                 className="w-full sm:w-auto"
               >
                 <Plus className="w-4 h-4 mr-2" />
@@ -1393,60 +1462,122 @@ export default function SettingsPage() {
                 <LinkIcon className="w-5 h-5" />
                 Social Media Links
               </CardTitle>
-              <CardDescription>Your social media profiles</CardDescription>
+              <CardDescription>
+                Your social media profiles
+                {(settings.socialLinks?.length || 0) > 0 && (
+                  <span className="ml-2 text-xs">
+                    ({settings.socialLinks?.length} total)
+                  </span>
+                )}
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {settings.socialLinks?.map((link, index) => (
-                <div
-                  key={index}
-                  className="flex flex-col gap-3 p-3 border rounded-lg sm:flex-row sm:items-end sm:gap-4"
-                >
-                  <div className="flex-1 space-y-2">
-                    <Label>Platform</Label>
-                    <Select
-                      value={link.platform || ""}
-                      onValueChange={(value) =>
-                        updateSocialLink(index, "platform", value)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select platform" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {SOCIAL_PLATFORMS.map((platform) => (
-                          <SelectItem
-                            key={platform.value}
-                            value={platform.value}
+              {(() => {
+                const links = settings.socialLinks || [];
+                const totalPages = Math.ceil(links.length / ITEMS_PER_PAGE);
+                const startIndex = (socialPage - 1) * ITEMS_PER_PAGE;
+                const paginatedLinks = links.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+                return (
+                  <>
+                    {paginatedLinks.map((link, paginatedIndex) => {
+                      const index = startIndex + paginatedIndex;
+                      return (
+                        <div
+                          key={index}
+                          className="flex flex-col gap-3 p-3 border rounded-lg sm:flex-row sm:items-end sm:gap-4"
+                        >
+                          <div className="flex-1 space-y-2">
+                            <Label>Platform</Label>
+                            <Select
+                              value={link.platform || ""}
+                              onValueChange={(value) =>
+                                updateSocialLink(index, "platform", value)
+                              }
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select platform" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {SOCIAL_PLATFORMS.map((platform) => (
+                                  <SelectItem
+                                    key={platform.value}
+                                    value={platform.value}
+                                  >
+                                    {platform.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="flex-[2] space-y-2">
+                            <Label>URL</Label>
+                            <Input
+                              value={link.url}
+                              onChange={(e) =>
+                                updateSocialLink(index, "url", e.target.value)
+                              }
+                              placeholder="https://..."
+                            />
+                          </div>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => {
+                              removeSocialLink(index);
+                              // Adjust page if needed
+                              const newTotal = links.length - 1;
+                              const newTotalPages = Math.ceil(newTotal / ITEMS_PER_PAGE);
+                              if (socialPage > newTotalPages && newTotalPages > 0) {
+                                setSocialPage(newTotalPages);
+                              }
+                            }}
+                            className="w-full sm:w-auto text-white"
                           >
-                            {platform.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="flex-[2] space-y-2">
-                    <Label>URL</Label>
-                    <Input
-                      value={link.url}
-                      onChange={(e) =>
-                        updateSocialLink(index, "url", e.target.value)
-                      }
-                      placeholder="https://..."
-                    />
-                  </div>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => removeSocialLink(index)}
-                    className="w-full sm:w-auto text-white"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              ))}
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      );
+                    })}
+
+                    {/* Pagination Controls */}
+                    {totalPages > 1 && (
+                      <div className="flex items-center justify-between pt-2">
+                        <p className="text-sm text-muted-foreground">
+                          Page {socialPage} of {totalPages}
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setSocialPage((p) => Math.max(1, p - 1))}
+                            disabled={socialPage === 1}
+                          >
+                            <ChevronLeft className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setSocialPage((p) => Math.min(totalPages, p + 1))}
+                            disabled={socialPage === totalPages}
+                          >
+                            <ChevronRight className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
               <Button
                 variant="outline"
-                onClick={addSocialLink}
+                onClick={() => {
+                  addSocialLink();
+                  // Navigate to last page after adding
+                  const newTotal = (settings.socialLinks?.length || 0) + 1;
+                  const newTotalPages = Math.ceil(newTotal / ITEMS_PER_PAGE);
+                  setSocialPage(newTotalPages);
+                }}
                 className="w-full sm:w-auto"
               >
                 <Plus className="w-4 h-4 mr-2" />
@@ -1466,84 +1597,144 @@ export default function SettingsPage() {
               </CardTitle>
               <CardDescription>
                 Manage FAQ items shown on your website
+                {(settings.faq?.length || 0) > 0 && (
+                  <span className="ml-2 text-xs">
+                    ({settings.faq?.length} total)
+                  </span>
+                )}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {(settings.faq || []).map((faq, index) => (
-                <div
-                  key={index}
-                  className="flex flex-col gap-3 p-4 border rounded-lg"
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2">
-                      <GripVertical className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-sm font-medium text-muted-foreground">
-                        #{index + 1}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => moveFAQ(index, "up")}
-                        disabled={index === 0}
-                      >
-                        ↑
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => moveFAQ(index, "down")}
-                        disabled={index === (settings.faq?.length || 0) - 1}
-                      >
-                        ↓
-                      </Button>
-                      <div className="flex items-center gap-2">
-                        <Switch
-                          checked={faq.isActive !== false}
-                          onCheckedChange={(checked) =>
-                            updateFAQ(index, "isActive", checked)
-                          }
-                        />
-                        <span className="text-xs text-muted-foreground">
-                          Active
-                        </span>
+              {(() => {
+                const faqs = settings.faq || [];
+                const totalPages = Math.ceil(faqs.length / ITEMS_PER_PAGE);
+                const startIndex = (faqPage - 1) * ITEMS_PER_PAGE;
+                const paginatedFaqs = faqs.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+                return (
+                  <>
+                    {paginatedFaqs.map((faq, paginatedIndex) => {
+                      const index = startIndex + paginatedIndex;
+                      return (
+                        <div
+                          key={index}
+                          className="flex flex-col gap-3 p-4 border rounded-lg"
+                        >
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-2">
+                              <GripVertical className="w-4 h-4 text-muted-foreground" />
+                              <span className="text-sm font-medium text-muted-foreground">
+                                #{index + 1}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => moveFAQ(index, "up")}
+                                disabled={index === 0}
+                              >
+                                ↑
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => moveFAQ(index, "down")}
+                                disabled={index === (settings.faq?.length || 0) - 1}
+                              >
+                                ↓
+                              </Button>
+                              <div className="flex items-center gap-2">
+                                <Switch
+                                  checked={faq.isActive !== false}
+                                  onCheckedChange={(checked) =>
+                                    updateFAQ(index, "isActive", checked)
+                                  }
+                                />
+                                <span className="text-xs text-muted-foreground">
+                                  Active
+                                </span>
+                              </div>
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => {
+                                  removeFAQ(index);
+                                  // Adjust page if needed
+                                  const newTotal = faqs.length - 1;
+                                  const newTotalPages = Math.ceil(newTotal / ITEMS_PER_PAGE);
+                                  if (faqPage > newTotalPages && newTotalPages > 0) {
+                                    setFaqPage(newTotalPages);
+                                  }
+                                }}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Question</Label>
+                            <Input
+                              value={faq.question}
+                              onChange={(e) =>
+                                updateFAQ(index, "question", e.target.value)
+                              }
+                              placeholder="Enter the question..."
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Answer</Label>
+                            <Textarea
+                              value={faq.answer}
+                              onChange={(e) =>
+                                updateFAQ(index, "answer", e.target.value)
+                              }
+                              placeholder="Enter the answer..."
+                              rows={3}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
+
+                    {/* Pagination Controls */}
+                    {totalPages > 1 && (
+                      <div className="flex items-center justify-between pt-2">
+                        <p className="text-sm text-muted-foreground">
+                          Page {faqPage} of {totalPages}
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setFaqPage((p) => Math.max(1, p - 1))}
+                            disabled={faqPage === 1}
+                          >
+                            <ChevronLeft className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setFaqPage((p) => Math.min(totalPages, p + 1))}
+                            disabled={faqPage === totalPages}
+                          >
+                            <ChevronRight className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </div>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => removeFAQ(index)}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Question</Label>
-                    <Input
-                      value={faq.question}
-                      onChange={(e) =>
-                        updateFAQ(index, "question", e.target.value)
-                      }
-                      placeholder="Enter the question..."
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Answer</Label>
-                    <Textarea
-                      value={faq.answer}
-                      onChange={(e) =>
-                        updateFAQ(index, "answer", e.target.value)
-                      }
-                      placeholder="Enter the answer..."
-                      rows={3}
-                    />
-                  </div>
-                </div>
-              ))}
+                    )}
+                  </>
+                );
+              })()}
               <Button
                 variant="outline"
-                onClick={addFAQ}
+                onClick={() => {
+                  addFAQ();
+                  // Navigate to last page after adding
+                  const newTotal = (settings.faq?.length || 0) + 1;
+                  const newTotalPages = Math.ceil(newTotal / ITEMS_PER_PAGE);
+                  setFaqPage(newTotalPages);
+                }}
                 className="w-full sm:w-auto"
               >
                 <Plus className="w-4 h-4 mr-2" />

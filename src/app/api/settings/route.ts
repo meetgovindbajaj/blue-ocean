@@ -3,7 +3,7 @@ import connectDB from "@/lib/db";
 import SiteSettings from "@/models/SiteSettings";
 
 const CACHE_HEADERS = {
-  "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
+  "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
 };
 
 // GET public site settings (excludes sensitive data)

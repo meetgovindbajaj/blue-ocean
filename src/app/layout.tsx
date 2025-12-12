@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
+import { getSiteSettings } from "@/lib/siteMetadata";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -16,10 +17,19 @@ const montserratMono = Montserrat({
 // Google Tag Manager ID from environment variable
 const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID;
 
-export const metadata: Metadata = {
-  title: "Blue Ocean",
-  description: "Quality Solid Wood Furniture for Your Home",
-};
+// Dynamic metadata generation from database settings
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings();
+
+  const siteName = settings.siteName || "Blue Ocean";
+  const metaTitle = settings.seo?.metaTitle || `${siteName} - Quality Solid Wood Furniture`;
+  const metaDescription = settings.seo?.metaDescription || "Quality Solid Wood Furniture for Your Home";
+
+  return {
+    title: metaTitle,
+    description: metaDescription,
+  };
+}
 
 export default function RootLayout({
   children,

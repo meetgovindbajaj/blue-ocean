@@ -56,6 +56,7 @@ const trackBannerClick = async (bannerId: string) => {
 const HeroSection = ({ banners }: HeroSectionProps) => {
   const slides = useMemo(() => banners?.filter(Boolean) || [], [banners]);
   const isMobile = useIsMobile();
+  console.log({ isMobile });
   // Convert banners to CarouselItem format
   const carouselData: CarouselItem[] = useMemo(() => {
     return slides.map((banner) => ({
@@ -66,7 +67,7 @@ const HeroSection = ({ banners }: HeroSectionProps) => {
       alt: banner.title || "Hero banner",
       content: <BannerContent banner={banner} />,
     }));
-  }, [slides]);
+  }, [slides, isMobile]);
 
   if (!slides.length) return null;
 

@@ -8,7 +8,7 @@ import { AnalyticsEvent } from "@/models/Analytics";
 import { transformBanner } from "@/lib/transformers/heroBanner";
 
 const CACHE_HEADERS = {
-  "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
+  "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
 };
 
 export async function GET() {

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Route } from "next";
 import {
   BadgePercent,
+  Bell,
   ChartArea,
   ChartBarStacked,
   ChevronRight,
@@ -92,6 +93,11 @@ const marketingNavItems = [
     title: "Offers",
     url: "/admin/offers" as Route,
     icon: BadgePercent,
+  },
+  {
+    title: "Notifications",
+    url: "/admin/notifications" as Route,
+    icon: Bell,
   },
 ];
 

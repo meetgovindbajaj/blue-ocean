@@ -95,7 +95,10 @@ export default function NewProductPage() {
   };
 
   // Auto-calculate discount based on retail and wholesale price difference
-  const calculateDiscountFromPrices = (retail: number, wholesale: number): number => {
+  const calculateDiscountFromPrices = (
+    retail: number,
+    wholesale: number
+  ): number => {
     if (retail > 0 && wholesale > 0 && retail > wholesale) {
       return Math.round(((retail - wholesale) / retail) * 100);
     }
@@ -104,7 +107,10 @@ export default function NewProductPage() {
 
   // Handler for retail price change - auto-calculate discount
   const handleRetailPriceChange = (value: number) => {
-    const newDiscount = calculateDiscountFromPrices(value, formData.prices.wholesale);
+    const newDiscount = calculateDiscountFromPrices(
+      value,
+      formData.prices.wholesale
+    );
     setFormData({
       ...formData,
       prices: {
@@ -117,7 +123,10 @@ export default function NewProductPage() {
 
   // Handler for wholesale price change - auto-calculate discount
   const handleWholesalePriceChange = (value: number) => {
-    const newDiscount = calculateDiscountFromPrices(formData.prices.retail, value);
+    const newDiscount = calculateDiscountFromPrices(
+      formData.prices.retail,
+      value
+    );
     setFormData({
       ...formData,
       prices: {
@@ -131,7 +140,9 @@ export default function NewProductPage() {
   // Handler for discount change - auto-calculate wholesale price
   const handleDiscountChange = (discount: number) => {
     if (discount > 0 && formData.prices.retail > 0) {
-      const newWholesale = Math.round(formData.prices.retail * (1 - discount / 100));
+      const newWholesale = Math.round(
+        formData.prices.retail * (1 - discount / 100)
+      );
       setFormData({
         ...formData,
         prices: {
@@ -271,7 +282,9 @@ export default function NewProductPage() {
                   min="0"
                   step="0.01"
                   value={formData.prices.retail}
-                  onChange={(e) => handleRetailPriceChange(parseFloat(e.target.value) || 0)}
+                  onChange={(e) =>
+                    handleRetailPriceChange(parseFloat(e.target.value) || 0)
+                  }
                   required
                 />
               </div>
@@ -284,10 +297,13 @@ export default function NewProductPage() {
                   min="0"
                   step="0.01"
                   value={formData.prices.wholesale}
-                  onChange={(e) => handleWholesalePriceChange(parseFloat(e.target.value) || 0)}
+                  onChange={(e) =>
+                    handleWholesalePriceChange(parseFloat(e.target.value) || 0)
+                  }
                 />
                 <p className="text-xs text-muted-foreground">
-                  Auto-calculated based on discount, or enter to auto-calculate discount
+                  Auto-calculated based on discount, or enter to auto-calculate
+                  discount
                 </p>
               </div>
 
@@ -299,7 +315,9 @@ export default function NewProductPage() {
                   min="0"
                   max="100"
                   value={formData.prices.discount}
-                  onChange={(e) => handleDiscountChange(parseInt(e.target.value) || 0)}
+                  onChange={(e) =>
+                    handleDiscountChange(parseInt(e.target.value) || 0)
+                  }
                 />
                 <p className="text-xs text-muted-foreground">
                   Auto-calculated from retail/wholesale difference
@@ -429,7 +447,8 @@ export default function NewProductPage() {
               maxImages={10}
             />
             <p className="text-sm text-muted-foreground mt-2">
-              Click on an image and select &quot;Set Thumb&quot; to mark it as the thumbnail.
+              Click on an image and select &quot;Set Thumb&quot; to mark it as
+              the thumbnail.
             </p>
           </CardContent>
         </Card>

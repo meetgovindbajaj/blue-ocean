@@ -36,24 +36,31 @@ export async function generateMetadata(): Promise<Metadata> {
       description,
       url: `${siteUrl}/about`,
       siteName,
+      locale: "en_US",
+      type: "website",
       images: [
         {
           url: ogImage,
           width: 1200,
           height: 630,
           alt: `About ${siteName}`,
+          type: "image/jpeg",
         },
       ],
-      type: "website",
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
       images: [ogImage],
+      site: siteName,
     },
     alternates: {
       canonical: `${siteUrl}/about`,
+    },
+    other: {
+      "og:image:width": "1200",
+      "og:image:height": "630",
     },
   };
 }

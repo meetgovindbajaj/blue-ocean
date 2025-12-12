@@ -10,8 +10,10 @@ export async function GET(request: NextRequest) {
     await connectDB();
 
     const { searchParams } = new URL(request.url);
-    const limit = parseInt(searchParams.get("limit") || "100");
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "20");
     const search = searchParams.get("search") || "";
+    const isActive = searchParams.get("isActive");
 
     const query: any = {};
 
@@ -22,11 +24,21 @@ export async function GET(request: NextRequest) {
       ];
     }
 
-    const categories = await Category.find(query)
-      .populate("parent", "id name slug")
-      .sort({ name: 1 })
-      .limit(limit)
-      .lean();
+    if (isActive !== null && isActive !== "") {
+      query.isActive = isActive === "true";
+    }
+
+    const skip = (page - 1) * limit;
+
+    const [categories, total] = await Promise.all([
+      Category.find(query)
+        .populate("parent", "id name slug")
+        .sort({ name: 1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      Category.countDocuments(query),
+    ]);
 
     return NextResponse.json({
       success: true,
@@ -34,6 +46,12 @@ export async function GET(request: NextRequest) {
         ...c,
         id: c.id || c._id?.toString(),
       })),
+      pagination: {
+        page,
+        limit,
+        total,
+        pages: Math.ceil(total / limit),
+      },
     });
   } catch (error) {
     console.error("Admin Categories GET error:", error);

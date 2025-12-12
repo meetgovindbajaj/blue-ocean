@@ -12,7 +12,7 @@ import mongoose, { Types } from "mongoose";
 export const dynamic = "force-dynamic";
 
 const CACHE_HEADERS = {
-  "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
+  "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
 };
 
 // GET product detail. params is Promise<{ slug: string }> (Next.js 15 pattern)

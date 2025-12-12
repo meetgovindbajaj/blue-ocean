@@ -592,7 +592,7 @@ const SettingsPage = () => {
                     </label>
                   </div>
 
-                  <div className={styles.settingItem}>
+                  {/* <div className={styles.settingItem}>
                     <div className={styles.settingInfo}>
                       <div className={styles.settingIcon}>
                         <Smartphone size={20} />
@@ -619,9 +619,9 @@ const SettingsPage = () => {
                       />
                       <span className={styles.toggleSlider}></span>
                     </label>
-                  </div>
+                  </div> */}
 
-                  <div className={styles.settingItem}>
+                  {/* <div className={styles.settingItem}>
                     <div className={styles.settingInfo}>
                       <div className={styles.settingIcon}>
                         <BellRing size={20} />
@@ -648,7 +648,7 @@ const SettingsPage = () => {
                       />
                       <span className={styles.toggleSlider}></span>
                     </label>
-                  </div>
+                  </div> */}
                 </div>
 
                 <div className={styles.settingsGroup}>
@@ -749,7 +749,7 @@ const SettingsPage = () => {
                     </select>
                   </div>
 
-                  <div className={styles.settingItem}>
+                  {/* <div className={styles.settingItem}>
                     <div className={styles.settingInfo}>
                       <div className={styles.settingIcon}>
                         <Globe size={20} />
@@ -771,7 +771,7 @@ const SettingsPage = () => {
                       <option value="en">English</option>
                       <option value="hi">Hindi</option>
                     </select>
-                  </div>
+                  </div> */}
                 </div>
               </section>
             )}
@@ -902,7 +902,7 @@ const SettingsPage = () => {
                 </p>
 
                 {/* Two-Factor Authentication */}
-                <div className={styles.settingsGroup}>
+                {/* <div className={styles.settingsGroup}>
                   <h3 className={styles.groupTitle}>
                     Two-Factor Authentication
                   </h3>
@@ -940,7 +940,7 @@ const SettingsPage = () => {
                     Two-factor authentication setup is coming soon. This will
                     add an extra layer of security to your account.
                   </p>
-                </div>
+                </div> */}
 
                 {/* Password Management */}
                 <div className={styles.settingsGroup}>

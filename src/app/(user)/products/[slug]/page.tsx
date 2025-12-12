@@ -101,22 +101,30 @@ export async function generateMetadata({
 
   const product = data.product;
   const title = product.name;
-  const description =
-    product.description ||
-    `Buy ${product.name} at ${siteName}. ${product.category?.name ? `Category: ${product.category.name}.` : ""} Premium quality solid wood furniture.`;
-  const ogImage =
-    product.images?.[0]?.url ||
-    settings?.seo?.ogImage ||
-    `${siteUrl}/og-image.jpg`;
+
+  // Create a clean description for social media (strip HTML if any, limit length)
+  const rawDescription = product.description || "";
+  const cleanDescription = rawDescription.replace(/<[^>]*>/g, "").substring(0, 200);
+  const description = cleanDescription
+    ? `${cleanDescription}${cleanDescription.length >= 200 ? "..." : ""}`
+    : `Buy ${product.name} at ${siteName}. ${product.category?.name ? `Category: ${product.category.name}.` : ""} Premium quality solid wood furniture.`;
+
+  // Get the best image for OG (prefer thumbnail or first image)
+  const thumbnailImage = product.images?.find((img: any) => img.isThumbnail);
+  const firstImage = product.images?.[0];
+  const ogImage = thumbnailImage?.url || firstImage?.url || settings?.seo?.ogImage || `${siteUrl}/og-image.jpg`;
   const productUrl = `${siteUrl}/products/${slug}`;
+  const price = product.prices?.effectivePrice || product.prices?.retail || 0;
+  const currency = settings?.locale?.currency || "USD";
 
   // Build JSON-LD structured data for product
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
-    description: product.description || `${product.name} - Premium furniture`,
-    image: product.images?.map((img: any) => img.url) || [],
+    description: cleanDescription || `${product.name} - Premium furniture`,
+    image: product.images?.map((img: any) => img.url) || [ogImage],
+    url: productUrl,
     brand: {
       "@type": "Brand",
       name: siteName,
@@ -124,45 +132,89 @@ export async function generateMetadata({
     offers: {
       "@type": "Offer",
       url: productUrl,
-      priceCurrency: settings?.locale?.currency || "USD",
-      price: product.prices?.effectivePrice || product.prices?.retail || 0,
+      priceCurrency: currency,
+      price: price,
       availability: "https://schema.org/InStock",
+      seller: {
+        "@type": "Organization",
+        name: siteName,
+      },
     },
     ...(product.category && {
       category: product.category.name,
     }),
   };
 
+  // Multiple image sizes for different platforms
+  const images: Array<{
+    url: string;
+    width: number;
+    height: number;
+    alt: string;
+    type?: string;
+  }> = [
+    {
+      url: ogImage,
+      width: 1200,
+      height: 630,
+      alt: product.name,
+      type: "image/jpeg",
+    },
+  ];
+
+  // Add additional product images if available (for carousel support on some platforms)
+  if (product.images?.length > 1) {
+    product.images.slice(1, 4).forEach((img: any) => {
+      images.push({
+        url: img.url,
+        width: img.width || 800,
+        height: img.height || 800,
+        alt: product.name,
+        type: "image/jpeg",
+      });
+    });
+  }
+
   return {
     title,
     description,
+    // Open Graph - works for Facebook, LinkedIn, WhatsApp, Telegram, etc.
     openGraph: {
       title: `${title} | ${siteName}`,
       description,
       url: productUrl,
       siteName,
-      images: [
-        {
-          url: ogImage,
-          width: 1200,
-          height: 630,
-          alt: product.name,
-        },
-      ],
+      locale: "en_US",
       type: "website",
+      images,
     },
+    // Twitter Card
     twitter: {
       card: "summary_large_image",
       title: `${title} | ${siteName}`,
       description,
       images: [ogImage],
+      site: siteName,
+      creator: siteName,
     },
+    // Canonical URL
     alternates: {
       canonical: productUrl,
     },
+    // Additional meta tags for various platforms
     other: {
-      "product:price:amount": String(product.prices?.effectivePrice || product.prices?.retail || 0),
-      "product:price:currency": settings?.locale?.currency || "USD",
+      // Facebook/Open Graph product tags
+      "product:price:amount": String(price),
+      "product:price:currency": currency,
+      "product:availability": "in stock",
+      "product:condition": "new",
+      "product:brand": siteName,
+      ...(product.category && { "product:category": product.category.name }),
+      // Image dimensions for WhatsApp/Telegram preview optimization
+      "og:image:width": "1200",
+      "og:image:height": "630",
+      "og:image:type": "image/jpeg",
+      // JSON-LD structured data
       "script:ld+json": JSON.stringify(jsonLd),
     },
   };

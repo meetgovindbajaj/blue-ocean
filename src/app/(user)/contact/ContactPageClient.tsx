@@ -6,7 +6,8 @@ import Image from "next/image";
 import styles from "./page.module.css";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 import { useAuth } from "@/context/AuthContext";
-import { Mail, Phone, MapPin, Clock, MessageCircle, Send, Loader2, Search, X, ChevronDown, Package, Share2, Facebook, Twitter, Instagram, Linkedin, Youtube, Globe } from "lucide-react";
+import { Mail, Phone, MapPin, Clock, MessageCircle, Send, Loader2, Search, X, ChevronDown, Package, Share2, Facebook, Twitter, Instagram, Linkedin, Youtube, Globe, LogIn } from "lucide-react";
+import Link from "next/link";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -207,6 +208,11 @@ const ContactPageInner = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!user) {
+      toast.error("Please login to send a message");
+      return;
+    }
 
     if (!formData.name || !formData.email || !formData.subject || !formData.message) {
       toast.error("Please fill in all required fields");
@@ -420,7 +426,24 @@ const ContactPageInner = () => {
           {/* Contact Form */}
           <section ref={formSectionRef} className={styles.formSection}>
             <h2 className={styles.sectionTitle}>Send Us a Message</h2>
-            <form onSubmit={handleSubmit} className={styles.form}>
+
+            {/* Login Required Notice */}
+            {!authLoading && !user && (
+              <div className={styles.loginRequired}>
+                <div className={styles.loginRequiredContent}>
+                  <LogIn size={24} />
+                  <div>
+                    <h3>Login Required</h3>
+                    <p>Please login to send us a message. This helps us serve you better and track your inquiries.</p>
+                  </div>
+                </div>
+                <Link href="/login?redirect=/contact" className={styles.loginButton}>
+                  Login to Continue
+                </Link>
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className={`${styles.form} ${!user && !authLoading ? styles.formDisabled : ''}`}>
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
                   <label htmlFor="name" className={styles.label}>
@@ -619,12 +642,17 @@ const ContactPageInner = () => {
               <button
                 type="submit"
                 className={styles.submitButton}
-                disabled={submitting}
+                disabled={submitting || !user}
               >
                 {submitting ? (
                   <>
                     <Loader2 size={18} className={styles.spinner} />
                     Sending...
+                  </>
+                ) : !user ? (
+                  <>
+                    <LogIn size={18} />
+                    Login to Send
                   </>
                 ) : (
                   <>

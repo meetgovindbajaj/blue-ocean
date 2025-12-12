@@ -20,7 +20,7 @@ interface QueryFilter {
 type SortOption = "name" | "price-low" | "price-high" | "newest" | "trending";
 
 const CACHE_HEADERS = {
-  "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
+  "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
 };
 
 const VALID_SORTS: SortOption[] = [
