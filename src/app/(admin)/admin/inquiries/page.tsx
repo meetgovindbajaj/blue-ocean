@@ -668,152 +668,217 @@ export default function InquiriesPage() {
 
       {/* View Dialog */}
       <Dialog open={viewDialogOpen} onOpenChange={setViewDialogOpen}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Inquiry Details</DialogTitle>
+        <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
+          <DialogHeader className="flex-shrink-0 pb-4 border-b">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <DialogTitle className="text-xl">Inquiry Details</DialogTitle>
+                {selectedInquiry && (
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Received {formatDate(selectedInquiry.createdAt)}
+                  </p>
+                )}
+              </div>
+              {selectedInquiry && (
+                <div className="flex-shrink-0">
+                  {getStatusBadge(selectedInquiry.status)}
+                </div>
+              )}
+            </div>
           </DialogHeader>
           {selectedInquiry && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-muted-foreground">Name</Label>
-                  <p className="font-medium">{selectedInquiry.name}</p>
+            <div className="flex-1 overflow-y-auto py-4 space-y-6">
+              {/* Customer Info Card */}
+              <div className="bg-muted/50 rounded-xl p-4">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                    <User className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-semibold">{selectedInquiry.name}</p>
+                    <p className="text-sm text-muted-foreground">{selectedInquiry.email}</p>
+                  </div>
                 </div>
-                <div>
-                  <Label className="text-muted-foreground">Status</Label>
-                  <div>{getStatusBadge(selectedInquiry.status)}</div>
-                </div>
-                <div>
-                  <Label className="text-muted-foreground">Email</Label>
-                  <p>{selectedInquiry.email}</p>
-                </div>
-                <div>
-                  <Label className="text-muted-foreground">Phone</Label>
-                  <p>{selectedInquiry.phone || "-"}</p>
-                </div>
+                {selectedInquiry.phone && (
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Phone className="h-4 w-4" />
+                    {selectedInquiry.phone}
+                  </div>
+                )}
+                {selectedInquiry.product && (
+                  <div className="flex items-center gap-2 text-sm mt-2 pt-2 border-t border-border/50">
+                    <Package className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-muted-foreground">Product:</span>
+                    <span className="font-medium">{selectedInquiry.product.name}</span>
+                  </div>
+                )}
               </div>
 
-              {selectedInquiry.product && (
-                <div>
-                  <Label className="text-muted-foreground">Product</Label>
-                  <p className="flex items-center gap-1">
-                    <Package className="h-4 w-4" />
-                    {selectedInquiry.product.name}
-                  </p>
-                </div>
-              )}
-
+              {/* Original Message */}
               <div>
-                <Label className="text-muted-foreground">Message</Label>
-                <p className="mt-1 p-3 bg-muted rounded-lg text-sm">
-                  {selectedInquiry.message}
-                </p>
+                <Label className="text-sm font-medium text-muted-foreground mb-2 block">
+                  Original Message
+                </Label>
+                <div className="p-4 bg-blue-50 dark:bg-blue-950/30 rounded-xl border border-blue-200 dark:border-blue-900">
+                  <p className="text-sm whitespace-pre-wrap">{selectedInquiry.message}</p>
+                </div>
               </div>
 
-              {/* User Comments */}
-              {selectedInquiry.userComments && selectedInquiry.userComments.length > 0 && (
-                <div>
-                  <Label className="text-muted-foreground flex items-center gap-2">
-                    <User className="h-4 w-4" />
-                    Customer Comments
-                  </Label>
-                  <div className="mt-2 space-y-2 max-h-48 overflow-y-auto">
-                    {selectedInquiry.userComments.map((comment, index) => (
-                      <div
-                        key={index}
-                        className="p-3 rounded-lg text-sm bg-purple-50 border border-purple-200"
-                      >
-                        <p className="whitespace-pre-wrap">{comment.comment}</p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {formatDate(comment.timestamp)}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+              {/* Timeline - Mixed messages */}
+              {(() => {
+                // Combine and sort all messages chronologically
+                const timelineItems: Array<{
+                  type: 'user' | 'admin' | 'email';
+                  content: string;
+                  timestamp: string;
+                }> = [];
 
-              {/* Existing Notes */}
-              {selectedInquiry.notes && selectedInquiry.notes.length > 0 && (
-                <div>
-                  <Label className="text-muted-foreground">Admin Notes History</Label>
-                  <div className="mt-2 space-y-2 max-h-48 overflow-y-auto">
-                    {selectedInquiry.notes.map((note, index) => (
-                      <div
-                        key={index}
-                        className={`p-3 rounded-lg text-sm ${
-                          note.note.startsWith("[Email Response Sent]")
-                            ? "bg-green-50 border border-green-200"
-                            : "bg-muted"
-                        }`}
-                      >
-                        <p className="whitespace-pre-wrap">{note.note}</p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {formatDate(note.timestamp)}
-                        </p>
-                      </div>
-                    ))}
+                selectedInquiry.userComments?.forEach((comment) => {
+                  timelineItems.push({
+                    type: 'user',
+                    content: comment.comment,
+                    timestamp: comment.timestamp,
+                  });
+                });
+
+                selectedInquiry.notes?.forEach((note) => {
+                  timelineItems.push({
+                    type: note.note.startsWith("[Email Response Sent]") ? 'email' : 'admin',
+                    content: note.note.startsWith("[Email Response Sent]")
+                      ? note.note.replace("[Email Response Sent]\n", "")
+                      : note.note,
+                    timestamp: note.timestamp,
+                  });
+                });
+
+                // Sort by timestamp (oldest first for natural conversation flow)
+                timelineItems.sort((a, b) =>
+                  new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+                );
+
+                if (timelineItems.length === 0) return null;
+
+                return (
+                  <div>
+                    <Label className="text-sm font-medium text-muted-foreground mb-3 block">
+                      Conversation Timeline
+                    </Label>
+                    <div className="space-y-3">
+                      {timelineItems.map((item, index) => {
+                        const isUser = item.type === 'user';
+                        const isEmail = item.type === 'email';
+
+                        return (
+                          <div
+                            key={index}
+                            className={`flex ${isUser ? 'justify-start' : 'justify-end'}`}
+                          >
+                            <div
+                              className={`max-w-[85%] rounded-2xl p-3 ${
+                                isUser
+                                  ? 'bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-900 rounded-tl-sm'
+                                  : isEmail
+                                  ? 'bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900 rounded-tr-sm'
+                                  : 'bg-muted rounded-tr-sm'
+                              }`}
+                            >
+                              <div className="flex items-center gap-2 mb-1">
+                                {isUser ? (
+                                  <>
+                                    <User className="h-3 w-3 text-purple-600" />
+                                    <span className="text-xs font-medium text-purple-600">Customer</span>
+                                  </>
+                                ) : isEmail ? (
+                                  <>
+                                    <Mail className="h-3 w-3 text-green-600" />
+                                    <span className="text-xs font-medium text-green-600">Email Sent</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <MessageSquare className="h-3 w-3 text-muted-foreground" />
+                                    <span className="text-xs font-medium text-muted-foreground">Admin Note</span>
+                                  </>
+                                )}
+                                <span className="text-xs text-muted-foreground ml-auto">
+                                  {formatDate(item.timestamp)}
+                                </span>
+                              </div>
+                              <p className="text-sm whitespace-pre-wrap">{item.content}</p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              )}
+                );
+              })()}
 
               {/* Add New Note */}
-              <div>
-                <Label className="text-muted-foreground">Add New Note</Label>
+              <div className="pt-4 border-t">
+                <Label className="text-sm font-medium mb-2 block">Add Note</Label>
                 <Textarea
                   value={adminNotes}
                   onChange={(e) => setAdminNotes(e.target.value)}
-                  placeholder="Add internal notes..."
-                  className="mt-1"
+                  placeholder="Add internal notes about this inquiry..."
+                  className="min-h-[80px] resize-none"
                 />
-              </div>
-
-              <div className="text-xs text-muted-foreground">
-                Received: {formatDate(selectedInquiry.createdAt)}
               </div>
             </div>
           )}
-          <DialogFooter>
+          <DialogFooter className="flex-shrink-0 pt-4 border-t gap-2">
             <Button variant="outline" onClick={() => setViewDialogOpen(false)}>
               Close
             </Button>
-            <Button onClick={handleSaveNotes}>Save Notes</Button>
+            <Button onClick={handleSaveNotes} disabled={!adminNotes.trim()}>
+              Save Note
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Respond Dialog */}
       <Dialog open={respondDialogOpen} onOpenChange={setRespondDialogOpen}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Send Response</DialogTitle>
+        <DialogContent className="max-w-lg max-h-[90vh] flex flex-col overflow-hidden">
+          <DialogHeader className="flex-shrink-0 pb-4 border-b">
+            <DialogTitle className="text-xl">Send Response</DialogTitle>
             <DialogDescription>
               Send an email response to {selectedInquiry?.name}
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label>To</Label>
-              <p className="text-sm text-muted-foreground">{selectedInquiry?.email}</p>
+          <div className="flex-1 overflow-y-auto py-4 space-y-4">
+            <div className="bg-muted/50 rounded-xl p-4">
+              <div className="flex items-center gap-3">
+                <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Mail className="h-4 w-4 text-primary" />
+                </div>
+                <div>
+                  <p className="font-medium text-sm">{selectedInquiry?.name}</p>
+                  <p className="text-sm text-muted-foreground">{selectedInquiry?.email}</p>
+                </div>
+              </div>
             </div>
             <div>
-              <Label>Original Message</Label>
-              <p className="mt-1 p-3 bg-muted rounded-lg text-sm line-clamp-3">
-                {selectedInquiry?.message}
-              </p>
+              <Label className="text-sm font-medium text-muted-foreground mb-2 block">
+                Original Message
+              </Label>
+              <div className="p-3 bg-blue-50 dark:bg-blue-950/30 rounded-xl border border-blue-200 dark:border-blue-900">
+                <p className="text-sm line-clamp-4">{selectedInquiry?.message}</p>
+              </div>
             </div>
             <div>
-              <Label htmlFor="response">Your Response</Label>
+              <Label htmlFor="response" className="text-sm font-medium mb-2 block">
+                Your Response
+              </Label>
               <Textarea
                 id="response"
                 value={responseMessage}
                 onChange={(e) => setResponseMessage(e.target.value)}
-                placeholder="Type your response..."
-                className="mt-1 min-h-[150px]"
+                placeholder="Type your response to the customer..."
+                className="min-h-[150px] resize-none"
               />
             </div>
           </div>
-          <DialogFooter>
+          <DialogFooter className="flex-shrink-0 pt-4 border-t gap-2">
             <Button variant="outline" onClick={() => setRespondDialogOpen(false)}>
               Cancel
             </Button>

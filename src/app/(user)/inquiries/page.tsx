@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import styles from "./page.module.css";
@@ -17,8 +17,14 @@ import {
   MessageCircle,
   Send,
   User,
+  ChevronLeft,
+  ChevronRight,
+  Eye,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
+
+const ITEMS_PER_PAGE = 5;
 
 interface Note {
   adminId: string;
@@ -62,13 +68,46 @@ const statusConfig: Record<string, { label: string; icon: any; color: string }> 
 
 const InquiriesPage = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [loading, setLoading] = useState(true);
   const [commentText, setCommentText] = useState<Record<string, string>>({});
   const [submittingComment, setSubmittingComment] = useState<string | null>(null);
+  const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
+
+  // Get page from URL or default to 1
+  const pageFromUrl = parseInt(searchParams.get("page") || "1", 10);
+  const currentPage = isNaN(pageFromUrl) || pageFromUrl < 1 ? 1 : pageFromUrl;
+
+  // Calculate pagination
+  const totalPages = Math.ceil(inquiries.length / ITEMS_PER_PAGE);
+  const validPage = Math.min(currentPage, totalPages || 1);
+  const startIndex = (validPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const paginatedInquiries = inquiries.slice(startIndex, endIndex);
+
+  // Update URL when page changes
+  const setCurrentPage = (page: number) => {
+    const url = new URL(window.location.href);
+    if (page === 1) {
+      url.searchParams.delete("page");
+    } else {
+      url.searchParams.set("page", page.toString());
+    }
+    router.push(url.pathname + url.search, { scroll: false });
+  };
 
   useEffect(() => {
     fetchInquiries();
+  }, []);
+
+  // Close modal on escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSelectedInquiry(null);
+    };
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
   }, []);
 
   const fetchInquiries = async () => {
@@ -166,174 +205,347 @@ const InquiriesPage = () => {
             </Link>
           </div>
         ) : (
-          <div className={styles.inquiriesList}>
-            {inquiries.map((inquiry) => {
-              const status = statusConfig[inquiry.status] || statusConfig.new;
-              const StatusIcon = status.icon;
+          <>
+            {/* Results summary */}
+            <div className={styles.resultsSummary}>
+              <span>
+                Showing {startIndex + 1}-{Math.min(endIndex, inquiries.length)} of {inquiries.length} {inquiries.length === 1 ? "inquiry" : "inquiries"}
+                {totalPages > 1 && ` (Page ${validPage} of ${totalPages})`}
+              </span>
+            </div>
 
-              return (
-                <div key={inquiry.id} className={styles.inquiryCard}>
-                  <div className={styles.inquiryHeader}>
-                    <div className={styles.statusBadge} style={{ backgroundColor: status.color }}>
-                      <StatusIcon size={14} />
-                      {status.label}
-                    </div>
-                    <span className={styles.date}>{formatDate(inquiry.createdAt)}</span>
-                  </div>
+            <div className={styles.inquiriesList}>
+              {paginatedInquiries.map((inquiry) => {
+                const status = statusConfig[inquiry.status] || statusConfig.pending;
+                const StatusIcon = status.icon;
+                const conversationCount = (inquiry.userComments?.length || 0) + (inquiry.notes?.length || 0);
 
-                  {inquiry.product && (
-                    <Link
-                      href={`/products/${inquiry.product.slug}`}
-                      className={styles.productLink}
-                    >
-                      {inquiry.product.image && (
-                        <div className={styles.productImage}>
-                          <Image
-                            src={inquiry.product.image}
-                            alt={inquiry.product.name}
-                            fill
-                            style={{ objectFit: "cover" }}
-                          />
-                        </div>
-                      )}
-                      <span className={styles.productName}>
-                        <Package size={14} />
-                        {inquiry.product.name}
-                      </span>
-                      <ExternalLink size={14} className={styles.externalIcon} />
-                    </Link>
-                  )}
-
-                  {inquiry.subject && (
-                    <h3 className={styles.inquirySubject}>{inquiry.subject}</h3>
-                  )}
-
-                  <p className={styles.inquiryMessage}>{inquiry.message}</p>
-
-                  {/* Comment Form for customer-feedback status */}
-                  {inquiry.status === "customer-feedback" && (
-                    <div className={styles.feedbackSection}>
-                      <h4 className={styles.feedbackTitle}>
-                        <MessageCircle size={16} />
-                        Your Feedback is Needed
-                      </h4>
-                      <p className={styles.feedbackDescription}>
-                        Please provide additional information to help us resolve your inquiry.
-                      </p>
-                      <div className={styles.commentForm}>
-                        <textarea
-                          className={styles.commentTextarea}
-                          placeholder="Type your response here..."
-                          value={commentText[inquiry.id] || ""}
-                          onChange={(e) =>
-                            setCommentText((prev) => ({
-                              ...prev,
-                              [inquiry.id]: e.target.value,
-                            }))
-                          }
-                          rows={4}
-                          maxLength={1000}
-                        />
-                        <div className={styles.commentFormFooter}>
-                          <span className={styles.charCount}>
-                            {(commentText[inquiry.id] || "").length}/1000
-                          </span>
-                          <button
-                            className={styles.submitButton}
-                            onClick={() => handleSubmitComment(inquiry.id)}
-                            disabled={submittingComment === inquiry.id || !commentText[inquiry.id]?.trim()}
-                          >
-                            {submittingComment === inquiry.id ? (
-                              <>
-                                <Loader2 size={14} className={styles.spinner} />
-                                Submitting...
-                              </>
-                            ) : (
-                              <>
-                                <Send size={14} />
-                                Submit Feedback
-                              </>
-                            )}
-                          </button>
-                        </div>
+                return (
+                  <div key={inquiry.id} className={styles.inquiryCard}>
+                    <div className={styles.inquiryHeader}>
+                      <div className={styles.statusBadge} style={{ backgroundColor: status.color }}>
+                        <StatusIcon size={14} />
+                        {status.label}
                       </div>
+                      <span className={styles.date}>{formatDate(inquiry.createdAt)}</span>
                     </div>
-                  )}
 
-                  {/* User Comments */}
-                  {inquiry.userComments && inquiry.userComments.length > 0 && (
-                    <div className={styles.responsesSection}>
-                      <h4 className={styles.responsesTitle}>
-                        <User size={16} />
-                        Your Comments ({inquiry.userComments.length})
-                      </h4>
-                      <div className={styles.responsesList}>
-                        {inquiry.userComments.map((comment, index) => (
-                          <div key={index} className={`${styles.responseItem} ${styles.userComment}`}>
-                            <div className={styles.responseHeader}>
-                              <User size={14} />
-                              <span>Your Comment</span>
-                              <span className={styles.responseDate}>
-                                {formatDate(comment.timestamp)}
-                              </span>
-                            </div>
-                            <p className={styles.responseContent}>
-                              {comment.comment}
-                            </p>
+                    {inquiry.product && (
+                      <div className={styles.productInfo}>
+                        {inquiry.product.image && (
+                          <div className={styles.productImageSmall}>
+                            <Image
+                              src={inquiry.product.image}
+                              alt={inquiry.product.name}
+                              fill
+                              style={{ objectFit: "cover" }}
+                            />
                           </div>
-                        ))}
+                        )}
+                        <span className={styles.productNameSmall}>
+                          <Package size={12} />
+                          {inquiry.product.name}
+                        </span>
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  {/* Admin Responses/Notes */}
-                  {inquiry.notes && inquiry.notes.length > 0 && (
-                    <div className={styles.responsesSection}>
-                      <h4 className={styles.responsesTitle}>
-                        <MessageCircle size={16} />
-                        Responses ({inquiry.notes.length})
-                      </h4>
-                      <div className={styles.responsesList}>
-                        {inquiry.notes.map((note, index) => {
-                          const isEmailResponse = note.note.startsWith("[Email Response Sent]");
-                          const displayContent = isEmailResponse
-                            ? note.note.replace("[Email Response Sent]\n", "")
-                            : note.note;
+                    {inquiry.subject && (
+                      <h3 className={styles.inquirySubject}>{inquiry.subject}</h3>
+                    )}
 
-                          return (
-                            <div key={index} className={`${styles.responseItem} ${isEmailResponse ? styles.emailResponse : styles.noteResponse}`}>
-                              <div className={styles.responseHeader}>
-                                {isEmailResponse ? <Mail size={14} /> : <MessageCircle size={14} />}
-                                <span>{isEmailResponse ? "Email Response" : "Admin Note"}</span>
-                                <span className={styles.responseDate}>
-                                  {formatDate(note.timestamp)}
-                                </span>
-                              </div>
-                              <p className={styles.responseContent}>
-                                {displayContent}
-                              </p>
-                            </div>
-                          );
-                        })}
+                    <p className={styles.inquiryMessagePreview}>
+                      {inquiry.message.length > 120
+                        ? `${inquiry.message.substring(0, 120)}...`
+                        : inquiry.message}
+                    </p>
+
+                    <div className={styles.inquiryCardFooter}>
+                      <div className={styles.inquiryStats}>
+                        {conversationCount > 0 && (
+                          <span className={styles.statBadge}>
+                            <MessageCircle size={12} />
+                            {conversationCount} {conversationCount === 1 ? "message" : "messages"}
+                          </span>
+                        )}
+                        {inquiry.status === "customer-feedback" && (
+                          <span className={styles.feedbackBadge}>
+                            <AlertCircle size={12} />
+                            Needs Response
+                          </span>
+                        )}
                       </div>
+                      <button
+                        className={styles.viewDetailsButton}
+                        onClick={() => setSelectedInquiry(inquiry)}
+                      >
+                        <Eye size={14} />
+                        View Details
+                      </button>
                     </div>
-                  )}
-
-                  <div className={styles.inquiryFooter}>
-                    <span className={styles.inquiryMeta}>
-                      Submitted as: {inquiry.name} ({inquiry.email})
-                    </span>
                   </div>
+                );
+              })}
+            </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className={styles.pagination}>
+                <button
+                  className={styles.paginationButton}
+                  onClick={() => setCurrentPage(Math.max(1, validPage - 1))}
+                  disabled={validPage === 1}
+                >
+                  <ChevronLeft size={18} />
+                  Previous
+                </button>
+                <div className={styles.paginationPages}>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <button
+                      key={page}
+                      className={`${styles.paginationPage} ${validPage === page ? styles.paginationPageActive : ""}`}
+                      onClick={() => setCurrentPage(page)}
+                    >
+                      {page}
+                    </button>
+                  ))}
                 </div>
-              );
-            })}
-          </div>
+                <button
+                  className={styles.paginationButton}
+                  onClick={() => setCurrentPage(Math.min(totalPages, validPage + 1))}
+                  disabled={validPage === totalPages}
+                >
+                  Next
+                  <ChevronRight size={18} />
+                </button>
+              </div>
+            )}
+          </>
         )}
 
         <div className={styles.helpSection}>
           <p>Need help? <Link href="/contact" className={styles.link}>Submit a new inquiry</Link></p>
         </div>
       </div>
+
+      {/* Detail Modal */}
+      {selectedInquiry && (
+        <div className={styles.modalOverlay} onClick={() => setSelectedInquiry(null)}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <div>
+                <h2 className={styles.modalTitle}>Inquiry Details</h2>
+                <p className={styles.modalSubtitle}>
+                  Submitted on {formatDate(selectedInquiry.createdAt)}
+                </p>
+              </div>
+              <button
+                className={styles.modalClose}
+                onClick={() => setSelectedInquiry(null)}
+                aria-label="Close modal"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className={styles.modalContent}>
+              {/* Status Badge */}
+              <div className={styles.modalStatusRow}>
+                {(() => {
+                  const status = statusConfig[selectedInquiry.status] || statusConfig.pending;
+                  const StatusIcon = status.icon;
+                  return (
+                    <div className={styles.statusBadge} style={{ backgroundColor: status.color }}>
+                      <StatusIcon size={14} />
+                      {status.label}
+                    </div>
+                  );
+                })()}
+              </div>
+
+              {/* Product Link */}
+              {selectedInquiry.product && (
+                <Link
+                  href={`/products/${selectedInquiry.product.slug}`}
+                  className={styles.productLink}
+                  onClick={() => setSelectedInquiry(null)}
+                >
+                  {selectedInquiry.product.image && (
+                    <div className={styles.productImage}>
+                      <Image
+                        src={selectedInquiry.product.image}
+                        alt={selectedInquiry.product.name}
+                        fill
+                        style={{ objectFit: "cover" }}
+                      />
+                    </div>
+                  )}
+                  <span className={styles.productName}>
+                    <Package size={14} />
+                    {selectedInquiry.product.name}
+                  </span>
+                  <ExternalLink size={14} className={styles.externalIcon} />
+                </Link>
+              )}
+
+              {/* Subject */}
+              {selectedInquiry.subject && (
+                <h3 className={styles.modalSubject}>{selectedInquiry.subject}</h3>
+              )}
+
+              {/* Original Message */}
+              <div className={styles.originalMessage}>
+                <label className={styles.sectionLabel}>Your Message</label>
+                <p className={styles.messageText}>{selectedInquiry.message}</p>
+              </div>
+
+              {/* Feedback Form for customer-feedback status */}
+              {selectedInquiry.status === "customer-feedback" && (
+                <div className={styles.feedbackSection}>
+                  <h4 className={styles.feedbackTitle}>
+                    <MessageCircle size={16} />
+                    Your Feedback is Needed
+                  </h4>
+                  <p className={styles.feedbackDescription}>
+                    Please provide additional information to help us resolve your inquiry.
+                  </p>
+                  <div className={styles.commentForm}>
+                    <textarea
+                      className={styles.commentTextarea}
+                      placeholder="Type your response here..."
+                      value={commentText[selectedInquiry.id] || ""}
+                      onChange={(e) =>
+                        setCommentText((prev) => ({
+                          ...prev,
+                          [selectedInquiry.id]: e.target.value,
+                        }))
+                      }
+                      rows={4}
+                      maxLength={1000}
+                    />
+                    <div className={styles.commentFormFooter}>
+                      <span className={styles.charCount}>
+                        {(commentText[selectedInquiry.id] || "").length}/1000
+                      </span>
+                      <button
+                        className={styles.submitButton}
+                        onClick={() => {
+                          handleSubmitComment(selectedInquiry.id);
+                        }}
+                        disabled={submittingComment === selectedInquiry.id || !commentText[selectedInquiry.id]?.trim()}
+                      >
+                        {submittingComment === selectedInquiry.id ? (
+                          <>
+                            <Loader2 size={14} className={styles.spinner} />
+                            Submitting...
+                          </>
+                        ) : (
+                          <>
+                            <Send size={14} />
+                            Submit Feedback
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Conversation Timeline */}
+              {(() => {
+                type TimelineItem = {
+                  type: 'user' | 'admin' | 'email';
+                  content: string;
+                  timestamp: string;
+                };
+                const timelineItems: TimelineItem[] = [];
+
+                selectedInquiry.userComments?.forEach((comment) => {
+                  timelineItems.push({
+                    type: 'user',
+                    content: comment.comment,
+                    timestamp: comment.timestamp,
+                  });
+                });
+
+                selectedInquiry.notes?.forEach((note) => {
+                  const isEmailResponse = note.note.startsWith("[Email Response Sent]");
+                  timelineItems.push({
+                    type: isEmailResponse ? 'email' : 'admin',
+                    content: isEmailResponse
+                      ? note.note.replace("[Email Response Sent]\n", "")
+                      : note.note,
+                    timestamp: note.timestamp,
+                  });
+                });
+
+                timelineItems.sort((a, b) =>
+                  new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+                );
+
+                if (timelineItems.length === 0) return null;
+
+                return (
+                  <div className={styles.timelineSection}>
+                    <h4 className={styles.timelineTitle}>
+                      <MessageCircle size={16} />
+                      Conversation ({timelineItems.length})
+                    </h4>
+                    <div className={styles.timeline}>
+                      {timelineItems.map((item, index) => {
+                        const isUser = item.type === 'user';
+                        const isEmail = item.type === 'email';
+
+                        return (
+                          <div
+                            key={index}
+                            className={`${styles.timelineItem} ${
+                              isUser
+                                ? styles.timelineItemUser
+                                : isEmail
+                                ? styles.timelineItemEmail
+                                : styles.timelineItemAdmin
+                            }`}
+                          >
+                            <div className={styles.timelineItemHeader}>
+                              {isUser ? (
+                                <>
+                                  <User size={12} />
+                                  <span>You</span>
+                                </>
+                              ) : isEmail ? (
+                                <>
+                                  <Mail size={12} />
+                                  <span>Support Team</span>
+                                </>
+                              ) : (
+                                <>
+                                  <MessageCircle size={12} />
+                                  <span>Support</span>
+                                </>
+                              )}
+                              <span className={styles.timelineItemDate}>
+                                {formatDate(item.timestamp)}
+                              </span>
+                            </div>
+                            <p className={styles.timelineItemContent}>
+                              {item.content}
+                            </p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* Footer Info */}
+              <div className={styles.modalFooterInfo}>
+                <span>Submitted as: {selectedInquiry.name} ({selectedInquiry.email})</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
