@@ -482,12 +482,14 @@ const CategoryListPageInner = () => {
         />
       )}
 
-      {/* Filters - hide category filter completely on category pages */}
+      {/* Filters - show only subcategories with products, or hide if none */}
       <div className={styles.filtersSection}>
         <ProductFilters
-          categories={[]} // Don't show category filter on category page
+          categories={subcategoriesWithProducts}
           totalResults={pagination.total}
           hideSearch={false}
+          hideCategoryFilter={isSubcategory || subcategoriesWithProducts.length === 0}
+          allowedCategories={subcategoriesWithProducts}
         />
       </div>
 

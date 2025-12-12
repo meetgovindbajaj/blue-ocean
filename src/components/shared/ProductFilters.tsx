@@ -24,7 +24,7 @@ import { SlidersHorizontal, X, Search } from "lucide-react";
 import styles from "./ProductFilters.module.css";
 import { Route } from "next";
 import { useCurrency } from "@/context/CurrencyContext";
-import CategoryMultiSelect from "./CategoryMultiSelect";
+import CategoryMultiSelect, { CategoryWithProductCount } from "./CategoryMultiSelect";
 
 export type SortOption =
   | "newest"
@@ -53,6 +53,10 @@ interface ProductFiltersProps {
   onFiltersChange?: (filters: FilterValues) => void;
   hideSearch?: boolean;
   onClear?: () => void;
+  /** If true, completely hide the category filter dropdown */
+  hideCategoryFilter?: boolean;
+  /** If provided, only these categories will be available in the category multiselect */
+  allowedCategories?: CategoryWithProductCount[];
 }
 
 const SORT_OPTIONS: { value: SortOption; label: string }[] = [
@@ -81,6 +85,8 @@ export default function ProductFilters({
   onFiltersChange,
   hideSearch = false,
   onClear,
+  hideCategoryFilter = false,
+  allowedCategories,
 }: ProductFiltersProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -376,12 +382,15 @@ export default function ProductFilters({
           )}
 
           {/* Category MultiSelect */}
-          <CategoryMultiSelect
-            selectedCategories={filters.categories}
-            onSelectionChange={handleCategoriesChange}
-            placeholder="Select categories..."
-            className={styles.categorySelect}
-          />
+          {!hideCategoryFilter && (
+            <CategoryMultiSelect
+              selectedCategories={filters.categories}
+              onSelectionChange={handleCategoriesChange}
+              placeholder="Select categories..."
+              className={styles.categorySelect}
+              allowedCategories={allowedCategories}
+            />
+          )}
 
           {/* Sort Select */}
           <Select
@@ -494,19 +503,22 @@ export default function ProductFilters({
                 )}
 
                 {/* Categories */}
-                <div className={styles.mobileFilterGroup}>
-                  <label className={styles.filterLabel}>Categories</label>
-                  <CategoryMultiSelect
-                    selectedCategories={filters.categories}
-                    onSelectionChange={(categories) =>
-                      setFilters((f) => ({
-                        ...f,
-                        categories,
-                      }))
-                    }
-                    placeholder="Select categories..."
-                  />
-                </div>
+                {!hideCategoryFilter && (
+                  <div className={styles.mobileFilterGroup}>
+                    <label className={styles.filterLabel}>Categories</label>
+                    <CategoryMultiSelect
+                      selectedCategories={filters.categories}
+                      onSelectionChange={(categories) =>
+                        setFilters((f) => ({
+                          ...f,
+                          categories,
+                        }))
+                      }
+                      placeholder="Select categories..."
+                      allowedCategories={allowedCategories}
+                    />
+                  </div>
+                )}
 
                 {/* Price Range */}
                 <div className={styles.mobileFilterGroup}>

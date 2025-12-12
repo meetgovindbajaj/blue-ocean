@@ -109,7 +109,7 @@ export default function Dashboard() {
       icon: ImageIcon,
       color: "text-orange-600",
       bgColor: "bg-orange-100",
-      href: "/admin/hero-banners",
+      href: "/admin/offers",
     },
     {
       title: "Inquiries",
@@ -447,7 +447,7 @@ export default function Dashboard() {
             </Link>
 
             <Link
-              href={"/admin/hero-banners/new" as Route}
+              href={"/admin/offers/banners/new" as Route}
               className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors"
             >
               <div className="p-2 rounded-lg bg-orange-100">

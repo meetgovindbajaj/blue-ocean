@@ -5,18 +5,23 @@ import { X, ChevronDown, Search, Check, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import styles from "./CategoryMultiSelect.module.css";
 
-interface Category {
+export interface CategoryWithProductCount {
   id: string;
   name: string;
   slug: string;
   productCount?: number;
 }
 
+// Alias for backward compatibility
+type Category = CategoryWithProductCount;
+
 interface CategoryMultiSelectProps {
   selectedCategories: string[];
   onSelectionChange: (categories: string[]) => void;
   placeholder?: string;
   className?: string;
+  /** If provided, only these categories will be shown (by slug). When empty array, no categories shown. */
+  allowedCategories?: Category[];
 }
 
 const CategoryMultiSelect = ({
@@ -24,6 +29,7 @@ const CategoryMultiSelect = ({
   onSelectionChange,
   placeholder = "Select categories...",
   className,
+  allowedCategories,
 }: CategoryMultiSelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -33,8 +39,15 @@ const CategoryMultiSelect = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Fetch categories with product counts
+  // Check if we should use allowed categories or fetch all
+  const useAllowedCategories = allowedCategories !== undefined;
+
+  // Fetch categories with product counts (only if not using allowedCategories)
   const fetchCategories = useCallback(async () => {
+    if (useAllowedCategories) {
+      setCategories(allowedCategories);
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
@@ -52,7 +65,7 @@ const CategoryMultiSelect = ({
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [useAllowedCategories, allowedCategories]);
 
   useEffect(() => {
     fetchCategories();
