@@ -461,10 +461,43 @@ const SearchBar = () => {
   const pathname = usePathname();
   const prevPathname = useRef(pathname);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setIsOpen(false);
     setQuery("");
-  };
+  }, []);
+
+  const handleOpen = useCallback(() => {
+    setIsOpen(true);
+    // Push a history state so back button closes the search
+    window.history.pushState({ searchOpen: true }, "");
+  }, []);
+
+  // Handle browser back button to close search
+  useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      // If search is open and user presses back, close it
+      if (isOpen) {
+        event.preventDefault();
+        handleClose();
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [isOpen, handleClose]);
+
+  // Handle escape key to close search
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && isOpen) {
+        // Go back in history to remove the search state
+        window.history.back();
+      }
+    };
+
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [isOpen]);
 
   // Close overlay when route changes
   useEffect(() => {
@@ -472,7 +505,7 @@ const SearchBar = () => {
       handleClose();
     }
     prevPathname.current = pathname;
-  }, [pathname, isOpen]);
+  }, [pathname, isOpen, handleClose]);
 
   return (
     <div style={{ display: "contents", position: "relative" }}>
@@ -480,14 +513,14 @@ const SearchBar = () => {
         style={{ cursor: "pointer" }}
         src={Search}
         alt="Search"
-        onClick={() => setIsOpen((p) => !p)}
+        onClick={() => (isOpen ? window.history.back() : handleOpen())}
       />
       {isOpen && (
         <Suspense fallback={<SearchContentLoading />}>
           <SearchContent
             query={query}
             setQuery={setQuery}
-            onClose={handleClose}
+            onClose={() => window.history.back()}
           />
         </Suspense>
       )}

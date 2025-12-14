@@ -34,11 +34,12 @@
 .mainButtonOpen {
   background: rgba(82, 82, 82, 0.9);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-  transform: rotate(90deg);
+  transform: rotate(45deg);
 }
 
 .mainButtonOpen:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: rotate(45deg);
 }
 
 .menu {
@@ -192,6 +193,7 @@
     opacity: 0;
     transform: scale(0.8);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -203,6 +205,7 @@
     opacity: 0;
     transform: translateY(-50%) translateX(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(-50%) translateX(0);
@@ -242,6 +245,7 @@
       opacity: 0;
       transform: translateX(-50%) translateY(10px);
     }
+
     to {
       opacity: 1;
       transform: translateX(-50%) translateY(0);
