@@ -1,7 +1,23 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  Cell,
+  Pie,
+  PieChart as RechartsPieChart,
+  XAxis,
+  YAxis,
+} from "recharts";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
@@ -11,6 +27,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
+  type ChartConfig,
+} from "@/components/ui/chart";
 import {
   Eye,
   MousePointer,
@@ -63,6 +87,11 @@ interface AnalyticsData {
   }>;
   dailyTrends: Array<{
     date: string;
+    productViews: number;
+    categoryViews: number;
+    bannerImpressions: number;
+    bannerClicks: number;
+    tagClicks: number;
     views: number;
     clicks: number;
   }>;
@@ -87,6 +116,61 @@ const ENTITY_LABELS: Record<string, string> = {
   tag: "Tags",
   page: "Pages",
 };
+
+// Chart configurations - now with separate colors for each event type
+const dailyTrendsConfig = {
+  productViews: {
+    label: "Products",
+    color: "hsl(217, 91%, 60%)", // Blue
+  },
+  categoryViews: {
+    label: "Categories",
+    color: "hsl(217, 91%, 75%)", // Light Blue
+  },
+  bannerImpressions: {
+    label: "Impressions",
+    color: "hsl(262, 83%, 58%)", // Purple
+  },
+  bannerClicks: {
+    label: "Banner Clicks",
+    color: "hsl(262, 83%, 75%)", // Light Purple
+  },
+  tagClicks: {
+    label: "Tags",
+    color: "hsl(142, 71%, 45%)", // Green
+  },
+} satisfies ChartConfig;
+
+const entityPieConfig = {
+  product: {
+    label: "Products",
+    color: "hsl(217, 91%, 60%)", // blue
+  },
+  category: {
+    label: "Categories",
+    color: "hsl(142, 71%, 45%)", // green
+  },
+  banner: {
+    label: "Banners",
+    color: "hsl(262, 83%, 58%)", // purple
+  },
+  tag: {
+    label: "Tags",
+    color: "hsl(25, 95%, 53%)", // orange
+  },
+  page: {
+    label: "Pages",
+    color: "hsl(189, 94%, 43%)", // cyan
+  },
+} satisfies ChartConfig;
+
+const PIE_COLORS = [
+  "hsl(217, 91%, 60%)", // blue
+  "hsl(142, 71%, 45%)", // green
+  "hsl(262, 83%, 58%)", // purple
+  "hsl(25, 95%, 53%)", // orange
+  "hsl(189, 94%, 43%)", // cyan
+];
 
 export default function AnalyticsPage() {
   const [data, setData] = useState<AnalyticsData | null>(null);
@@ -185,7 +269,7 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <div className="flex-1 p-6 space-y-6">
+    <div className="flex-1 p-6 space-y-6 overflow-x-hidden">
       <div className="flex items-start justify-between md:flex-row flex-col gap-4">
         <div>
           <h1 className="text-2xl font-bold">Analytics</h1>
@@ -229,54 +313,160 @@ export default function AnalyticsPage() {
 
       {/* Charts Row */}
       <div className="grid gap-6 md:grid-cols-2">
-        {/* Daily Trends Chart */}
+        {/* Weekly Trends Chart */}
         <Card>
-          <CardHeader>
+          <CardHeader className="border-b pb-4">
             <CardTitle className="flex items-center gap-2">
               <Activity className="h-5 w-5" />
-              Daily Trends
+              Weekly Site Activity
             </CardTitle>
+            <CardDescription className="text-xs space-y-0.5">
+              <span className="block">
+                <span className="inline-block w-2.5 h-2.5 rounded-sm mr-1" style={{ backgroundColor: "hsl(217, 91%, 60%)" }} />
+                Products &amp;{" "}
+                <span className="inline-block w-2.5 h-2.5 rounded-sm mr-1 ml-1" style={{ backgroundColor: "hsl(217, 91%, 75%)" }} />
+                Categories (views)
+              </span>
+              <span className="block">
+                <span className="inline-block w-2.5 h-2.5 rounded-sm mr-1" style={{ backgroundColor: "hsl(262, 83%, 58%)" }} />
+                Impressions &amp;{" "}
+                <span className="inline-block w-2.5 h-2.5 rounded-sm mr-1 ml-1" style={{ backgroundColor: "hsl(262, 83%, 75%)" }} />
+                Banner Clicks
+              </span>
+              <span className="block">
+                <span className="inline-block w-2.5 h-2.5 rounded-sm mr-1" style={{ backgroundColor: "hsl(142, 71%, 45%)" }} />
+                Tag Clicks
+              </span>
+            </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-4 overflow-hidden">
             {data?.dailyTrends && data.dailyTrends.length > 0 ? (
-              <div className="space-y-4">
-                {/* Simple bar chart */}
-                <div className="flex items-end gap-1" style={{ height: "160px" }}>
-                  {data.dailyTrends.slice(-14).map((day, index) => {
-                    const viewHeight = Math.max((day.views / maxDailyViews) * 100, 2);
-                    return (
-                      <div
-                        key={day.date}
-                        className="flex-1 flex flex-col items-center justify-end h-full group"
-                      >
-                        <div
-                          className="w-full bg-blue-500 rounded-t transition-all hover:bg-blue-600 min-h-[4px]"
-                          style={{ height: `${viewHeight}%` }}
-                          title={`${day.date}: ${day.views} views`}
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
-                {/* Date labels */}
-                <div className="flex gap-1">
-                  {data.dailyTrends.slice(-14).map((day, index) => (
-                    <div key={`label-${day.date}`} className="flex-1 text-center">
-                      {index % 2 === 0 && (
-                        <span className="text-[10px] text-muted-foreground">
-                          {day.date.slice(5)}
-                        </span>
-                      )}
-                    </div>
-                  ))}
-                </div>
-                <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-blue-500 rounded" />
-                    <span>Views</span>
-                  </div>
-                </div>
-              </div>
+              <ChartContainer
+                config={dailyTrendsConfig}
+                className="aspect-auto h-[340px] w-full"
+              >
+                <AreaChart data={data.dailyTrends} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                  <defs>
+                    {/* Product Views - Dark Blue */}
+                    <linearGradient id="fillProductViews" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="var(--color-productViews)" stopOpacity={0.8} />
+                      <stop offset="95%" stopColor="var(--color-productViews)" stopOpacity={0.1} />
+                    </linearGradient>
+                    {/* Category Views - Light Blue */}
+                    <linearGradient id="fillCategoryViews" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="var(--color-categoryViews)" stopOpacity={0.8} />
+                      <stop offset="95%" stopColor="var(--color-categoryViews)" stopOpacity={0.1} />
+                    </linearGradient>
+                    {/* Banner Impressions - Dark Purple */}
+                    <linearGradient id="fillBannerImpressions" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="var(--color-bannerImpressions)" stopOpacity={0.8} />
+                      <stop offset="95%" stopColor="var(--color-bannerImpressions)" stopOpacity={0.1} />
+                    </linearGradient>
+                    {/* Banner Clicks - Light Purple */}
+                    <linearGradient id="fillBannerClicks" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="var(--color-bannerClicks)" stopOpacity={0.8} />
+                      <stop offset="95%" stopColor="var(--color-bannerClicks)" stopOpacity={0.1} />
+                    </linearGradient>
+                    {/* Tag Clicks - Green */}
+                    <linearGradient id="fillTagClicks" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="var(--color-tagClicks)" stopOpacity={0.8} />
+                      <stop offset="95%" stopColor="var(--color-tagClicks)" stopOpacity={0.1} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid vertical={false} />
+                  <XAxis
+                    dataKey="date"
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={8}
+                    minTickGap={32}
+                    tickFormatter={(value) => {
+                      const date = new Date(value);
+                      return date.toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                      });
+                    }}
+                  />
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={8}
+                    width={40}
+                  />
+                  <ChartTooltip
+                    cursor={false}
+                    content={
+                      <ChartTooltipContent
+                        className="w-[220px] p-3"
+                        labelFormatter={(value) => {
+                          return new Date(value).toLocaleDateString("en-US", {
+                            weekday: "short",
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          });
+                        }}
+                        formatter={(value, name) => (
+                          <div className="flex items-center justify-between gap-3 py-0.5 w-full">
+                            <span className="text-muted-foreground text-xs truncate flex-shrink min-w-0">
+                              {dailyTrendsConfig[name as keyof typeof dailyTrendsConfig]?.label || name}
+                            </span>
+                            <span className="font-mono font-semibold tabular-nums text-xs flex-shrink-0">
+                              {(value as number).toLocaleString()}
+                            </span>
+                          </div>
+                        )}
+                        indicator="dot"
+                      />
+                    }
+                  />
+                  {/* Page Views - stacked together (blue hues) */}
+                  <Area
+                    dataKey="productViews"
+                    type="natural"
+                    fill="url(#fillProductViews)"
+                    stroke="var(--color-productViews)"
+                    strokeWidth={2}
+                    stackId="views"
+                  />
+                  <Area
+                    dataKey="categoryViews"
+                    type="natural"
+                    fill="url(#fillCategoryViews)"
+                    stroke="var(--color-categoryViews)"
+                    strokeWidth={2}
+                    stackId="views"
+                  />
+                  {/* Banner stats - stacked together (purple hues) */}
+                  <Area
+                    dataKey="bannerImpressions"
+                    type="natural"
+                    fill="url(#fillBannerImpressions)"
+                    stroke="var(--color-bannerImpressions)"
+                    strokeWidth={2}
+                    stackId="banners"
+                  />
+                  <Area
+                    dataKey="bannerClicks"
+                    type="natural"
+                    fill="url(#fillBannerClicks)"
+                    stroke="var(--color-bannerClicks)"
+                    strokeWidth={2}
+                    stackId="banners"
+                  />
+                  {/* Tag clicks (green) */}
+                  <Area
+                    dataKey="tagClicks"
+                    type="natural"
+                    fill="url(#fillTagClicks)"
+                    stroke="var(--color-tagClicks)"
+                    strokeWidth={2}
+                    stackId="tags"
+                  />
+                  <ChartLegend content={<ChartLegendContent className="flex-wrap justify-center gap-x-4 gap-y-1" />} />
+                </AreaChart>
+              </ChartContainer>
             ) : (
               <p className="text-sm text-muted-foreground text-center py-8">
                 No trend data available
@@ -287,38 +477,80 @@ export default function AnalyticsPage() {
 
         {/* Entity Breakdown Pie Chart */}
         <Card>
-          <CardHeader>
+          <CardHeader className="border-b pb-4">
             <CardTitle className="flex items-center gap-2">
               <PieChart className="h-5 w-5" />
               Activity by Type
             </CardTitle>
+            <CardDescription>Distribution of events by entity type</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-4">
             {data?.entityBreakdown && data.entityBreakdown.length > 0 ? (
-              <div className="space-y-4">
-                {/* Simple horizontal bars */}
-                <div className="space-y-3">
+              <div className="flex flex-col items-center">
+                <ChartContainer
+                  config={entityPieConfig}
+                  className="aspect-square h-[200px] w-full max-w-[200px]"
+                >
+                  <RechartsPieChart>
+                    <ChartTooltip
+                      cursor={false}
+                      content={
+                        <ChartTooltipContent
+                          hideLabel
+                          formatter={(value, name) => (
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium">
+                                {ENTITY_LABELS[name as string] || name}:
+                              </span>
+                              <span>{(value as number).toLocaleString()}</span>
+                            </div>
+                          )}
+                        />
+                      }
+                    />
+                    <Pie
+                      data={data.entityBreakdown.filter((e) => e.value > 0)}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={50}
+                      outerRadius={80}
+                      paddingAngle={2}
+                    >
+                      {data.entityBreakdown
+                        .filter((e) => e.value > 0)
+                        .map((entry, index) => (
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={PIE_COLORS[index % PIE_COLORS.length]}
+                          />
+                        ))}
+                    </Pie>
+                  </RechartsPieChart>
+                </ChartContainer>
+                {/* Legend */}
+                <div className="flex flex-wrap justify-center gap-4 mt-4">
                   {data.entityBreakdown
                     .filter((e) => e.value > 0)
                     .sort((a, b) => b.value - a.value)
-                    .map((entity) => {
+                    .map((entity, index) => {
                       const percentage = (entity.value / totalEntityEvents) * 100;
                       return (
-                        <div key={entity.name} className="space-y-1">
-                          <div className="flex items-center justify-between text-sm">
-                            <span className="font-medium">
-                              {ENTITY_LABELS[entity.name] || entity.name}
-                            </span>
-                            <span className="text-muted-foreground">
-                              {entity.value.toLocaleString()} ({percentage.toFixed(1)}%)
-                            </span>
-                          </div>
-                          <div className="h-2 bg-muted rounded-full overflow-hidden">
-                            <div
-                              className={`h-full ${ENTITY_COLORS[entity.name] || "bg-gray-500"} transition-all`}
-                              style={{ width: `${percentage}%` }}
-                            />
-                          </div>
+                        <div
+                          key={entity.name}
+                          className="flex items-center gap-2 text-sm"
+                        >
+                          <div
+                            className="h-3 w-3 rounded-sm"
+                            style={{
+                              backgroundColor: PIE_COLORS[index % PIE_COLORS.length],
+                            }}
+                          />
+                          <span>
+                            {ENTITY_LABELS[entity.name] || entity.name} (
+                            {percentage.toFixed(0)}%)
+                          </span>
                         </div>
                       );
                     })}
@@ -333,182 +565,307 @@ export default function AnalyticsPage() {
         </Card>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        {/* Top Products */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5" />
-              Top Products by Views
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {data?.topProducts && data.topProducts.length > 0 ? (
-                data.topProducts.map((product, index) => (
-                  <div key={product.id} className="space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <div className="flex items-center gap-2">
-                        <span className="flex items-center justify-center w-6 h-6 rounded-full bg-muted text-xs font-medium">
-                          {index + 1}
-                        </span>
-                        <span className="font-medium truncate max-w-[200px]">
-                          {product.name}
-                        </span>
-                      </div>
-                      <span className="text-muted-foreground">
-                        {product.views.toLocaleString()} views
-                      </span>
+      {/* Top Products List */}
+      <Card>
+        <CardHeader className="border-b pb-4">
+          <CardTitle className="flex items-center gap-2">
+            <TrendingUp className="h-5 w-5" />
+            Top Products by Page Views
+          </CardTitle>
+          <CardDescription>
+            Most viewed product pages during the selected period
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="pt-4">
+          {data?.topProducts && data.topProducts.length > 0 ? (
+            <div className="max-h-[350px] overflow-y-auto pr-2 space-y-3">
+              {data.topProducts.map((product, index) => {
+                const maxViews = data.topProducts[0]?.views || 1;
+                const percentage = (product.views / maxViews) * 100;
+                return (
+                  <div
+                    key={product.id}
+                    className="flex items-center gap-4 p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
+                  >
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-700 font-semibold text-sm shrink-0">
+                      {index + 1}
                     </div>
-                    <Progress value={product.percentage} className="h-2" />
-                  </div>
-                ))
-              ) : (
-                <p className="text-sm text-muted-foreground text-center py-4">
-                  No data available
-                </p>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Tag Performance */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Tag className="h-5 w-5" />
-              Tag Performance
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {data?.tagStats && data.tagStats.length > 0 ? (
-                data.tagStats.slice(0, 5).map((tag, index) => {
-                  const percentage = (tag.clicks / maxTagClicks) * 100;
-                  return (
-                    <div key={tag.id} className="space-y-2">
-                      <div className="flex items-center justify-between text-sm">
-                        <div className="flex items-center gap-2">
-                          <span className="flex items-center justify-center w-6 h-6 rounded-full bg-orange-100 text-orange-600 text-xs font-medium">
-                            {index + 1}
-                          </span>
-                          <span className="font-medium truncate max-w-[200px]">
-                            {tag.name}
-                          </span>
-                        </div>
-                        <span className="text-muted-foreground">
-                          {tag.clicks.toLocaleString()} clicks
-                        </span>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-sm truncate" title={product.name}>
+                        {product.name}
+                      </p>
+                      <div className="mt-1.5 h-2 bg-muted rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-blue-500 rounded-full transition-all"
+                          style={{ width: `${percentage}%` }}
+                        />
                       </div>
-                      <Progress
-                        value={percentage}
-                        className="h-2 [&>div]:bg-orange-500"
-                      />
+                    </div>
+                    <div className="text-right shrink-0">
+                      <p className="font-semibold text-sm tabular-nums">
+                        {product.views.toLocaleString()}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {product.uniqueVisitors} visitors
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground text-center py-8">
+              No product view data available
+            </p>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Categories and Tags Row */}
+      <div className="grid gap-6 md:grid-cols-2 overflow-hidden">
+        {/* Top Categories List */}
+        <Card className="overflow-hidden min-w-0">
+          <CardHeader className="border-b pb-4">
+            <CardTitle className="flex items-center gap-2">
+              <ShoppingCart className="h-5 w-5 shrink-0" />
+              <span className="truncate">Category Page Views</span>
+            </CardTitle>
+            <CardDescription className="truncate">
+              Views on category listing pages
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pt-4 overflow-hidden">
+            {data?.topCategories && data.topCategories.length > 0 ? (
+              <div className="max-h-[300px] overflow-y-auto overflow-x-hidden pr-2 space-y-2">
+                {data.topCategories.map((category, index) => {
+                  const maxViews = data.topCategories[0]?.views || 1;
+                  const percentage = maxViews > 0 ? (category.views / maxViews) * 100 : 0;
+                  return (
+                    <div
+                      key={category.id}
+                      className="flex items-center gap-3 p-2.5 rounded-lg border hover:bg-muted/50 transition-colors"
+                    >
+                      <div className="flex items-center justify-center w-7 h-7 rounded-full bg-green-100 text-green-700 font-semibold text-xs shrink-0">
+                        {index + 1}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm truncate" title={category.name}>
+                          {category.name}
+                        </p>
+                        <div className="mt-1 h-1.5 bg-muted rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-green-500 rounded-full transition-all"
+                            style={{ width: `${percentage}%` }}
+                          />
+                        </div>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className="font-semibold text-sm tabular-nums">
+                          {category.views.toLocaleString()}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {category.productCount} products
+                        </p>
+                      </div>
                     </div>
                   );
-                })
-              ) : (
-                <p className="text-sm text-muted-foreground text-center py-4">
-                  No tag data available
-                </p>
-              )}
-            </div>
+                })}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-8">
+                No category data available
+              </p>
+            )}
           </CardContent>
         </Card>
 
-        {/* Top Categories */}
-        <Card>
-          <CardHeader>
+        {/* Tag Clicks List */}
+        <Card className="overflow-hidden min-w-0">
+          <CardHeader className="border-b pb-4">
             <CardTitle className="flex items-center gap-2">
-              <ShoppingCart className="h-5 w-5" />
-              Categories Overview
+              <Tag className="h-5 w-5 shrink-0" />
+              <span className="truncate">Tag Click Performance</span>
             </CardTitle>
+            <CardDescription className="truncate">
+              Number of clicks on product tags
+            </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {data?.topCategories && data.topCategories.length > 0 ? (
-                data.topCategories.map((category) => (
-                  <div
-                    key={category.id}
-                    className="flex items-center justify-between"
-                  >
-                    <div>
-                      <p className="font-medium">{category.name}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {category.productCount} products
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-medium">
-                        {category.views.toLocaleString()}
-                      </p>
-                      <p className="text-xs text-muted-foreground">views</p>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p className="text-sm text-muted-foreground text-center py-4">
-                  No data available
-                </p>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Banner Performance */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="h-5 w-5" />
-              Banner Performance
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4 max-h-[400px] overflow-y-auto">
-              {data?.bannerStats && data.bannerStats.length > 0 ? (
-                <div className="space-y-3">
-                  {data.bannerStats.map((banner) => (
+          <CardContent className="pt-4 overflow-hidden">
+            {data?.tagStats && data.tagStats.length > 0 ? (
+              <div className="max-h-[300px] overflow-y-auto overflow-x-hidden pr-2 space-y-2">
+                {data.tagStats.map((tag, index) => {
+                  const maxClicks = data.tagStats[0]?.clicks || 1;
+                  const percentage = maxClicks > 0 ? (tag.clicks / maxClicks) * 100 : 0;
+                  return (
                     <div
-                      key={banner.id}
-                      className="p-3 border rounded-lg space-y-2"
+                      key={tag.id}
+                      className="flex items-center gap-3 p-2.5 rounded-lg border hover:bg-muted/50 transition-colors"
                     >
-                      <p className="font-medium truncate text-sm">{banner.name}</p>
-                      <div className="grid grid-cols-3 gap-2 text-center">
-                        <div>
-                          <p className="text-base font-bold">
-                            {banner.impressions.toLocaleString()}
-                          </p>
-                          <p className="text-[10px] text-muted-foreground">
-                            Impressions
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-base font-bold">
-                            {banner.clicks.toLocaleString()}
-                          </p>
-                          <p className="text-[10px] text-muted-foreground">
-                            Clicks
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-base font-bold">
-                            {banner.ctr.toFixed(1)}%
-                          </p>
-                          <p className="text-[10px] text-muted-foreground">CTR</p>
+                      <div className="flex items-center justify-center w-7 h-7 rounded-full bg-orange-100 text-orange-700 font-semibold text-xs shrink-0">
+                        {index + 1}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm truncate" title={tag.name}>
+                          {tag.name}
+                        </p>
+                        <div className="mt-1 h-1.5 bg-muted rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-orange-500 rounded-full transition-all"
+                            style={{ width: `${percentage}%` }}
+                          />
                         </div>
                       </div>
+                      <div className="text-right shrink-0">
+                        <p className="font-semibold text-sm tabular-nums">
+                          {tag.clicks.toLocaleString()}
+                        </p>
+                        <p className="text-xs text-muted-foreground">clicks</p>
+                      </div>
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-muted-foreground text-center py-4">
-                  No banner data available
-                </p>
-              )}
-            </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-8">
+                No tag click data available
+              </p>
+            )}
           </CardContent>
         </Card>
       </div>
+
+      {/* Banner Performance */}
+      <Card>
+        <CardHeader className="border-b pb-4">
+          <CardTitle className="flex items-center gap-2">
+            <BarChart3 className="h-5 w-5" />
+            Hero Banner Performance
+          </CardTitle>
+          <CardDescription>
+            Banner impressions (times shown), clicks, and click-through rate (CTR)
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="pt-4">
+          {data?.bannerStats && data.bannerStats.length > 0 ? (
+            <div className="space-y-4">
+              {/* Banner Stats Cards */}
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {data.bannerStats.map((banner) => {
+                  const maxImpressions = Math.max(
+                    ...data.bannerStats.map((b) => b.impressions),
+                    1
+                  );
+                  const impressionPercentage =
+                    (banner.impressions / maxImpressions) * 100;
+
+                  return (
+                    <div
+                      key={banner.id}
+                      className="border rounded-lg p-4 space-y-3"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <h4 className="font-medium text-sm leading-tight line-clamp-2">
+                          {banner.name}
+                        </h4>
+                        <span
+                          className={`text-xs font-semibold px-2 py-0.5 rounded-full shrink-0 ${
+                            banner.ctr >= 2
+                              ? "bg-green-100 text-green-700"
+                              : banner.ctr >= 1
+                              ? "bg-yellow-100 text-yellow-700"
+                              : "bg-gray-100 text-gray-600"
+                          }`}
+                        >
+                          {banner.ctr.toFixed(1)}% CTR
+                        </span>
+                      </div>
+
+                      {/* Impressions Bar */}
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-xs text-muted-foreground">
+                          <span>Impressions</span>
+                          <span className="font-medium text-foreground">
+                            {banner.impressions.toLocaleString()}
+                          </span>
+                        </div>
+                        <div className="h-2 bg-muted rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-purple-500 rounded-full transition-all"
+                            style={{ width: `${impressionPercentage}%` }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Clicks Bar */}
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-xs text-muted-foreground">
+                          <span>Clicks</span>
+                          <span className="font-medium text-foreground">
+                            {banner.clicks.toLocaleString()}
+                          </span>
+                        </div>
+                        <div className="h-2 bg-muted rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-green-500 rounded-full transition-all"
+                            style={{
+                              width: `${
+                                banner.impressions > 0
+                                  ? (banner.clicks / banner.impressions) * 100
+                                  : 0
+                              }%`,
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Summary Stats */}
+              <div className="flex items-center justify-center gap-8 pt-4 border-t text-sm">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-purple-600">
+                    {data.bannerStats
+                      .reduce((sum, b) => sum + b.impressions, 0)
+                      .toLocaleString()}
+                  </div>
+                  <div className="text-muted-foreground">Total Impressions</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-green-600">
+                    {data.bannerStats
+                      .reduce((sum, b) => sum + b.clicks, 0)
+                      .toLocaleString()}
+                  </div>
+                  <div className="text-muted-foreground">Total Clicks</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-blue-600">
+                    {(
+                      (data.bannerStats.reduce((sum, b) => sum + b.clicks, 0) /
+                        Math.max(
+                          data.bannerStats.reduce(
+                            (sum, b) => sum + b.impressions,
+                            0
+                          ),
+                          1
+                        )) *
+                      100
+                    ).toFixed(2)}
+                    %
+                  </div>
+                  <div className="text-muted-foreground">Avg CTR</div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground text-center py-8">
+              No banner data available
+            </p>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

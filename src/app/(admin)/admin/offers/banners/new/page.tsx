@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ArrowLeft, Save } from "lucide-react";
 import ImagePicker, { ImageData } from "@/components/admin/ImagePicker";
@@ -31,6 +32,11 @@ interface Product {
   id: string;
   name: string;
   slug: string;
+  prices?: {
+    retail: number;
+    wholesale: number;
+    discount: number;
+  };
 }
 
 const CONTENT_TYPES = [
@@ -104,19 +110,44 @@ export default function NewBannerPage() {
     }
   }, [formData.contentType, formData.content.productId, formData.content.categoryId, products, categories]);
 
+  // Auto-fill discount when product is selected (for product type banners)
+  const handleProductSelect = (productId: string) => {
+    const product = products.find(p => p.id === productId);
+    const discount = product?.prices?.discount || 0;
+    const title = product?.name || "";
+
+    setFormData(prev => ({
+      ...prev,
+      content: {
+        ...prev.content,
+        productId,
+        discountPercent: discount,
+        title: prev.content.title || title,
+      },
+    }));
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [catRes, prodRes] = await Promise.all([
           fetch("/api/admin/categories?limit=100"),
-          fetch("/api/admin/products?limit=100"),
+          fetch("/api/admin/products?limit=500"),
         ]);
 
         const catData = await catRes.json();
         const prodData = await prodRes.json();
 
         if (catData.success) setCategories(catData.categories);
-        if (prodData.success) setProducts(prodData.products);
+        if (prodData.success) {
+          // Ensure prices are included
+          setProducts(prodData.products.map((p: any) => ({
+            id: p.id,
+            name: p.name,
+            slug: p.slug,
+            prices: p.prices,
+          })));
+        }
       } catch (error) {
         console.error("Failed to fetch data:", error);
       }
@@ -332,26 +363,20 @@ export default function NewBannerPage() {
                 {(formData.contentType === "product") && (
                   <div className="space-y-2">
                     <Label htmlFor="productId">Select Product</Label>
-                    <Select
+                    <SearchableSelect
                       value={formData.content.productId}
-                      onValueChange={(value) =>
-                        setFormData({
-                          ...formData,
-                          content: { ...formData.content, productId: value },
-                        })
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a product" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {products.map((prod) => (
-                          <SelectItem key={prod.id} value={prod.id}>
-                            {prod.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                      onValueChange={handleProductSelect}
+                      options={products.map((prod) => ({
+                        value: prod.id,
+                        label: prod.name,
+                        description: prod.prices?.discount
+                          ? `${prod.prices.discount}% off`
+                          : undefined,
+                      }))}
+                      placeholder="Search for a product..."
+                      searchPlaceholder="Type to search products..."
+                      emptyMessage="No products found."
+                    />
                   </div>
                 )}
 
@@ -460,7 +485,7 @@ export default function NewBannerPage() {
                 </div>
               </div>
 
-              {formData.contentType === "offer" && (
+              {(formData.contentType === "offer" || formData.contentType === "product") && (
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="discountPercent">Discount %</Label>
@@ -480,22 +505,29 @@ export default function NewBannerPage() {
                         })
                       }
                     />
+                    {formData.contentType === "product" && (
+                      <p className="text-xs text-muted-foreground">
+                        This will update the product&apos;s discount when saved
+                      </p>
+                    )}
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="offerCode">Offer Code</Label>
-                    <Input
-                      id="offerCode"
-                      value={formData.content.offerCode}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          content: { ...formData.content, offerCode: e.target.value },
-                        })
-                      }
-                      placeholder="SUMMER20"
-                    />
-                  </div>
+                  {formData.contentType === "offer" && (
+                    <div className="space-y-2">
+                      <Label htmlFor="offerCode">Offer Code</Label>
+                      <Input
+                        id="offerCode"
+                        value={formData.content.offerCode}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            content: { ...formData.content, offerCode: e.target.value },
+                          })
+                        }
+                        placeholder="SUMMER20"
+                      />
+                    </div>
+                  )}
                 </div>
               )}
             </CardContent>

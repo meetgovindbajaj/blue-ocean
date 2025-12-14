@@ -22,6 +22,15 @@ export async function GET(request: NextRequest) {
     const includeAuto = searchParams.get("includeAuto") !== "false";
     const now = new Date();
 
+    // Auto-deactivate expired banners (end date has passed)
+    await HeroBanner.updateMany(
+      {
+        isActive: true,
+        endDate: { $lt: now, $ne: null },
+      },
+      { $set: { isActive: false } }
+    );
+
     const query = {
       isActive: true,
       $or: [{ startDate: null }, { startDate: { $lte: now } }],

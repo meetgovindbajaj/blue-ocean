@@ -284,6 +284,7 @@ export async function GET(request: NextRequest) {
     const totalTagClicks = tagStatsWithAnalytics.reduce((sum, t) => sum + t.clicks, 0);
 
     // Get daily trends for charts - aggregate from AnalyticsEvent directly
+    // Now with separate counts for each event type
     const dailyTrends = await AnalyticsEvent.aggregate([
       {
         $match: dateMatch,
@@ -291,6 +292,25 @@ export async function GET(request: NextRequest) {
       {
         $group: {
           _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+          // Views breakdown
+          productViews: {
+            $sum: { $cond: [{ $eq: ["$eventType", "product_view"] }, 1, 0] },
+          },
+          categoryViews: {
+            $sum: { $cond: [{ $eq: ["$eventType", "category_view"] }, 1, 0] },
+          },
+          // Banner stats
+          bannerImpressions: {
+            $sum: { $cond: [{ $eq: ["$eventType", "banner_impression"] }, 1, 0] },
+          },
+          bannerClicks: {
+            $sum: { $cond: [{ $eq: ["$eventType", "banner_click"] }, 1, 0] },
+          },
+          // Tag clicks
+          tagClicks: {
+            $sum: { $cond: [{ $eq: ["$eventType", "tag_click"] }, 1, 0] },
+          },
+          // Legacy totals for backwards compatibility
           views: {
             $sum: { $cond: [{ $regexMatch: { input: "$eventType", regex: /view/ } }, 1, 0] },
           },
@@ -328,8 +348,14 @@ export async function GET(request: NextRequest) {
         tagStats: tagStatsWithAnalytics,
         dailyTrends: dailyTrends.map((d: any) => ({
           date: d._id,
-          views: d.views,
-          clicks: d.clicks,
+          productViews: d.productViews || 0,
+          categoryViews: d.categoryViews || 0,
+          bannerImpressions: d.bannerImpressions || 0,
+          bannerClicks: d.bannerClicks || 0,
+          tagClicks: d.tagClicks || 0,
+          // Legacy totals
+          views: d.views || 0,
+          clicks: d.clicks || 0,
         })),
         entityBreakdown: entityBreakdown.map((e: any) => ({
           name: e._id,

@@ -69,12 +69,29 @@ export async function POST(request: NextRequest) {
     const banner = new HeroBanner(body);
     await banner.save();
 
-    // If banner has a product and discount, update the product's discount
-    if (body.content?.productId && body.content?.discountPercent > 0) {
-      await Product.findByIdAndUpdate(body.content.productId, {
-        $set: { "prices.discount": body.content.discountPercent }
-      });
-      revalidatePath("/products");
+    // If banner has a product and discount, update the product's discount and recalculate prices
+    if (body.content?.productId && typeof body.content?.discountPercent === "number") {
+      const product = await Product.findById(body.content.productId);
+      if (product) {
+        const discount = body.content.discountPercent;
+        const retailPrice = product.prices.retail;
+        const effectivePrice = discount > 0
+          ? Math.round(retailPrice * (1 - discount / 100))
+          : retailPrice;
+        // Wholesale price is recalculated based on effective price (70% margin)
+        const wholesalePrice = discount > 0
+          ? Math.round(effectivePrice * 0.7)
+          : product.prices.wholesale || Math.round(retailPrice * 0.7);
+
+        await Product.findByIdAndUpdate(body.content.productId, {
+          $set: {
+            "prices.discount": discount,
+            "prices.effectivePrice": effectivePrice,
+            "prices.wholesale": wholesalePrice,
+          }
+        });
+        revalidatePath("/products");
+      }
     }
 
     // Populate and transform for consistent response
@@ -100,16 +117,67 @@ export async function POST(request: NextRequest) {
   }
 }
 
+// PATCH - Reorder banners
+export async function PATCH(request: NextRequest) {
+  try {
+    await dbConnect();
+
+    const body = await request.json();
+    const { bannerIds } = body;
+
+    if (!Array.isArray(bannerIds) || bannerIds.length === 0) {
+      return NextResponse.json(
+        { success: false, error: "Banner IDs array is required" },
+        { status: 400 }
+      );
+    }
+
+    // Update order for each banner
+    const updates = bannerIds.map((id: string, index: number) =>
+      HeroBanner.findByIdAndUpdate(id, { order: index }, { new: true })
+    );
+
+    await Promise.all(updates);
+
+    // Revalidate paths
+    revalidatePath("/");
+    revalidatePath("/api/hero-banners");
+
+    return NextResponse.json({
+      success: true,
+      message: "Banner order updated successfully",
+    });
+  } catch (error) {
+    console.error("Reorder banners error:", error);
+    return NextResponse.json(
+      { success: false, error: "Failed to reorder banners" },
+      { status: 500 }
+    );
+  }
+}
+
 // GET all banners (admin view)
 export async function GET(request: NextRequest) {
   try {
+    await dbConnect();
+
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "20");
     const status = searchParams.get("status"); // active, inactive, scheduled, expired
 
-    const query: any = {};
     const now = new Date();
+
+    // Auto-deactivate expired banners (end date has passed)
+    await HeroBanner.updateMany(
+      {
+        isActive: true,
+        endDate: { $lt: now, $ne: null },
+      },
+      { $set: { isActive: false } }
+    );
+
+    const query: any = {};
 
     if (status === "active") {
       query.isActive = true;

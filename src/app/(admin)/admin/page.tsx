@@ -2,8 +2,23 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
+  type ChartConfig,
+} from "@/components/ui/chart";
 import {
   Package,
   FolderTree,
@@ -51,7 +66,24 @@ interface DashboardStats {
     views: number;
     uniqueVisitors: number;
   }>;
+  dailyTrends: Array<{
+    date: string;
+    views: number;
+    clicks: number;
+    uniqueVisitors: number;
+  }>;
 }
+
+const chartConfig = {
+  views: {
+    label: "Views",
+    color: "hsl(var(--chart-1))",
+  },
+  clicks: {
+    label: "Clicks",
+    color: "hsl(var(--chart-2))",
+  },
+} satisfies ChartConfig;
 
 export default function Dashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -249,6 +281,115 @@ export default function Dashboard() {
           </Card>
         </Link>
       </div>
+
+      {/* Activity Chart */}
+      {stats?.dailyTrends && stats.dailyTrends.length > 0 && (
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between border-b pb-4">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <BarChart3 className="h-5 w-5" />
+                Site Activity
+              </CardTitle>
+              <CardDescription>
+                Views and clicks over the last 14 days
+              </CardDescription>
+            </div>
+            <Link
+              href="/admin/analytics"
+              className="text-sm text-primary hover:underline flex items-center gap-1"
+            >
+              View Analytics <ArrowRight className="h-3 w-3" />
+            </Link>
+          </CardHeader>
+          <CardContent className="pt-4">
+            <ChartContainer
+              config={chartConfig}
+              className="aspect-auto h-[250px] w-full"
+            >
+              <AreaChart data={stats.dailyTrends}>
+                <defs>
+                  <linearGradient id="fillViews" x1="0" y1="0" x2="0" y2="1">
+                    <stop
+                      offset="5%"
+                      stopColor="var(--color-views)"
+                      stopOpacity={0.8}
+                    />
+                    <stop
+                      offset="95%"
+                      stopColor="var(--color-views)"
+                      stopOpacity={0.1}
+                    />
+                  </linearGradient>
+                  <linearGradient id="fillClicks" x1="0" y1="0" x2="0" y2="1">
+                    <stop
+                      offset="5%"
+                      stopColor="var(--color-clicks)"
+                      stopOpacity={0.8}
+                    />
+                    <stop
+                      offset="95%"
+                      stopColor="var(--color-clicks)"
+                      stopOpacity={0.1}
+                    />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid vertical={false} />
+                <XAxis
+                  dataKey="date"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  minTickGap={32}
+                  tickFormatter={(value) => {
+                    const date = new Date(value);
+                    return date.toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                    });
+                  }}
+                />
+                <YAxis
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  width={40}
+                />
+                <ChartTooltip
+                  cursor={false}
+                  content={
+                    <ChartTooltipContent
+                      labelFormatter={(value) => {
+                        return new Date(value).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        });
+                      }}
+                      indicator="dot"
+                    />
+                  }
+                />
+                <Area
+                  dataKey="views"
+                  type="natural"
+                  fill="url(#fillViews)"
+                  stroke="var(--color-views)"
+                  stackId="a"
+                />
+                <Area
+                  dataKey="clicks"
+                  type="natural"
+                  fill="url(#fillClicks)"
+                  stroke="var(--color-clicks)"
+                  stackId="b"
+                />
+                <ChartLegend content={<ChartLegendContent />} />
+              </AreaChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Products Sections */}
       <div className="grid gap-6 lg:grid-cols-3">

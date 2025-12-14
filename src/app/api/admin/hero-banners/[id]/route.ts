@@ -23,6 +23,18 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       );
     }
 
+    const now = new Date();
+
+    // Auto-deactivate this banner if it has expired
+    await HeroBanner.updateOne(
+      {
+        _id: id,
+        isActive: true,
+        endDate: { $lt: now, $ne: null },
+      },
+      { $set: { isActive: false } }
+    );
+
     const banner = await HeroBanner.findById(id)
       .populate("content.productId", "name slug prices images")
       .populate("content.categoryId", "name slug image")
@@ -132,6 +144,67 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       body.content.ctaLink = generateCtaLink(body);
     }
 
+    // If activating a banner via PUT, validate all required info
+    if (body.isActive === true) {
+      // Merge existing banner data with updates to validate
+      const existingBanner = await HeroBanner.findById(id).lean();
+      if (existingBanner) {
+        const errors: string[] = [];
+        const now = new Date();
+
+        // Use updated values if provided, otherwise use existing
+        const name = body.name ?? existingBanner.name;
+        const imageUrl = body.image?.url ?? existingBanner.image?.url;
+        const contentType = body.contentType ?? existingBanner.contentType;
+        const endDate = body.endDate !== undefined ? body.endDate : existingBanner.endDate;
+        const content = { ...(existingBanner as any).content, ...body.content };
+
+        // Check required fields
+        if (!name?.trim()) {
+          errors.push("Banner name is required");
+        }
+        if (!imageUrl) {
+          errors.push("Banner image is required");
+        }
+
+        // Check schedule - end date must be current day or afterwards
+        if (endDate && new Date(endDate) < now) {
+          errors.push("End date must be today or in the future");
+        }
+
+        // Check offer expiry if applicable
+        if (contentType === "offer") {
+          const offerValidUntil = content?.offerValidUntil;
+          if (offerValidUntil && new Date(offerValidUntil) < now) {
+            errors.push("Offer expiry date must be today or in the future");
+          }
+        }
+
+        // Check product type banner has valid product
+        if (contentType === "product") {
+          const productId = content?.productId;
+          if (!productId) {
+            errors.push("Product must be selected for product type banners");
+          }
+        }
+
+        // Check category type banner has valid category
+        if (contentType === "category") {
+          const categoryId = content?.categoryId;
+          if (!categoryId) {
+            errors.push("Category must be selected for category type banners");
+          }
+        }
+
+        if (errors.length > 0) {
+          return NextResponse.json(
+            { success: false, error: errors.join(", ") },
+            { status: 400 }
+          );
+        }
+      }
+    }
+
     const banner = await HeroBanner.findByIdAndUpdate(
       id,
       { $set: body },
@@ -148,12 +221,29 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    // If banner has a product and discount, update the product's discount
-    if (body.content?.productId && body.content?.discountPercent > 0) {
-      await Product.findByIdAndUpdate(body.content.productId, {
-        $set: { "prices.discount": body.content.discountPercent }
-      });
-      revalidatePath("/products");
+    // If banner has a product and discount, update the product's discount and recalculate prices
+    if (body.content?.productId && typeof body.content?.discountPercent === "number") {
+      const product = await Product.findById(body.content.productId);
+      if (product) {
+        const discount = body.content.discountPercent;
+        const retailPrice = product.prices.retail;
+        const effectivePrice = discount > 0
+          ? Math.round(retailPrice * (1 - discount / 100))
+          : retailPrice;
+        // Wholesale price is recalculated based on effective price (70% margin)
+        const wholesalePrice = discount > 0
+          ? Math.round(effectivePrice * 0.7)
+          : product.prices.wholesale || Math.round(retailPrice * 0.7);
+
+        await Product.findByIdAndUpdate(body.content.productId, {
+          $set: {
+            "prices.discount": discount,
+            "prices.effectivePrice": effectivePrice,
+            "prices.wholesale": wholesalePrice,
+          }
+        });
+        revalidatePath("/products");
+      }
     }
 
     // Revalidate cached pages
@@ -203,6 +293,86 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         { success: false, error: "No valid fields to update" },
         { status: 400 }
       );
+    }
+
+    // If activating a banner, validate all required info
+    if (body.isActive === true) {
+      const existingBanner = await HeroBanner.findById(id).lean();
+      if (existingBanner) {
+        const errors: string[] = [];
+        const now = new Date();
+
+        // Check required fields
+        if (!existingBanner.name?.trim()) {
+          errors.push("Banner name is required");
+        }
+        if (!existingBanner.image?.url) {
+          errors.push("Banner image is required");
+        }
+
+        // Check schedule - end date must be current day or afterwards
+        if (existingBanner.endDate && new Date(existingBanner.endDate) < now) {
+          errors.push("End date must be today or in the future");
+        }
+
+        // Check offer expiry if applicable
+        if (existingBanner.contentType === "offer") {
+          const offerValidUntil = (existingBanner as any).content?.offerValidUntil;
+          if (offerValidUntil && new Date(offerValidUntil) < now) {
+            errors.push("Offer expiry date must be today or in the future");
+          }
+        }
+
+        // Check product type banner has valid product
+        if (existingBanner.contentType === "product") {
+          const productId = (existingBanner as any).content?.productId;
+          if (!productId) {
+            errors.push("Product must be selected for product type banners");
+          }
+        }
+
+        // Check category type banner has valid category
+        if (existingBanner.contentType === "category") {
+          const categoryId = (existingBanner as any).content?.categoryId;
+          if (!categoryId) {
+            errors.push("Category must be selected for category type banners");
+          }
+        }
+
+        if (errors.length > 0) {
+          return NextResponse.json(
+            { success: false, error: errors.join(", ") },
+            { status: 400 }
+          );
+        }
+
+        // If product banner is being activated, sync the product discount
+        if (existingBanner.contentType === "product") {
+          const productId = (existingBanner as any).content?.productId;
+          const discount = (existingBanner as any).content?.discountPercent || 0;
+          if (productId && typeof discount === "number") {
+            const product = await Product.findById(productId);
+            if (product) {
+              const retailPrice = product.prices.retail;
+              const effectivePrice = discount > 0
+                ? Math.round(retailPrice * (1 - discount / 100))
+                : retailPrice;
+              const wholesalePrice = discount > 0
+                ? Math.round(effectivePrice * 0.7)
+                : product.prices.wholesale || Math.round(retailPrice * 0.7);
+
+              await Product.findByIdAndUpdate(productId, {
+                $set: {
+                  "prices.discount": discount,
+                  "prices.effectivePrice": effectivePrice,
+                  "prices.wholesale": wholesalePrice,
+                }
+              });
+              revalidatePath("/products");
+            }
+          }
+        }
+      }
     }
 
     const banner = await HeroBanner.findByIdAndUpdate(

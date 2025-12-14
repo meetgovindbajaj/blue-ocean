@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, Save } from "lucide-react";
@@ -32,6 +33,11 @@ interface Product {
   id: string;
   name: string;
   slug: string;
+  prices?: {
+    retail: number;
+    wholesale: number;
+    discount: number;
+  };
 }
 
 const CONTENT_TYPES = [
@@ -105,7 +111,7 @@ export default function EditBannerPage({
         const [bannerRes, catRes, prodRes] = await Promise.all([
           fetch(`/api/admin/hero-banners/${id}`),
           fetch("/api/admin/categories?limit=100"),
-          fetch("/api/admin/products?limit=100"),
+          fetch("/api/admin/products?limit=500"),
         ]);
 
         const bannerData = await bannerRes.json();
@@ -113,19 +119,26 @@ export default function EditBannerPage({
         const prodData = await prodRes.json();
 
         const loadedCategories = catData.success ? catData.categories : [];
-        const loadedProducts = prodData.success ? prodData.products : [];
+        const loadedProducts = prodData.success ? prodData.products.map((p: any) => ({
+          id: p.id,
+          name: p.name,
+          slug: p.slug,
+          prices: p.prices,
+        })) : [];
 
         if (catData.success) setCategories(loadedCategories);
-        if (prodData.success) setProducts(loadedProducts);
+        setProducts(loadedProducts);
 
         if (bannerData.success) {
           const b = bannerData.banner;
-          const productId = b.content?.productId?.id || b.content?.productId || "";
-          const categoryId = b.content?.categoryId?.id || b.content?.categoryId || "";
+          // The API transformer flattens content fields to top level
+          // product/category are objects at top level with id property
+          const productId = b.product?.id || b.content?.productId?.id || b.content?.productId || "";
+          const categoryId = b.category?.id || b.content?.categoryId?.id || b.content?.categoryId || "";
           const contentType = b.contentType || "custom";
 
-          // Generate CTA link if not already set
-          let ctaLink = b.content?.ctaLink || "";
+          // Generate CTA link if not already set (use top-level ctaLink from transformer)
+          let ctaLink = b.ctaLink || b.content?.ctaLink || "";
           if (!ctaLink && contentType !== "custom") {
             ctaLink = generateCtaLink(contentType, productId, categoryId, loadedProducts, loadedCategories);
           }
@@ -144,13 +157,14 @@ export default function EditBannerPage({
             content: {
               productId: productId,
               categoryId: categoryId,
-              title: b.content?.title || "",
-              subtitle: b.content?.subtitle || "",
-              description: b.content?.description || "",
-              ctaText: b.content?.ctaText || "Shop Now",
+              // Use top-level fields from transformer, fallback to content for backwards compatibility
+              title: b.title || b.content?.title || "",
+              subtitle: b.subtitle || b.content?.subtitle || "",
+              description: b.description || b.content?.description || "",
+              ctaText: b.ctaText || b.content?.ctaText || "Shop Now",
               ctaLink: ctaLink,
-              discountPercent: b.content?.discountPercent || 0,
-              offerCode: b.content?.offerCode || "",
+              discountPercent: b.discountPercent || b.content?.discountPercent || 0,
+              offerCode: b.offerCode || b.content?.offerCode || "",
               offerValidUntil: formatDateForInput(b.offerValidUntil || b.content?.offerValidUntil),
             },
             image: b.image?.id ? {
@@ -209,6 +223,23 @@ export default function EditBannerPage({
       }));
     }
   }, [formData.contentType, formData.content.productId, formData.content.categoryId]);
+
+  // Auto-fill discount when product is selected (for product type banners)
+  const handleProductSelect = (productId: string) => {
+    const product = products.find(p => p.id === productId);
+    const discount = product?.prices?.discount || 0;
+    const title = product?.name || "";
+
+    setFormData(prev => ({
+      ...prev,
+      content: {
+        ...prev.content,
+        productId,
+        discountPercent: discount,
+        title: prev.content.title || title,
+      },
+    }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -458,26 +489,20 @@ export default function EditBannerPage({
                 {(formData.contentType === "product") && (
                   <div className="space-y-2">
                     <Label htmlFor="productId">Select Product</Label>
-                    <Select
+                    <SearchableSelect
                       value={formData.content.productId}
-                      onValueChange={(value) =>
-                        setFormData({
-                          ...formData,
-                          content: { ...formData.content, productId: value },
-                        })
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a product" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {products.map((prod) => (
-                          <SelectItem key={prod.id} value={prod.id}>
-                            {prod.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                      onValueChange={handleProductSelect}
+                      options={products.map((prod) => ({
+                        value: prod.id,
+                        label: prod.name,
+                        description: prod.prices?.discount
+                          ? `${prod.prices.discount}% off`
+                          : undefined,
+                      }))}
+                      placeholder="Search for a product..."
+                      searchPlaceholder="Type to search products..."
+                      emptyMessage="No products found."
+                    />
                   </div>
                 )}
 

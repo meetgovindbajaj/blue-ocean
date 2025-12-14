@@ -21,6 +21,11 @@ export async function GET() {
     weekStart.setUTCDate(weekStart.getUTCDate() - 7);
     weekStart.setUTCHours(0, 0, 0, 0);
 
+    // Last 14 days for chart
+    const twoWeeksAgo = new Date(now);
+    twoWeeksAgo.setUTCDate(twoWeeksAgo.getUTCDate() - 14);
+    twoWeeksAgo.setUTCHours(0, 0, 0, 0);
+
     const [
       totalProducts,
       activeProducts,
@@ -37,6 +42,7 @@ export async function GET() {
       viewsToday,
       viewsThisWeek,
       topViewedFromAnalytics,
+      dailyTrends,
     ] = await Promise.all([
       Product.countDocuments(),
       Product.countDocuments({ isActive: true }),
@@ -93,6 +99,27 @@ export async function GET() {
         { $sort: { views: -1 } },
         { $limit: 5 },
       ]),
+      // Daily trends for chart (last 14 days)
+      AnalyticsEvent.aggregate([
+        {
+          $match: {
+            createdAt: { $gte: twoWeeksAgo },
+          },
+        },
+        {
+          $group: {
+            _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+            views: {
+              $sum: { $cond: [{ $regexMatch: { input: "$eventType", regex: /view/ } }, 1, 0] },
+            },
+            clicks: {
+              $sum: { $cond: [{ $regexMatch: { input: "$eventType", regex: /click/ } }, 1, 0] },
+            },
+            uniqueIps: { $addToSet: "$ip" },
+          },
+        },
+        { $sort: { _id: 1 } },
+      ]),
     ]);
 
     return NextResponse.json({
@@ -125,6 +152,12 @@ export async function GET() {
           name: p.entityName || "Unknown",
           views: p.views || 0,
           uniqueVisitors: p.uniqueVisitors || 0,
+        })),
+        dailyTrends: dailyTrends.map((d: any) => ({
+          date: d._id,
+          views: d.views || 0,
+          clicks: d.clicks || 0,
+          uniqueVisitors: d.uniqueIps?.length || 0,
         })),
       },
     });

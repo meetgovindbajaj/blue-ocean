@@ -157,6 +157,15 @@ async function fetchHeroBanners() {
   const now = new Date();
   const limit = 10;
 
+  // Auto-deactivate expired banners (end date has passed)
+  await HeroBanner.updateMany(
+    {
+      isActive: true,
+      endDate: { $lt: now, $ne: null },
+    },
+    { $set: { isActive: false } }
+  );
+
   const query = {
     isActive: true,
     $or: [{ startDate: null }, { startDate: { $lte: now } }],
