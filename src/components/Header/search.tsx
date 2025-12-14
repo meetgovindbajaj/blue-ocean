@@ -1,7 +1,5 @@
 "use client";
-import Search from "@/assets/search.svg";
-import Cross from "@/assets/cross.svg";
-import Image from "next/image";
+import { Search as SearchIcon, X } from "lucide-react";
 import { useState, useEffect, useCallback, Suspense, useRef } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import styles from "./search.module.css";
@@ -10,6 +8,16 @@ import ProductCard from "../shared/ProductCard";
 import { CarouselWrapper, CarouselItem } from "@/components/ui/CarouselWrapper";
 import { ProductType } from "@/types/product";
 import { Route } from "next";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerTitle,
+} from "@/components/ui/drawer";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 interface Category {
   id: string;
@@ -42,11 +50,16 @@ const SearchContent = ({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const [products, setProducts] = useState<ProductType[]>([]);
   const [relatedProducts, setRelatedProducts] = useState<ProductType[]>([]);
-  const [lessRelevantProducts, setLessRelevantProducts] = useState<ProductType[]>([]);
-  const [recommendedProducts, setRecommendedProducts] = useState<ProductType[]>([]);
+  const [lessRelevantProducts, setLessRelevantProducts] = useState<
+    ProductType[]
+  >([]);
+  const [recommendedProducts, setRecommendedProducts] = useState<ProductType[]>(
+    []
+  );
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -57,6 +70,14 @@ const SearchContent = ({
     limit: 12,
     pages: 0,
   });
+
+  // Focus input on mount
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      inputRef.current?.focus();
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Convert products to carousel items
   const productToCarouselItem = (product: ProductType): CarouselItem => ({
@@ -101,10 +122,10 @@ const SearchContent = ({
   // Sync query state from URL when search param is cleared externally (e.g., from filter pills)
   useEffect(() => {
     const urlSearch = searchParams.get("search") || "";
-    if (urlSearch !== query && urlSearch === "") {
-      setQuery("");
+    if (urlSearch !== "") {
+      setQuery(urlSearch);
     }
-  }, [searchParams]);
+  }, []);
 
   // Fetch categories on mount
   useEffect(() => {
@@ -158,16 +179,14 @@ const SearchContent = ({
           .slice(0, 5)
           .map((p: ProductType) => p.name);
 
-        // Add category suggestions
-        const categorySuggestions = categories
-          .filter((c) =>
-            c.name.toLowerCase().includes(debouncedQuery.toLowerCase())
-          )
-          .map((c) => c.name);
+        // // Add category suggestions
+        // const categorySuggestions = categories
+        //   .filter((c) =>
+        //     c.name.toLowerCase().includes(debouncedQuery.toLowerCase())
+        //   )
+        //   .map((c) => c.name);
 
-        setSuggestions([
-          ...new Set([...productSuggestions, ...categorySuggestions]),
-        ]);
+        setSuggestions([...new Set([...productSuggestions])]);
       }
     } catch {
       console.error("Failed to fetch products");
@@ -230,91 +249,60 @@ const SearchContent = ({
   };
 
   return (
-    <>
-      <div className={styles.navSearch}>
-        <form onSubmit={handleSearchSubmit}>
-          <div className={styles.searchBox}>
-            <Image
-              src={Search}
-              alt=""
-              style={{
-                position: "absolute",
-                left: "16px",
-                translate: "0 50%",
-                cursor: "pointer",
-              }}
-            />
-            <input
+    <div className={styles.searchDrawerContent}>
+      {/* Search Input Header */}
+      <div className={styles.searchHeader}>
+        <form onSubmit={handleSearchSubmit} className={styles.searchForm}>
+          <div className={styles.searchInputWrapper}>
+            <SearchIcon className={styles.searchInputIcon} />
+            <Input
+              ref={inputRef}
               type="text"
               value={query}
               onChange={(e) => {
+                console.log(e.target.value);
                 setQuery(e.target.value);
                 setShowSuggestions(true);
               }}
               placeholder="Search products..."
-              autoFocus
-              style={{
-                width: "100%",
-                height: "48px",
-                padding: "0 48px",
-                color: "#2d3436",
-                backgroundColor: "#f5f5f5",
-                border: "none",
-                borderRadius: "10px",
-                outline: "none",
-                transition: "all 0.2s ease",
-              }}
-              onFocus={(e) => {
-                e.currentTarget.style.backgroundColor = "#ffffff";
+              className={styles.searchInput}
+              onFocus={() => {
                 if (query.length >= 2) setShowSuggestions(true);
               }}
-              onBlur={(e) => {
-                e.currentTarget.style.backgroundColor = "#f5f5f5";
+              onBlur={() => {
                 setTimeout(() => setShowSuggestions(false), 200);
               }}
             />
-            <button
-              type="button"
-              onClick={handleClearSearch}
-              style={{
-                position: "absolute",
-                right: "8px",
-                top: "50%",
-                transform: "translateY(-50%)",
-                width: "32px",
-                height: "32px",
-                borderRadius: "100%",
-                backgroundColor: "transparent",
-                border: "none",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                color: "#636e72",
-                transition: "background-color 0.2s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = "#e8f4f8";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "transparent";
-              }}
-            >
-              <Image src={Cross} alt="" />
-            </button>
+            {query.length > 0 && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={handleClearSearch}
+                className={styles.clearButton}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            )}
           </div>
         </form>
+        <DrawerClose asChild>
+          <Button variant="ghost" size="sm" className={styles.cancelButton}>
+            Cancel
+          </Button>
+        </DrawerClose>
       </div>
 
-      <div
-        className={`${styles.navSearch} ${styles.navSearchResultsContainer}`}
-      >
+      {/* Scrollable Results Area */}
+      <ScrollArea className={styles.searchResults}>
         {/* Suggestions dropdown */}
         {showSuggestions && suggestions.length > 0 && query.length >= 2 && (
           <div className={styles.suggestionsDropdown}>
             <div className={styles.suggestionsHeader}>
               <span>{suggestions.length} suggestions</span>
-              <button onClick={() => setShowSuggestions(false)}>Close</button>
+              <button type="button" onClick={() => setShowSuggestions(false)}>
+                Close
+              </button>
             </div>
             {suggestions.map((suggestion, idx) => (
               <div
@@ -322,7 +310,7 @@ const SearchContent = ({
                 onClick={() => handleSuggestionClick(suggestion)}
                 className={styles.suggestionItem}
               >
-                <Image src={Search} alt="" width={14} height={14} />
+                <SearchIcon className="h-4 w-4" />
                 <span>{suggestion}</span>
               </div>
             ))}
@@ -443,8 +431,8 @@ const SearchContent = ({
             <p>Start typing to search products...</p>
           </div>
         )}
-      </div>
-    </>
+      </ScrollArea>
+    </div>
   );
 };
 
@@ -466,40 +454,7 @@ const SearchBar = () => {
     setQuery("");
   }, []);
 
-  const handleOpen = useCallback(() => {
-    setIsOpen(true);
-    // Push a history state so back button closes the search
-    window.history.pushState({ searchOpen: true }, "");
-  }, []);
-
-  // Handle browser back button to close search
-  useEffect(() => {
-    const handlePopState = (event: PopStateEvent) => {
-      // If search is open and user presses back, close it
-      if (isOpen) {
-        event.preventDefault();
-        handleClose();
-      }
-    };
-
-    window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
-  }, [isOpen, handleClose]);
-
-  // Handle escape key to close search
-  useEffect(() => {
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && isOpen) {
-        // Go back in history to remove the search state
-        window.history.back();
-      }
-    };
-
-    window.addEventListener("keydown", handleEscape);
-    return () => window.removeEventListener("keydown", handleEscape);
-  }, [isOpen]);
-
-  // Close overlay when route changes
+  // Close overlay when route changes (e.g., when clicking a product)
   useEffect(() => {
     if (prevPathname.current !== pathname && isOpen) {
       handleClose();
@@ -508,23 +463,32 @@ const SearchBar = () => {
   }, [pathname, isOpen, handleClose]);
 
   return (
-    <div style={{ display: "contents", position: "relative" }}>
-      <Image
-        style={{ cursor: "pointer" }}
-        src={Search}
-        alt="Search"
-        onClick={() => (isOpen ? window.history.back() : handleOpen())}
-      />
-      {isOpen && (
-        <Suspense fallback={<SearchContentLoading />}>
-          <SearchContent
-            query={query}
-            setQuery={setQuery}
-            onClose={() => window.history.back()}
-          />
-        </Suspense>
-      )}
-    </div>
+    <>
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => setIsOpen(true)}
+        className="h-8 w-8 align-center justify-center"
+        aria-label="Search"
+      >
+        <SearchIcon className="h-5 w-5" />
+      </Button>
+
+      <Drawer open={isOpen} onOpenChange={setIsOpen} direction="top">
+        <DrawerContent className={styles.searchDrawer}>
+          <VisuallyHidden>
+            <DrawerTitle>Search Products</DrawerTitle>
+          </VisuallyHidden>
+          <Suspense fallback={<SearchContentLoading />}>
+            <SearchContent
+              query={query}
+              setQuery={setQuery}
+              onClose={handleClose}
+            />
+          </Suspense>
+        </DrawerContent>
+      </Drawer>
+    </>
   );
 };
 

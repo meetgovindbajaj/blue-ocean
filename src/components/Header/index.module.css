@@ -49,6 +49,7 @@
     .moreOptions {
         display: flex;
         gap: 1rem;
+        align-items: center;
     }
 
     @media screen and (width <=1000px) {
