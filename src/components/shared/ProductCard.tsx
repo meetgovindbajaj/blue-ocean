@@ -118,13 +118,6 @@ const ProductCard = ({ product }: { product: ProductType }) => {
 
         {/* Product Info */}
         <CardContent className="p-4 flex flex-col flex-grow">
-          {/* Category */}
-          {categoryName && (
-            <p className="text-[11px] text-muted-foreground uppercase tracking-wide mb-2">
-              {categoryName}
-            </p>
-          )}
-
           <h3 className="font-semibold text-base leading-snug line-clamp-2 mb-2">
             {product.name}
           </h3>

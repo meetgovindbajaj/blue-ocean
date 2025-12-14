@@ -384,7 +384,7 @@ export default function ProductDetailClient({
               itemsPerView: {
                 mobile: 1,
                 tablet: 2,
-                desktop: 3,
+                desktop: 4,
                 xl: 4,
               },
               headerContent: (
@@ -414,7 +414,7 @@ export default function ProductDetailClient({
               itemsPerView: {
                 mobile: 1,
                 tablet: 2,
-                desktop: 3,
+                desktop: 4,
                 xl: 4,
               },
               headerContent: (

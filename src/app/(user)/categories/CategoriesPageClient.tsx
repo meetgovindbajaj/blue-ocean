@@ -1,9 +1,10 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useState, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { ProductType } from "@/types/product";
 import ProductCard from "@/components/shared/ProductCard";
 import ProductFilters from "@/components/shared/ProductFilters";
@@ -254,6 +255,21 @@ const CategoryListPageInner = () => {
     limit: 20,
     pages: 0,
   });
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const gridRef = useRef<HTMLDivElement>(null);
+
+  // Animation trigger - triggers once after products load
+  useEffect(() => {
+    const grid = gridRef.current;
+    if (!grid || hasAnimated) return;
+
+    // Small delay to ensure grid is rendered
+    const timer = setTimeout(() => {
+      setHasAnimated(true);
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [products, hasAnimated]);
 
   // Check if current category is a subcategory (has a parent)
   const isSubcategory = Boolean(category?.parent);
@@ -509,9 +525,24 @@ const CategoryListPageInner = () => {
         </div>
       ) : (
         <>
-          <div className={styles.productsGrid}>
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
+          <div className={styles.productsGrid} ref={gridRef}>
+            {products.map((product, index) => (
+              <motion.div
+                key={product.id}
+                initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                animate={
+                  hasAnimated
+                    ? { opacity: 1, y: 0, scale: 1 }
+                    : { opacity: 0, y: 30, scale: 0.95 }
+                }
+                transition={{
+                  duration: 0.4,
+                  delay: Math.min(index, 8) * 0.05,
+                  ease: [0.25, 0.46, 0.45, 0.94],
+                }}
+              >
+                <ProductCard product={product} />
+              </motion.div>
             ))}
           </div>
 
@@ -529,12 +560,12 @@ const CategoryListPageInner = () => {
                   showControlBtns: true,
                   showControlDots: false,
                   loop: true,
-                  autoPlay: false,
+                  autoPlay: true,
                   itemsPerView: {
                     mobile: 1,
                     tablet: 2,
                     desktop: 4,
-                    xl: 5,
+                    xl: 4,
                   },
                 }}
                 renderItem={(item) => item.content}
@@ -553,12 +584,12 @@ const CategoryListPageInner = () => {
                   showControlBtns: true,
                   showControlDots: false,
                   loop: true,
-                  autoPlay: false,
+                  autoPlay: true,
                   itemsPerView: {
                     mobile: 1,
                     tablet: 2,
                     desktop: 4,
-                    xl: 5,
+                    xl: 4,
                   },
                 }}
                 renderItem={(item) => item.content}
@@ -577,12 +608,12 @@ const CategoryListPageInner = () => {
                   showControlBtns: true,
                   showControlDots: false,
                   loop: true,
-                  autoPlay: false,
+                  autoPlay: true,
                   itemsPerView: {
                     mobile: 1,
                     tablet: 2,
                     desktop: 4,
-                    xl: 5,
+                    xl: 4,
                   },
                 }}
                 renderItem={(item) => item.content}

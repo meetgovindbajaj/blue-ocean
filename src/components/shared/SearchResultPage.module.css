@@ -16,6 +16,13 @@
     padding: 4px;
   }
 
+  /* Limit to 4 columns on xl screens */
+  @media screen and (min-width: 1200px) {
+    .productsGrid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
   /* Loading State */
   .loadingState {
     display: flex;
@@ -166,20 +173,35 @@
   /* Carousel Sections */
   .carouselSection {
     margin-top: 3rem;
-    padding-top: 2rem;
+    padding: 2rem 0;
     border-top: 1px solid var(--border, #e5e7eb);
   }
 
   .carouselTitle {
     font-size: 1.5rem;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--text-primary, #111827);
     margin: 0 0 1.5rem 0;
+    padding: 0 0.5rem;
+    letter-spacing: -0.02em;
   }
 
   .carouselProductCard {
     padding: 0.5rem;
     height: 100%;
+  }
+
+  /* Tablet adjustments */
+  @media screen and (max-width: 900px) {
+    .carouselSection {
+      margin-top: 2.5rem;
+      padding: 1.75rem 0;
+    }
+
+    .carouselTitle {
+      font-size: 1.35rem;
+      margin-bottom: 1.25rem;
+    }
   }
 
   /* Mobile adjustments */
@@ -207,12 +229,13 @@
 
     .carouselSection {
       margin-top: 2rem;
-      padding-top: 1.5rem;
+      padding: 1.5rem 0;
     }
 
     .carouselTitle {
-      font-size: 1.25rem;
+      font-size: 1.125rem;
       margin-bottom: 1rem;
+      padding: 0 0.25rem;
     }
   }
 }

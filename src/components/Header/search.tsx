@@ -366,12 +366,12 @@ const SearchContent = ({
                     showControlBtns: true,
                     showControlDots: false,
                     loop: true,
-                    autoPlay: false,
+                    autoPlay: true,
                     itemsPerView: {
                       mobile: 1,
                       tablet: 2,
                       desktop: 4,
-                      xl: 5,
+                      xl: 4,
                     },
                   }}
                   renderItem={(item) => item.content}
@@ -390,12 +390,12 @@ const SearchContent = ({
                     showControlBtns: true,
                     showControlDots: false,
                     loop: true,
-                    autoPlay: false,
+                    autoPlay: true,
                     itemsPerView: {
                       mobile: 1,
                       tablet: 2,
                       desktop: 4,
-                      xl: 5,
+                      xl: 4,
                     },
                   }}
                   renderItem={(item) => item.content}
@@ -414,12 +414,12 @@ const SearchContent = ({
                     showControlBtns: true,
                     showControlDots: false,
                     loop: true,
-                    autoPlay: false,
+                    autoPlay: true,
                     itemsPerView: {
                       mobile: 1,
                       tablet: 2,
                       desktop: 4,
-                      xl: 5,
+                      xl: 4,
                     },
                   }}
                   renderItem={(item) => item.content}

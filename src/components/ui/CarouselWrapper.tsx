@@ -56,7 +56,6 @@ export interface CarouselOptions {
   headerContent?: ReactNode;
   autoPlay?: boolean;
   autoPlayInterval?: number;
-  pauseOnInteraction?: boolean;
   loop?: boolean;
   itemsPerView?: {
     mobile?: number;
@@ -670,13 +669,39 @@ export const CarouselWrapper = ({
   const [progress, setProgress] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isShareOpen, setIsShareOpen] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [hasAnimated, setHasAnimated] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const previewCardsRef = useRef<HTMLDivElement>(null);
   const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
   const progressRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Intersection Observer for visibility detection
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          setIsVisible(entry.isIntersecting);
+          // Only set hasAnimated to true once (don't hide on scroll out)
+          if (entry.isIntersecting && !hasAnimated) {
+            setHasAnimated(true);
+          }
+        });
+      },
+      {
+        threshold: 0.2, // Trigger when 20% visible
+        rootMargin: "50px",
+      }
+    );
+
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [hasAnimated]);
 
   const screenSize = useScreenSize();
   const total = data.length;
@@ -738,13 +763,13 @@ export const CarouselWrapper = ({
   const goNext = useCallback(() => goTo(activeIndex + 1), [activeIndex, goTo]);
   const goPrev = useCallback(() => goTo(activeIndex - 1), [activeIndex, goTo]);
 
-  // Auto-play logic
+  // Auto-play logic - only runs when carousel is visible
   useEffect(() => {
     if (
       !options.autoPlay ||
       total <= 1 ||
       isFullscreen ||
-      (options.pauseOnInteraction && isPaused)
+      !isVisible
     ) {
       if (autoPlayRef.current) clearInterval(autoPlayRef.current);
       if (progressRef.current) clearInterval(progressRef.current);
@@ -776,9 +801,8 @@ export const CarouselWrapper = ({
     total,
     options.autoPlay,
     options.autoPlayInterval,
-    options.pauseOnInteraction,
     isFullscreen,
-    isPaused,
+    isVisible,
     goNext,
   ]);
 
@@ -958,11 +982,7 @@ export const CarouselWrapper = ({
         onMouseMove={onMouseMove}
         onMouseUp={onMouseUp}
         onClick={onClick}
-        onMouseLeave={() => {
-          onMouseLeave();
-          options.pauseOnInteraction && setIsPaused(false);
-        }}
-        onMouseEnter={() => options.pauseOnInteraction && setIsPaused(true)}
+        onMouseLeave={onMouseLeave}
       >
         {/* Background Image */}
         <motion.div
@@ -1010,6 +1030,30 @@ export const CarouselWrapper = ({
             >
               <ChevronRight className={styles.navArrowIcon} />
             </button>
+          </>
+        )}
+
+        {/* Mobile Tap Zones (invisible, shown when control buttons are hidden) */}
+        {!options.showControlBtns && total > 1 && (
+          <>
+            <button
+              className={styles.mobileTapZoneLeft}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                goPrev();
+              }}
+              aria-label="Previous slide"
+            />
+            <button
+              className={styles.mobileTapZoneRight}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                goNext();
+              }}
+              aria-label="Next slide"
+            />
           </>
         )}
 
@@ -1150,11 +1194,7 @@ export const CarouselWrapper = ({
           setMouseStart(0);
           setMouseEnd(0);
         }}
-        onMouseEnter={() => options.pauseOnInteraction && setIsPaused(true)}
-        onMouseLeave={() => {
-          onMouseLeave();
-          options.pauseOnInteraction && setIsPaused(false);
-        }}
+        onMouseLeave={onMouseLeave}
         onClick={onClick}
       >
         {/* Blurred Background */}
@@ -1360,11 +1400,7 @@ export const CarouselWrapper = ({
     return (
       <div
         className={cn(styles.defaultWrapper, isDragging && styles.dragging)}
-        onMouseEnter={() => options.pauseOnInteraction && setIsPaused(true)}
-        onMouseLeave={() => {
-          onMouseLeave();
-          options.pauseOnInteraction && setIsPaused(false);
-        }}
+        onMouseLeave={onMouseLeave}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
@@ -1392,12 +1428,23 @@ export const CarouselWrapper = ({
                 index >= currentSlideStart &&
                 index < currentSlideStart + itemsPerView;
               return (
-                <div
+                <motion.div
                   key={item.id}
                   className={styles.defaultItem}
                   style={{
                     flex: `0 0 ${itemWidthPercent}%`,
                     maxWidth: `${itemWidthPercent}%`,
+                  }}
+                  initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                  animate={
+                    hasAnimated
+                      ? { opacity: 1, y: 0, scale: 1 }
+                      : { opacity: 0, y: 30, scale: 0.95 }
+                  }
+                  transition={{
+                    duration: 0.4,
+                    delay: Math.min(index, itemsPerView) * 0.08,
+                    ease: [0.25, 0.46, 0.45, 0.94],
                   }}
                 >
                   <div
@@ -1430,7 +1477,7 @@ export const CarouselWrapper = ({
                       </>
                     )}
                   </div>
-                </div>
+                </motion.div>
               );
             })}
           </motion.div>

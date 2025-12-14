@@ -1,7 +1,8 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useState, useRef } from "react";
 import { useSearchParams } from "next/navigation";
+import { motion } from "framer-motion";
 import { ProductType } from "@/types/product";
 import ProductCard from "./ProductCard";
 import ProductFilters from "./ProductFilters";
@@ -44,6 +45,22 @@ const SearchResultPageInner = ({
     limit: 20,
     pages: 0,
   });
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const gridRef = useRef<HTMLDivElement>(null);
+
+  // Intersection Observer for products grid animation - triggers once
+  useEffect(() => {
+    const grid = gridRef.current;
+    if (!grid || hasAnimated) return;
+
+    // Small delay to ensure grid is rendered
+    const timer = setTimeout(() => {
+      setHasAnimated(true);
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [products, hasAnimated]);
+
 
   // Fetch categories on mount
   useEffect(() => {
@@ -178,12 +195,24 @@ const SearchResultPageInner = ({
       {/* Products Grid */}
       {!loading && !error && products.length > 0 && (
         <>
-          <div className={styles.productsGrid}>
-            {products.map((product) => (
-              <ProductCard
+          <div className={styles.productsGrid} ref={gridRef}>
+            {products.map((product, index) => (
+              <motion.div
                 key={product.id + "_search-result"}
-                product={product}
-              />
+                initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                animate={
+                  hasAnimated
+                    ? { opacity: 1, y: 0, scale: 1 }
+                    : { opacity: 0, y: 30, scale: 0.95 }
+                }
+                transition={{
+                  duration: 0.4,
+                  delay: Math.min(index, 8) * 0.05,
+                  ease: [0.25, 0.46, 0.45, 0.94],
+                }}
+              >
+                <ProductCard product={product} />
+              </motion.div>
             ))}
           </div>
 
@@ -201,12 +230,12 @@ const SearchResultPageInner = ({
                   showControlBtns: true,
                   showControlDots: false,
                   loop: true,
-                  autoPlay: false,
+                  autoPlay: true,
                   itemsPerView: {
                     mobile: 1,
                     tablet: 2,
                     desktop: 4,
-                    xl: 5,
+                    xl: 4,
                   },
                 }}
                 renderItem={(item) => item.content}
@@ -225,12 +254,12 @@ const SearchResultPageInner = ({
                   showControlBtns: true,
                   showControlDots: false,
                   loop: true,
-                  autoPlay: false,
+                  autoPlay: true,
                   itemsPerView: {
                     mobile: 1,
                     tablet: 2,
                     desktop: 4,
-                    xl: 5,
+                    xl: 4,
                   },
                 }}
                 renderItem={(item) => item.content}
@@ -249,12 +278,12 @@ const SearchResultPageInner = ({
                   showControlBtns: true,
                   showControlDots: false,
                   loop: true,
-                  autoPlay: false,
+                  autoPlay: true,
                   itemsPerView: {
                     mobile: 1,
                     tablet: 2,
                     desktop: 4,
-                    xl: 5,
+                    xl: 4,
                   },
                 }}
                 renderItem={(item) => item.content}

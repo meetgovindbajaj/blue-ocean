@@ -154,6 +154,30 @@
     }
   }
 
+  /* Tap Zones - invisible tap areas for navigation when control buttons are hidden */
+  .mobileTapZoneLeft,
+  .mobileTapZoneRight {
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 48px;
+    z-index: 5;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .mobileTapZoneLeft {
+    left: 0;
+  }
+
+  .mobileTapZoneRight {
+    right: 0;
+  }
+
   /* Control Dots / Pills */
   .controlDots {
     position: absolute;
