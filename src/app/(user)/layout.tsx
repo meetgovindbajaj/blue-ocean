@@ -9,6 +9,7 @@ import { Toaster } from "@/components/ui/sonner";
 import FloatingActions from "@/components/shared/FloatingActions";
 import GoogleAnalytics from "@/components/shared/GoogleAnalytics";
 import CookieConsent from "@/components/CookieConsent";
+import NavigationProgress from "@/components/shared/NavigationProgress";
 import { getSiteSettings } from "@/lib/siteMetadata";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://blueocean.com";
@@ -89,6 +90,9 @@ export default function UserLayout({
     <AuthProvider>
       <SiteSettingsProvider>
         <CurrencyProvider>
+          <Suspense fallback={null}>
+            <NavigationProgress />
+          </Suspense>
           <GoogleAnalytics />
           <Suspense fallback={<div className="h-16 border-b" aria-label="Loading header" />}>
             <Header />
