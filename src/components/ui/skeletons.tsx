@@ -487,6 +487,7 @@ export function CarouselSkeleton({
 
 /**
  * Hidden SEO container - renders server data for crawlers but hidden visually
+ * Uses inline styles to prevent FOUC (Flash of Unstyled Content)
  */
 export function SEOContainer({
   children,
@@ -500,6 +501,17 @@ export function SEOContainer({
       className={cn("sr-only", className)}
       aria-hidden="true"
       data-seo-content="true"
+      style={{
+        position: "absolute",
+        width: "1px",
+        height: "1px",
+        padding: 0,
+        margin: "-1px",
+        overflow: "hidden",
+        clip: "rect(0, 0, 0, 0)",
+        whiteSpace: "nowrap",
+        borderWidth: 0,
+      }}
     >
       {children}
     </div>

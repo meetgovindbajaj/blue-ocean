@@ -19,12 +19,9 @@ const FeaturedCategories = ({ categories }: FeaturedCategoriesProps) => {
       image: category.image?.url || "",
       thumbnailImage: category.image?.thumbnailUrl || category.image?.url || "",
       alt: category.name,
-      url: `/categories?slug=${category.slug}`,
+      url: `/categories/${category.slug}`,
       content: (
-        <Link
-          href={`/categories?slug=${category.slug}`}
-          className={styles.cardLink}
-        >
+        <Link href={`/categories/${category.slug}`} className={styles.cardLink}>
           <h3 className={styles.cardTitle}>{category.name}</h3>
           <p className={styles.cardSubtitle}>
             {category.productCount || 0} products

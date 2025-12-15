@@ -263,7 +263,7 @@ export default function SitemapPageClient({
             {filteredCategories.map((category) => (
               <div key={category.id} className={styles.categoryCard}>
                 <Link
-                  href={`/categories?slug=${category.slug}`}
+                  href={`/categories/${category.slug}`}
                   className={styles.categoryHeader}
                 >
                   <FolderTree size={20} />
@@ -288,7 +288,7 @@ export default function SitemapPageClient({
                       .map((child) => (
                         <Link
                           key={child.id}
-                          href={`/categories?slug=${child.slug}`}
+                          href={`/categories/${child.slug}`}
                           className={styles.subcategoryLink}
                         >
                           <ChevronRight size={14} />
@@ -395,10 +395,7 @@ export default function SitemapPageClient({
               </div>
             </div>
             <div className={styles.pagesGrid}>
-              <Link
-                href={"/legal" as Route}
-                className={styles.pageCard}
-              >
+              <Link href={"/legal" as Route} className={styles.pageCard}>
                 <div className={styles.pageCardIcon}>
                   <Scale size={24} />
                 </div>
@@ -424,7 +421,9 @@ export default function SitemapPageClient({
                     <div className={styles.pageCardContent}>
                       <h3 className={styles.pageCardTitle}>{doc.title}</h3>
                       <p className={styles.pageCardDescription}>
-                        {doc.type.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}
+                        {doc.type
+                          .replace(/-/g, " ")
+                          .replace(/\b\w/g, (l) => l.toUpperCase())}
                       </p>
                     </div>
                     <ChevronRight size={20} className={styles.pageCardArrow} />

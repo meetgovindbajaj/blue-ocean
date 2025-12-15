@@ -66,7 +66,7 @@ export async function GET(
       id: currentCategory.id || currentCategory._id?.toString(),
       name: currentCategory.name,
       slug: currentCategory.slug,
-      url: `/categories?slug=${currentCategory.slug}`,
+      url: `/categories/${currentCategory.slug}`,
     });
 
     // Add parent categories
@@ -75,7 +75,7 @@ export async function GET(
         id: currentCategory.parent.id || currentCategory.parent._id?.toString(),
         name: currentCategory.parent.name,
         slug: currentCategory.parent.slug,
-        url: `/categories?slug=${currentCategory.parent.slug}`,
+        url: `/categories/${currentCategory.parent.slug}`,
       });
     }
 
@@ -95,7 +95,9 @@ export async function GET(
       image: (category as any).image,
       parent: (category as any).parent
         ? {
-            id: (category as any).parent.id || (category as any).parent._id?.toString(),
+            id:
+              (category as any).parent.id ||
+              (category as any).parent._id?.toString(),
             name: (category as any).parent.name,
             slug: (category as any).parent.slug,
             image: (category as any).parent.image,

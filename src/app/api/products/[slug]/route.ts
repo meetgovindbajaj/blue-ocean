@@ -178,7 +178,7 @@ export async function GET(
         id: cat.id || cat._id?.toString(),
         name: cat.name,
         slug: cat.slug,
-        url: `/categories?slug=${cat.slug}`,
+        url: `/categories/${cat.slug}`,
       });
       cat = cat.parent;
     }

@@ -1,17 +1,34 @@
 import { Metadata } from "next";
-import CategoriesPageClient from "./CategoriesPageClient";
+import Link from "next/link";
+import Image from "next/image";
+import { ChevronRight, FolderTree } from "lucide-react";
 import { SEOContainer, SEOCategoryData } from "@/components/ui/skeletons";
 import { getSiteSettings } from "@/lib/siteMetadata";
+import styles from "./page.module.css";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://blueocean.com";
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  image?: {
+    url: string;
+    thumbnailUrl?: string;
+  };
+  productCount?: number;
+  children?: Category[];
+}
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
 
   const siteName = settings.siteName || "Blue Ocean";
   const title = "Categories";
-  const description = "Browse our furniture categories. Find tables, chairs, beds, sofas, storage and more premium quality solid wood furniture collections.";
+  const description =
+    "Browse our furniture categories. Find tables, chairs, beds, sofas, storage and more premium quality solid wood furniture collections.";
   const ogImage = settings.seo?.ogImage || `${siteUrl}/og-image.jpg`;
   const pageUrl = `${siteUrl}/categories`;
 
@@ -52,17 +69,8 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-interface SEOCategory {
-  id: string;
-  name: string;
-  slug: string;
-  description?: string;
-  productCount?: number;
-  children?: SEOCategory[];
-}
-
-// Server-side data fetching for SEO
-async function getCategories(): Promise<SEOCategory[]> {
+// Server-side data fetching
+async function getCategories(): Promise<Category[]> {
   try {
     const res = await fetch(
       `${baseUrl}/api/categories?parentOnly=true&withCounts=true&limit=100`,
@@ -77,7 +85,6 @@ async function getCategories(): Promise<SEOCategory[]> {
 }
 
 export default async function CategoriesPage() {
-  // Fetch categories server-side for SEO
   const categories = await getCategories();
 
   return (
@@ -85,7 +92,10 @@ export default async function CategoriesPage() {
       {/* SEO Container - Hidden visually but readable by search engines */}
       <SEOContainer>
         <h1>Furniture Categories</h1>
-        <p>Browse our complete collection of {categories.length} furniture categories including premium quality solid wood furniture.</p>
+        <p>
+          Browse our complete collection of {categories.length} furniture
+          categories including premium quality solid wood furniture.
+        </p>
 
         <nav aria-label="Category Navigation">
           <h2>All Categories</h2>
@@ -93,17 +103,21 @@ export default async function CategoriesPage() {
             {categories.map((category) => (
               <li key={category.id}>
                 <SEOCategoryData category={category} />
-                <a href={`/categories?slug=${category.slug}`}>
+                <a href={`/categories/${category.slug}`}>
                   {category.name}
-                  {category.productCount ? ` (${category.productCount} products)` : ""}
+                  {category.productCount
+                    ? ` (${category.productCount} products)`
+                    : ""}
                 </a>
                 {category.children && category.children.length > 0 && (
                   <ul>
                     {category.children.map((child) => (
                       <li key={child.id}>
-                        <a href={`/categories?slug=${child.slug}`}>
+                        <a href={`/categories/${child.slug}`}>
                           {child.name}
-                          {child.productCount ? ` (${child.productCount} products)` : ""}
+                          {child.productCount
+                            ? ` (${child.productCount} products)`
+                            : ""}
                         </a>
                       </li>
                     ))}
@@ -115,8 +129,76 @@ export default async function CategoriesPage() {
         </nav>
       </SEOContainer>
 
-      {/* Client-side interactive component */}
-      <CategoriesPageClient initialCategories={categories} />
+      {/* Visual Category Tree */}
+      <div className={styles.page}>
+        <div className={styles.categoryTreeContainer}>
+          <h1 className={styles.allCategoriesTitle}>All Categories</h1>
+          <p className={styles.allCategoriesSubtitle}>
+            Browse our product categories
+          </p>
+          <div className={styles.categoryTree}>
+            {categories.map((category) => (
+              <div key={category.id} className={styles.categoryTreeItem}>
+                <Link
+                  href={`/categories/${category.slug}`}
+                  className={styles.categoryTreeParent}
+                >
+                  <div className={styles.categoryTreeImage}>
+                    {category.image?.url ? (
+                      <Image
+                        src={category.image.url}
+                        alt={category.name}
+                        fill
+                        style={{ objectFit: "cover" }}
+                        placeholder="blur"
+                        blurDataURL={
+                          category.image.thumbnailUrl || category.image.url
+                        }
+                      />
+                    ) : (
+                      <FolderTree className="w-8 h-8 text-muted-foreground" />
+                    )}
+                  </div>
+                  <div className={styles.categoryTreeInfo}>
+                    <span className={styles.categoryTreeName}>
+                      {category.name}
+                    </span>
+                    {category.description && (
+                      <span className={styles.categoryTreeDescription}>
+                        {category.description}
+                      </span>
+                    )}
+                    {category.productCount !== undefined && (
+                      <span className={styles.categoryTreeCount}>
+                        {category.productCount} products
+                      </span>
+                    )}
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+                </Link>
+                {category.children && category.children.length > 0 && (
+                  <div className={styles.categoryTreeChildren}>
+                    {category.children.map((child) => (
+                      <Link
+                        key={child.id}
+                        href={`/categories/${child.slug}`}
+                        className={styles.categoryTreeChild}
+                      >
+                        <span>{child.name}</span>
+                        {child.productCount !== undefined && (
+                          <span className={styles.categoryTreeChildCount}>
+                            ({child.productCount})
+                          </span>
+                        )}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </>
   );
 }

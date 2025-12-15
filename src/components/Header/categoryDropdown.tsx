@@ -248,7 +248,7 @@ const CategoryDropdown = ({ id }: { id: string }) => {
               onMouseEnter={() => handleParentCategoryHover(category)}
             >
               <Link
-                href={`/categories?slug=${category.slug}` as any}
+                href={`/categories/${category.slug}` as any}
                 className={styles.categoryLink}
               >
                 <span className={styles.categoryName}>{category.name}</span>
@@ -280,7 +280,7 @@ const CategoryDropdown = ({ id }: { id: string }) => {
                   onMouseEnter={() => handleSubCategoryHover(subCategory)}
                 >
                   <Link
-                    href={`/categories?slug=${subCategory.slug}` as any}
+                    href={`/categories/${subCategory.slug}` as any}
                     className={styles.subCategoryLink}
                   >
                     <span className={styles.subCategoryName}>
@@ -408,7 +408,7 @@ const CategoryDropdown = ({ id }: { id: string }) => {
             <ul className={styles.featuredList}>
               {categories.slice(0, 6).map((category) => (
                 <li key={category.id} className={styles.featuredItem}>
-                  <Link href={`/categories?slug=${category.slug}` as any}>
+                  <Link href={`/categories/${category.slug}` as any}>
                     {category.name}
                   </Link>
                 </li>

@@ -442,6 +442,18 @@
     color: var(--primary-foreground);
   }
 
+  .categoryTreeCount {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
+  }
+
+  .categoryTreeChildCount {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-left: 0.25rem;
+  }
+
   /* Responsive Adjustments */
 
   @media (max-width: 640px) {
