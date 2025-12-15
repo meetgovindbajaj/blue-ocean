@@ -486,76 +486,80 @@ export default function AnalyticsPage() {
           </CardHeader>
           <CardContent className="pt-4">
             {data?.entityBreakdown && data.entityBreakdown.length > 0 ? (
-              <div className="flex flex-col items-center">
-                <ChartContainer
-                  config={entityPieConfig}
-                  className="aspect-square h-[200px] w-full max-w-[200px]"
-                >
-                  <RechartsPieChart>
-                    <ChartTooltip
-                      cursor={false}
-                      content={
-                        <ChartTooltipContent
-                          hideLabel
-                          formatter={(value, name) => (
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium">
-                                {ENTITY_LABELS[name as string] || name}:
-                              </span>
-                              <span>{(value as number).toLocaleString()}</span>
-                            </div>
-                          )}
-                        />
-                      }
-                    />
-                    <Pie
-                      data={data.entityBreakdown.filter((e) => e.value > 0)}
-                      dataKey="value"
-                      nameKey="name"
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={50}
-                      outerRadius={80}
-                      paddingAngle={2}
+              (() => {
+                // Filter and sort data once, use same order for both chart and legend
+                const sortedData = data.entityBreakdown
+                  .filter((e) => e.value > 0)
+                  .sort((a, b) => b.value - a.value);
+
+                return (
+                  <div className="flex flex-col items-center">
+                    <ChartContainer
+                      config={entityPieConfig}
+                      className="aspect-square h-[200px] w-full max-w-[200px]"
                     >
-                      {data.entityBreakdown
-                        .filter((e) => e.value > 0)
-                        .map((entry, index) => (
-                          <Cell
-                            key={`cell-${index}`}
-                            fill={PIE_COLORS[index % PIE_COLORS.length]}
-                          />
-                        ))}
-                    </Pie>
-                  </RechartsPieChart>
-                </ChartContainer>
-                {/* Legend */}
-                <div className="flex flex-wrap justify-center gap-4 mt-4">
-                  {data.entityBreakdown
-                    .filter((e) => e.value > 0)
-                    .sort((a, b) => b.value - a.value)
-                    .map((entity, index) => {
-                      const percentage = (entity.value / totalEntityEvents) * 100;
-                      return (
-                        <div
-                          key={entity.name}
-                          className="flex items-center gap-2 text-sm"
+                      <RechartsPieChart>
+                        <ChartTooltip
+                          cursor={false}
+                          content={
+                            <ChartTooltipContent
+                              hideLabel
+                              formatter={(value, name) => (
+                                <div className="flex items-center gap-2">
+                                  <span className="font-medium">
+                                    {ENTITY_LABELS[name as string] || name}:
+                                  </span>
+                                  <span>{(value as number).toLocaleString()}</span>
+                                </div>
+                              )}
+                            />
+                          }
+                        />
+                        <Pie
+                          data={sortedData}
+                          dataKey="value"
+                          nameKey="name"
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={50}
+                          outerRadius={80}
+                          paddingAngle={2}
                         >
+                          {sortedData.map((entry, index) => (
+                            <Cell
+                              key={`cell-${index}`}
+                              fill={PIE_COLORS[index % PIE_COLORS.length]}
+                            />
+                          ))}
+                        </Pie>
+                      </RechartsPieChart>
+                    </ChartContainer>
+                    {/* Legend */}
+                    <div className="flex flex-wrap justify-center gap-4 mt-4">
+                      {sortedData.map((entity, index) => {
+                        const percentage = (entity.value / totalEntityEvents) * 100;
+                        return (
                           <div
-                            className="h-3 w-3 rounded-sm"
-                            style={{
-                              backgroundColor: PIE_COLORS[index % PIE_COLORS.length],
-                            }}
-                          />
-                          <span>
-                            {ENTITY_LABELS[entity.name] || entity.name} (
-                            {percentage.toFixed(0)}%)
-                          </span>
-                        </div>
-                      );
-                    })}
-                </div>
-              </div>
+                            key={entity.name}
+                            className="flex items-center gap-2 text-sm"
+                          >
+                            <div
+                              className="h-3 w-3 rounded-sm"
+                              style={{
+                                backgroundColor: PIE_COLORS[index % PIE_COLORS.length],
+                              }}
+                            />
+                            <span>
+                              {ENTITY_LABELS[entity.name] || entity.name} (
+                              {percentage.toFixed(0)}%)
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })()
             ) : (
               <p className="text-sm text-muted-foreground text-center py-8">
                 No activity data available

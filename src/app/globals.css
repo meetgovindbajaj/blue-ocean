@@ -119,6 +119,20 @@ base, component, utilities;
     @apply bg-background text-foreground;
   }
 
+  /* Accessibility: Ensure sr-only styles are never overwritten */
+  .sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border-width: 0 !important;
+    inset: auto !important;
+  }
+
   /* Accessibility: Ensure focus visibility for keyboard navigation */
   :focus-visible {
     @apply outline-2 outline-offset-2 outline-ring;

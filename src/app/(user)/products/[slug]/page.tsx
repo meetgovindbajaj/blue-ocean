@@ -117,34 +117,6 @@ export async function generateMetadata({
   const price = product.prices?.effectivePrice || product.prices?.retail || 0;
   const currency = settings?.locale?.currency || "USD";
 
-  // Build JSON-LD structured data for product
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: product.name,
-    description: cleanDescription || `${product.name} - Premium furniture`,
-    image: product.images?.map((img: any) => img.url) || [ogImage],
-    url: productUrl,
-    brand: {
-      "@type": "Brand",
-      name: siteName,
-    },
-    offers: {
-      "@type": "Offer",
-      url: productUrl,
-      priceCurrency: currency,
-      price: price,
-      availability: "https://schema.org/InStock",
-      seller: {
-        "@type": "Organization",
-        name: siteName,
-      },
-    },
-    ...(product.category && {
-      category: product.category.name,
-    }),
-  };
-
   // Multiple image sizes for different platforms
   const images: Array<{
     url: string;
@@ -214,9 +186,56 @@ export async function generateMetadata({
       "og:image:width": "1200",
       "og:image:height": "630",
       "og:image:type": "image/jpeg",
-      // JSON-LD structured data
-      "script:ld+json": JSON.stringify(jsonLd),
     },
+  };
+}
+
+// Generate JSON-LD structured data for the product
+async function generateJsonLd(slug: string) {
+  const [data, settings] = await Promise.all([
+    getProduct(slug),
+    getSiteSettings(),
+  ]);
+
+  if (!data?.product) return null;
+
+  const product = data.product;
+  const siteName = settings?.siteName || "Blue Ocean";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://blueocean.com";
+  const productUrl = `${siteUrl}/products/${slug}`;
+  const price = product.prices?.effectivePrice || product.prices?.retail || 0;
+  const currency = settings?.locale?.currency || "USD";
+  const rawDescription = product.description || "";
+  const cleanDescription = rawDescription.replace(/<[^>]*>/g, "").substring(0, 200);
+  const thumbnailImage = product.images?.find((img: any) => img.isThumbnail);
+  const firstImage = product.images?.[0];
+  const ogImage = thumbnailImage?.url || firstImage?.url || `${siteUrl}/og-image.jpg`;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: cleanDescription || `${product.name} - Premium furniture`,
+    image: product.images?.map((img: any) => img.url) || [ogImage],
+    url: productUrl,
+    brand: {
+      "@type": "Brand",
+      name: siteName,
+    },
+    offers: {
+      "@type": "Offer",
+      url: productUrl,
+      priceCurrency: currency,
+      price: price,
+      availability: "https://schema.org/InStock",
+      seller: {
+        "@type": "Organization",
+        name: siteName,
+      },
+    },
+    ...(product.category && {
+      category: product.category.name,
+    }),
   };
 }
 
@@ -228,19 +247,28 @@ export default async function ProductDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  // Fetch related and recommended products in parallel
-  // Related products now come from parent and sibling categories
-  const [relatedProducts, recommendedProducts] = await Promise.all([
+  // Fetch related products, recommended products, and JSON-LD in parallel
+  const [relatedProducts, recommendedProducts, jsonLd] = await Promise.all([
     getRelatedProducts(slug),
     getRecommendedProducts(data.product.id),
+    generateJsonLd(slug),
   ]);
 
   return (
-    <ProductDetailClient
-      product={data.product}
-      breadcrumbs={data.breadcrumbs}
-      relatedProducts={relatedProducts}
-      recommendedProducts={recommendedProducts}
-    />
+    <>
+      {/* JSON-LD Structured Data - rendered in head by Next.js */}
+      {jsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
+      <ProductDetailClient
+        product={data.product}
+        breadcrumbs={data.breadcrumbs}
+        relatedProducts={relatedProducts}
+        recommendedProducts={recommendedProducts}
+      />
+    </>
   );
 }
