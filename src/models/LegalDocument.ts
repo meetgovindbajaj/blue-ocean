@@ -106,9 +106,7 @@ const LegalDocumentSchema = new Schema<ILegalDocument>(
   }
 );
 
-// Create indexes
-LegalDocumentSchema.index({ type: 1 });
-LegalDocumentSchema.index({ slug: 1 });
+// Create indexes (type and slug already have unique: true which creates indexes)
 LegalDocumentSchema.index({ isVisible: 1 });
 
 const LegalDocument =

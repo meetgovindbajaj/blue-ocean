@@ -1,76 +1,31 @@
 import { MetadataRoute } from "next";
+import dbConnect from "@/lib/db";
+import Product from "@/models/Product";
+import Category from "@/models/Category";
+import LegalDocument from "@/models/LegalDocument";
 
 const baseUrl =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://blue--ocean.vercel.app";
-
-interface Product {
-  slug: string;
-  updatedAt?: string;
-  images?: { url: string }[];
-}
-
-interface Category {
-  slug: string;
-  updatedAt?: string;
-  image?: { url: string };
-}
-
-interface LegalDocument {
-  slug: string;
-  updatedAt?: string;
-}
-
-// Fetch all products for sitemap
-async function getProducts(): Promise<Product[]> {
-  try {
-    const res = await fetch(`${baseUrl}/api/products?limit=1000`, {
-      next: { revalidate: 3600 }, // Revalidate every hour
-    });
-    if (!res.ok) return [];
-    const data = await res.json();
-    return data.success ? data.products : [];
-  } catch (error) {
-    console.error("Failed to fetch products for sitemap:", error);
-    return [];
-  }
-}
-
-// Fetch all categories for sitemap
-async function getCategories(): Promise<Category[]> {
-  try {
-    const res = await fetch(`${baseUrl}/api/categories?limit=100`, {
-      next: { revalidate: 3600 },
-    });
-    if (!res.ok) return [];
-    const data = await res.json();
-    return data.success ? data.categories : [];
-  } catch (error) {
-    console.error("Failed to fetch categories for sitemap:", error);
-    return [];
-  }
-}
-
-// Fetch legal documents for sitemap
-async function getLegalDocuments(): Promise<LegalDocument[]> {
-  try {
-    const res = await fetch(`${baseUrl}/api/legal-documents?activeOnly=true`, {
-      next: { revalidate: 3600 },
-    });
-    if (!res.ok) return [];
-    const data = await res.json();
-    return data.success ? data.documents : [];
-  } catch (error) {
-    console.error("Failed to fetch legal documents for sitemap:", error);
-    return [];
-  }
-}
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  `https://${process.env.VERCEL_URL}` ||
+  "https://blue--ocean.vercel.app";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  await dbConnect();
+
   // Fetch all dynamic content in parallel
   const [products, categories, legalDocs] = await Promise.all([
-    getProducts(),
-    getCategories(),
-    getLegalDocuments(),
+    Product.find({ isActive: true })
+      .select("slug updatedAt images")
+      .lean()
+      .exec(),
+    Category.find({ isActive: true })
+      .select("slug updatedAt image")
+      .lean()
+      .exec(),
+    LegalDocument.find({ isVisible: true })
+      .select("slug updatedAt")
+      .lean()
+      .exec(),
   ]);
 
   // Static pages
