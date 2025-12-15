@@ -1,7 +1,11 @@
 import { Metadata } from "next";
 import Home from "@/components/Home";
 import styles from "./page.module.css";
-import { SEOContainer, SEOProductData, SEOCategoryData } from "@/components/ui/skeletons";
+import {
+  SEOContainer,
+  SEOProductData,
+  SEOCategoryData,
+} from "@/components/ui/skeletons";
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://blueocean.com";
@@ -38,11 +42,15 @@ async function getLandingData() {
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
-
   const siteName = settings?.siteName || "Blue Ocean";
-  const title = settings?.seo?.metaTitle || `${siteName} - Premium Quality Solid Wood Furniture`;
-  const description = settings?.seo?.metaDescription || `Welcome to ${siteName}. Discover our collection of premium quality solid wood furniture crafted with precision and care.`;
-  const ogImage = settings?.seo?.ogImage || settings?.logo?.url || `${siteUrl}/og-image.jpg`;
+  const title =
+    settings?.seo?.metaTitle ||
+    `${siteName} - Premium Quality Solid Wood Furniture`;
+  const description =
+    settings?.seo?.metaDescription ||
+    `Welcome to ${siteName}. Discover our collection of premium quality solid wood furniture crafted with precision and care.`;
+  const ogImage =
+    settings?.seo?.ogImage || settings?.logo?.url || `${siteUrl}/og-image.jpg`;
 
   return {
     title,
@@ -133,8 +141,9 @@ export default async function Page() {
       <SEOContainer>
         <h1>{siteName} - Premium Quality Solid Wood Furniture</h1>
         <p>
-          Welcome to {siteName}. Discover our collection of premium quality solid wood furniture
-          crafted with precision and care. Browse our featured products and categories.
+          Welcome to {siteName}. Discover our collection of premium quality
+          solid wood furniture crafted with precision and care. Browse our
+          featured products and categories.
         </p>
 
         {heroBanners.length > 0 && (
@@ -168,7 +177,10 @@ export default async function Page() {
         {products.length > 0 && (
           <section aria-label="Featured Products">
             <h2>Featured Products</h2>
-            <p>Explore our handpicked selection of {products.length} premium furniture pieces.</p>
+            <p>
+              Explore our handpicked selection of {products.length} premium
+              furniture pieces.
+            </p>
             {products.map((product) => (
               <SEOProductData key={product.id} product={product} />
             ))}
@@ -190,15 +202,23 @@ export default async function Page() {
           <ul>
             <li>
               <h3>Custom Design</h3>
-              <p>Tailored furniture built exactly to your vision with premium materials.</p>
+              <p>
+                Tailored furniture built exactly to your vision with premium
+                materials.
+              </p>
             </li>
             <li>
               <h3>Global Shipping</h3>
-              <p>Reliable worldwide delivery with trusted logistics partners.</p>
+              <p>
+                Reliable worldwide delivery with trusted logistics partners.
+              </p>
             </li>
             <li>
               <h3>Expert Support</h3>
-              <p>End-to-end guidance with clear communication throughout your order.</p>
+              <p>
+                End-to-end guidance with clear communication throughout your
+                order.
+              </p>
             </li>
             <li>
               <h3>Quality Control</h3>
@@ -209,10 +229,18 @@ export default async function Page() {
 
         <nav aria-label="Quick Links">
           <ul>
-            <li><a href="/products">All Products</a></li>
-            <li><a href="/categories">All Categories</a></li>
-            <li><a href="/about">About Us</a></li>
-            <li><a href="/contact">Contact Us</a></li>
+            <li>
+              <a href="/products">All Products</a>
+            </li>
+            <li>
+              <a href="/categories">All Categories</a>
+            </li>
+            <li>
+              <a href="/about">About Us</a>
+            </li>
+            <li>
+              <a href="/contact">Contact Us</a>
+            </li>
           </ul>
         </nav>
       </SEOContainer>
