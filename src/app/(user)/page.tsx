@@ -6,34 +6,368 @@ import {
   SEOProductData,
   SEOCategoryData,
 } from "@/components/ui/skeletons";
+import dbConnect from "@/lib/db";
+import SiteSettings from "@/models/SiteSettings";
+import Product from "@/models/Product";
+import Category from "@/models/Category";
+import Tag from "@/models/Tag";
+import HeroBanner, { IHeroBanner } from "@/models/HeroBanner";
+import { AnalyticsEvent } from "@/models/Analytics";
+import { transformBanner } from "@/lib/transformers/heroBanner";
 
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://blueocean.com";
 
-// Fetch site settings for metadata
+// Direct database fetch for site settings
 async function getSiteSettings() {
   try {
-    const res = await fetch(`${baseUrl}/api/settings`, {
-      next: { revalidate: 300 },
-    });
-    if (!res.ok) return null;
-    const data = await res.json();
-    return data.success ? data.settings : null;
+    await dbConnect();
+    const settings = await SiteSettings.findOne().lean().exec();
+    return settings;
   } catch (error) {
     console.error("Failed to fetch site settings:", error);
     return null;
   }
 }
 
-// Fetch landing page data for SEO
+// Helper function to get date range for auto banners
+function getDateRange(period: string): Date | null {
+  const now = new Date();
+  switch (period) {
+    case "day":
+      return new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    case "week":
+      return new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    case "month":
+      return new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    default:
+      return null;
+  }
+}
+
+// Process auto-generated banners
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function processAutoBanner(banner: IHeroBanner): Promise<any | null> {
+  const config = banner.content?.autoConfig || {};
+  const limit = config.limit || 5;
+  const period = config.period || "week";
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let products: any[] = [];
+  let autoTitle = banner.content?.title;
+  let autoSubtitle = banner.content?.subtitle;
+
+  switch (banner.contentType) {
+    case "trending": {
+      const dateRange = getDateRange(period);
+
+      const trendingStats = await AnalyticsEvent.aggregate([
+        {
+          $match: {
+            entityType: "product",
+            eventType: "product_view",
+            ...(dateRange ? { createdAt: { $gte: dateRange } } : {}),
+          },
+        },
+        { $group: { _id: "$entityId", totalViews: { $sum: 1 } } },
+        { $sort: { totalViews: -1 } },
+        { $limit: limit },
+      ]);
+
+      const productIds = trendingStats.map((s) => s._id);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const productQuery: any = { isActive: true };
+
+      if (productIds.length) {
+        productQuery._id = { $in: productIds };
+      }
+      if (config.categoryFilter) {
+        productQuery.category = config.categoryFilter;
+      }
+
+      products = await Product.find(productQuery)
+        .populate("category", "name slug")
+        .lean();
+
+      if (!products.length) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const fallbackQuery: any = { isActive: true };
+        if (config.categoryFilter) {
+          fallbackQuery.category = config.categoryFilter;
+        }
+
+        products = await Product.find(fallbackQuery)
+          .sort({ createdAt: -1 })
+          .limit(limit)
+          .populate("category", "name slug")
+          .lean();
+      }
+
+      const scoreMap = new Map(
+        trendingStats.map((s) => [s._id?.toString(), s.totalViews])
+      );
+
+      if (products.length && productIds.length) {
+        products.sort(
+          (a, b) =>
+            (scoreMap.get(b._id.toString()) || 0) -
+            (scoreMap.get(a._id.toString()) || 0)
+        );
+      }
+
+      autoTitle ||= banner.content?.title || "Trending Now";
+      autoSubtitle ||=
+        banner.content?.subtitle || "Most viewed products this " + period;
+      break;
+    }
+
+    case "new_arrivals": {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const productQuery: any = { isActive: true };
+      if (config.categoryFilter) {
+        productQuery.category = config.categoryFilter;
+      }
+
+      products = await Product.find(productQuery)
+        .sort({ createdAt: -1 })
+        .limit(limit)
+        .populate("category", "name slug")
+        .lean();
+
+      autoTitle ||= banner.content?.title || "New Arrivals";
+      autoSubtitle ||=
+        banner.content?.subtitle || "Fresh additions to our collection";
+      break;
+    }
+
+    case "offer": {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const productQuery: any = {
+        isActive: true,
+        "prices.discount": { $gt: 0 },
+      };
+      if (config.categoryFilter) {
+        productQuery.category = config.categoryFilter;
+      }
+
+      products = await Product.find(productQuery)
+        .sort({ "prices.discount": -1 })
+        .limit(limit)
+        .populate("category", "name slug")
+        .lean();
+
+      const maxDiscount = products[0]?.prices?.discount || 0;
+      autoTitle ||= banner.content?.title || `Up to ${maxDiscount}% Off`;
+      autoSubtitle ||= banner.content?.subtitle || "Limited time offers";
+      break;
+    }
+
+    default:
+      return null;
+  }
+
+  if (!products.length) {
+    return null;
+  }
+
+  return {
+    ...banner,
+    content: {
+      ...banner.content,
+      title: autoTitle,
+      subtitle: autoSubtitle,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      autoProducts: products.map((p: any) => ({
+        id: p.id || p._id?.toString(),
+        name: p.name,
+        slug: p.slug,
+        prices: p.prices,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        thumbnail:
+          p.images?.find((img: any) => img.isThumbnail) || p.images?.[0],
+        category: p.category,
+      })),
+    },
+  };
+}
+
+// Fetch hero banners with full processing
+async function fetchHeroBanners() {
+  const now = new Date();
+  const limit = 10;
+
+  // Auto-deactivate expired banners
+  await HeroBanner.updateMany(
+    {
+      isActive: true,
+      endDate: { $lt: now, $ne: null },
+    },
+    { $set: { isActive: false } }
+  );
+
+  const query = {
+    isActive: true,
+    $or: [{ startDate: null }, { startDate: { $lte: now } }],
+    $and: [{ $or: [{ endDate: null }, { endDate: { $gte: now } }] }],
+  };
+
+  // Manual banners
+  const manualBanners = await HeroBanner.find({
+    ...query,
+    sourceType: "manual",
+  })
+    .sort({ order: 1 })
+    .limit(limit)
+    .populate("content.productId", "name slug prices images")
+    .populate("content.categoryId", "name slug image")
+    .lean();
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let allBanners: any[] = [...manualBanners];
+
+  // Auto banners
+  const autoBanners = await HeroBanner.find({ ...query, sourceType: "auto" })
+    .sort({ order: 1 })
+    .lean();
+
+  for (const auto of autoBanners) {
+    const enriched = await processAutoBanner(auto as IHeroBanner);
+    if (enriched) allBanners.push(enriched);
+  }
+
+  allBanners.sort((a, b) => a.order - b.order);
+  allBanners = allBanners.slice(0, limit);
+
+  return allBanners.map((b) => transformBanner(b, false));
+}
+
+// Direct database fetch for landing page data (matches API response)
 async function getLandingData() {
   try {
-    const res = await fetch(`${baseUrl}/api/landing`, {
-      cache: "no-store",
+    await dbConnect();
+
+    const [categories, products, tags, heroBanners] = await Promise.all([
+      // Categories (parent only with children)
+      Category.find({ isActive: true, parent: null })
+        .select("id name slug description image children isActive")
+        .populate({
+          path: "children",
+          select: "id name slug image isActive",
+          match: { isActive: true },
+        })
+        .sort({ name: 1 })
+        .limit(10)
+        .lean(),
+
+      // Products (featured/active)
+      Product.find({ isActive: true })
+        .select(
+          "id name slug description prices images category isActive createdAt size score totalViews"
+        )
+        .populate("category", "id name slug")
+        .sort({ score: -1, createdAt: -1 })
+        .limit(20)
+        .lean(),
+
+      // Featured tags
+      Tag.find({ isActive: true }).sort({ order: 1, name: 1 }).limit(10).lean(),
+
+      // Hero banners
+      fetchHeroBanners(),
+    ]);
+
+    // Calculate product counts per category
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const categoryIds = categories.map((cat: any) => cat._id);
+    const childCategoryIds = categories.flatMap(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (cat: any) => cat.children?.map((child: any) => child._id) || []
+    );
+    const allCategoryIds = [...categoryIds, ...childCategoryIds];
+
+    // Get product counts for all categories
+    const productCounts = await Product.aggregate([
+      { $match: { isActive: true, category: { $in: allCategoryIds } } },
+      { $group: { _id: "$category", count: { $sum: 1 } } },
+    ]);
+
+    const countMap = new Map(
+      productCounts.map((pc) => [pc._id.toString(), pc.count])
+    );
+
+    // Transform categories with product counts
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const transformedCategories = categories.map((cat: any) => {
+      const catId = cat._id?.toString() || cat.id;
+      const childrenIds =
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        cat.children?.map((c: any) => c._id?.toString() || c.id) || [];
+
+      // Sum products in this category + all children
+      let totalProducts = countMap.get(catId) || 0;
+      childrenIds.forEach((childId: string) => {
+        totalProducts += countMap.get(childId) || 0;
+      });
+
+      return {
+        id: cat.id || catId,
+        name: cat.name,
+        slug: cat.slug,
+        description: cat.description,
+        image: cat.image,
+        productCount: totalProducts,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        children: cat.children?.map((child: any) => ({
+          id: child.id || child._id?.toString(),
+          name: child.name,
+          slug: child.slug,
+          image: child.image,
+          productCount: countMap.get(child._id?.toString()) || 0,
+        })),
+      };
     });
-    if (!res.ok) return null;
-    const data = await res.json();
-    return data.success ? data.data : null;
+
+    // Transform products
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const transformedProducts = products.map((product: any) => ({
+      id: product.id || product._id?.toString(),
+      name: product.name,
+      slug: product.slug,
+      description: product.description,
+      prices: product.prices,
+      images: product.images,
+      category: product.category
+        ? {
+            id: product.category.id || product.category._id?.toString(),
+            name: product.category.name,
+            slug: product.category.slug,
+          }
+        : undefined,
+      size: product.size,
+      score: product.score,
+      totalViews: product.totalViews,
+    }));
+
+    // Transform tags
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const transformedTags = tags.map((tag: any) => ({
+      id: tag.id || tag._id?.toString(),
+      name: tag.name,
+      slug: tag.slug,
+      description: tag.description,
+      image: tag.image,
+      logo: tag.logo,
+      website: tag.website,
+      isFeatured: tag.isFeatured,
+    }));
+
+    // Serialize to plain objects to avoid "Only plain objects can be passed to Client Components" error
+    // MongoDB documents may contain _id buffers, Date objects, etc. that can't be passed to client
+    return JSON.parse(JSON.stringify({
+      categories: transformedCategories,
+      products: transformedProducts,
+      tags: transformedTags,
+      heroBanners,
+    }));
   } catch (error) {
     console.error("Failed to fetch landing data:", error);
     return null;
@@ -42,15 +376,15 @@ async function getLandingData() {
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
-  const siteName = settings?.siteName || "Blue Ocean";
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const s = settings as any;
+  const siteName = s?.siteName || "Blue Ocean";
   const title =
-    settings?.seo?.metaTitle ||
-    `${siteName} - Premium Quality Solid Wood Furniture`;
+    s?.seo?.metaTitle || `${siteName} - Premium Quality Solid Wood Furniture`;
   const description =
-    settings?.seo?.metaDescription ||
+    s?.seo?.metaDescription ||
     `Welcome to ${siteName}. Discover our collection of premium quality solid wood furniture crafted with precision and care.`;
-  const ogImage =
-    settings?.seo?.ogImage || settings?.logo?.url || `${siteUrl}/og-image.jpg`;
+  const ogImage = s?.seo?.ogImage || s?.logo?.url || `${siteUrl}/og-image.jpg`;
 
   return {
     title,
@@ -115,11 +449,11 @@ interface SEOTag {
   description?: string;
 }
 
-interface HeroBanner {
+interface HeroBannerData {
   id: string;
   title?: string;
   subtitle?: string;
-  link?: string;
+  ctaLink?: string;
 }
 
 export default async function Page() {
@@ -129,11 +463,12 @@ export default async function Page() {
     getLandingData(),
   ]);
 
-  const siteName = settings?.siteName || "Blue Ocean";
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const siteName = (settings as any)?.siteName || "Blue Ocean";
   const products: SEOProduct[] = landingData?.products || [];
   const categories: SEOCategory[] = landingData?.categories || [];
   const tags: SEOTag[] = landingData?.tags || [];
-  const heroBanners: HeroBanner[] = landingData?.heroBanners || [];
+  const heroBanners: HeroBannerData[] = landingData?.heroBanners || [];
 
   return (
     <>
@@ -152,7 +487,7 @@ export default async function Page() {
               <div key={banner.id}>
                 {banner.title && <h2>{banner.title}</h2>}
                 {banner.subtitle && <p>{banner.subtitle}</p>}
-                {banner.link && <a href={banner.link}>Learn More</a>}
+                {banner.ctaLink && <a href={banner.ctaLink}>Learn More</a>}
               </div>
             ))}
           </section>
