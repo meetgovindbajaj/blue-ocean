@@ -409,16 +409,16 @@
 /* Section Heading Styles - Consistent with Featured Products */
 .sectionTitle {
   font-size: clamp(1.5rem, 3vw, 2rem);
-  font-weight: 700;
+  font-weight: 500;
   color: #111827;
-  text-align: center;
+  text-align: left;
   margin: 0;
 }
 
 .sectionSubtitle {
   font-size: 1rem;
   color: #6b7280;
-  text-align: center;
+  text-align: left;
   margin: 0.5rem 0 2rem 0;
 }
 
@@ -430,9 +430,9 @@
 
 .relatedTitle {
   font-size: clamp(1.5rem, 3vw, 2rem);
-  font-weight: 700;
+  font-weight: 500;
   color: #111827;
-  text-align: center;
+  text-align: left;
   margin: 0 0 2rem 0;
 }
 

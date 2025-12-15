@@ -1,6 +1,7 @@
 import dbConnect from "@/lib/db";
 import Category from "@/models/Category";
 import Product from "@/models/Product";
+import SiteSettings from "@/models/SiteSettings";
 import { NextRequest, NextResponse } from "next/server";
 
 interface QueryFilter {
@@ -12,9 +13,35 @@ interface QueryFilter {
   }>;
 }
 
+interface ProductQueryFilter {
+  isActive: boolean;
+  $or?: Array<{
+    name?: { $regex: string; $options: string };
+    description?: { $regex: string; $options: string };
+  }>;
+  "prices.retail"?: { $gte?: number; $lte?: number };
+}
+
 const CACHE_HEADERS = {
   "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
 };
+
+// Convert price from user currency to base currency (for filtering)
+function convertToBaseCurrency(
+  price: number,
+  fromCurrency: string,
+  baseCurrency: string,
+  exchangeRates: Record<string, number>
+): number {
+  if (fromCurrency === baseCurrency) return price;
+
+  const fromRate = exchangeRates[fromCurrency] || 1;
+  const toRate = exchangeRates[baseCurrency] || 1;
+
+  // Convert: fromCurrency -> USD -> baseCurrency
+  const priceInUSD = price / fromRate;
+  return priceInUSD * toRate;
+}
 
 export async function GET(req: NextRequest) {
   try {
@@ -28,6 +55,12 @@ export async function GET(req: NextRequest) {
     const limit = searchParams.get("limit");
     const page = searchParams.get("page") || "1";
 
+    // Product filter params - for filtering which products to count
+    const productSearch = searchParams.get("productSearch");
+    const minPrice = searchParams.get("minPrice");
+    const maxPrice = searchParams.get("maxPrice");
+    const priceCurrency = searchParams.get("priceCurrency");
+
     // Input validation
     const limitNum = limit ? Math.min(Math.max(parseInt(limit), 1), 100) : 50;
     const pageNum = Math.max(parseInt(page), 1);
@@ -40,7 +73,7 @@ export async function GET(req: NextRequest) {
       query.parent = null;
     }
 
-    // Search functionality
+    // Search functionality (for category names)
     if (search?.trim()) {
       const sanitizedSearch = search.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       query.$or = [
@@ -51,9 +84,50 @@ export async function GET(req: NextRequest) {
 
     // If withCounts is requested, use aggregation pipeline
     if (withCounts || onlyWithProducts) {
-      // Get product counts per category using aggregation
+      // Build product filter query
+      const productQuery: ProductQueryFilter = { isActive: true };
+
+      // Product search filter (search in product name/description)
+      if (productSearch?.trim()) {
+        const sanitized = productSearch.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        productQuery.$or = [
+          { name: { $regex: sanitized, $options: "i" } },
+          { description: { $regex: sanitized, $options: "i" } },
+        ];
+      }
+
+      // Price filter - convert from user's currency to base currency if needed
+      let minPriceNum = minPrice ? Number(minPrice) : null;
+      let maxPriceNum = maxPrice ? Number(maxPrice) : null;
+
+      if (priceCurrency && (minPriceNum !== null || maxPriceNum !== null)) {
+        // Get site settings for base currency and exchange rates
+        const settings = await SiteSettings.findOne().select("locale").lean();
+        if (settings?.locale) {
+          const baseCurrency = (settings.locale as { currency?: string }).currency || "USD";
+          const exchangeRates = (settings.locale as { exchangeRates?: Record<string, number> }).exchangeRates || {};
+
+          if (priceCurrency !== baseCurrency) {
+            if (minPriceNum !== null) {
+              minPriceNum = convertToBaseCurrency(minPriceNum, priceCurrency, baseCurrency, exchangeRates);
+            }
+            if (maxPriceNum !== null) {
+              maxPriceNum = convertToBaseCurrency(maxPriceNum, priceCurrency, baseCurrency, exchangeRates);
+            }
+          }
+        }
+      }
+
+      if (minPriceNum !== null || maxPriceNum !== null) {
+        productQuery["prices.retail"] = {
+          ...(minPriceNum !== null && { $gte: minPriceNum }),
+          ...(maxPriceNum !== null && { $lte: maxPriceNum }),
+        };
+      }
+
+      // Get product counts per category using aggregation with filters
       const productCounts = await Product.aggregate([
-        { $match: { isActive: true } },
+        { $match: productQuery },
         { $group: { _id: "$category", count: { $sum: 1 } } },
       ]);
 

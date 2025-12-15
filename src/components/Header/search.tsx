@@ -94,8 +94,11 @@ const SearchContent = ({
 
   const debouncedQuery = useDebounce(query, 300);
 
+  // Track if URL update was triggered internally to prevent loops
+  const isInternalUpdate = useRef(false);
+
   // Get current filter values from URL
-  const currentCategory = searchParams.get("category") || "";
+  const currentCategories = searchParams.get("categories") || "";
   const currentSort = searchParams.get("sort") || "newest";
   const currentMinPrice = searchParams.get("minPrice") || "";
   const currentMaxPrice = searchParams.get("maxPrice") || "";
@@ -105,6 +108,7 @@ const SearchContent = ({
   useEffect(() => {
     const currentSearch = searchParams.get("search") || "";
     if (debouncedQuery !== currentSearch) {
+      isInternalUpdate.current = true;
       const params = new URLSearchParams(searchParams.toString());
       if (debouncedQuery) {
         params.set("search", debouncedQuery);
@@ -119,13 +123,20 @@ const SearchContent = ({
     }
   }, [debouncedQuery, searchParams, router, pathname]);
 
-  // Sync query state from URL when search param is cleared externally (e.g., from filter pills)
+  // Sync query state from URL when search param changes externally (e.g., from filter pills)
   useEffect(() => {
+    // Skip if this URL change was triggered by us
+    if (isInternalUpdate.current) {
+      isInternalUpdate.current = false;
+      return;
+    }
+
     const urlSearch = searchParams.get("search") || "";
-    if (urlSearch !== "") {
+    // Only sync if the URL search differs from current query
+    if (urlSearch !== query) {
       setQuery(urlSearch);
     }
-  }, []);
+  }, [searchParams]);
 
   // Fetch categories on mount
   useEffect(() => {
@@ -150,7 +161,7 @@ const SearchContent = ({
       const params = new URLSearchParams();
 
       if (debouncedQuery) params.set("search", debouncedQuery);
-      if (currentCategory) params.set("category", currentCategory);
+      if (currentCategories) params.set("categories", currentCategories);
       if (currentSort && currentSort !== "newest")
         params.set("sort", currentSort);
       if (currentMinPrice) params.set("minPrice", currentMinPrice);
@@ -199,7 +210,7 @@ const SearchContent = ({
     }
   }, [
     debouncedQuery,
-    currentCategory,
+    currentCategories,
     currentSort,
     currentMinPrice,
     currentMaxPrice,
@@ -316,14 +327,15 @@ const SearchContent = ({
             ))}
           </div>
         )}
-
         {/* Filters */}
-        <ProductFilters
-          categories={categories}
-          totalResults={pagination.total}
-          hideSearch
-          onClear={() => setQuery("")}
-        />
+        <div className="p-4">
+          <ProductFilters
+            categories={categories}
+            totalResults={pagination.total}
+            hideSearch
+            onClear={() => setQuery("")}
+          />
+        </div>
 
         {/* Loading State */}
         {loading && (
@@ -418,19 +430,29 @@ const SearchContent = ({
         )}
 
         {/* No Results */}
-        {!loading && query.length >= 2 && products.length === 0 && (
-          <div className={styles.noResults}>
-            <p>No products found for &quot;{query}&quot;</p>
-            <span>Try a different search term</span>
-          </div>
-        )}
+        {!loading &&
+          (query.length >= 2 ||
+            currentCategories ||
+            currentMinPrice ||
+            currentMaxPrice) &&
+          products.length === 0 && (
+            <div className={styles.noResults}>
+              <p>No products found{query ? ` for "${query}"` : ""}</p>
+              <span>Try adjusting your search or filters</span>
+            </div>
+          )}
 
-        {/* Empty State - No query */}
-        {!loading && query.length < 2 && products.length === 0 && (
-          <div className={styles.searchHint}>
-            <p>Start typing to search products...</p>
-          </div>
-        )}
+        {/* Empty State - No query and no filters */}
+        {!loading &&
+          query.length < 2 &&
+          !currentCategories &&
+          !currentMinPrice &&
+          !currentMaxPrice &&
+          products.length === 0 && (
+            <div className={styles.searchHint}>
+              <p>Start typing to search products...</p>
+            </div>
+          )}
       </ScrollArea>
     </div>
   );

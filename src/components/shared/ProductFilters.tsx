@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -108,11 +108,67 @@ export default function ProductFilters({
   const [minPriceInput, setMinPriceInput] = useState(filters.minPrice);
   const [maxPriceInput, setMaxPriceInput] = useState(filters.maxPrice);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [filteredCategories, setFilteredCategories] = useState<CategoryWithProductCount[]>([]);
+  const [loadingCategories, setLoadingCategories] = useState(false);
 
   // Debounce inputs
   const debouncedSearch = useDebounce(searchInput, 400);
   const debouncedMinPrice = useDebounce(minPriceInput, 500);
   const debouncedMaxPrice = useDebounce(maxPriceInput, 500);
+
+  // Fetch categories with filtered product counts when filters change
+  const fetchFilteredCategories = useCallback(async () => {
+    // Skip if using allowedCategories prop
+    if (allowedCategories !== undefined) {
+      setFilteredCategories(allowedCategories);
+      return;
+    }
+
+    setLoadingCategories(true);
+    try {
+      const params = new URLSearchParams();
+      params.set("withCounts", "true");
+      params.set("onlyWithProducts", "true");
+      params.set("limit", "100");
+
+      // Add product filters to get accurate counts
+      if (debouncedSearch) {
+        params.set("productSearch", debouncedSearch);
+      }
+      if (debouncedMinPrice) {
+        params.set("minPrice", debouncedMinPrice);
+      }
+      if (debouncedMaxPrice) {
+        params.set("maxPrice", debouncedMaxPrice);
+      }
+      if (debouncedMinPrice || debouncedMaxPrice) {
+        params.set("priceCurrency", currency);
+      }
+
+      const response = await fetch(`/api/categories?${params.toString()}`);
+      const data = await response.json();
+      if (data.success) {
+        setFilteredCategories(data.categories);
+      }
+    } catch (err) {
+      console.error("Failed to fetch filtered categories:", err);
+    } finally {
+      setLoadingCategories(false);
+    }
+  }, [debouncedSearch, debouncedMinPrice, debouncedMaxPrice, currency, allowedCategories]);
+
+  // Fetch filtered categories when filters change
+  useEffect(() => {
+    fetchFilteredCategories();
+  }, [fetchFilteredCategories]);
+
+  // Memoize the categories to pass to CategoryMultiSelect
+  const categoriesToShow = useMemo(() => {
+    if (allowedCategories !== undefined) {
+      return allowedCategories;
+    }
+    return filteredCategories;
+  }, [allowedCategories, filteredCategories]);
 
   // Update URL with filters
   const updateURL = useCallback(
@@ -194,6 +250,9 @@ export default function ProductFilters({
       updateURL(newFilters);
       onFiltersChange?.(newFilters);
     }
+    // Note: Only debounced values should trigger this effect, not filters/updateURL/onFiltersChange
+    // to avoid infinite loops. Those are used inside but shouldn't re-trigger the effect.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearch, debouncedMinPrice, debouncedMaxPrice]);
 
   // Get active filters for chips
@@ -202,8 +261,10 @@ export default function ProductFilters({
     activeFilters.push({ key: "search", label: `Search: ${filters.search}` });
   }
   if (filters.categories.length > 0) {
+    // Use filteredCategories first, then fall back to categories prop for name lookup
+    const allCategories = [...filteredCategories, ...categories];
     filters.categories.forEach((catSlug) => {
-      const cat = categories.find((c) => c.slug === catSlug);
+      const cat = allCategories.find((c) => c.slug === catSlug);
       activeFilters.push({
         key: "categories",
         label: cat?.name || catSlug,
@@ -386,9 +447,9 @@ export default function ProductFilters({
             <CategoryMultiSelect
               selectedCategories={filters.categories}
               onSelectionChange={handleCategoriesChange}
-              placeholder="Select categories..."
+              placeholder={loadingCategories ? "Loading..." : "Select categories..."}
               className={styles.categorySelect}
-              allowedCategories={allowedCategories}
+              allowedCategories={categoriesToShow}
             />
           )}
 
@@ -514,8 +575,8 @@ export default function ProductFilters({
                           categories,
                         }))
                       }
-                      placeholder="Select categories..."
-                      allowedCategories={allowedCategories}
+                      placeholder={loadingCategories ? "Loading..." : "Select categories..."}
+                      allowedCategories={categoriesToShow}
                     />
                   </div>
                 )}
