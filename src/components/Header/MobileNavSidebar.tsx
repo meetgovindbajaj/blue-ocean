@@ -98,7 +98,7 @@ const supportNavItems = [
   { title: "About Us", url: "/about" as Route, icon: Info },
   { title: "Contact", url: "/contact" as Route, icon: Mail },
   { title: "FAQ", url: "/faq" as Route, icon: HelpCircle },
-  { title: "Sitemap", url: "/sitemap" as Route, icon: ArrowUpDown },
+  { title: "Sitemap", url: "/sitemaps" as Route, icon: ArrowUpDown },
 ];
 
 const accountNavItems = [

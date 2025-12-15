@@ -5,7 +5,18 @@ import Link from "next/link";
 import styles from "./index.module.css";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 import { useAuth } from "@/context/AuthContext";
-import { Facebook, Instagram, Twitter, Linkedin, Youtube, Mail, Phone, MapPin, Send, Loader2 } from "lucide-react";
+import {
+  Facebook,
+  Instagram,
+  Twitter,
+  Linkedin,
+  Youtube,
+  Mail,
+  Phone,
+  MapPin,
+  Send,
+  Loader2,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -130,7 +141,9 @@ const Footer = () => {
 
   const currentYear = new Date().getFullYear();
   const siteName = settings?.siteName || "Furniture Store";
-  const copyright = settings?.footer?.copyright || `© ${currentYear} ${siteName}. All rights reserved.`;
+  const copyright =
+    settings?.footer?.copyright ||
+    `© ${currentYear} ${siteName}. All rights reserved.`;
 
   return (
     <footer className={styles.page} role="contentinfo">
@@ -143,7 +156,9 @@ const Footer = () => {
               <p className={styles.tagline}>{settings.tagline}</p>
             )}
             {settings?.footer?.description && (
-              <p className={styles.description}>{settings.footer.description}</p>
+              <p className={styles.description}>
+                {settings.footer.description}
+              </p>
             )}
           </div>
 
@@ -166,10 +181,15 @@ const Footer = () => {
               <Link href="/faq">FAQ</Link>
               <Link href="/contact">Help Center</Link>
               <Link href="/inquiries">My Inquiries</Link>
-              <Link href="/sitemap">Sitemap</Link>
+              <Link href="/sitemaps">Sitemap</Link>
               {settings?.support?.whatsappNumber && (
                 <a
-                  href={`https://wa.me/${settings.support.whatsappNumber.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(settings.support.whatsappMessage || "Hello!")}`}
+                  href={`https://wa.me/${settings.support.whatsappNumber.replace(
+                    /[^0-9]/g,
+                    ""
+                  )}?text=${encodeURIComponent(
+                    settings.support.whatsappMessage || "Hello!"
+                  )}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Contact us on WhatsApp (opens in new tab)"
@@ -186,7 +206,10 @@ const Footer = () => {
               <h4 className={styles.sectionTitle}>Legal</h4>
               <nav className={styles.links} aria-label="Legal documents">
                 {legalDocs.map((doc, index) => (
-                  <Link key={doc._id || `legal-${index}`} href={`/legal/${doc.slug}`}>
+                  <Link
+                    key={doc._id || `legal-${index}`}
+                    href={`/legal/${doc.slug}`}
+                  >
                     {doc.title}
                   </Link>
                 ))}
@@ -234,7 +257,11 @@ const Footer = () => {
 
         {/* Newsletter - Only show when user is logged in */}
         {user && (
-          <div className={styles.newsletterSection} role="region" aria-labelledby="newsletter-title">
+          <div
+            className={styles.newsletterSection}
+            role="region"
+            aria-labelledby="newsletter-title"
+          >
             <div className={styles.newsletterContent}>
               <div className={styles.newsletterInfo}>
                 <h4 id="newsletter-title" className={styles.newsletterTitle}>
@@ -264,16 +291,23 @@ const Footer = () => {
                   required
                 />
                 <span id="newsletter-description" className="sr-only">
-                  Enter your email to receive our newsletter with updates on new products and exclusive offers
+                  Enter your email to receive our newsletter with updates on new
+                  products and exclusive offers
                 </span>
                 <button
                   type="submit"
                   className={styles.newsletterButton}
                   disabled={subscribing}
-                  aria-label={subscribing ? "Subscribing..." : "Subscribe to newsletter"}
+                  aria-label={
+                    subscribing ? "Subscribing..." : "Subscribe to newsletter"
+                  }
                 >
                   {subscribing ? (
-                    <Loader2 size={18} className={styles.spinner} aria-hidden="true" />
+                    <Loader2
+                      size={18}
+                      className={styles.spinner}
+                      aria-hidden="true"
+                    />
                   ) : (
                     <Send size={18} aria-hidden="true" />
                   )}
