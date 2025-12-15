@@ -28,6 +28,10 @@ const DEFAULT_SERVICES = {
   },
 };
 
+interface AboutPageClientProps {
+  initialSettings?: any;
+}
+
 // Helper to extract YouTube video ID from various URL formats
 const getYouTubeVideoId = (url: string): string | null => {
   if (!url) return null;
@@ -47,8 +51,10 @@ const getYouTubeVideoId = (url: string): string | null => {
   return null;
 };
 
-const AboutPageClient = () => {
-  const { settings, loading } = useSiteSettings();
+const AboutPageClient = ({ initialSettings }: AboutPageClientProps) => {
+  const { settings: contextSettings, loading } = useSiteSettings();
+  // Use initial settings from server if available, otherwise fall back to context
+  const settings = initialSettings || contextSettings;
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [playingVideo, setPlayingVideo] = useState<string | null>(null);
 
@@ -84,7 +90,8 @@ const AboutPageClient = () => {
       .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   }, [settings?.about?.factory?.videos]);
 
-  if (loading) {
+  // Skip loading state if we have initial settings from server
+  if (loading && !initialSettings) {
     return (
       <div className={styles.page}>
         <div className={styles.container}>

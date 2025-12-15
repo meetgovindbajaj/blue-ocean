@@ -90,10 +90,12 @@ export default function UserLayout({
       <SiteSettingsProvider>
         <CurrencyProvider>
           <GoogleAnalytics />
-          <Suspense fallback={<div className="h-16 border-b" />}>
+          <Suspense fallback={<div className="h-16 border-b" aria-label="Loading header" />}>
             <Header />
           </Suspense>
-          <Suspense>{children}</Suspense>
+          <main id="main-content" role="main" tabIndex={-1}>
+            <Suspense>{children}</Suspense>
+          </main>
           <Footer />
           <FloatingActions />
           <CookieConsent />

@@ -268,10 +268,9 @@ const SearchContent = ({
             <SearchIcon className={styles.searchInputIcon} />
             <Input
               ref={inputRef}
-              type="text"
+              type="search"
               value={query}
               onChange={(e) => {
-                console.log(e.target.value);
                 setQuery(e.target.value);
                 setShowSuggestions(true);
               }}
@@ -283,6 +282,11 @@ const SearchContent = ({
               onBlur={() => {
                 setTimeout(() => setShowSuggestions(false), 200);
               }}
+              aria-label="Search products"
+              aria-autocomplete="list"
+              aria-controls={showSuggestions && suggestions.length > 0 ? "search-suggestions" : undefined}
+              aria-expanded={showSuggestions && suggestions.length > 0}
+              role="combobox"
             />
             {query.length > 0 && (
               <Button
@@ -291,8 +295,9 @@ const SearchContent = ({
                 size="icon"
                 onClick={handleClearSearch}
                 className={styles.clearButton}
+                aria-label="Clear search"
               >
-                <X className="h-4 w-4" />
+                <X className="h-4 w-4" aria-hidden="true" />
               </Button>
             )}
           </div>
@@ -308,10 +313,19 @@ const SearchContent = ({
       <ScrollArea className={styles.searchResults}>
         {/* Suggestions dropdown */}
         {showSuggestions && suggestions.length > 0 && query.length >= 2 && (
-          <div className={styles.suggestionsDropdown}>
+          <div
+            className={styles.suggestionsDropdown}
+            role="listbox"
+            aria-label={`${suggestions.length} search suggestions`}
+            id="search-suggestions"
+          >
             <div className={styles.suggestionsHeader}>
-              <span>{suggestions.length} suggestions</span>
-              <button type="button" onClick={() => setShowSuggestions(false)}>
+              <span aria-live="polite">{suggestions.length} suggestions</span>
+              <button
+                type="button"
+                onClick={() => setShowSuggestions(false)}
+                aria-label="Close suggestions"
+              >
                 Close
               </button>
             </div>
@@ -319,9 +333,18 @@ const SearchContent = ({
               <div
                 key={idx}
                 onClick={() => handleSuggestionClick(suggestion)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleSuggestionClick(suggestion);
+                  }
+                }}
                 className={styles.suggestionItem}
+                role="option"
+                tabIndex={0}
+                aria-selected={false}
               >
-                <SearchIcon className="h-4 w-4" />
+                <SearchIcon className="h-4 w-4" aria-hidden="true" />
                 <span>{suggestion}</span>
               </div>
             ))}

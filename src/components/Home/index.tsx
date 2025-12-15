@@ -8,15 +8,22 @@ import FeaturedCategories from "./FeaturedCategories";
 import FeaturedProducts from "./FeaturedProducts";
 import FeaturedServices from "./FeaturedServices";
 import FeaturedTags from "./FeaturedTags";
-import HeroSection, { HeroBanner } from "./Hero";
+import HeroSection from "./Hero";
 import styles from "./index.module.css";
 import { Skeleton } from "@/components/ui/skeleton";
-import CarouselWrapper, { CarouselItem } from "../ui/CarouselWrapper";
 
-const HomeContent = () => {
-  const { data, loading } = useLandingData();
+interface HomeContentProps {
+  initialData?: any;
+}
 
-  if (loading) {
+const HomeContent = ({ initialData }: HomeContentProps) => {
+  const { data: contextData, loading } = useLandingData();
+
+  // Use initial data from server if available, otherwise fall back to context
+  const data = initialData || contextData;
+
+  // Skip loading state if we have initial data from server
+  if (loading && !initialData) {
     return (
       <div className={styles.page}>
         <div className={styles.loadingSkeleton}>
@@ -69,10 +76,14 @@ const HomeContent = () => {
   );
 };
 
-const Home = () => {
+interface HomeProps {
+  initialData?: any;
+}
+
+const Home = ({ initialData }: HomeProps) => {
   return (
-    <LandingDataProvider>
-      <HomeContent />
+    <LandingDataProvider initialData={initialData}>
+      <HomeContent initialData={initialData} />
     </LandingDataProvider>
   );
 };

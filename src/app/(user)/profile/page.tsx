@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 import { User, Mail, Calendar, Shield, Edit2, Camera, Loader2, Phone } from "lucide-react";
 import { toast } from "sonner";
+import { ProfilePageSkeleton } from "@/components/ui/skeletons";
 
 interface UserProfile {
   id: string;
@@ -189,14 +190,7 @@ const ProfilePage = () => {
   };
 
   if (loading) {
-    return (
-      <div className={styles.page}>
-        <div className={styles.loading}>
-          <Loader2 className={styles.spinner} size={32} />
-          <span>Loading profile...</span>
-        </div>
-      </div>
-    );
+    return <ProfilePageSkeleton />;
   }
 
   if (!user) {

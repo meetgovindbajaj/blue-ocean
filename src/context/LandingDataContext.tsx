@@ -106,12 +106,24 @@ const LandingDataContext = createContext<LandingDataContextValue>({
   error: null,
 });
 
-export function LandingDataProvider({ children }: { children: ReactNode }) {
-  const [data, setData] = useState<LandingData | null>(null);
-  const [loading, setLoading] = useState(true);
+interface LandingDataProviderProps {
+  children: ReactNode;
+  initialData?: LandingData | null;
+}
+
+export function LandingDataProvider({ children, initialData }: LandingDataProviderProps) {
+  // Use initial data from server if available
+  const [data, setData] = useState<LandingData | null>(initialData || null);
+  // Don't show loading if we have initial data
+  const [loading, setLoading] = useState(!initialData);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // Skip fetch if we have initial data from server
+    if (initialData) {
+      return;
+    }
+
     const fetchLandingData = async () => {
       try {
         const response = await fetch("/api/landing");
@@ -132,7 +144,7 @@ export function LandingDataProvider({ children }: { children: ReactNode }) {
     };
 
     fetchLandingData();
-  }, []);
+  }, [initialData]);
 
   return (
     <LandingDataContext.Provider value={{ data, loading, error }}>

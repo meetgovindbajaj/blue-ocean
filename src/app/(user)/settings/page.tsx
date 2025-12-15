@@ -28,6 +28,7 @@ import {
 import { toast } from "sonner";
 import { useCurrency, CURRENCIES } from "@/context/CurrencyContext";
 import CarouselWrapper from "@/components/ui/CarouselWrapper";
+import { SettingsPageSkeleton } from "@/components/ui/skeletons";
 
 interface Address {
   street?: string;
@@ -327,14 +328,7 @@ const SettingsPage = () => {
   };
 
   if (loading) {
-    return (
-      <div className={styles.page}>
-        <div className={styles.loading}>
-          <Loader2 className={styles.spinner} size={32} />
-          <span>Loading settings...</span>
-        </div>
-      </div>
-    );
+    return <SettingsPageSkeleton />;
   }
 
   return (

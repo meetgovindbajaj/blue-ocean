@@ -24,7 +24,9 @@ import { SlidersHorizontal, X, Search } from "lucide-react";
 import styles from "./ProductFilters.module.css";
 import { Route } from "next";
 import { useCurrency } from "@/context/CurrencyContext";
-import CategoryMultiSelect, { CategoryWithProductCount } from "./CategoryMultiSelect";
+import CategoryMultiSelect, {
+  CategoryWithProductCount,
+} from "./CategoryMultiSelect";
 
 export type SortOption =
   | "newest"
@@ -97,7 +99,9 @@ export default function ProductFilters({
   // Initialize state from URL params
   const categoriesParam = searchParams.get("categories");
   const [filters, setFilters] = useState<FilterValues>({
-    categories: categoriesParam ? categoriesParam.split(",").filter(Boolean) : [],
+    categories: categoriesParam
+      ? categoriesParam.split(",").filter(Boolean)
+      : [],
     search: searchParams.get("search") || "",
     sort: (searchParams.get("sort") as SortOption) || "newest",
     minPrice: searchParams.get("minPrice") || "",
@@ -108,7 +112,9 @@ export default function ProductFilters({
   const [minPriceInput, setMinPriceInput] = useState(filters.minPrice);
   const [maxPriceInput, setMaxPriceInput] = useState(filters.maxPrice);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const [filteredCategories, setFilteredCategories] = useState<CategoryWithProductCount[]>([]);
+  const [filteredCategories, setFilteredCategories] = useState<
+    CategoryWithProductCount[]
+  >([]);
   const [loadingCategories, setLoadingCategories] = useState(false);
 
   // Debounce inputs
@@ -155,7 +161,13 @@ export default function ProductFilters({
     } finally {
       setLoadingCategories(false);
     }
-  }, [debouncedSearch, debouncedMinPrice, debouncedMaxPrice, currency, allowedCategories]);
+  }, [
+    debouncedSearch,
+    debouncedMinPrice,
+    debouncedMaxPrice,
+    currency,
+    allowedCategories,
+  ]);
 
   // Fetch filtered categories when filters change
   useEffect(() => {
@@ -256,7 +268,11 @@ export default function ProductFilters({
   }, [debouncedSearch, debouncedMinPrice, debouncedMaxPrice]);
 
   // Get active filters for chips
-  const activeFilters: { key: keyof FilterValues; label: string; value?: string }[] = [];
+  const activeFilters: {
+    key: keyof FilterValues;
+    label: string;
+    value?: string;
+  }[] = [];
   if (filters.search) {
     activeFilters.push({ key: "search", label: `Search: ${filters.search}` });
   }
@@ -329,7 +345,9 @@ export default function ProductFilters({
       } else if (key === "categories") {
         if (value) {
           // Remove specific category
-          newFilters.categories = newFilters.categories.filter((c) => c !== value);
+          newFilters.categories = newFilters.categories.filter(
+            (c) => c !== value
+          );
         } else {
           // Clear all categories
           newFilters.categories = [];
@@ -375,7 +393,14 @@ export default function ProductFilters({
     updateURL(newFilters);
     onFiltersChange?.(newFilters);
     setIsSheetOpen(false);
-  }, [filters, searchInput, minPriceInput, maxPriceInput, updateURL, onFiltersChange]);
+  }, [
+    filters,
+    searchInput,
+    minPriceInput,
+    maxPriceInput,
+    updateURL,
+    onFiltersChange,
+  ]);
 
   // Sync state with URL params on mount and URL changes
   useEffect(() => {
@@ -408,35 +433,56 @@ export default function ProductFilters({
   };
 
   return (
-    <div className={styles.container}>
+    <div
+      className={styles.container}
+      role="search"
+      aria-label="Product filters"
+    >
       {/* Desktop/Tablet Filters */}
       <div className={styles.desktopWrapper}>
         {/* Top Row: Search, Category, Sort, Price Range */}
-        <div className={styles.filtersRow}>
+        <fieldset className={styles.filtersRow}>
+          <legend className="sr-only">Filter products</legend>
+
           {/* Search Input */}
           {!hideSearch && (
-            <form onSubmit={handleSearchSubmit} className={styles.searchForm}>
+            <form
+              onSubmit={handleSearchSubmit}
+              className={styles.searchForm}
+              role="search"
+            >
               <div className={styles.searchWrapper}>
+                <label htmlFor="product-search" className="sr-only">
+                  Search products
+                </label>
                 <Input
-                  type="text"
+                  id="product-search"
+                  type="search"
                   placeholder="Search products..."
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
                   className={styles.searchInput}
+                  aria-label="Search products"
                 />
-                <button type="button" className={styles.searchClear}>
-                  {searchInput && (
-                    <X
-                      className="h-4 w-4"
-                      onClick={() => {
-                        setSearchInput("");
-                        handleRemoveFilter("search");
-                      }}
-                    />
-                  )}
-                </button>
-                <button type="submit" className={styles.searchButton}>
-                  <Search className="h-4 w-4" />
+                {searchInput && (
+                  <button
+                    type="button"
+                    className={styles.searchClear}
+                    onClick={() => {
+                      setSearchInput("");
+                      handleRemoveFilter("search");
+                    }}
+                    aria-label="Clear search"
+                  >
+                    <X className="h-4 w-4" aria-hidden="true" />
+                  </button>
+                )}
+                <button
+                  type="submit"
+                  className={styles.searchButton}
+                  aria-label="Submit search"
+                >
+                  <Search className="h-4 w-4" aria-hidden="true" />
                 </button>
               </div>
             </form>
@@ -444,77 +490,117 @@ export default function ProductFilters({
 
           {/* Category MultiSelect */}
           {!hideCategoryFilter && (
-            <CategoryMultiSelect
-              selectedCategories={filters.categories}
-              onSelectionChange={handleCategoriesChange}
-              placeholder={loadingCategories ? "Loading..." : "Select categories..."}
-              className={styles.categorySelect}
-              allowedCategories={categoriesToShow}
-            />
+            <div role="group" aria-label="Category filter" className="flex-3">
+              <CategoryMultiSelect
+                selectedCategories={filters.categories}
+                onSelectionChange={handleCategoriesChange}
+                placeholder={
+                  loadingCategories ? "Loading..." : "Select categories..."
+                }
+                className={styles.categorySelect}
+                allowedCategories={categoriesToShow}
+              />
+            </div>
           )}
 
           {/* Sort Select */}
-          <Select
-            value={filters.sort}
-            onValueChange={(value) =>
-              handleFilterChange("sort", value as SortOption)
-            }
-          >
-            <SelectTrigger className={`${styles.selectTrigger} ${styles.sortSelect}`}>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {SORT_OPTIONS.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value}>
-                  {opt.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div role="group" aria-label="Sort options" className="flex-3">
+            <label htmlFor="sort-select" className="sr-only">
+              Sort products by
+            </label>
+            <Select
+              value={filters.sort}
+              onValueChange={(value) =>
+                handleFilterChange("sort", value as SortOption)
+              }
+            >
+              <SelectTrigger
+                className={`${styles.selectTrigger} ${styles.sortSelect}`}
+                id="sort-select"
+                aria-label="Sort products by"
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {SORT_OPTIONS.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
           {/* Price Range */}
-          <div className={styles.priceRange}>
+          <fieldset className={styles.priceRange}>
+            <legend className="sr-only">Price range filter</legend>
+            <label htmlFor="min-price" className="sr-only">
+              Minimum price in {currencySymbol}
+            </label>
             <Input
+              id="min-price"
               type="number"
               placeholder={`Min ${currencySymbol}`}
               value={minPriceInput}
               onChange={(e) => setMinPriceInput(e.target.value)}
               className={styles.priceInput}
               min={0}
+              aria-label={`Minimum price in ${currencySymbol}`}
             />
-            <span className={styles.priceSeparator}>-</span>
+            <span className={styles.priceSeparator} aria-hidden="true">
+              -
+            </span>
+            <label htmlFor="max-price" className="sr-only">
+              Maximum price in {currencySymbol}
+            </label>
             <Input
+              id="max-price"
               type="number"
               placeholder={`Max ${currencySymbol}`}
               value={maxPriceInput}
               onChange={(e) => setMaxPriceInput(e.target.value)}
               className={styles.priceInput}
               min={0}
+              aria-label={`Maximum price in ${currencySymbol}`}
             />
-          </div>
-        </div>
+          </fieldset>
+        </fieldset>
 
         {/* Bottom Row: Results Count, Active Filters, Clear All */}
-        <div className={styles.activeFiltersRow}>
+        <div
+          className={styles.activeFiltersRow}
+          role="status"
+          aria-live="polite"
+        >
           <div className={styles.leftSection}>
             {totalResults !== undefined && (
-              <span className={styles.resultsCount}>
+              <span
+                className={styles.resultsCount}
+                aria-label={`${totalResults} ${
+                  totalResults === 1 ? "product" : "products"
+                } found`}
+              >
                 {totalResults} {totalResults === 1 ? "product" : "products"}{" "}
                 found
               </span>
             )}
 
             {/* Active Filter Chips */}
-            {activeFilters.map((filter, index) => (
-              <button
-                key={`${filter.key}-${filter.value || index}`}
-                className={styles.filterChip}
-                onClick={() => handleRemoveFilter(filter.key, filter.value)}
-              >
-                {filter.label}
-                <X className="h-3 w-3" />
-              </button>
-            ))}
+            {activeFilters.length > 0 && (
+              <div role="group" aria-label="Active filters">
+                {activeFilters.map((filter, index) => (
+                  <button
+                    key={`${filter.key}-${filter.value || index}`}
+                    className={styles.filterChip}
+                    onClick={() => handleRemoveFilter(filter.key, filter.value)}
+                    aria-label={`Remove filter: ${filter.label}`}
+                  >
+                    <span aria-hidden="true">{filter.label}</span>
+                    <X className="h-3 w-3" aria-hidden="true" />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {activeFilters.length > 0 && (
@@ -523,6 +609,7 @@ export default function ProductFilters({
               size="sm"
               onClick={handleClearFilters}
               className={styles.clearAllButton}
+              aria-label="Clear all active filters"
             >
               Clear All Filters
             </Button>
@@ -535,17 +622,29 @@ export default function ProductFilters({
         <div className={styles.mobileHeader}>
           <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <SheetTrigger asChild>
-              <Button variant="outline" className={styles.filterButton}>
-                <SlidersHorizontal className="h-4 w-4" />
-                Filters
+              <Button
+                variant="outline"
+                className={styles.filterButton}
+                aria-label={`Open filters${
+                  activeFilters.length > 0
+                    ? `, ${activeFilters.length} active`
+                    : ""
+                }`}
+              >
+                <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
+                <span>Filters</span>
                 {activeFilters.length > 0 && (
-                  <span className={styles.filterBadge}>
+                  <span className={styles.filterBadge} aria-hidden="true">
                     {activeFilters.length}
                   </span>
                 )}
               </Button>
             </SheetTrigger>
-            <SheetContent side="bottom" className={styles.sheetContent}>
+            <SheetContent
+              side="bottom"
+              className={styles.sheetContent}
+              aria-label="Filter products"
+            >
               <SheetHeader>
                 <SheetTitle>Filters</SheetTitle>
               </SheetHeader>
@@ -553,12 +652,19 @@ export default function ProductFilters({
                 {/* Search */}
                 {!hideSearch && (
                   <div className={styles.mobileFilterGroup}>
-                    <label className={styles.filterLabel}>Search</label>
+                    <label
+                      htmlFor="mobile-search"
+                      className={styles.filterLabel}
+                    >
+                      Search
+                    </label>
                     <Input
-                      type="text"
+                      id="mobile-search"
+                      type="search"
                       placeholder="Search products..."
                       value={searchInput}
                       onChange={(e) => setSearchInput(e.target.value)}
+                      aria-label="Search products"
                     />
                   </div>
                 )}
@@ -566,53 +672,84 @@ export default function ProductFilters({
                 {/* Categories */}
                 {!hideCategoryFilter && (
                   <div className={styles.mobileFilterGroup}>
-                    <label className={styles.filterLabel}>Categories</label>
-                    <CategoryMultiSelect
-                      selectedCategories={filters.categories}
-                      onSelectionChange={(categories) =>
-                        setFilters((f) => ({
-                          ...f,
-                          categories,
-                        }))
-                      }
-                      placeholder={loadingCategories ? "Loading..." : "Select categories..."}
-                      allowedCategories={categoriesToShow}
-                    />
+                    <label
+                      id="mobile-categories-label"
+                      className={styles.filterLabel}
+                    >
+                      Categories
+                    </label>
+                    <div aria-labelledby="mobile-categories-label">
+                      <CategoryMultiSelect
+                        selectedCategories={filters.categories}
+                        onSelectionChange={(categories) =>
+                          setFilters((f) => ({
+                            ...f,
+                            categories,
+                          }))
+                        }
+                        placeholder={
+                          loadingCategories
+                            ? "Loading..."
+                            : "Select categories..."
+                        }
+                        allowedCategories={categoriesToShow}
+                      />
+                    </div>
                   </div>
                 )}
 
                 {/* Price Range */}
-                <div className={styles.mobileFilterGroup}>
-                  <label className={styles.filterLabel}>Price Range ({currencySymbol})</label>
+                <fieldset className={styles.mobileFilterGroup}>
+                  <legend className={styles.filterLabel}>
+                    Price Range ({currencySymbol})
+                  </legend>
                   <div className={styles.mobilePriceRange}>
+                    <label htmlFor="mobile-min-price" className="sr-only">
+                      Minimum price
+                    </label>
                     <Input
+                      id="mobile-min-price"
                       type="number"
                       placeholder={`Min ${currencySymbol}`}
                       value={minPriceInput}
                       onChange={(e) => setMinPriceInput(e.target.value)}
                       min={0}
+                      aria-label={`Minimum price in ${currencySymbol}`}
                     />
-                    <span className={styles.priceSeparator}>-</span>
+                    <span className={styles.priceSeparator} aria-hidden="true">
+                      -
+                    </span>
+                    <label htmlFor="mobile-max-price" className="sr-only">
+                      Maximum price
+                    </label>
                     <Input
+                      id="mobile-max-price"
                       type="number"
                       placeholder={`Max ${currencySymbol}`}
                       value={maxPriceInput}
                       onChange={(e) => setMaxPriceInput(e.target.value)}
                       min={0}
+                      aria-label={`Maximum price in ${currencySymbol}`}
                     />
                   </div>
-                </div>
+                </fieldset>
 
                 {/* Sort */}
                 <div className={styles.mobileFilterGroup}>
-                  <label className={styles.filterLabel}>Sort By</label>
+                  <label htmlFor="mobile-sort" className={styles.filterLabel}>
+                    Sort By
+                  </label>
                   <Select
                     value={filters.sort}
                     onValueChange={(value) =>
                       setFilters((f) => ({ ...f, sort: value as SortOption }))
                     }
                   >
-                    <SelectTrigger className={styles.mobileSelectTrigger}>
+                    <SelectTrigger
+                      className={styles.mobileSelectTrigger}
+                      id="mobile-sort"
+                      aria-label="Sort products by"
+                    >
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -630,11 +767,17 @@ export default function ProductFilters({
                   variant="outline"
                   onClick={handleClearFilters}
                   className={styles.sheetClearBtn}
+                  aria-label="Clear all filters"
                 >
                   Clear All
                 </Button>
                 <SheetClose asChild>
-                  <Button onClick={handleApplyFilters}>Apply Filters</Button>
+                  <Button
+                    onClick={handleApplyFilters}
+                    aria-label="Apply selected filters"
+                  >
+                    Apply Filters
+                  </Button>
                 </SheetClose>
               </SheetFooter>
             </SheetContent>
@@ -647,7 +790,10 @@ export default function ProductFilters({
               handleFilterChange("sort", value as SortOption)
             }
           >
-            <SelectTrigger className={styles.mobileSortTrigger}>
+            <SelectTrigger
+              className={styles.mobileSortTrigger}
+              aria-label="Sort products"
+            >
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -661,29 +807,44 @@ export default function ProductFilters({
         </div>
 
         {/* Mobile Results & Active Filters */}
-        <div className={styles.mobileActiveFilters}>
+        <div
+          className={styles.mobileActiveFilters}
+          role="status"
+          aria-live="polite"
+        >
           {activeFilters.length > 0 && (
-            <div className={styles.mobileChips}>
+            <div
+              className={styles.mobileChips}
+              role="group"
+              aria-label="Active filters"
+            >
               {activeFilters.map((filter, index) => (
                 <button
                   key={`${filter.key}-${filter.value || index}`}
                   className={styles.filterChip}
                   onClick={() => handleRemoveFilter(filter.key, filter.value)}
+                  aria-label={`Remove filter: ${filter.label}`}
                 >
-                  {filter.label}
-                  <X className="h-3 w-3" />
+                  <span aria-hidden="true">{filter.label}</span>
+                  <X className="h-3 w-3" aria-hidden="true" />
                 </button>
               ))}
               <button
                 className={styles.clearAllChip}
                 onClick={handleClearFilters}
+                aria-label="Clear all filters"
               >
                 Clear All
               </button>
             </div>
           )}
           {totalResults !== undefined && (
-            <span className={styles.mobileResultsCount}>
+            <span
+              className={styles.mobileResultsCount}
+              aria-label={`${totalResults} ${
+                totalResults === 1 ? "product" : "products"
+              } found`}
+            >
               {totalResults} {totalResults === 1 ? "product" : "products"} found
             </span>
           )}

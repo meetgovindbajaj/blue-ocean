@@ -41,11 +41,11 @@ const ProductCard = ({ product }: { product: ProductType }) => {
   // Convert product images to CarouselItem format
   const carouselImages: CarouselItem[] = useMemo(() => {
     if (!product.images || product.images.length === 0) return [];
-    return product.images.map((img) => ({
+    return product.images.map((img, index) => ({
       id: img.id,
       image: img.url,
       thumbnailImage: img.thumbnailUrl,
-      alt: product.name,
+      alt: `${product.name} - Image ${index + 1} of ${product.images.length}`,
     }));
   }, [product.images, product.name]);
 
@@ -64,100 +64,131 @@ const ProductCard = ({ product }: { product: ProductType }) => {
       ? product.breadcrumbs[product.breadcrumbs.length - 1]?.name
       : null;
 
+  // Build size description for screen readers
+  const sizeDescription = allDimensionsZero
+    ? "Custom size available"
+    : `${product.size.length} × ${product.size.width} × ${product.size.height} ${product.size.unit}${!product.size.fixedSize ? ", customizable" : ""}`;
+
+  // Build full product description for screen readers
+  const screenReaderDescription = `${product.name}. Price: ${priceInfo.current}${priceInfo.original ? `, was ${priceInfo.original}, ${priceInfo.discount}% off` : ""}. Size: ${sizeDescription}${categoryName ? `. Category: ${categoryName}` : ""}`;
+
   return (
-    <Link
-      href={`/products/${product.slug}`}
-      className="block no-underline h-full"
-    >
-      <Card
-        className={cn(
-          "group overflow-hidden p-0 gap-0 transition-all duration-200 h-full flex flex-col",
-          "hover:-translate-y-1 hover:shadow-lg cursor-pointer"
-        )}
+    <article aria-label={product.name}>
+      <Link
+        href={`/products/${product.slug}`}
+        className="block no-underline h-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg"
+        aria-label={screenReaderDescription}
       >
-        {/* Product Image */}
-        <div className="relative aspect-[4/3] overflow-hidden bg-muted flex-shrink-0">
-          {hasMultipleImages ? (
-            <CarouselWrapper
-              variant="fullWidth"
-              data={carouselImages}
-              className={styles.productCarousel}
-              options={{
-                showControlBtns: false,
-                showControlDots: true,
-                showDotsProgress: false,
-                autoPlay: true,
-                autoPlayInterval: 3000,
-                loop: true,
-              }}
-            />
-          ) : thumbnailImage?.url ? (
-            <Image
-              src={thumbnailImage.url}
-              alt={product.name}
-              fill
-              className="object-cover transition-transform duration-300 group-hover:scale-105"
-              quality={85}
-              placeholder="blur"
-              blurDataURL={thumbnailImage.thumbnailUrl || thumbnailImage.url}
-            />
-          ) : (
-            <div className="absolute inset-0 flex items-center justify-center text-muted-foreground text-sm">
-              No Image
-            </div>
+        <Card
+          className={cn(
+            "group overflow-hidden p-0 gap-0 transition-all duration-200 h-full flex flex-col",
+            "hover:-translate-y-1 hover:shadow-lg cursor-pointer"
           )}
-          {product.prices.discount > 0 && (
-            <Badge
-              variant="destructive"
-              className="absolute top-3 right-3 rounded-full px-2.5 py-1 z-10"
-            >
-              -{product.prices.discount}%
-            </Badge>
-          )}
-        </div>
-
-        {/* Product Info */}
-        <CardContent className="p-4 flex flex-col flex-grow">
-          <h3 className="font-semibold text-base leading-snug line-clamp-2 mb-2">
-            {product.name}
-          </h3>
-
-          {/* Size Info */}
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-2">
-            {allDimensionsZero ? (
-              <Badge variant="secondary" className="text-[11px] font-medium">
-                Custom
-              </Badge>
+        >
+          {/* Product Image */}
+          <div
+            className="relative aspect-[4/3] overflow-hidden bg-muted flex-shrink-0"
+            aria-label={`Product images for ${product.name}`}
+          >
+            {hasMultipleImages ? (
+              <CarouselWrapper
+                variant="fullWidth"
+                data={carouselImages}
+                className={styles.productCarousel}
+                options={{
+                  showControlBtns: false,
+                  showControlDots: true,
+                  showDotsProgress: false,
+                  autoPlay: true,
+                  autoPlayInterval: 3000,
+                  loop: true,
+                }}
+                aria-label={`${product.name} image gallery with ${carouselImages.length} images`}
+              />
+            ) : thumbnailImage?.url ? (
+              <Image
+                src={thumbnailImage.url}
+                alt={`${product.name} product image`}
+                fill
+                className="object-cover transition-transform duration-300 group-hover:scale-105"
+                quality={85}
+                placeholder="blur"
+                blurDataURL={thumbnailImage.thumbnailUrl || thumbnailImage.url}
+              />
             ) : (
-              <>
-                <span>
-                  {product.size.length} × {product.size.width} ×{" "}
-                  {product.size.height} {product.size.unit}
-                </span>
-                {!product.size.fixedSize && (
-                  <Badge
-                    variant="secondary"
-                    className="text-[11px] font-medium"
-                  >
-                    Custom
-                  </Badge>
-                )}
-              </>
+              <div
+                className="absolute inset-0 flex items-center justify-center text-muted-foreground text-sm"
+                role="img"
+                aria-label="No product image available"
+              >
+                No Image
+              </div>
+            )}
+            {product.prices.discount > 0 && (
+              <Badge
+                variant="destructive"
+                className="absolute top-3 right-3 rounded-full px-2.5 py-1 z-10"
+                aria-label={`${product.prices.discount}% discount`}
+              >
+                <span aria-hidden="true">-{product.prices.discount}%</span>
+              </Badge>
             )}
           </div>
 
-          {/* Price - pushed to bottom */}
-          <div className="flex items-center gap-2 pt-1 mt-auto">
-            <span className="text-lg font-bold">{priceInfo.current}</span>
-            {priceInfo.original && (
-              <span className="text-sm text-muted-foreground line-through">
-                {priceInfo.original}
+          {/* Product Info */}
+          <CardContent className="p-4 flex flex-col flex-grow">
+            <h3 className="font-semibold text-base leading-snug line-clamp-2 mb-2">
+              {product.name}
+            </h3>
+
+            {/* Size Info */}
+            <div
+              className="flex items-center gap-1.5 text-xs text-muted-foreground mb-2"
+              aria-label={`Size: ${sizeDescription}`}
+            >
+              {allDimensionsZero ? (
+                <Badge variant="secondary" className="text-[11px] font-medium">
+                  <span aria-hidden="true">Custom</span>
+                </Badge>
+              ) : (
+                <>
+                  <span aria-hidden="true">
+                    {product.size.length} × {product.size.width} ×{" "}
+                    {product.size.height} {product.size.unit}
+                  </span>
+                  {!product.size.fixedSize && (
+                    <Badge
+                      variant="secondary"
+                      className="text-[11px] font-medium"
+                    >
+                      <span aria-hidden="true">Custom</span>
+                    </Badge>
+                  )}
+                </>
+              )}
+            </div>
+
+            {/* Price - pushed to bottom */}
+            <div
+              className="flex items-center gap-2 pt-1 mt-auto"
+              aria-label={`Price: ${priceInfo.current}${priceInfo.original ? `, was ${priceInfo.original}` : ""}`}
+            >
+              <span className="text-lg font-bold" aria-hidden="true">
+                {priceInfo.current}
               </span>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-    </Link>
+              {priceInfo.original && (
+                <span
+                  className="text-sm text-muted-foreground line-through"
+                  aria-hidden="true"
+                >
+                  {priceInfo.original}
+                </span>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </Link>
+    </article>
   );
 };
 

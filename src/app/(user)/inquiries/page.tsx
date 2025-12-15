@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { Route } from "next";
+import { InquiriesPageSkeleton } from "@/components/ui/skeletons";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -189,14 +190,7 @@ const InquiriesPage = () => {
   };
 
   if (loading) {
-    return (
-      <div className={styles.page}>
-        <div className={styles.loading}>
-          <Loader2 className={styles.spinner} size={32} />
-          <span>Loading inquiries...</span>
-        </div>
-      </div>
-    );
+    return <InquiriesPageSkeleton />;
   }
 
   return (

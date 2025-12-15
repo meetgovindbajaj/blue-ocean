@@ -133,7 +133,7 @@ const Footer = () => {
   const copyright = settings?.footer?.copyright || `© ${currentYear} ${siteName}. All rights reserved.`;
 
   return (
-    <footer className={styles.page}>
+    <footer className={styles.page} role="contentinfo">
       <div className={styles.container}>
         <div className={styles.grid}>
           {/* Brand & Description */}
@@ -150,7 +150,7 @@ const Footer = () => {
           {/* Quick Links */}
           <div className={styles.section}>
             <h4 className={styles.sectionTitle}>Quick Links</h4>
-            <nav className={styles.links}>
+            <nav className={styles.links} aria-label="Quick links">
               <Link href="/">Home</Link>
               <Link href="/products">Products</Link>
               <Link href="/categories">Categories</Link>
@@ -162,7 +162,7 @@ const Footer = () => {
           {/* Support Links */}
           <div className={styles.section}>
             <h4 className={styles.sectionTitle}>Support</h4>
-            <nav className={styles.links}>
+            <nav className={styles.links} aria-label="Support links">
               <Link href="/faq">FAQ</Link>
               <Link href="/contact">Help Center</Link>
               <Link href="/inquiries">My Inquiries</Link>
@@ -172,6 +172,7 @@ const Footer = () => {
                   href={`https://wa.me/${settings.support.whatsappNumber.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(settings.support.whatsappMessage || "Hello!")}`}
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label="Contact us on WhatsApp (opens in new tab)"
                 >
                   WhatsApp Support
                 </a>
@@ -183,7 +184,7 @@ const Footer = () => {
           {legalDocs.length > 0 && (
             <div className={styles.section}>
               <h4 className={styles.sectionTitle}>Legal</h4>
-              <nav className={styles.links}>
+              <nav className={styles.links} aria-label="Legal documents">
                 {legalDocs.map((doc, index) => (
                   <Link key={doc._id || `legal-${index}`} href={`/legal/${doc.slug}`}>
                     {doc.title}
@@ -196,22 +197,30 @@ const Footer = () => {
           {/* Contact Info */}
           <div className={styles.section}>
             <h4 className={styles.sectionTitle}>Contact</h4>
-            <div className={styles.contactInfo}>
+            <address className={styles.contactInfo}>
               {settings?.contact?.email && (
-                <a href={`mailto:${settings.contact.email}`} className={styles.contactItem}>
-                  <Mail size={16} />
+                <a
+                  href={`mailto:${settings.contact.email}`}
+                  className={styles.contactItem}
+                  aria-label={`Email us at ${settings.contact.email}`}
+                >
+                  <Mail size={16} aria-hidden="true" />
                   <span>{settings.contact.email}</span>
                 </a>
               )}
               {settings?.contact?.phone && (
-                <a href={`tel:${settings.contact.phone}`} className={styles.contactItem}>
-                  <Phone size={16} />
+                <a
+                  href={`tel:${settings.contact.phone}`}
+                  className={styles.contactItem}
+                  aria-label={`Call us at ${settings.contact.phone}`}
+                >
+                  <Phone size={16} aria-hidden="true" />
                   <span>{settings.contact.phone}</span>
                 </a>
               )}
               {settings?.contact?.address && (
                 <div className={styles.contactItem}>
-                  <MapPin size={16} />
+                  <MapPin size={16} aria-hidden="true" />
                   <span>
                     {settings.contact.address}
                     {settings.contact.city && `, ${settings.contact.city}`}
@@ -219,39 +228,54 @@ const Footer = () => {
                   </span>
                 </div>
               )}
-            </div>
+            </address>
           </div>
         </div>
 
         {/* Newsletter - Only show when user is logged in */}
         {user && (
-          <div className={styles.newsletterSection}>
+          <div className={styles.newsletterSection} role="region" aria-labelledby="newsletter-title">
             <div className={styles.newsletterContent}>
               <div className={styles.newsletterInfo}>
-                <h4 className={styles.newsletterTitle}>Subscribe to Our Newsletter</h4>
+                <h4 id="newsletter-title" className={styles.newsletterTitle}>
+                  Subscribe to Our Newsletter
+                </h4>
                 <p className={styles.newsletterText}>
                   Get updates on new products, exclusive offers, and more.
                 </p>
               </div>
-              <form onSubmit={handleNewsletterSubmit} className={styles.newsletterForm}>
+              <form
+                onSubmit={handleNewsletterSubmit}
+                className={styles.newsletterForm}
+                aria-label="Newsletter subscription"
+              >
+                <label htmlFor="newsletter-email" className="sr-only">
+                  Email address for newsletter
+                </label>
                 <input
+                  id="newsletter-email"
                   type="email"
                   placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className={styles.newsletterInput}
                   disabled={subscribing}
+                  aria-describedby="newsletter-description"
+                  required
                 />
+                <span id="newsletter-description" className="sr-only">
+                  Enter your email to receive our newsletter with updates on new products and exclusive offers
+                </span>
                 <button
                   type="submit"
                   className={styles.newsletterButton}
                   disabled={subscribing}
-                  aria-label="Subscribe"
+                  aria-label={subscribing ? "Subscribing..." : "Subscribe to newsletter"}
                 >
                   {subscribing ? (
-                    <Loader2 size={18} className={styles.spinner} />
+                    <Loader2 size={18} className={styles.spinner} aria-hidden="true" />
                   ) : (
-                    <Send size={18} />
+                    <Send size={18} aria-hidden="true" />
                   )}
                 </button>
               </form>
@@ -262,7 +286,7 @@ const Footer = () => {
         {/* Social Links */}
         {settings?.socialLinks && settings.socialLinks.length > 0 && (
           <div className={styles.socialSection}>
-            <div className={styles.socialLinks}>
+            <nav className={styles.socialLinks} aria-label="Social media links">
               {settings.socialLinks.map((link, index) => (
                 <a
                   key={index}
@@ -270,12 +294,14 @@ const Footer = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className={styles.socialLink}
-                  aria-label={link.platform}
+                  aria-label={`Follow us on ${link.platform} (opens in new tab)`}
                 >
-                  {socialIcons[link.platform.toLowerCase()] || link.platform}
+                  <span aria-hidden="true">
+                    {socialIcons[link.platform.toLowerCase()] || link.platform}
+                  </span>
                 </a>
               ))}
-            </div>
+            </nav>
           </div>
         )}
 

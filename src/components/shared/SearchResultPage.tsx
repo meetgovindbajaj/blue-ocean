@@ -24,29 +24,53 @@ interface PaginationInfo {
 
 interface SearchResultPageProps {
   showFilters?: boolean;
+  /** Initial products from server-side fetch for SEO */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  initialProducts?: any[];
+  /** Initial categories from server-side fetch */
+  initialCategories?: Category[];
+  /** Initial pagination from server-side fetch */
+  initialPagination?: PaginationInfo;
+  /** Initial related products from server-side fetch */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  initialRelatedProducts?: any[];
+  /** Initial recommended products from server-side fetch */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  initialRecommendedProducts?: any[];
 }
 
 // Inner component that uses useSearchParams
 const SearchResultPageInner = ({
   showFilters = true,
+  initialProducts = [],
+  initialCategories = [],
+  initialPagination,
+  initialRelatedProducts = [],
+  initialRecommendedProducts = [],
 }: SearchResultPageProps) => {
   const searchParams = useSearchParams();
 
-  const [products, setProducts] = useState<ProductType[]>([]);
-  const [relatedProducts, setRelatedProducts] = useState<ProductType[]>([]);
+  // Use initial data from server if available
+  const [products, setProducts] = useState<ProductType[]>(initialProducts);
+  const [relatedProducts, setRelatedProducts] = useState<ProductType[]>(initialRelatedProducts);
   const [lessRelevantProducts, setLessRelevantProducts] = useState<ProductType[]>([]);
-  const [recommendedProducts, setRecommendedProducts] = useState<ProductType[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [recommendedProducts, setRecommendedProducts] = useState<ProductType[]>(initialRecommendedProducts);
+  const [categories, setCategories] = useState<Category[]>(initialCategories);
+  // Don't show loading if we have initial data
+  const [loading, setLoading] = useState(initialProducts.length === 0);
   const [error, setError] = useState<string | null>(null);
-  const [pagination, setPagination] = useState<PaginationInfo>({
-    total: 0,
-    page: 1,
-    limit: 20,
-    pages: 0,
-  });
-  const [hasAnimated, setHasAnimated] = useState(false);
+  const [pagination, setPagination] = useState<PaginationInfo>(
+    initialPagination || {
+      total: 0,
+      page: 1,
+      limit: 20,
+      pages: 0,
+    }
+  );
+  const [hasAnimated, setHasAnimated] = useState(initialProducts.length > 0);
   const gridRef = useRef<HTMLDivElement>(null);
+  // Track if this is first render with URL params (to determine if we need to fetch)
+  const isInitialRender = useRef(true);
 
   // Intersection Observer for products grid animation - triggers once
   useEffect(() => {
@@ -62,8 +86,11 @@ const SearchResultPageInner = ({
   }, [products, hasAnimated]);
 
 
-  // Fetch categories on mount
+  // Fetch categories on mount (only if not provided from server)
   useEffect(() => {
+    // Skip if we already have initial categories from server
+    if (initialCategories.length > 0) return;
+
     const fetchCategories = async () => {
       try {
         const response = await fetch("/api/categories");
@@ -76,7 +103,7 @@ const SearchResultPageInner = ({
       }
     };
     fetchCategories();
-  }, []);
+  }, [initialCategories.length]);
 
   // Fetch products from API
   const fetchProducts = useCallback(async () => {
@@ -138,8 +165,28 @@ const SearchResultPageInner = ({
 
   // Fetch on mount and when search params change
   useEffect(() => {
+    // On initial render with initial data and no URL filters, skip fetch
+    if (isInitialRender.current && initialProducts.length > 0) {
+      // Check if there are any filter params in URL
+      const hasUrlFilters =
+        searchParams.get("search") ||
+        searchParams.get("categories") ||
+        searchParams.get("category") ||
+        searchParams.get("sort") ||
+        searchParams.get("minPrice") ||
+        searchParams.get("maxPrice") ||
+        searchParams.get("page");
+
+      isInitialRender.current = false;
+
+      // If no URL filters, use initial data from server
+      if (!hasUrlFilters) {
+        return;
+      }
+    }
+
     fetchProducts();
-  }, [fetchProducts]);
+  }, [fetchProducts, initialProducts.length, searchParams]);
 
   const query = searchParams.get("search") || "";
 
@@ -305,11 +352,13 @@ const SearchResultPage = (props: SearchResultPageProps) => {
   );
 };
 
-// Loading skeleton
+// Loading skeleton - using better skeleton components
 const SearchResultsLoading = () => (
-  <div className={styles.loadingState}>
-    <div className={styles.spinner} />
-    <span>Loading products...</span>
+  <div className={styles.navSearchResults}>
+    <div className={styles.loadingState}>
+      <div className={styles.spinner} />
+      <span>Loading products...</span>
+    </div>
   </div>
 );
 

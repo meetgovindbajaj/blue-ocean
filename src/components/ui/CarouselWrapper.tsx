@@ -516,11 +516,24 @@ const FullscreenPreview = ({
     <div
       className={styles.fullscreenOverlay}
       onClick={scale === 1 ? onClose : undefined}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Fullscreen image viewer, showing image ${currentIndex + 1} of ${data.length}`}
     >
+      {/* Live region for slide announcements in fullscreen */}
+      <div
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+      >
+        {currentItem?.alt || `Image ${currentIndex + 1} of ${data.length}`}
+        {scale > 1 && `. Zoom level: ${Math.round(scale * 100)}%`}
+      </div>
       <button
         className={styles.fullscreenClose}
         onClick={onClose}
-        aria-label="Close fullscreen"
+        aria-label="Close fullscreen preview"
       >
         <X className="w-6 h-6" />
       </button>
@@ -616,14 +629,22 @@ const FullscreenPreview = ({
           >
             <ChevronRight className="w-8 h-8" />
           </button>
-          <div className={styles.fullscreenCounter}>
+          <div
+            className={styles.fullscreenCounter}
+            aria-hidden="true"
+          >
             {currentIndex + 1} / {data.length}
           </div>
         </>
       )}
 
       {data.length > 1 && scale === 1 && (
-        <div className={styles.fullscreenThumbnails} ref={thumbnailsRef}>
+        <div
+          className={styles.fullscreenThumbnails}
+          ref={thumbnailsRef}
+          role="tablist"
+          aria-label="Image thumbnails"
+        >
           {data.map((item, idx) => (
             <button
               key={item.id}
@@ -635,11 +656,15 @@ const FullscreenPreview = ({
                 styles.fullscreenThumb,
                 currentIndex === idx && styles.fullscreenThumbActive
               )}
+              role="tab"
+              aria-selected={currentIndex === idx}
+              aria-label={item.alt || `View image ${idx + 1} of ${data.length}`}
             >
               <img
                 key={`FullscreenPreview2Image-${item.id}`}
                 src={item?.thumbnailImage || item?.image || ""}
-                alt={item.alt || `Thumbnail ${idx + 1}`}
+                alt=""
+                aria-hidden="true"
               />
             </button>
           ))}
@@ -1059,7 +1084,11 @@ export const CarouselWrapper = ({
 
         {/* Control Dots */}
         {options.showControlDots && total > 1 && (
-          <div className={styles.controlDots}>
+          <div
+            className={styles.controlDots}
+            role="tablist"
+            aria-label="Slide navigation"
+          >
             {data.map((_, index) => (
               <button
                 key={index}
@@ -1071,12 +1100,15 @@ export const CarouselWrapper = ({
                     styles.dotActiveNoProgress
                 )}
                 onClick={() => goTo(index)}
-                aria-label={`Go to slide ${index + 1}`}
+                role="tab"
+                aria-selected={activeIndex === index}
+                aria-label={`Go to slide ${index + 1} of ${total}`}
               >
                 {activeIndex === index && options.showDotsProgress && (
                   <span
                     className={styles.dotProgress}
                     style={{ transform: `scaleX(${progress / 100})` }}
+                    aria-hidden="true"
                   />
                 )}
               </button>
@@ -1087,7 +1119,12 @@ export const CarouselWrapper = ({
         {/* Preview Cards - Positioned AFTER the carousel for fullWidth */}
         {options.showPreviewCards && total > 1 && (
           <div className={styles.fullWidthPreviewCards}>
-            <div className={styles.previewCards} ref={previewCardsRef}>
+            <div
+              className={styles.previewCards}
+              ref={previewCardsRef}
+              role="tablist"
+              aria-label="Slide preview thumbnails"
+            >
               {data.map((item, index) => (
                 <button
                   key={item.id}
@@ -1096,11 +1133,15 @@ export const CarouselWrapper = ({
                     styles.previewCard,
                     activeIndex === index && styles.previewCardActive
                   )}
+                  role="tab"
+                  aria-selected={activeIndex === index}
+                  aria-label={item.alt || `View slide ${index + 1} of ${total}`}
                 >
                   <img
                     key={`RenderFullWidthVariantImage-${item.id}`}
                     src={item?.thumbnailImage || item?.image || ""}
-                    alt={item.alt || `Preview ${index + 1}`}
+                    alt=""
+                    aria-hidden="true"
                   />
                 </button>
               ))}
@@ -1230,6 +1271,7 @@ export const CarouselWrapper = ({
               <button
                 onClick={handleInsetPrev}
                 className={cn(styles.insetNavBtn, styles.insetNavBtnPrev)}
+                aria-label={`Previous slide, currently on slide ${activeIndex + 1} of ${total}`}
               >
                 <ChevronLeft className={styles.insetNavIcon} />
               </button>
@@ -1307,6 +1349,7 @@ export const CarouselWrapper = ({
               <button
                 onClick={handleInsetNext}
                 className={cn(styles.insetNavBtn, styles.insetNavBtnNext)}
+                aria-label={`Next slide, currently on slide ${activeIndex + 1} of ${total}`}
               >
                 <ChevronRight className={styles.insetNavIcon} />
               </button>
@@ -1315,7 +1358,11 @@ export const CarouselWrapper = ({
 
           {/* Indicators */}
           {options.showControlDots && total > 1 && (
-            <div className={styles.insetIndicators}>
+            <div
+              className={styles.insetIndicators}
+              role="tablist"
+              aria-label="Slide navigation"
+            >
               {data.map((_, index) => (
                 <button
                   key={index}
@@ -1326,11 +1373,15 @@ export const CarouselWrapper = ({
                       ? styles.insetIndicatorActive
                       : styles.insetIndicatorInactive
                   )}
+                  role="tab"
+                  aria-selected={activeIndex === index}
+                  aria-label={`Go to slide ${index + 1} of ${total}`}
                 >
                   {activeIndex === index && (
                     <div
                       className={styles.insetIndicatorProgress}
                       style={{ width: `${progress}%` }}
+                      aria-hidden="true"
                     />
                   )}
                 </button>
@@ -1341,7 +1392,12 @@ export const CarouselWrapper = ({
           {/* Preview Cards - Positioned AFTER the carousel */}
           {options.showPreviewCards && total > 1 && (
             <div className={styles.previewCardsWrapper}>
-              <div className={styles.previewCards} ref={previewCardsRef}>
+              <div
+                className={styles.previewCards}
+                ref={previewCardsRef}
+                role="tablist"
+                aria-label="Slide preview thumbnails"
+              >
                 {data.map((item, index) => (
                   <button
                     key={item.id}
@@ -1350,11 +1406,15 @@ export const CarouselWrapper = ({
                       styles.previewCard,
                       activeIndex === index && styles.previewCardActive
                     )}
+                    role="tab"
+                    aria-selected={activeIndex === index}
+                    aria-label={item.alt || `View slide ${index + 1} of ${total}`}
                   >
                     <img
                       key={`RenderInsetVariantPreviewImage-${item.id}`}
                       src={item?.thumbnailImage || item?.image || ""}
-                      alt={item.alt || `Preview ${index + 1}`}
+                      alt=""
+                      aria-hidden="true"
                     />
                   </button>
                 ))}
@@ -1489,7 +1549,7 @@ export const CarouselWrapper = ({
                 className={cn(styles.defaultNavBtn, styles.defaultNavBtnPrev)}
                 onClick={goPrev}
                 disabled={!options.loop && activeIndex === 0}
-                aria-label="Previous"
+                aria-label={`Previous slide, currently showing slide ${activeIndex + 1} of ${totalSlides}`}
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
@@ -1497,7 +1557,7 @@ export const CarouselWrapper = ({
                 className={cn(styles.defaultNavBtn, styles.defaultNavBtnNext)}
                 onClick={goNext}
                 disabled={!options.loop && activeIndex >= maxIndex}
-                aria-label="Next"
+                aria-label={`Next slide, currently showing slide ${activeIndex + 1} of ${totalSlides}`}
               >
                 <ChevronRight className="w-5 h-5" />
               </button>
@@ -1508,7 +1568,12 @@ export const CarouselWrapper = ({
         {/* Preview Cards */}
         {options.showPreviewCards && total > 1 && (
           <div className={styles.previewCardsWrapper}>
-            <div className={styles.previewCards} ref={previewCardsRef}>
+            <div
+              className={styles.previewCards}
+              ref={previewCardsRef}
+              role="tablist"
+              aria-label="Slide preview thumbnails"
+            >
               {data.map((item, index) => (
                 <button
                   key={item.id}
@@ -1517,11 +1582,15 @@ export const CarouselWrapper = ({
                     styles.previewCard,
                     activeIndex === index && styles.previewCardActive
                   )}
+                  role="tab"
+                  aria-selected={activeIndex === index}
+                  aria-label={item.alt || `View slide ${index + 1} of ${total}`}
                 >
                   <img
                     key={`RenderDefaultVariantPreviewImage-${item.id}`}
                     src={item?.thumbnailImage || item?.image || ""}
-                    alt={item.alt || `Preview ${index + 1}`}
+                    alt=""
+                    aria-hidden="true"
                   />
                 </button>
               ))}
@@ -1531,7 +1600,11 @@ export const CarouselWrapper = ({
 
         {/* Control Dots */}
         {options.showControlDots && totalSlides > 1 && (
-          <div className={styles.defaultDots}>
+          <div
+            className={styles.defaultDots}
+            role="tablist"
+            aria-label="Slide navigation"
+          >
             {Array.from({ length: totalSlides }).map((_, index) => (
               <button
                 key={index}
@@ -1540,7 +1613,9 @@ export const CarouselWrapper = ({
                   activeIndex === index && styles.defaultDotActive
                 )}
                 onClick={() => goTo(index)}
-                aria-label={`Go to slide ${index + 1}`}
+                role="tab"
+                aria-selected={activeIndex === index}
+                aria-label={`Go to slide ${index + 1} of ${totalSlides}`}
               />
             ))}
           </div>
@@ -1571,6 +1646,9 @@ export const CarouselWrapper = ({
     );
   };
 
+  // Generate unique ID for this carousel instance
+  const carouselId = useMemo(() => `carousel-${Math.random().toString(36).substr(2, 9)}`, []);
+
   return (
     <div
       ref={containerRef}
@@ -1582,7 +1660,17 @@ export const CarouselWrapper = ({
       tabIndex={0}
       role="region"
       aria-roledescription="carousel"
+      aria-label={`Image carousel with ${total} slides`}
     >
+      {/* Live region for slide change announcements */}
+      <div
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+      >
+        Slide {activeIndex + 1} of {total}
+      </div>
       {variant === "fullWidth" && renderFullWidthVariant()}
       {variant === "inset" && renderInsetVariant()}
       {variant === "default" && renderDefaultVariant()}

@@ -232,21 +232,27 @@ interface CategoryWithCount extends Category {
   productCount?: number;
 }
 
+interface CategoryListPageInnerProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  initialCategories?: any[];
+}
+
 // Main Category List Page Inner Component
-const CategoryListPageInner = () => {
+const CategoryListPageInner = ({ initialCategories = [] }: CategoryListPageInnerProps) => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const slug = searchParams.get("slug");
 
   const [category, setCategory] = useState<Category | null>(null);
   const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
-  const [allCategories, setAllCategories] = useState<Category[]>([]);
+  const [allCategories, setAllCategories] = useState<Category[]>(initialCategories);
   const [products, setProducts] = useState<ProductType[]>([]);
   const [relatedProducts, setRelatedProducts] = useState<ProductType[]>([]);
   const [lessRelevantProducts, setLessRelevantProducts] = useState<ProductType[]>([]);
   const [recommendedProducts, setRecommendedProducts] = useState<ProductType[]>([]);
   const [subcategoriesWithProducts, setSubcategoriesWithProducts] = useState<CategoryWithCount[]>([]);
-  const [loading, setLoading] = useState(true);
+  // Don't show loading if we have initial categories and no slug (showing category tree)
+  const [loading, setLoading] = useState(!slug ? initialCategories.length === 0 : true);
   const [productsLoading, setProductsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pagination, setPagination] = useState<PaginationInfo>({
@@ -287,8 +293,11 @@ const CategoryListPageInner = () => {
     ),
   });
 
-  // Fetch all categories for tree view
+  // Fetch all categories for tree view (skip if we have initial categories)
   const fetchAllCategories = useCallback(async () => {
+    // Skip if we already have categories from server
+    if (initialCategories.length > 0 && allCategories.length > 0) return;
+
     try {
       const response = await fetch("/api/categories?parentOnly=true&limit=100");
       const data = await response.json();
@@ -298,7 +307,7 @@ const CategoryListPageInner = () => {
     } catch (err) {
       console.error("Failed to fetch categories:", err);
     }
-  }, []);
+  }, [initialCategories.length, allCategories.length]);
 
   // Fetch specific category
   const fetchCategory = useCallback(
@@ -711,8 +720,13 @@ const Pagination = ({ pagination }: { pagination: PaginationInfo }) => {
   );
 };
 
+interface CategoriesPageClientProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  initialCategories?: any[];
+}
+
 // Main Component with Suspense
-const CategoriesPageClient = () => {
+const CategoriesPageClient = ({ initialCategories = [] }: CategoriesPageClientProps) => {
   return (
     <Suspense
       fallback={
@@ -723,7 +737,7 @@ const CategoriesPageClient = () => {
         </div>
       }
     >
-      <CategoryListPageInner />
+      <CategoryListPageInner initialCategories={initialCategories} />
     </Suspense>
   );
 };
