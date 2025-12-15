@@ -77,50 +77,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     {
       url: baseUrl,
       lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 1,
     },
     {
       url: `${baseUrl}/products`,
       lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 0.9,
     },
     {
       url: `${baseUrl}/categories`,
       lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.8,
     },
     {
       url: `${baseUrl}/about`,
       lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.7,
     },
     {
       url: `${baseUrl}/contact`,
       lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.7,
     },
     {
       url: `${baseUrl}/faq`,
       lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.6,
     },
     {
       url: `${baseUrl}/legal`,
       lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/sitemaps`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.4,
     },
   ];
 
@@ -128,8 +108,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const productPages: MetadataRoute.Sitemap = products.map((product) => ({
     url: `${baseUrl}/products/${product.slug}`,
     lastModified: product.updatedAt ? new Date(product.updatedAt) : new Date(),
-    changeFrequency: "weekly" as const,
-    priority: 0.8,
     ...(product.images?.[0]?.url && {
       images: [product.images[0].url],
     }),
@@ -141,8 +119,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: category.updatedAt
       ? new Date(category.updatedAt)
       : new Date(),
-    changeFrequency: "weekly" as const,
-    priority: 0.7,
     ...(category.image?.url && {
       images: [category.image.url],
     }),
@@ -152,8 +128,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const legalPages: MetadataRoute.Sitemap = legalDocs.map((doc) => ({
     url: `${baseUrl}/legal/${doc.slug}`,
     lastModified: doc.updatedAt ? new Date(doc.updatedAt) : new Date(),
-    changeFrequency: "monthly" as const,
-    priority: 0.4,
   }));
 
   return [...staticPages, ...productPages, ...categoryPages, ...legalPages];
