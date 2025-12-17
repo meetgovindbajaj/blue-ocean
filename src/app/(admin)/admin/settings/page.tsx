@@ -71,6 +71,18 @@ const SOCIAL_PLATFORMS = [
   { value: "Threads", label: "Threads" },
 ];
 
+const TEAM_SOCIAL_PLATFORMS = [
+  { value: "LinkedIn", label: "LinkedIn" },
+  { value: "Twitter", label: "Twitter / X" },
+  { value: "Facebook", label: "Facebook" },
+  { value: "Instagram", label: "Instagram" },
+  { value: "GitHub", label: "GitHub" },
+  { value: "Portfolio", label: "Portfolio" },
+  { value: "Website", label: "Website" },
+  { value: "Behance", label: "Behance" },
+  { value: "Dribbble", label: "Dribbble" },
+];
+
 const CURRENCIES = [
   { value: "INR", symbol: "₹", label: "Indian Rupee (₹)" },
   { value: "USD", symbol: "$", label: "US Dollar ($)" },
@@ -121,11 +133,19 @@ interface BusinessHour {
   isClosed?: boolean;
 }
 
+interface TeamMemberSocialLink {
+  platform: string;
+  url: string;
+}
+
 interface TeamMember {
   name: string;
   role: string;
   image?: string;
   bio?: string;
+  email?: string;
+  phone?: string;
+  socialLinks?: TeamMemberSocialLink[];
 }
 
 interface ServiceContent {
@@ -385,9 +405,53 @@ export default function SettingsPage() {
         ...settings.about,
         team: [
           ...(settings.about?.team || []),
-          { name: "", role: "", image: "", bio: "" },
+          { name: "", role: "", image: "", bio: "", email: "", phone: "", socialLinks: [] },
         ],
       },
+    });
+  };
+
+  const addTeamMemberSocialLink = (memberIndex: number) => {
+    if (!settings) return;
+    const newTeam = [...(settings.about?.team || [])];
+    const currentLinks = newTeam[memberIndex]?.socialLinks || [];
+    newTeam[memberIndex] = {
+      ...newTeam[memberIndex],
+      socialLinks: [...currentLinks, { platform: "", url: "" }],
+    };
+    setSettings({
+      ...settings,
+      about: { ...settings.about, team: newTeam },
+    });
+  };
+
+  const updateTeamMemberSocialLink = (
+    memberIndex: number,
+    linkIndex: number,
+    field: string,
+    value: string
+  ) => {
+    if (!settings) return;
+    const newTeam = [...(settings.about?.team || [])];
+    const currentLinks = [...(newTeam[memberIndex]?.socialLinks || [])];
+    currentLinks[linkIndex] = { ...currentLinks[linkIndex], [field]: value };
+    newTeam[memberIndex] = { ...newTeam[memberIndex], socialLinks: currentLinks };
+    setSettings({
+      ...settings,
+      about: { ...settings.about, team: newTeam },
+    });
+  };
+
+  const removeTeamMemberSocialLink = (memberIndex: number, linkIndex: number) => {
+    if (!settings) return;
+    const newTeam = [...(settings.about?.team || [])];
+    const currentLinks = (newTeam[memberIndex]?.socialLinks || []).filter(
+      (_, i) => i !== linkIndex
+    );
+    newTeam[memberIndex] = { ...newTeam[memberIndex], socialLinks: currentLinks };
+    setSettings({
+      ...settings,
+      about: { ...settings.about, team: newTeam },
     });
   };
 
@@ -1078,6 +1142,92 @@ export default function SettingsPage() {
                               placeholder="Brief bio or description..."
                               rows={2}
                             />
+                          </div>
+                          <div className="grid gap-4 md:grid-cols-2">
+                            <div className="space-y-2">
+                              <Label>Email</Label>
+                              <Input
+                                type="email"
+                                value={member.email || ""}
+                                onChange={(e) =>
+                                  updateTeamMember(index, "email", e.target.value)
+                                }
+                                placeholder="john@example.com"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label>Phone</Label>
+                              <Input
+                                value={member.phone || ""}
+                                onChange={(e) =>
+                                  updateTeamMember(index, "phone", e.target.value)
+                                }
+                                placeholder="+1 234 567 8900"
+                              />
+                            </div>
+                          </div>
+                          <div className="space-y-3">
+                            <div className="flex items-center justify-between">
+                              <Label>Social Links</Label>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => addTeamMemberSocialLink(index)}
+                              >
+                                <Plus className="w-4 h-4 mr-1" />
+                                Add Link
+                              </Button>
+                            </div>
+                            {(member.socialLinks || []).length > 0 ? (
+                              <div className="space-y-2">
+                                {(member.socialLinks || []).map((link, linkIdx) => (
+                                  <div
+                                    key={linkIdx}
+                                    className="flex flex-col gap-2 p-2 bg-muted/50 rounded-lg sm:flex-row sm:items-center"
+                                  >
+                                    <Select
+                                      value={link.platform || ""}
+                                      onValueChange={(value) =>
+                                        updateTeamMemberSocialLink(index, linkIdx, "platform", value)
+                                      }
+                                    >
+                                      <SelectTrigger className="w-full sm:w-36">
+                                        <SelectValue placeholder="Platform" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        {TEAM_SOCIAL_PLATFORMS.map((platform) => (
+                                          <SelectItem key={platform.value} value={platform.value}>
+                                            {platform.label}
+                                          </SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                    <Input
+                                      value={link.url || ""}
+                                      onChange={(e) =>
+                                        updateTeamMemberSocialLink(index, linkIdx, "url", e.target.value)
+                                      }
+                                      placeholder="https://..."
+                                      className="flex-1"
+                                    />
+                                    <Button
+                                      type="button"
+                                      variant="ghost"
+                                      size="icon"
+                                      className="text-destructive shrink-0"
+                                      onClick={() => removeTeamMemberSocialLink(index, linkIdx)}
+                                    >
+                                      <Trash2 className="w-4 h-4" />
+                                    </Button>
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
+                              <p className="text-sm text-muted-foreground">
+                                No social links added yet
+                              </p>
+                            )}
                           </div>
                         </div>
                       );

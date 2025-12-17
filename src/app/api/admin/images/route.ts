@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/db";
-import { listImages, CloudinaryImage } from "@/lib/cloudinary";
+import { listImages, searchImages, CloudinaryImage } from "@/lib/cloudinary";
 import Product from "@/models/Product";
 import Category from "@/models/Category";
 import HeroBanner from "@/models/HeroBanner";
@@ -29,12 +29,30 @@ export async function GET(request: NextRequest) {
     const cursor = searchParams.get("cursor") || undefined;
     const limit = Math.min(parseInt(searchParams.get("limit") || "50"), 100);
     const filter = searchParams.get("filter"); // "all" | "active" | "unused"
+    const search = searchParams.get("search")?.trim(); // Search query
 
-    // Get images from Cloudinary
-    const { images, nextCursor } = await listImages(folder, {
-      maxResults: limit,
-      nextCursor: cursor,
-    });
+    // Get images from Cloudinary - use search if query provided
+    let images: CloudinaryImage[];
+    let nextCursor: string | undefined;
+
+    if (search) {
+      // Use search API for searching by name
+      // Don't pass cursor for search - we fetch all matching results at once
+      const searchResult = await searchImages(folder, search, {
+        maxResults: 200, // Get more results for search to filter from
+      });
+      images = searchResult.images;
+      // No pagination for search results - all results returned at once
+      nextCursor = undefined;
+    } else {
+      // Use regular list API
+      const listResult = await listImages(folder, {
+        maxResults: limit,
+        nextCursor: cursor,
+      });
+      images = listResult.images;
+      nextCursor = listResult.nextCursor;
+    }
 
     // Build usage map based on the folder
     const usageMap = new Map<string, ImageWithUsage["usedIn"]>();

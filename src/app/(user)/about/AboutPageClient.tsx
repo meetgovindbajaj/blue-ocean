@@ -2,11 +2,69 @@
 
 import styles from "./page.module.css";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
-import { Target, Eye, Building2, PencilRuler, Globe2, Headset, ShieldCheck, History, Users, User, Factory, Play } from "lucide-react";
+import { Target, Eye, Building2, PencilRuler, Globe2, Headset, ShieldCheck, History, Users, User, Factory, Play, Mail, Phone, Linkedin, Twitter, Facebook, Instagram, Github, Globe, ExternalLink } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
 import CarouselWrapper from "@/components/ui/CarouselWrapper";
 import { useState, useCallback, useMemo } from "react";
+
+// Helper to get icon for social platform
+const getSocialIcon = (platform: string) => {
+  const iconProps = { size: 16, className: "shrink-0" };
+  switch (platform?.toLowerCase()) {
+    case "linkedin":
+      return <Linkedin {...iconProps} />;
+    case "twitter":
+      return <Twitter {...iconProps} />;
+    case "facebook":
+      return <Facebook {...iconProps} />;
+    case "instagram":
+      return <Instagram {...iconProps} />;
+    case "github":
+      return <Github {...iconProps} />;
+    case "portfolio":
+    case "website":
+    case "behance":
+    case "dribbble":
+    default:
+      return <Globe {...iconProps} />;
+  }
+};
+
+// Team member contact/social links component
+const TeamMemberLinks = ({ member }: { member: any }) => {
+  const hasContact = member.email || member.phone;
+  const hasSocial = member.socialLinks && member.socialLinks.length > 0;
+
+  if (!hasContact && !hasSocial) return null;
+
+  return (
+    <div className={styles.teamLinks}>
+      {member.email && (
+        <a href={`mailto:${member.email}`} className={styles.teamContactLink} title="Email">
+          <Mail size={14} />
+        </a>
+      )}
+      {member.phone && (
+        <a href={`tel:${member.phone}`} className={styles.teamContactLink} title="Phone">
+          <Phone size={14} />
+        </a>
+      )}
+      {member.socialLinks?.map((link: any, idx: number) => (
+        <a
+          key={idx}
+          href={link.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.teamSocialLink}
+          title={link.platform}
+        >
+          {getSocialIcon(link.platform)}
+        </a>
+      ))}
+    </div>
+  );
+};
 
 // Default services data (fallback when no dynamic data exists)
 const DEFAULT_SERVICES = {
@@ -202,6 +260,7 @@ const AboutPageClient = ({ initialSettings }: AboutPageClientProps) => {
                         <h3 className={styles.teamName}>{member.name}</h3>
                         <p className={styles.teamRole}>{member.role}</p>
                         {member.bio && <p className={styles.teamBio}>{member.bio}</p>}
+                        <TeamMemberLinks member={member} />
                       </div>
                     ),
                   }))}
@@ -241,6 +300,7 @@ const AboutPageClient = ({ initialSettings }: AboutPageClientProps) => {
                     <h3 className={styles.teamName}>{member.name}</h3>
                     <p className={styles.teamRole}>{member.role}</p>
                     {member.bio && <p className={styles.teamBio}>{member.bio}</p>}
+                    <TeamMemberLinks member={member} />
                   </div>
                 ))}
               </div>

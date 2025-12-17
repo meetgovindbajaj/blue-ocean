@@ -47,6 +47,12 @@ interface ISiteSettings extends Document {
       role: string;
       image?: string;
       bio?: string;
+      email?: string;
+      phone?: string;
+      socialLinks?: {
+        platform: string;
+        url: string;
+      }[];
     }[];
     services?: {
       customDesign?: {
@@ -172,6 +178,14 @@ const SiteSettingsSchema = new Schema<ISiteSettings>(
           role: String,
           image: String,
           bio: String,
+          email: String,
+          phone: String,
+          socialLinks: [
+            {
+              platform: String,
+              url: String,
+            },
+          ],
         },
       ],
       services: {
@@ -308,16 +322,16 @@ const SiteSettingsSchema = new Schema<ISiteSettings>(
 );
 
 // Ensure only one settings document exists
-SiteSettingsSchema.statics.getSettings = async function () {
-  let settings = await this.findOne();
-  if (!settings) {
-    settings = await this.create({
-      siteName: "Blue Ocean",
-      contact: { email: "contact@example.com" },
-    });
-  }
-  return settings;
-};
+// SiteSettingsSchema.statics.getSettings = async function () {
+//   let settings = await this.findOne();
+//   if (!settings) {
+//     settings = await this.create({
+//       siteName: "Blue Ocean",
+//       contact: { email: "contact@example.com" },
+//     });
+//   }
+//   return settings;
+// };
 
 const SiteSettings =
   models.SiteSettings ||

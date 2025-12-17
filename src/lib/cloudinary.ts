@@ -235,6 +235,97 @@ export async function listImages(
   }
 }
 
+// Search images by name/public_id
+export async function searchImages(
+  folder: string,
+  query: string,
+  options: { maxResults?: number; nextCursor?: string } = {}
+): Promise<{ images: CloudinaryImage[]; nextCursor?: string }> {
+  try {
+    // Sanitize query for Cloudinary search - escape special characters
+    const sanitizedQuery = query.toLowerCase().replace(/[^a-z0-9\s-_]/g, "").trim();
+
+    if (!sanitizedQuery) {
+      // If query is empty after sanitization, return empty results
+      return { images: [] };
+    }
+
+    // Use Cloudinary's search API with expression
+    // Use resource_type and folder, then filter by public_id containing the query
+    const searchExpression = `resource_type:image AND folder=${folder} AND public_id:*${sanitizedQuery}*`;
+
+    const searchQuery = cloudinary.search
+      .expression(searchExpression)
+      .sort_by("created_at", "desc")
+      .max_results(options.maxResults || 50);
+
+    // Only use cursor if provided - for search, we typically want fresh results
+    if (options.nextCursor) {
+      searchQuery.next_cursor(options.nextCursor);
+    }
+
+    const result = await searchQuery.execute();
+
+    const images: CloudinaryImage[] = result.resources.map((resource: any) => ({
+      id: resource.public_id,
+      name: resource.public_id.split("/").pop() || "",
+      url: resource.secure_url,
+      thumbnailUrl: generateThumbnailUrl(resource.secure_url),
+      isThumbnail: false,
+      downloadUrl: generateDownloadUrl(resource.public_id),
+      size: resource.bytes,
+      width: resource.width,
+      height: resource.height,
+    }));
+
+    return {
+      images,
+      nextCursor: result.next_cursor,
+    };
+  } catch (error) {
+    console.error("Failed to search images:", error);
+    // Fallback: fetch all images and filter client-side
+    // Don't use cursor for fallback - fetch fresh and filter
+    try {
+      const allImages: CloudinaryImage[] = [];
+      let cursor: string | undefined = undefined;
+      const maxIterations = 10; // Safety limit
+      let iterations = 0;
+
+      // Fetch multiple pages to get enough results for filtering
+      while (iterations < maxIterations) {
+        const listResult = await listImages(folder, {
+          maxResults: 100,
+          nextCursor: cursor,
+        });
+
+        allImages.push(...listResult.images);
+
+        if (!listResult.nextCursor || allImages.length >= 500) {
+          break;
+        }
+        cursor = listResult.nextCursor;
+        iterations++;
+      }
+
+      // Filter images that match the query
+      const queryLower = query.toLowerCase();
+      const filteredImages = allImages.filter((img) =>
+        img.name.toLowerCase().includes(queryLower) ||
+        img.id.toLowerCase().includes(queryLower)
+      );
+
+      return {
+        images: filteredImages.slice(0, options.maxResults || 50),
+        nextCursor: undefined, // No pagination for filtered results
+      };
+    } catch (fallbackError) {
+      console.error("Fallback search also failed:", fallbackError);
+      return { images: [] };
+    }
+  }
+}
+
 // Update image (replace)
 export async function updateImage(
   publicId: string,

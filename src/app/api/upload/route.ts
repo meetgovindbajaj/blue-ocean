@@ -15,6 +15,7 @@ export async function POST(request: NextRequest) {
       const formData = await request.formData();
       const files = formData.getAll("files") as File[];
       folder = (formData.get("folder") as string) || "blue_ocean";
+      const customName = (formData.get("customName") as string) || "";
 
       if (!files || files.length === 0) {
         return NextResponse.json(
@@ -24,10 +25,19 @@ export async function POST(request: NextRequest) {
       }
 
       // Convert files to buffers and upload
-      const uploadPromises = files.map(async (file) => {
+      const uploadPromises = files.map(async (file, index) => {
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
-        return uploadImage(buffer, { folder });
+        // Use custom name as public ID if provided (sanitize it for Cloudinary)
+        const sanitizedName = customName
+          ? customName.toLowerCase().replace(/[^a-z0-9-_]/g, "-").replace(/-+/g, "-")
+          : undefined;
+        const publicId = sanitizedName
+          ? files.length > 1
+            ? `${sanitizedName}-${index + 1}`
+            : sanitizedName
+          : undefined;
+        return uploadImage(buffer, { folder, publicId });
       });
 
       images = await Promise.all(uploadPromises);

@@ -105,8 +105,12 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Convert to plain object and handle Map conversion
-    const settingsObj = settings.toObject();
+    // Convert to plain object with proper options for nested arrays
+    const settingsObj = settings.toObject({
+      virtuals: true,
+      getters: true,
+      flattenMaps: true,
+    });
 
     // Handle exchangeRates Map conversion
     if (settingsObj.locale?.exchangeRates) {
@@ -115,6 +119,18 @@ export async function GET(request: NextRequest) {
           settingsObj.locale.exchangeRates
         );
       }
+    }
+
+    // Ensure team array is properly serialized
+    if (settingsObj.about?.team) {
+      settingsObj.about.team = settingsObj.about.team.map((member: any) => ({
+        ...member,
+        _id: member._id?.toString(),
+        socialLinks: (member.socialLinks || []).map((link: any) => ({
+          ...link,
+          _id: link._id?.toString(),
+        })),
+      }));
     }
 
     return NextResponse.json({
@@ -156,21 +172,56 @@ export async function PUT(request: NextRequest) {
       // Remove fields that shouldn't be updated
       const { _id, id, __v, createdAt, updatedAt, ...updateBody } = body;
 
-      // Apply updates to the existing document
-      Object.assign(settings, updateBody);
+      // For nested objects like 'about', we need to use set() to properly update subdocuments
+      // Object.assign doesn't properly handle Mongoose subdocument arrays
 
-      // Mark locale as modified to ensure nested object changes are detected
-      if (updateBody.locale) {
-        settings.markModified("locale");
-        settings.markModified("locale.exchangeRates");
+      // Update top-level fields directly
+      if (updateBody.siteName !== undefined) settings.siteName = updateBody.siteName;
+      if (updateBody.tagline !== undefined) settings.tagline = updateBody.tagline;
+      if (updateBody.logo !== undefined) settings.logo = updateBody.logo;
+      if (updateBody.favicon !== undefined) settings.favicon = updateBody.favicon;
+      if (updateBody.socialLinks !== undefined) settings.socialLinks = updateBody.socialLinks;
+      if (updateBody.businessHours !== undefined) settings.businessHours = updateBody.businessHours;
+      if (updateBody.faq !== undefined) settings.faq = updateBody.faq;
+
+      // Handle nested objects with set() for proper Mongoose change detection
+      if (updateBody.about !== undefined) {
+        settings.set("about", updateBody.about);
+      }
+      if (updateBody.contact !== undefined) {
+        settings.set("contact", updateBody.contact);
+      }
+      if (updateBody.footer !== undefined) {
+        settings.set("footer", updateBody.footer);
+      }
+      if (updateBody.seo !== undefined) {
+        settings.set("seo", updateBody.seo);
+      }
+      if (updateBody.policies !== undefined) {
+        settings.set("policies", updateBody.policies);
+      }
+      if (updateBody.support !== undefined) {
+        settings.set("support", updateBody.support);
+      }
+      if (updateBody.locale !== undefined) {
+        settings.set("locale", updateBody.locale);
       }
 
-      // Mark about as modified to ensure nested object changes are detected
-      if (updateBody.about) {
-        settings.markModified("about");
-        settings.markModified("about.services");
-        settings.markModified("about.team");
-      }
+      // Mark all nested fields as modified to ensure changes are saved
+      settings.markModified("about");
+      settings.markModified("about.team");
+      settings.markModified("about.services");
+      settings.markModified("about.factory");
+      settings.markModified("locale");
+      settings.markModified("locale.exchangeRates");
+      settings.markModified("contact");
+      settings.markModified("footer");
+      settings.markModified("seo");
+      settings.markModified("policies");
+      settings.markModified("support");
+      settings.markModified("socialLinks");
+      settings.markModified("businessHours");
+      settings.markModified("faq");
 
       await settings.save();
     }
@@ -239,7 +290,32 @@ export async function PUT(request: NextRequest) {
     revalidatePath("/api/settings");
     revalidatePath("/api/products");
 
-    const settingsObj = settings.toObject();
+    const settingsObj = settings.toObject({
+      virtuals: true,
+      getters: true,
+      flattenMaps: true,
+    });
+
+    // Handle exchangeRates Map conversion
+    if (settingsObj.locale?.exchangeRates) {
+      if (settingsObj.locale.exchangeRates instanceof Map) {
+        settingsObj.locale.exchangeRates = Object.fromEntries(
+          settingsObj.locale.exchangeRates
+        );
+      }
+    }
+
+    // Ensure team array is properly serialized
+    if (settingsObj.about?.team) {
+      settingsObj.about.team = settingsObj.about.team.map((member: any) => ({
+        ...member,
+        _id: member._id?.toString(),
+        socialLinks: (member.socialLinks || []).map((link: any) => ({
+          ...link,
+          _id: link._id?.toString(),
+        })),
+      }));
+    }
 
     return NextResponse.json({
       success: true,
@@ -372,7 +448,11 @@ export async function PATCH(request: NextRequest) {
 
     // Convert Map to plain object for exchangeRates
     const settingsObjPatch = settings.toObject
-      ? settings.toObject()
+      ? settings.toObject({
+          virtuals: true,
+          getters: true,
+          flattenMaps: true,
+        })
       : { ...settings };
 
     // Handle exchangeRates Map conversion
@@ -382,6 +462,18 @@ export async function PATCH(request: NextRequest) {
           settingsObjPatch.locale.exchangeRates
         );
       }
+    }
+
+    // Ensure team array is properly serialized
+    if (settingsObjPatch.about?.team) {
+      settingsObjPatch.about.team = settingsObjPatch.about.team.map((member: any) => ({
+        ...member,
+        _id: member._id?.toString(),
+        socialLinks: (member.socialLinks || []).map((link: any) => ({
+          ...link,
+          _id: link._id?.toString(),
+        })),
+      }));
     }
 
     return NextResponse.json({
