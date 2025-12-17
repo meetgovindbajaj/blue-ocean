@@ -229,7 +229,13 @@ export async function PUT(request: NextRequest) {
     // If currency changed, bulk update all product prices
     if (isCurrencyChanging) {
       try {
-        const rates = await getExchangeRates();
+        // Use saved exchange rates from the OLD settings (before update), fallback to external API
+        const savedRates = settings.locale?.exchangeRates;
+        const rates = (savedRates && Object.keys(savedRates).length > 0)
+          ? { ...DEFAULT_EXCHANGE_RATES, ...Object.fromEntries(
+              Object.entries(savedRates).map(([k, v]) => [k, typeof v === 'number' ? v : Number(v)])
+            )}
+          : await getExchangeRates();
 
         // Get all products
         const products = await Product.find({});
@@ -375,6 +381,10 @@ export async function PATCH(request: NextRequest) {
       updateData[section] = data;
     }
 
+    // Get existing settings to access saved exchange rates BEFORE updating
+    const existingSettings = await SiteSettings.findOne();
+    const savedRates = existingSettings?.locale?.exchangeRates;
+
     const settings = await SiteSettings.findOneAndUpdate(
       {},
       { $set: updateData },
@@ -384,7 +394,12 @@ export async function PATCH(request: NextRequest) {
     // If currency changed, bulk update all product prices
     if (isCurrencyChanging) {
       try {
-        const rates = await getExchangeRates();
+        // Use saved exchange rates from site settings, fallback to external API
+        const rates = (savedRates && Object.keys(savedRates).length > 0)
+          ? { ...DEFAULT_EXCHANGE_RATES, ...Object.fromEntries(
+              Object.entries(savedRates).map(([k, v]) => [k, typeof v === 'number' ? v : Number(v)])
+            )}
+          : await getExchangeRates();
 
         // Get all products
         const products = await Product.find({});

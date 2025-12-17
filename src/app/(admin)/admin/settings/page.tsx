@@ -817,11 +817,28 @@ export default function SettingsPage() {
                         (c) => c.value === value
                       );
                       if (currency) {
-                        updateSettings("locale.currency", value);
-                        updateSettings(
-                          "locale.currencySymbol",
-                          currency.symbol
-                        );
+                        // Update all locale fields at once to avoid state race conditions
+                        const localeMap: Record<string, string> = {
+                          INR: "en-IN",
+                          USD: "en-US",
+                          EUR: "de-DE",
+                          GBP: "en-GB",
+                          AED: "ar-AE",
+                          SAR: "ar-SA",
+                          CAD: "en-CA",
+                          AUD: "en-AU",
+                          JPY: "ja-JP",
+                          CNY: "zh-CN",
+                        };
+                        setSettings({
+                          ...settings,
+                          locale: {
+                            ...settings.locale,
+                            currency: value,
+                            currencySymbol: currency.symbol,
+                            locale: localeMap[value] || "en-US",
+                          },
+                        });
                       }
                     }}
                   >
