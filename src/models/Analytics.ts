@@ -44,6 +44,15 @@ export interface IAnalyticsEvent extends Document {
     position?: number;
     page?: string;
     previousPage?: string;
+    // UTM Parameters
+    utm_source?: string;
+    utm_medium?: string;
+    utm_campaign?: string;
+    utm_term?: string;
+    utm_content?: string;
+    // Backlink tracking
+    backlink_source?: string; // e.g., 'devto', 'hashnode'
+    backlink_post?: string; // Post ID or slug
   };
   createdAt: Date;
 }
@@ -97,6 +106,15 @@ const AnalyticsEventSchema = new Schema<IAnalyticsEvent>(
       position: { type: Number },
       page: { type: String },
       previousPage: { type: String },
+      // UTM Parameters
+      utm_source: { type: String, index: true },
+      utm_medium: { type: String, index: true },
+      utm_campaign: { type: String, index: true },
+      utm_term: { type: String },
+      utm_content: { type: String },
+      // Backlink tracking
+      backlink_source: { type: String, index: true },
+      backlink_post: { type: String },
     },
   },
   { timestamps: true }
@@ -150,9 +168,16 @@ const DailyAnalyticsSchema = new Schema<IDailyAnalytics>(
   { timestamps: true }
 );
 
-DailyAnalyticsSchema.index({ date: 1, entityType: 1, entityId: 1 }, { unique: true });
+DailyAnalyticsSchema.index(
+  { date: 1, entityType: 1, entityId: 1 },
+  { unique: true }
+);
 
-export const AnalyticsEvent = models.AnalyticsEvent || model<IAnalyticsEvent>("AnalyticsEvent", AnalyticsEventSchema);
-export const DailyAnalytics = models.DailyAnalytics || model<IDailyAnalytics>("DailyAnalytics", DailyAnalyticsSchema);
+export const AnalyticsEvent =
+  models.AnalyticsEvent ||
+  model<IAnalyticsEvent>("AnalyticsEvent", AnalyticsEventSchema);
+export const DailyAnalytics =
+  models.DailyAnalytics ||
+  model<IDailyAnalytics>("DailyAnalytics", DailyAnalyticsSchema);
 
 export default AnalyticsEvent;

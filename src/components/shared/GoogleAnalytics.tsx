@@ -2,46 +2,52 @@
 
 import Script from "next/script";
 
+type DataLayerEvent = Record<string, unknown>;
+type GtagFn = (...args: unknown[]) => void;
+
+declare global {
+  interface Window {
+    dataLayer?: DataLayerEvent[];
+    gtag?: GtagFn;
+  }
+}
+
 // Google Tag Manager ID from environment variable
 const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID;
 // Legacy GA4 support (optional)
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
+// Mutually exclusive analytics mode selection:
+// - If GTM is configured, GTM owns GA4 (do not also load gtag.js)
+// - If GTM is not configured, fall back to GA4 via gtag.js
+const USE_GTM = Boolean(GTM_ID);
+const USE_GA = !USE_GTM && Boolean(GA_MEASUREMENT_ID);
+
 export default function GoogleAnalytics() {
-  // Return null if neither is configured
-  if (!GTM_ID && !GA_MEASUREMENT_ID) {
-    return null;
-  }
+  if (!USE_GTM && !USE_GA) return null;
 
   return (
     <>
-      {/* Google Tag Manager - Script (if configured) */}
-      {GTM_ID && (
-        <Script id="gtm-script" strategy="afterInteractive">
-          {`
-            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-            })(window,document,'script','dataLayer','${GTM_ID}');
-          `}
-        </Script>
-      )}
+      {/*
+        GTM is injected in the RootLayout (head + noscript) when configured.
+        Keep this component responsible for GA4 gtag.js ONLY when GTM is absent.
+      */}
 
-      {/* Google Analytics 4 - Script (if configured) */}
-      {GA_MEASUREMENT_ID && (
+      {/* GA4 via gtag (ONLY if GTM is NOT used) */}
+      {USE_GA && (
         <>
           <Script
             src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
             strategy="afterInteractive"
           />
-          <Script id="google-analytics" strategy="afterInteractive">
+          <Script id="ga-init" strategy="afterInteractive">
             {`
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
+              window.gtag = window.gtag || gtag;
               gtag('js', new Date());
               gtag('config', '${GA_MEASUREMENT_ID}', {
-                page_path: window.location.pathname,
+                send_page_view: true,
               });
             `}
           </Script>
@@ -59,6 +65,7 @@ export function GoogleTagManagerNoscript() {
     <noscript>
       <iframe
         src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+        title="Google Tag Manager"
         height="0"
         width="0"
         style={{ display: "none", visibility: "hidden" }}
@@ -67,40 +74,32 @@ export function GoogleTagManagerNoscript() {
   );
 }
 
-// Helper to push events to dataLayer (works with both GTM and GA4)
-const pushToDataLayer = (event: Record<string, any>) => {
+// Helper to push events to dataLayer (used by GTM path)
+const pushToDataLayer = (event: DataLayerEvent) => {
   if (typeof window !== "undefined") {
-    (window as any).dataLayer = (window as any).dataLayer || [];
-    (window as any).dataLayer.push(event);
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push(event);
   }
 };
 
-// Export gtag event helper for use throughout the app
+// Unified event helper (GA4-correct params; GTM vs GA is mutually exclusive)
 export const trackEvent = (
-  action: string,
-  category: string,
-  label?: string,
-  value?: number
+  eventName: string,
+  params?: Record<string, unknown>
 ) => {
   if (typeof window === "undefined") return;
 
-  // For GTM - push to dataLayer
-  if (GTM_ID) {
+  // GTM path
+  if (USE_GTM) {
     pushToDataLayer({
-      event: action,
-      event_category: category,
-      event_label: label,
-      value: value,
+      event: eventName,
+      ...(params || {}),
     });
   }
 
-  // For GA4 - use gtag
-  if (GA_MEASUREMENT_ID) {
-    (window as any).gtag?.("event", action, {
-      event_category: category,
-      event_label: label,
-      value: value,
-    });
+  // GA-only path
+  if (USE_GA) {
+    window.gtag?.("event", eventName, params);
   }
 };
 
@@ -109,7 +108,7 @@ export const trackPageView = (url: string) => {
   if (typeof window === "undefined") return;
 
   // For GTM
-  if (GTM_ID) {
+  if (USE_GTM) {
     pushToDataLayer({
       event: "page_view",
       page_path: url,
@@ -117,8 +116,8 @@ export const trackPageView = (url: string) => {
   }
 
   // For GA4
-  if (GA_MEASUREMENT_ID) {
-    (window as any).gtag?.("config", GA_MEASUREMENT_ID, {
+  if (USE_GA) {
+    window.gtag?.("config", GA_MEASUREMENT_ID, {
       page_path: url,
     });
   }
@@ -133,10 +132,9 @@ export const trackProductView = (product: {
 }) => {
   if (typeof window === "undefined") return;
 
-  const eventData = {
-    event: "view_item",
+  const payload = {
     currency: "USD",
-    value: product.price || 0,
+    value: product.price ?? 0,
     items: [
       {
         item_id: product.id,
@@ -148,20 +146,22 @@ export const trackProductView = (product: {
   };
 
   // For GTM
-  if (GTM_ID) {
-    pushToDataLayer(eventData);
+  if (USE_GTM) {
+    pushToDataLayer({ event: "view_item", ecommerce: payload });
   }
 
   // For GA4
-  if (GA_MEASUREMENT_ID) {
-    (window as any).gtag?.("event", "view_item", eventData);
+  if (USE_GA) {
+    window.gtag?.("event", "view_item", payload);
   }
 };
 
 export const trackInquiry = (productName?: string) => {
-  trackEvent("inquiry_submit", "engagement", productName || "general");
+  trackEvent("inquiry_submit", {
+    product_name: productName || "general",
+  });
 };
 
 export const trackContact = () => {
-  trackEvent("contact_form_submit", "engagement");
+  trackEvent("contact_form_submit");
 };

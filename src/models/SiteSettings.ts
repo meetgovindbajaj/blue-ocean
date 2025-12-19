@@ -1,4 +1,4 @@
-import { model, Schema, Document, models } from "mongoose";
+import { type Document, model, models, Schema } from "mongoose";
 
 interface ISocialLink {
   platform: string;

@@ -1,15 +1,16 @@
+import type { Metadata } from "next";
 import { Suspense } from "react";
-import { Metadata } from "next";
+import CookieConsent from "@/components/CookieConsent";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
-import { SiteSettingsProvider } from "@/context/SiteSettingsContext";
-import { CurrencyProvider } from "@/context/CurrencyContext";
-import { AuthProvider } from "@/context/AuthContext";
-import { Toaster } from "@/components/ui/sonner";
 import FloatingActions from "@/components/shared/FloatingActions";
 import GoogleAnalytics from "@/components/shared/GoogleAnalytics";
-import CookieConsent from "@/components/CookieConsent";
 import NavigationProgress from "@/components/shared/NavigationProgress";
+import PageViewTracker from "@/components/shared/PageViewTracker";
+import { Toaster } from "@/components/ui/sonner";
+import { AuthProvider } from "@/context/AuthContext";
+import { CurrencyProvider } from "@/context/CurrencyContext";
+import { SiteSettingsProvider } from "@/context/SiteSettingsContext";
 import { getSiteSettings } from "@/lib/siteMetadata";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://blueocean.com";
@@ -19,9 +20,15 @@ export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
 
   const siteName = settings.siteName || "Blue Ocean";
-  const metaTitle = settings.seo?.metaTitle || `${siteName} - Premium Quality Solid Wood Furniture`;
-  const metaDescription = settings.seo?.metaDescription || "Connecting global markets through quality products, exceptional service, and innovative solutions. We are your trusted partner in international trade.";
-  const keywords = settings.seo?.keywords?.join(", ") || "furniture, home-decor, solid wood, premium furniture";
+  const metaTitle =
+    settings.seo?.metaTitle ||
+    `${siteName} - Premium Quality Solid Wood Furniture`;
+  const metaDescription =
+    settings.seo?.metaDescription ||
+    "Connecting global markets through quality products, exceptional service, and innovative solutions. We are your trusted partner in international trade.";
+  const keywords =
+    settings.seo?.keywords?.join(", ") ||
+    "furniture, home-decor, solid wood, premium furniture";
   const ogImage = settings.seo?.ogImage || `${siteUrl}/og-image.jpg`;
 
   return {
@@ -93,11 +100,14 @@ export default function UserLayout({
           <Suspense fallback={null}>
             <NavigationProgress />
           </Suspense>
+          <Suspense fallback={null}>
+            <PageViewTracker />
+          </Suspense>
           <GoogleAnalytics />
-          <Suspense fallback={<div className="h-16 border-b" aria-label="Loading header" />}>
+          <Suspense fallback={<div className="h-16 border-b" />}>
             <Header />
           </Suspense>
-          <main id="main-content" role="main" tabIndex={-1}>
+          <main id="main-content" tabIndex={-1}>
             <Suspense>{children}</Suspense>
           </main>
           <Footer />

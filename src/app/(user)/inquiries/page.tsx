@@ -1,30 +1,30 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
-import Image from "next/image";
-import styles from "./page.module.css";
 import {
-  MessageSquare,
-  Clock,
-  CheckCircle,
   AlertCircle,
-  Loader2,
-  ExternalLink,
-  Package,
-  Mail,
-  MessageCircle,
-  Send,
-  User,
+  CheckCircle,
   ChevronLeft,
   ChevronRight,
+  Clock,
+  ExternalLink,
   Eye,
+  Loader2,
+  Mail,
+  MessageCircle,
+  MessageSquare,
+  Package,
+  Send,
+  User,
   X,
 } from "lucide-react";
+import type { Route } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Route } from "next";
 import { InquiriesPageSkeleton } from "@/components/ui/skeletons";
+import styles from "./page.module.css";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -80,7 +80,7 @@ const statusConfig: Record<
   closed: { label: "Closed", icon: CheckCircle, color: "#6b7280" },
 };
 
-const InquiriesPage = () => {
+const InquiriesPageContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
@@ -93,7 +93,8 @@ const InquiriesPage = () => {
 
   // Get page from URL or default to 1
   const pageFromUrl = parseInt(searchParams.get("page") || "1", 10);
-  const currentPage = isNaN(pageFromUrl) || pageFromUrl < 1 ? 1 : pageFromUrl;
+  const currentPage =
+    Number.isNaN(pageFromUrl) || pageFromUrl < 1 ? 1 : pageFromUrl;
 
   // Calculate pagination
   const totalPages = Math.ceil(inquiries.length / ITEMS_PER_PAGE);
@@ -113,20 +114,7 @@ const InquiriesPage = () => {
     router.push(`${url.pathname}${url.search}` as Route, { scroll: false });
   };
 
-  useEffect(() => {
-    fetchInquiries();
-  }, []);
-
-  // Close modal on escape key
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setSelectedInquiry(null);
-    };
-    document.addEventListener("keydown", handleEscape);
-    return () => document.removeEventListener("keydown", handleEscape);
-  }, []);
-
-  const fetchInquiries = async () => {
+  const fetchInquiries = useCallback(async () => {
     try {
       const response = await fetch("/api/user/inquiries");
       const data = await response.json();
@@ -140,12 +128,25 @@ const InquiriesPage = () => {
       }
 
       setInquiries(data.inquiries || []);
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to load inquiries");
     } finally {
       setLoading(false);
     }
-  };
+  }, [router]);
+
+  useEffect(() => {
+    fetchInquiries();
+  }, [fetchInquiries]);
+
+  // Close modal on escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSelectedInquiry(null);
+    };
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, []);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -299,6 +300,7 @@ const InquiriesPage = () => {
                         )}
                       </div>
                       <button
+                        type="button"
                         className={styles.viewDetailsButton}
                         onClick={() => setSelectedInquiry(inquiry)}
                       >
@@ -315,6 +317,7 @@ const InquiriesPage = () => {
             {totalPages > 1 && (
               <div className={styles.pagination}>
                 <button
+                  type="button"
                   className={styles.paginationButton}
                   onClick={() => setCurrentPage(Math.max(1, validPage - 1))}
                   disabled={validPage === 1}
@@ -327,6 +330,7 @@ const InquiriesPage = () => {
                     (page) => (
                       <button
                         key={page}
+                        type="button"
                         className={`${styles.paginationPage} ${
                           validPage === page ? styles.paginationPageActive : ""
                         }`}
@@ -338,6 +342,7 @@ const InquiriesPage = () => {
                   )}
                 </div>
                 <button
+                  type="button"
                   className={styles.paginationButton}
                   onClick={() =>
                     setCurrentPage(Math.min(totalPages, validPage + 1))
@@ -364,11 +369,25 @@ const InquiriesPage = () => {
 
       {/* Detail Modal */}
       {selectedInquiry && (
-        <div
-          className={styles.modalOverlay}
-          onClick={() => setSelectedInquiry(null)}
-        >
-          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+        <div className={styles.modalOverlay}>
+          <button
+            type="button"
+            aria-label="Close dialog"
+            onClick={() => setSelectedInquiry(null)}
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: "transparent",
+              border: "none",
+              padding: 0,
+            }}
+          />
+          <div
+            className={styles.modal}
+            role="dialog"
+            aria-modal="true"
+            style={{ position: "relative", zIndex: 1 }}
+          >
             <div className={styles.modalHeader}>
               <div>
                 <h2 className={styles.modalTitle}>Inquiry Details</h2>
@@ -377,6 +396,7 @@ const InquiriesPage = () => {
                 </p>
               </div>
               <button
+                type="button"
                 className={styles.modalClose}
                 onClick={() => setSelectedInquiry(null)}
                 aria-label="Close modal"
@@ -439,7 +459,7 @@ const InquiriesPage = () => {
 
               {/* Original Message */}
               <div className={styles.originalMessage}>
-                <label className={styles.sectionLabel}>Your Message</label>
+                <p className={styles.sectionLabel}>Your Message</p>
                 <p className={styles.messageText}>{selectedInquiry.message}</p>
               </div>
 
@@ -473,6 +493,7 @@ const InquiriesPage = () => {
                         {(commentText[selectedInquiry.id] || "").length}/1000
                       </span>
                       <button
+                        type="button"
                         className={styles.submitButton}
                         onClick={() => {
                           handleSubmitComment(selectedInquiry.id);
@@ -544,13 +565,13 @@ const InquiriesPage = () => {
                       Conversation ({timelineItems.length})
                     </h4>
                     <div className={styles.timeline}>
-                      {timelineItems.map((item, index) => {
+                      {timelineItems.map((item) => {
                         const isUser = item.type === "user";
                         const isEmail = item.type === "email";
 
                         return (
                           <div
-                            key={index}
+                            key={`${item.type}:${item.timestamp}:${item.content}`}
                             className={`${styles.timelineItem} ${
                               isUser
                                 ? styles.timelineItemUser
@@ -602,6 +623,14 @@ const InquiriesPage = () => {
         </div>
       )}
     </div>
+  );
+};
+
+const InquiriesPage = () => {
+  return (
+    <Suspense fallback={<InquiriesPageSkeleton />}>
+      <InquiriesPageContent />
+    </Suspense>
   );
 };
 

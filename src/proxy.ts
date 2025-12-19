@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
 import { jwtVerify } from "jose";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
 const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET || "your-secret-key-change-in-production"
@@ -23,6 +23,7 @@ const rateLimitStore = new Map<string, RateLimitEntry>();
 // Rate limit configurations
 const RATE_LIMITS = {
   api: { limit: 100, windowMs: 60000 }, // 100 req/min for general API
+  analytics: { limit: 1000, windowMs: 60000 }, // 1000 req/min for analytics event ingestion
   auth: { limit: 10, windowMs: 60000 }, // 10 req/min for auth
   authStrict: { limit: 5, windowMs: 900000 }, // 5 req/15min for password reset
   admin: { limit: 200, windowMs: 60000 }, // 200 req/min for admin
@@ -107,7 +108,10 @@ function checkRateLimit(
   };
 }
 
-function addRateLimitHeaders(response: NextResponse, result: RateLimitResult): NextResponse {
+function addRateLimitHeaders(
+  response: NextResponse,
+  result: RateLimitResult
+): NextResponse {
   response.headers.set("X-RateLimit-Limit", result.limit.toString());
   response.headers.set("X-RateLimit-Remaining", result.remaining.toString());
   response.headers.set("X-RateLimit-Reset", result.reset.toString());
@@ -186,7 +190,10 @@ export async function proxy(request: NextRequest) {
   // Auth routes (login, register, forgot-password, etc.)
   if (pathname.startsWith("/api/auth")) {
     // Stricter limits for password reset
-    if (pathname.includes("forgot-password") || pathname.includes("reset-password")) {
+    if (
+      pathname.includes("forgot-password") ||
+      pathname.includes("reset-password")
+    ) {
       rateLimitConfig = RATE_LIMITS.authStrict;
       rateLimitIdentifier = "auth-strict";
     } else {
@@ -194,13 +201,21 @@ export async function proxy(request: NextRequest) {
       rateLimitIdentifier = "auth";
     }
   }
+  // Analytics ingestion (allow higher throughput)
+  else if (pathname.startsWith("/api/analytics/track")) {
+    rateLimitConfig = RATE_LIMITS.analytics;
+    rateLimitIdentifier = "analytics";
+  }
   // Admin routes
   else if (pathname.startsWith("/api/admin")) {
     rateLimitConfig = RATE_LIMITS.admin;
     rateLimitIdentifier = "admin";
   }
   // Contact/inquiry routes
-  else if (pathname.startsWith("/api/contact") || pathname.startsWith("/api/inquiry")) {
+  else if (
+    pathname.startsWith("/api/contact") ||
+    pathname.startsWith("/api/inquiry")
+  ) {
     rateLimitConfig = RATE_LIMITS.contact;
     rateLimitIdentifier = "contact";
   }
@@ -208,7 +223,11 @@ export async function proxy(request: NextRequest) {
   // Apply rate limiting for API routes
   let rateLimitResult: RateLimitResult | null = null;
   if (pathname.startsWith("/api/")) {
-    rateLimitResult = checkRateLimit(clientIp, rateLimitIdentifier, rateLimitConfig);
+    rateLimitResult = checkRateLimit(
+      clientIp,
+      rateLimitIdentifier,
+      rateLimitConfig
+    );
 
     if (!rateLimitResult.allowed) {
       return createRateLimitedResponse(rateLimitResult);

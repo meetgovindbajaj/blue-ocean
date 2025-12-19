@@ -1,11 +1,27 @@
 "use client";
 
+import {
+  Activity,
+  BarChart3,
+  Eye,
+  FileText,
+  MousePointer,
+  Package,
+  PieChart,
+  ShoppingCart,
+  Tag,
+  TrendingUp,
+  UserCheck,
+  Users,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   Area,
   AreaChart,
   CartesianGrid,
   Cell,
+  Line,
+  LineChart,
   Pie,
   PieChart as RechartsPieChart,
   XAxis,
@@ -18,7 +34,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import {
+  type ChartConfig,
+  ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
 import {
   Select,
   SelectContent,
@@ -26,28 +49,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Progress } from "@/components/ui/progress";
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-  ChartLegend,
-  ChartLegendContent,
-  type ChartConfig,
-} from "@/components/ui/chart";
-import {
-  Eye,
-  MousePointer,
-  TrendingUp,
-  Package,
-  Users,
-  ShoppingCart,
-  BarChart3,
-  UserCheck,
-  Tag,
-  PieChart,
-  Activity,
-} from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface AnalyticsData {
   overview: {
@@ -56,12 +58,22 @@ interface AnalyticsData {
     uniqueVisitors: number;
     totalBannerClicks: number;
     totalTagClicks: number;
+    productViews?: number;
+    categoryViews?: number;
+    pageViews?: number;
+    bannerImpressions?: number;
     totalProducts: number;
     totalUsers: number;
   };
   topProducts: Array<{
     id: string;
     name: string;
+    views: number;
+    uniqueVisitors: number;
+    percentage: number;
+  }>;
+  topPages: Array<{
+    path: string;
     views: number;
     uniqueVisitors: number;
     percentage: number;
@@ -89,6 +101,7 @@ interface AnalyticsData {
     date: string;
     productViews: number;
     categoryViews: number;
+    pageViews?: number;
     bannerImpressions: number;
     bannerClicks: number;
     tagClicks: number;
@@ -99,15 +112,25 @@ interface AnalyticsData {
     name: string;
     value: number;
   }>;
+  utmSources: Array<{
+    source: string;
+    visits: number;
+    uniqueVisitors: number;
+  }>;
+  utmCampaigns: Array<{
+    campaign: string;
+    source: string;
+    medium: string;
+    visits: number;
+    uniqueVisitors: number;
+  }>;
+  backlinkSources: Array<{
+    source: string;
+    visits: number;
+    uniqueVisitors: number;
+    posts: string[];
+  }>;
 }
-
-const ENTITY_COLORS: Record<string, string> = {
-  product: "bg-blue-500",
-  category: "bg-green-500",
-  banner: "bg-purple-500",
-  tag: "bg-orange-500",
-  page: "bg-cyan-500",
-};
 
 const ENTITY_LABELS: Record<string, string> = {
   product: "Products",
@@ -172,6 +195,31 @@ const PIE_COLORS = [
   "hsl(189, 94%, 43%)", // cyan
 ];
 
+const donutValueConfig = {
+  value: {
+    label: "Value",
+    color: "hsl(217, 91%, 60%)",
+  },
+} satisfies ChartConfig;
+
+const trafficLineConfig = {
+  views: {
+    label: "Views",
+    color: "hsl(217, 91%, 60%)",
+  },
+  clicks: {
+    label: "Clicks",
+    color: "hsl(142, 71%, 45%)",
+  },
+} satisfies ChartConfig;
+
+const pageViewsLineConfig = {
+  pageViews: {
+    label: "Page Views",
+    color: "hsl(189, 94%, 43%)",
+  },
+} satisfies ChartConfig;
+
 export default function AnalyticsPage() {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -181,7 +229,12 @@ export default function AnalyticsPage() {
     const fetchAnalytics = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`/api/admin/analytics?period=${period}`);
+        const response = await fetch(`/api/admin/analytics?period=${period}`, {
+          cache: "no-store",
+          headers: {
+            "Cache-Control": "no-cache",
+          },
+        });
         const result = await response.json();
         if (result.success) {
           setData(result.data);
@@ -240,10 +293,32 @@ export default function AnalyticsPage() {
     },
   ];
 
-  // Calculate max values for charts
-  const maxDailyViews = Math.max(...(data?.dailyTrends?.map((d) => d.views) || [1]), 1);
-  const maxTagClicks = Math.max(...(data?.tagStats?.map((t) => t.clicks) || [1]), 1);
-  const totalEntityEvents = data?.entityBreakdown?.reduce((sum, e) => sum + e.value, 0) || 1;
+  const breakdownCards = [
+    {
+      title: "Page Views",
+      value: data?.overview.pageViews || 0,
+      icon: FileText,
+      color: "text-cyan-600",
+      bgColor: "bg-cyan-100",
+    },
+    {
+      title: "Product Views",
+      value: data?.overview.productViews || 0,
+      icon: Eye,
+      color: "text-blue-600",
+      bgColor: "bg-blue-100",
+    },
+    {
+      title: "Banner Impressions",
+      value: data?.overview.bannerImpressions || 0,
+      icon: BarChart3,
+      color: "text-purple-600",
+      bgColor: "bg-purple-100",
+    },
+  ];
+
+  const totalEntityEvents =
+    data?.entityBreakdown?.reduce((sum, e) => sum + e.value, 0) || 1;
 
   if (loading) {
     return (
@@ -253,16 +328,18 @@ export default function AnalyticsPage() {
           <Skeleton className="h-10 w-32" />
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-          {[...Array(6)].map((_, i) => (
-            <Card key={i}>
-              <CardHeader className="pb-2">
-                <Skeleton className="h-4 w-24" />
-              </CardHeader>
-              <CardContent>
-                <Skeleton className="h-8 w-16" />
-              </CardContent>
-            </Card>
-          ))}
+          {Array.from({ length: 6 }, (_, idx) => `skeleton-${idx}`).map(
+            (key) => (
+              <Card key={key}>
+                <CardHeader className="pb-2">
+                  <Skeleton className="h-4 w-24" />
+                </CardHeader>
+                <CardContent>
+                  <Skeleton className="h-8 w-16" />
+                </CardContent>
+              </Card>
+            )
+          )}
         </div>
       </div>
     );
@@ -311,6 +388,27 @@ export default function AnalyticsPage() {
         ))}
       </div>
 
+      {/* Overview Breakdown */}
+      <div className="grid gap-4 md:grid-cols-3">
+        {breakdownCards.map((card) => (
+          <Card key={card.title}>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                {card.title}
+              </CardTitle>
+              <div className={`p-2 rounded-lg ${card.bgColor}`}>
+                <card.icon className={`h-4 w-4 ${card.color}`} />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {card.value.toLocaleString()}
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
       {/* Charts Row */}
       <div className="grid gap-6 md:grid-cols-2">
         {/* Weekly Trends Chart */}
@@ -322,19 +420,34 @@ export default function AnalyticsPage() {
             </CardTitle>
             <CardDescription className="text-xs space-y-0.5">
               <span className="block">
-                <span className="inline-block w-2.5 h-2.5 rounded-sm mr-1" style={{ backgroundColor: "hsl(217, 91%, 60%)" }} />
+                <span
+                  className="inline-block w-2.5 h-2.5 rounded-sm mr-1"
+                  style={{ backgroundColor: "hsl(217, 91%, 60%)" }}
+                />
                 Products &amp;{" "}
-                <span className="inline-block w-2.5 h-2.5 rounded-sm mr-1 ml-1" style={{ backgroundColor: "hsl(217, 91%, 75%)" }} />
+                <span
+                  className="inline-block w-2.5 h-2.5 rounded-sm mr-1 ml-1"
+                  style={{ backgroundColor: "hsl(217, 91%, 75%)" }}
+                />
                 Categories (views)
               </span>
               <span className="block">
-                <span className="inline-block w-2.5 h-2.5 rounded-sm mr-1" style={{ backgroundColor: "hsl(262, 83%, 58%)" }} />
+                <span
+                  className="inline-block w-2.5 h-2.5 rounded-sm mr-1"
+                  style={{ backgroundColor: "hsl(262, 83%, 58%)" }}
+                />
                 Impressions &amp;{" "}
-                <span className="inline-block w-2.5 h-2.5 rounded-sm mr-1 ml-1" style={{ backgroundColor: "hsl(262, 83%, 75%)" }} />
+                <span
+                  className="inline-block w-2.5 h-2.5 rounded-sm mr-1 ml-1"
+                  style={{ backgroundColor: "hsl(262, 83%, 75%)" }}
+                />
                 Banner Clicks
               </span>
               <span className="block">
-                <span className="inline-block w-2.5 h-2.5 rounded-sm mr-1" style={{ backgroundColor: "hsl(142, 71%, 45%)" }} />
+                <span
+                  className="inline-block w-2.5 h-2.5 rounded-sm mr-1"
+                  style={{ backgroundColor: "hsl(142, 71%, 45%)" }}
+                />
                 Tag Clicks
               </span>
             </CardDescription>
@@ -345,32 +458,105 @@ export default function AnalyticsPage() {
                 config={dailyTrendsConfig}
                 className="aspect-auto h-[340px] w-full"
               >
-                <AreaChart data={data.dailyTrends} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                <AreaChart
+                  data={data.dailyTrends}
+                  margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+                >
                   <defs>
                     {/* Product Views - Dark Blue */}
-                    <linearGradient id="fillProductViews" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="var(--color-productViews)" stopOpacity={0.8} />
-                      <stop offset="95%" stopColor="var(--color-productViews)" stopOpacity={0.1} />
+                    <linearGradient
+                      id="fillProductViews"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop
+                        offset="5%"
+                        stopColor="var(--color-productViews)"
+                        stopOpacity={0.8}
+                      />
+                      <stop
+                        offset="95%"
+                        stopColor="var(--color-productViews)"
+                        stopOpacity={0.1}
+                      />
                     </linearGradient>
                     {/* Category Views - Light Blue */}
-                    <linearGradient id="fillCategoryViews" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="var(--color-categoryViews)" stopOpacity={0.8} />
-                      <stop offset="95%" stopColor="var(--color-categoryViews)" stopOpacity={0.1} />
+                    <linearGradient
+                      id="fillCategoryViews"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop
+                        offset="5%"
+                        stopColor="var(--color-categoryViews)"
+                        stopOpacity={0.8}
+                      />
+                      <stop
+                        offset="95%"
+                        stopColor="var(--color-categoryViews)"
+                        stopOpacity={0.1}
+                      />
                     </linearGradient>
                     {/* Banner Impressions - Dark Purple */}
-                    <linearGradient id="fillBannerImpressions" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="var(--color-bannerImpressions)" stopOpacity={0.8} />
-                      <stop offset="95%" stopColor="var(--color-bannerImpressions)" stopOpacity={0.1} />
+                    <linearGradient
+                      id="fillBannerImpressions"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop
+                        offset="5%"
+                        stopColor="var(--color-bannerImpressions)"
+                        stopOpacity={0.8}
+                      />
+                      <stop
+                        offset="95%"
+                        stopColor="var(--color-bannerImpressions)"
+                        stopOpacity={0.1}
+                      />
                     </linearGradient>
                     {/* Banner Clicks - Light Purple */}
-                    <linearGradient id="fillBannerClicks" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="var(--color-bannerClicks)" stopOpacity={0.8} />
-                      <stop offset="95%" stopColor="var(--color-bannerClicks)" stopOpacity={0.1} />
+                    <linearGradient
+                      id="fillBannerClicks"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop
+                        offset="5%"
+                        stopColor="var(--color-bannerClicks)"
+                        stopOpacity={0.8}
+                      />
+                      <stop
+                        offset="95%"
+                        stopColor="var(--color-bannerClicks)"
+                        stopOpacity={0.1}
+                      />
                     </linearGradient>
                     {/* Tag Clicks - Green */}
-                    <linearGradient id="fillTagClicks" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="var(--color-tagClicks)" stopOpacity={0.8} />
-                      <stop offset="95%" stopColor="var(--color-tagClicks)" stopOpacity={0.1} />
+                    <linearGradient
+                      id="fillTagClicks"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop
+                        offset="5%"
+                        stopColor="var(--color-tagClicks)"
+                        stopOpacity={0.8}
+                      />
+                      <stop
+                        offset="95%"
+                        stopColor="var(--color-tagClicks)"
+                        stopOpacity={0.1}
+                      />
                     </linearGradient>
                   </defs>
                   <CartesianGrid vertical={false} />
@@ -410,7 +596,9 @@ export default function AnalyticsPage() {
                         formatter={(value, name) => (
                           <div className="flex items-center justify-between gap-3 py-0.5 w-full">
                             <span className="text-muted-foreground text-xs truncate flex-shrink min-w-0">
-                              {dailyTrendsConfig[name as keyof typeof dailyTrendsConfig]?.label || name}
+                              {dailyTrendsConfig[
+                                name as keyof typeof dailyTrendsConfig
+                              ]?.label || name}
                             </span>
                             <span className="font-mono font-semibold tabular-nums text-xs flex-shrink-0">
                               {(value as number).toLocaleString()}
@@ -464,7 +652,11 @@ export default function AnalyticsPage() {
                     strokeWidth={2}
                     stackId="tags"
                   />
-                  <ChartLegend content={<ChartLegendContent className="flex-wrap justify-center gap-x-4 gap-y-1" />} />
+                  <ChartLegend
+                    content={
+                      <ChartLegendContent className="flex-wrap justify-center gap-x-4 gap-y-1" />
+                    }
+                  />
                 </AreaChart>
               </ChartContainer>
             ) : (
@@ -482,7 +674,9 @@ export default function AnalyticsPage() {
               <PieChart className="h-5 w-5" />
               Activity by Type
             </CardTitle>
-            <CardDescription>Distribution of events by entity type</CardDescription>
+            <CardDescription>
+              Distribution of events by entity type
+            </CardDescription>
           </CardHeader>
           <CardContent className="pt-4">
             {data?.entityBreakdown && data.entityBreakdown.length > 0 ? (
@@ -509,7 +703,9 @@ export default function AnalyticsPage() {
                                   <span className="font-medium">
                                     {ENTITY_LABELS[name as string] || name}:
                                   </span>
-                                  <span>{(value as number).toLocaleString()}</span>
+                                  <span>
+                                    {(value as number).toLocaleString()}
+                                  </span>
                                 </div>
                               )}
                             />
@@ -525,9 +721,9 @@ export default function AnalyticsPage() {
                           outerRadius={80}
                           paddingAngle={2}
                         >
-                          {sortedData.map((entry, index) => (
+                          {sortedData.map((entity, index) => (
                             <Cell
-                              key={`cell-${index}`}
+                              key={`cell-${entity.name}`}
                               fill={PIE_COLORS[index % PIE_COLORS.length]}
                             />
                           ))}
@@ -537,7 +733,8 @@ export default function AnalyticsPage() {
                     {/* Legend */}
                     <div className="flex flex-wrap justify-center gap-4 mt-4">
                       {sortedData.map((entity, index) => {
-                        const percentage = (entity.value / totalEntityEvents) * 100;
+                        const percentage =
+                          (entity.value / totalEntityEvents) * 100;
                         return (
                           <div
                             key={entity.name}
@@ -546,7 +743,8 @@ export default function AnalyticsPage() {
                             <div
                               className="h-3 w-3 rounded-sm"
                               style={{
-                                backgroundColor: PIE_COLORS[index % PIE_COLORS.length],
+                                backgroundColor:
+                                  PIE_COLORS[index % PIE_COLORS.length],
                               }}
                             />
                             <span>
@@ -563,6 +761,414 @@ export default function AnalyticsPage() {
             ) : (
               <p className="text-sm text-muted-foreground text-center py-8">
                 No activity data available
+              </p>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Views vs Clicks (Line Chart) */}
+        <Card>
+          <CardHeader className="border-b pb-4">
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5" />
+              Traffic Trend
+            </CardTitle>
+            <CardDescription>
+              Views vs clicks over time (selected period)
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pt-4 overflow-hidden">
+            {data?.dailyTrends && data.dailyTrends.length > 0 ? (
+              <ChartContainer
+                config={trafficLineConfig}
+                className="aspect-auto h-[340px] w-full"
+              >
+                <LineChart
+                  data={data.dailyTrends}
+                  margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+                >
+                  <CartesianGrid vertical={false} />
+                  <XAxis
+                    dataKey="date"
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={8}
+                    minTickGap={32}
+                    tickFormatter={(value) => {
+                      const date = new Date(value);
+                      return date.toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                      });
+                    }}
+                  />
+                  <YAxis tickLine={false} axisLine={false} tickMargin={8} />
+                  <ChartTooltip
+                    cursor={false}
+                    content={
+                      <ChartTooltipContent
+                        className="w-[220px] p-3"
+                        labelFormatter={(value) =>
+                          new Date(value).toLocaleDateString("en-US", {
+                            weekday: "short",
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          })
+                        }
+                        formatter={(value, name) => (
+                          <div className="flex items-center justify-between gap-3 py-0.5 w-full">
+                            <span className="text-muted-foreground text-xs truncate flex-shrink min-w-0">
+                              {trafficLineConfig[
+                                name as keyof typeof trafficLineConfig
+                              ]?.label || name}
+                            </span>
+                            <span className="font-mono font-semibold tabular-nums text-xs flex-shrink-0">
+                              {(value as number).toLocaleString()}
+                            </span>
+                          </div>
+                        )}
+                        indicator="dot"
+                      />
+                    }
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="views"
+                    stroke="var(--color-views)"
+                    strokeWidth={2}
+                    dot={false}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="clicks"
+                    stroke="var(--color-clicks)"
+                    strokeWidth={2}
+                    dot={false}
+                  />
+                  <ChartLegend
+                    content={
+                      <ChartLegendContent className="flex-wrap justify-center gap-x-4 gap-y-1" />
+                    }
+                  />
+                </LineChart>
+              </ChartContainer>
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-8">
+                No trend data available
+              </p>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Top Pages Chart */}
+        <Card>
+          <CardHeader className="border-b pb-4">
+            <CardTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5" />
+              Top Pages (Views)
+            </CardTitle>
+            <CardDescription>Most visited pages</CardDescription>
+          </CardHeader>
+          <CardContent className="pt-4 overflow-hidden">
+            {data?.topPages && data.topPages.length > 0 ? (
+              (() => {
+                const MAX_SLICES = 6;
+                const items = data.topPages
+                  .slice(0, MAX_SLICES)
+                  .map((p, idx) => ({
+                    name: p.path,
+                    value: p.views,
+                    fill: PIE_COLORS[idx % PIE_COLORS.length],
+                  }));
+                const rest = data.topPages
+                  .slice(MAX_SLICES)
+                  .reduce((sum, p) => sum + (p.views || 0), 0);
+                if (rest > 0) {
+                  items.push({
+                    name: "Other",
+                    value: rest,
+                    fill: PIE_COLORS[items.length % PIE_COLORS.length],
+                  });
+                }
+
+                const total =
+                  items.reduce((sum, item) => sum + item.value, 0) || 1;
+
+                return (
+                  <div className="flex flex-col items-center">
+                    <ChartContainer
+                      config={donutValueConfig}
+                      className="aspect-auto h-[340px] w-full"
+                    >
+                      <RechartsPieChart>
+                        <ChartTooltip
+                          cursor={false}
+                          content={
+                            <ChartTooltipContent
+                              hideLabel
+                              formatter={(value, _name, item) => (
+                                <div className="flex items-center justify-between gap-3 py-0.5 w-full">
+                                  <span className="text-muted-foreground text-xs truncate">
+                                    {String(item?.payload?.name || "Page")}
+                                  </span>
+                                  <span className="font-medium tabular-nums">
+                                    {(value as number).toLocaleString()}
+                                  </span>
+                                </div>
+                              )}
+                              indicator="dot"
+                            />
+                          }
+                        />
+                        <Pie
+                          data={items}
+                          dataKey="value"
+                          nameKey="name"
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={60}
+                          outerRadius={95}
+                          paddingAngle={2}
+                        >
+                          {items.map((slice) => (
+                            <Cell
+                              key={`page-slice-${slice.name}`}
+                              fill={slice.fill}
+                            />
+                          ))}
+                        </Pie>
+                      </RechartsPieChart>
+                    </ChartContainer>
+
+                    {/* Legend (color → page) */}
+                    <div className="mt-4 grid w-full max-w-[520px] grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-2">
+                      {items.map((slice) => (
+                        <div
+                          key={`page-legend-${slice.name}`}
+                          className="flex items-center justify-between gap-3 text-sm"
+                        >
+                          <div className="flex min-w-0 items-center gap-2">
+                            <div
+                              className="h-3 w-3 shrink-0 rounded-sm"
+                              style={{ backgroundColor: slice.fill }}
+                            />
+                            <span className="truncate text-muted-foreground">
+                              {slice.name}
+                            </span>
+                          </div>
+                          <span className="shrink-0 tabular-nums">
+                            {Math.round((slice.value / total) * 100)}%
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-8">
+                No page view data available
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Acquisition Row */}
+      <div className="grid gap-6 md:grid-cols-2">
+        {/* UTM Sources Chart */}
+        <Card>
+          <CardHeader className="border-b pb-4">
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5" />
+              Top UTM Sources
+            </CardTitle>
+            <CardDescription>Where tracked traffic comes from</CardDescription>
+          </CardHeader>
+          <CardContent className="pt-4 overflow-hidden">
+            {data?.utmSources && data.utmSources.length > 0 ? (
+              (() => {
+                const MAX_SLICES = 6;
+                const items = data.utmSources
+                  .slice(0, MAX_SLICES)
+                  .map((s, idx) => ({
+                    name: s.source || "direct",
+                    value: s.visits,
+                    fill: PIE_COLORS[idx % PIE_COLORS.length],
+                  }));
+                const rest = data.utmSources
+                  .slice(MAX_SLICES)
+                  .reduce((sum, s) => sum + (s.visits || 0), 0);
+                if (rest > 0) {
+                  items.push({
+                    name: "Other",
+                    value: rest,
+                    fill: PIE_COLORS[items.length % PIE_COLORS.length],
+                  });
+                }
+
+                const total =
+                  items.reduce((sum, item) => sum + item.value, 0) || 1;
+
+                return (
+                  <div className="flex flex-col items-center">
+                    <ChartContainer
+                      config={donutValueConfig}
+                      className="aspect-auto h-[340px] w-full"
+                    >
+                      <RechartsPieChart>
+                        <ChartTooltip
+                          cursor={false}
+                          content={
+                            <ChartTooltipContent
+                              hideLabel
+                              formatter={(value, _name, item) => (
+                                <div className="flex items-center justify-between gap-3 py-0.5 w-full">
+                                  <span className="text-muted-foreground text-xs truncate">
+                                    {String(item?.payload?.name || "Source")}
+                                  </span>
+                                  <span className="font-medium tabular-nums">
+                                    {(value as number).toLocaleString()}
+                                  </span>
+                                </div>
+                              )}
+                              indicator="dot"
+                            />
+                          }
+                        />
+                        <Pie
+                          data={items}
+                          dataKey="value"
+                          nameKey="name"
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={60}
+                          outerRadius={95}
+                          paddingAngle={2}
+                        >
+                          {items.map((slice) => (
+                            <Cell
+                              key={`utm-slice-${slice.name}`}
+                              fill={slice.fill}
+                            />
+                          ))}
+                        </Pie>
+                      </RechartsPieChart>
+                    </ChartContainer>
+
+                    {/* Legend (color → source) */}
+                    <div className="mt-4 grid w-full max-w-[520px] grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-2">
+                      {items.map((slice) => (
+                        <div
+                          key={`utm-legend-${slice.name}`}
+                          className="flex items-center justify-between gap-3 text-sm"
+                        >
+                          <div className="flex min-w-0 items-center gap-2">
+                            <div
+                              className="h-3 w-3 shrink-0 rounded-sm"
+                              style={{ backgroundColor: slice.fill }}
+                            />
+                            <span className="truncate text-muted-foreground">
+                              {slice.name}
+                            </span>
+                          </div>
+                          <span className="shrink-0 tabular-nums">
+                            {Math.round((slice.value / total) * 100)}%
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-8">
+                No UTM traffic yet
+              </p>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Page Views Trend (Line Chart) */}
+        <Card>
+          <CardHeader className="border-b pb-4">
+            <CardTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5" />
+              Page Views Trend
+            </CardTitle>
+            <CardDescription>Page views over time</CardDescription>
+          </CardHeader>
+          <CardContent className="pt-4 overflow-hidden">
+            {data?.dailyTrends && data.dailyTrends.length > 0 ? (
+              <ChartContainer
+                config={pageViewsLineConfig}
+                className="aspect-auto h-[340px] w-full"
+              >
+                <LineChart
+                  data={data.dailyTrends}
+                  margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+                >
+                  <CartesianGrid vertical={false} />
+                  <XAxis
+                    dataKey="date"
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={8}
+                    minTickGap={32}
+                    tickFormatter={(value) => {
+                      const date = new Date(value);
+                      return date.toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                      });
+                    }}
+                  />
+                  <YAxis tickLine={false} axisLine={false} tickMargin={8} />
+                  <ChartTooltip
+                    cursor={false}
+                    content={
+                      <ChartTooltipContent
+                        className="w-[220px] p-3"
+                        labelFormatter={(value) =>
+                          new Date(value).toLocaleDateString("en-US", {
+                            weekday: "short",
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          })
+                        }
+                        formatter={(value) => (
+                          <div className="flex items-center justify-between gap-3 py-0.5 w-full">
+                            <span className="text-muted-foreground text-xs">
+                              Page Views
+                            </span>
+                            <span className="font-mono font-semibold tabular-nums text-xs">
+                              {(value as number).toLocaleString()}
+                            </span>
+                          </div>
+                        )}
+                        indicator="dot"
+                      />
+                    }
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="pageViews"
+                    stroke="var(--color-pageViews)"
+                    strokeWidth={2}
+                    dot={false}
+                  />
+                  <ChartLegend
+                    content={
+                      <ChartLegendContent className="flex-wrap justify-center gap-x-4 gap-y-1" />
+                    }
+                  />
+                </LineChart>
+              </ChartContainer>
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-8">
+                No trend data available
               </p>
             )}
           </CardContent>
@@ -595,7 +1201,10 @@ export default function AnalyticsPage() {
                       {index + 1}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm truncate" title={product.name}>
+                      <p
+                        className="font-medium text-sm truncate"
+                        title={product.name}
+                      >
                         {product.name}
                       </p>
                       <div className="mt-1.5 h-2 bg-muted rounded-full overflow-hidden">
@@ -625,6 +1234,65 @@ export default function AnalyticsPage() {
         </CardContent>
       </Card>
 
+      {/* Top Pages List */}
+      <Card>
+        <CardHeader className="border-b pb-4">
+          <CardTitle className="flex items-center gap-2">
+            <FileText className="h-5 w-5" />
+            Top Pages by Views
+          </CardTitle>
+          <CardDescription>
+            Most visited pages during the selected period
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="pt-4">
+          {data?.topPages && data.topPages.length > 0 ? (
+            <div className="max-h-[350px] overflow-y-auto pr-2 space-y-3">
+              {data.topPages.map((page, index) => {
+                const maxViews = data.topPages[0]?.views || 1;
+                const percentage = (page.views / maxViews) * 100;
+                return (
+                  <div
+                    key={page.path}
+                    className="flex items-center gap-4 p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
+                  >
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-cyan-100 text-cyan-700 font-semibold text-sm shrink-0">
+                      {index + 1}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p
+                        className="font-medium text-sm truncate"
+                        title={page.path}
+                      >
+                        {page.path}
+                      </p>
+                      <div className="mt-1.5 h-2 bg-muted rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-cyan-500 rounded-full transition-all"
+                          style={{ width: `${percentage}%` }}
+                        />
+                      </div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <p className="font-semibold text-sm tabular-nums">
+                        {page.views.toLocaleString()}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {page.uniqueVisitors} visitors
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground text-center py-8">
+              No page view data available
+            </p>
+          )}
+        </CardContent>
+      </Card>
+
       {/* Categories and Tags Row */}
       <div className="grid gap-6 md:grid-cols-2 overflow-hidden">
         {/* Top Categories List */}
@@ -643,7 +1311,8 @@ export default function AnalyticsPage() {
               <div className="max-h-[300px] overflow-y-auto overflow-x-hidden pr-2 space-y-2">
                 {data.topCategories.map((category, index) => {
                   const maxViews = data.topCategories[0]?.views || 1;
-                  const percentage = maxViews > 0 ? (category.views / maxViews) * 100 : 0;
+                  const percentage =
+                    maxViews > 0 ? (category.views / maxViews) * 100 : 0;
                   return (
                     <div
                       key={category.id}
@@ -653,7 +1322,10 @@ export default function AnalyticsPage() {
                         {index + 1}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-sm truncate" title={category.name}>
+                        <p
+                          className="font-medium text-sm truncate"
+                          title={category.name}
+                        >
                           {category.name}
                         </p>
                         <div className="mt-1 h-1.5 bg-muted rounded-full overflow-hidden">
@@ -699,7 +1371,8 @@ export default function AnalyticsPage() {
               <div className="max-h-[300px] overflow-y-auto overflow-x-hidden pr-2 space-y-2">
                 {data.tagStats.map((tag, index) => {
                   const maxClicks = data.tagStats[0]?.clicks || 1;
-                  const percentage = maxClicks > 0 ? (tag.clicks / maxClicks) * 100 : 0;
+                  const percentage =
+                    maxClicks > 0 ? (tag.clicks / maxClicks) * 100 : 0;
                   return (
                     <div
                       key={tag.id}
@@ -709,7 +1382,10 @@ export default function AnalyticsPage() {
                         {index + 1}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-sm truncate" title={tag.name}>
+                        <p
+                          className="font-medium text-sm truncate"
+                          title={tag.name}
+                        >
                           {tag.name}
                         </p>
                         <div className="mt-1 h-1.5 bg-muted rounded-full overflow-hidden">
@@ -738,6 +1414,217 @@ export default function AnalyticsPage() {
         </Card>
       </div>
 
+      {/* UTM & Backlink Tracking */}
+      <div className="grid gap-6 md:grid-cols-2">
+        {/* UTM Sources */}
+        <Card>
+          <CardHeader className="border-b pb-4">
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5" />
+              Traffic Sources (UTM)
+            </CardTitle>
+            <CardDescription>
+              Traffic from marketing campaigns (dev.to, social media, etc.)
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pt-4">
+            {data?.utmSources && data.utmSources.length > 0 ? (
+              <div className="space-y-3">
+                {data.utmSources.map((source, index) => {
+                  const maxVisits = data.utmSources[0]?.visits || 1;
+                  const percentage = (source.visits / maxVisits) * 100;
+                  return (
+                    <div
+                      key={source.source}
+                      className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors"
+                    >
+                      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-700 font-semibold text-xs shrink-0">
+                        {index + 1}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm capitalize truncate">
+                          {source.source}
+                        </p>
+                        <div className="mt-1.5 h-2 bg-muted rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-blue-500 rounded-full transition-all"
+                            style={{ width: `${percentage}%` }}
+                          />
+                        </div>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className="font-semibold text-sm tabular-nums">
+                          {source.visits}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {source.uniqueVisitors} unique
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-8">
+                No UTM traffic data yet. Share your links with UTM parameters!
+              </p>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Backlink Sources (Dev.to, Hashnode, etc.) */}
+        <Card>
+          <CardHeader className="border-b pb-4">
+            <CardTitle className="flex items-center gap-2">
+              <Activity className="h-5 w-5" />
+              Content Platform Traffic
+            </CardTitle>
+            <CardDescription>
+              Visitors from dev blogs and content platforms
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pt-4">
+            {data?.backlinkSources && data.backlinkSources.length > 0 ? (
+              <div className="space-y-3">
+                {data.backlinkSources.map((backlink, index) => {
+                  const maxVisits = data.backlinkSources[0]?.visits || 1;
+                  const percentage = (backlink.visits / maxVisits) * 100;
+                  const platformColors: Record<string, string> = {
+                    devto: "bg-purple-100 text-purple-700",
+                    hashnode: "bg-blue-100 text-blue-700",
+                    medium: "bg-green-100 text-green-700",
+                    twitter: "bg-cyan-100 text-cyan-700",
+                    linkedin: "bg-indigo-100 text-indigo-700",
+                  };
+                  const colorClass =
+                    platformColors[backlink.source] ||
+                    "bg-gray-100 text-gray-700";
+
+                  return (
+                    <div
+                      key={backlink.source}
+                      className="p-3 rounded-lg border hover:bg-muted/50 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`flex items-center justify-center w-8 h-8 rounded-full ${colorClass} font-semibold text-xs shrink-0`}
+                        >
+                          {index + 1}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-sm capitalize">
+                            {backlink.source === "devto"
+                              ? "Dev.to"
+                              : backlink.source}
+                          </p>
+                          <div className="mt-1.5 h-2 bg-muted rounded-full overflow-hidden">
+                            <div
+                              className={`h-full rounded-full transition-all ${
+                                backlink.source === "devto"
+                                  ? "bg-purple-500"
+                                  : backlink.source === "hashnode"
+                                  ? "bg-blue-500"
+                                  : "bg-green-500"
+                              }`}
+                              style={{ width: `${percentage}%` }}
+                            />
+                          </div>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <p className="font-semibold text-sm tabular-nums">
+                            {backlink.visits}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {backlink.uniqueVisitors} unique
+                          </p>
+                        </div>
+                      </div>
+                      {backlink.posts && backlink.posts.length > 0 && (
+                        <div className="mt-2 pl-11 text-xs text-muted-foreground">
+                          {backlink.posts.length} post
+                          {backlink.posts.length > 1 ? "s" : ""}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-8">
+                No backlink traffic yet. Publish your content to generate
+                traffic!
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* UTM Campaigns */}
+      {data?.utmCampaigns && data.utmCampaigns.length > 0 && (
+        <Card>
+          <CardHeader className="border-b pb-4">
+            <CardTitle className="flex items-center gap-2">
+              <Activity className="h-5 w-5" />
+              Marketing Campaigns
+            </CardTitle>
+            <CardDescription>
+              Performance of individual UTM campaigns
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pt-4">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {data.utmCampaigns.map((campaign) => {
+                const maxVisits = data.utmCampaigns[0]?.visits || 1;
+                const percentage = (campaign.visits / maxVisits) * 100;
+                return (
+                  <div
+                    key={`${campaign.campaign || "unknown"}-${
+                      campaign.source || "unknown"
+                    }-${campaign.medium || "unknown"}`}
+                    className="border rounded-lg p-4 space-y-2 hover:bg-muted/50 transition-colors"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <h4 className="font-medium text-sm leading-tight line-clamp-2 capitalize">
+                        {campaign.campaign}
+                      </h4>
+                      <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 shrink-0">
+                        {campaign.visits}
+                      </span>
+                    </div>
+                    <div className="space-y-1 text-xs text-muted-foreground">
+                      <div>
+                        Source:{" "}
+                        <span className="font-medium text-foreground capitalize">
+                          {campaign.source}
+                        </span>
+                      </div>
+                      <div>
+                        Medium:{" "}
+                        <span className="font-medium text-foreground capitalize">
+                          {campaign.medium}
+                        </span>
+                      </div>
+                      <div>
+                        Unique:{" "}
+                        <span className="font-medium text-foreground">
+                          {campaign.uniqueVisitors}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-blue-500 rounded-full transition-all"
+                        style={{ width: `${percentage}%` }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Banner Performance */}
       <Card>
         <CardHeader className="border-b pb-4">
@@ -746,7 +1633,8 @@ export default function AnalyticsPage() {
             Hero Banner Performance
           </CardTitle>
           <CardDescription>
-            Banner impressions (times shown), clicks, and click-through rate (CTR)
+            Banner impressions (times shown), clicks, and click-through rate
+            (CTR)
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-4">

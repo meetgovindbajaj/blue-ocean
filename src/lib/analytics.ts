@@ -1,17 +1,17 @@
-import { NextRequest } from "next/server";
+import mongoose, { Types } from "mongoose";
+import type { NextRequest } from "next/server";
 import {
   AnalyticsEvent,
   DailyAnalytics,
-  EventType,
-  EntityType,
+  type EntityType,
+  type EventType,
 } from "@/models/Analytics";
-import Product from "@/models/Product";
 import Category from "@/models/Category";
 import HeroBanner from "@/models/HeroBanner";
+import Product from "@/models/Product";
+import Profile from "@/models/Profile";
 import Tag from "@/models/Tag";
 import User from "@/models/User";
-import Profile from "@/models/Profile";
-import mongoose, { Types } from "mongoose";
 import { getCurrentUser } from "./auth";
 
 // Get client IP with proper priority
@@ -31,6 +31,98 @@ export function getDayBucket(date = new Date()): Date {
 
 // Deduplication window in milliseconds (10 minutes)
 const DEDUP_WINDOW_MS = 10 * 60 * 1000;
+
+// Extract UTM parameters from request URL
+export function extractUTMParameters(
+  request: NextRequest
+): Record<string, string> {
+  const utmParams: Record<string, string> = {};
+
+  const utmKeys = [
+    "utm_source",
+    "utm_medium",
+    "utm_campaign",
+    "utm_term",
+    "utm_content",
+  ];
+
+  const extractFromUrl = (urlString: string | null) => {
+    if (!urlString) return;
+    try {
+      const { searchParams } = new URL(urlString, request.url);
+      utmKeys.forEach((key) => {
+        const value = searchParams.get(key);
+        if (value) utmParams[key] = value;
+      });
+    } catch {
+      // Ignore invalid URLs
+    }
+  };
+
+  // Prefer the page URL (referrer) over the API endpoint URL.
+  // This is what the user actually visited and where UTMs live.
+  extractFromUrl(request.headers.get("referer"));
+
+  // Fallback to request URL (useful if UTMs are passed directly to the API).
+  if (Object.keys(utmParams).length === 0) {
+    extractFromUrl(request.url);
+  }
+
+  return utmParams;
+}
+
+// Detect backlink source from referrer
+export function detectBacklinkSource(referrer?: string): {
+  backlink_source?: string;
+  backlink_post?: string;
+} {
+  if (!referrer) return {};
+
+  try {
+    const referrerUrl = new URL(referrer);
+    const hostname = referrerUrl.hostname.toLowerCase();
+
+    // Dev.to detection
+    if (hostname.includes("dev.to")) {
+      const pathMatch = referrerUrl.pathname.match(/\/([^/]+)\/([^/]+)/);
+      return {
+        backlink_source: "devto",
+        backlink_post: pathMatch ? pathMatch[2] : undefined,
+      };
+    }
+
+    // Hashnode detection
+    if (hostname.includes("hashnode")) {
+      const pathMatch = referrerUrl.pathname.match(/\/([^/]+)/);
+      return {
+        backlink_source: "hashnode",
+        backlink_post: pathMatch ? pathMatch[1] : undefined,
+      };
+    }
+
+    // Medium detection
+    if (hostname.includes("medium.com")) {
+      return {
+        backlink_source: "medium",
+      };
+    }
+
+    // Other social/blog platforms
+    if (hostname.includes("twitter.com") || hostname.includes("x.com")) {
+      return { backlink_source: "twitter" };
+    }
+    if (hostname.includes("linkedin.com")) {
+      return { backlink_source: "linkedin" };
+    }
+    if (hostname.includes("facebook.com")) {
+      return { backlink_source: "facebook" };
+    }
+  } catch (_error) {
+    // Invalid URL, ignore
+  }
+
+  return {};
+}
 
 // Track analytics event with full IP tracking and daily aggregation
 export async function trackEvent(data: {
@@ -57,15 +149,20 @@ export async function trackEvent(data: {
     if (!data.skipDedup && data.eventType.includes("view")) {
       const dedupWindow = new Date(Date.now() - DEDUP_WINDOW_MS);
 
+      // Prefer sessionId (best for page view accuracy), then userId, then IP.
+      // Using IP as an OR condition can massively undercount users behind NAT,
+      // and in local/dev where IP is often always 127.0.0.1.
+      const dedupIdentity: Record<string, unknown> = data.sessionId
+        ? { sessionId: data.sessionId }
+        : userId
+        ? { userId }
+        : { ip: data.ip };
+
       const recentEvent = await AnalyticsEvent.findOne({
         eventType: data.eventType,
         entityType: data.entityType,
         entityId: data.entityId,
-        $or: [
-          { ip: data.ip },
-          ...(data.sessionId ? [{ sessionId: data.sessionId }] : []),
-          ...(userId ? [{ userId }] : []),
-        ],
+        ...dedupIdentity,
         createdAt: { $gte: dedupWindow },
       }).lean();
 

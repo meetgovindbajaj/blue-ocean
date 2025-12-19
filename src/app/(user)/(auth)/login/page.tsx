@@ -1,14 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import styles from "../auth.module.css";
-import { Mail, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Suspense, useState } from "react";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
+import styles from "../auth.module.css";
 
-const LoginPage = () => {
+const LoginContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { refreshUser } = useAuth();
@@ -52,7 +52,7 @@ const LoginPage = () => {
       } else {
         toast.error(data.error || "Login failed");
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
@@ -150,6 +150,7 @@ const LoginPage = () => {
             disabled={loading}
           >
             <svg viewBox="0 0 24 24" width="20" height="20">
+              <title>Google</title>
               <path
                 fill="#4285F4"
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -179,6 +180,27 @@ const LoginPage = () => {
         </div>
       </div>
     </div>
+  );
+};
+
+const LoginPage = () => {
+  return (
+    <Suspense
+      fallback={
+        <div className={styles.page}>
+          <div className={styles.container}>
+            <div className={styles.card}>
+              <div className={styles.loadingState}>
+                <Loader2 size={48} className={styles.spinner} />
+                <p>Loading...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    >
+      <LoginContent />
+    </Suspense>
   );
 };
 

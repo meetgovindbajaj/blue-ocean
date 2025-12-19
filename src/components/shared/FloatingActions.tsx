@@ -69,7 +69,13 @@ export default function FloatingActions() {
   };
 
   const handleShare = (platform: string) => {
-    const url = encodeURIComponent(window.location.href);
+    // Add UTM parameters to the shared URL
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.set("utm_source", platform);
+    currentUrl.searchParams.set("utm_medium", "social");
+    currentUrl.searchParams.set("utm_campaign", "share");
+
+    const url = encodeURIComponent(currentUrl.toString());
     const title = encodeURIComponent(document.title);
 
     let shareUrl = "";
@@ -88,7 +94,7 @@ export default function FloatingActions() {
         shareUrl = `https://wa.me/?text=${title}%20${url}`;
         break;
       case "copy":
-        navigator.clipboard.writeText(window.location.href);
+        navigator.clipboard.writeText(currentUrl.toString());
         toast.success("Link copied to clipboard!");
         setShowShareMenu(false);
         return;
@@ -148,46 +154,34 @@ export default function FloatingActions() {
             {/* Share submenu */}
             {showShareMenu && (
               <div className={styles.shareSubmenu}>
-                <a
-                  href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '')}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  onClick={() => handleShare("facebook")}
                   className={styles.shareOption}
                   aria-label="Share on Facebook"
-                  onClick={() => setShowShareMenu(false)}
                 >
                   <Facebook size={18} />
-                </a>
-                <a
-                  href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '')}&text=${encodeURIComponent(typeof window !== 'undefined' ? document.title : '')}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                </button>
+                <button
+                  onClick={() => handleShare("twitter")}
                   className={styles.shareOption}
                   aria-label="Share on Twitter"
-                  onClick={() => setShowShareMenu(false)}
                 >
                   <Twitter size={18} />
-                </a>
-                <a
-                  href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '')}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                </button>
+                <button
+                  onClick={() => handleShare("linkedin")}
                   className={styles.shareOption}
                   aria-label="Share on LinkedIn"
-                  onClick={() => setShowShareMenu(false)}
                 >
                   <Linkedin size={18} />
-                </a>
-                <a
-                  href={`https://wa.me/?text=${encodeURIComponent(typeof window !== 'undefined' ? document.title + ' ' + window.location.href : '')}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                </button>
+                <button
+                  onClick={() => handleShare("whatsapp")}
                   className={styles.shareOption}
                   aria-label="Share on WhatsApp"
-                  onClick={() => setShowShareMenu(false)}
                 >
                   <MessageCircle size={18} />
-                </a>
+                </button>
                 <button
                   onClick={() => handleShare("copy")}
                   className={styles.shareOption}
@@ -237,7 +231,9 @@ export default function FloatingActions() {
             setIsOpen(!isOpen);
             setShowShareMenu(false);
           }}
-          className={`${styles.mainButton} ${isOpen ? styles.mainButtonOpen : ""}`}
+          className={`${styles.mainButton} ${
+            isOpen ? styles.mainButtonOpen : ""
+          }`}
           aria-label={isOpen ? "Close menu" : "Open menu"}
         >
           <Plus size={24} />

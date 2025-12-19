@@ -1,7 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
+import {
+  detectBacklinkSource,
+  extractUTMParameters,
+  getClientIp,
+  trackEvent,
+} from "@/lib/analytics";
 import connectDB from "@/lib/db";
-import { trackEvent, getClientIp } from "@/lib/analytics";
-import { EventType, EntityType } from "@/models/Analytics";
+import type { EntityType, EventType } from "@/models/Analytics";
 
 export const dynamic = "force-dynamic";
 
@@ -22,9 +27,12 @@ export async function POST(request: NextRequest) {
       metadata = {},
     } = body;
 
-    if (!eventType || !entityType) {
+    if (!eventType || !entityType || !entityId) {
       return NextResponse.json(
-        { success: false, error: "eventType and entityType are required" },
+        {
+          success: false,
+          error: "eventType, entityType, and entityId are required",
+        },
         { status: 400 }
       );
     }
@@ -32,7 +40,21 @@ export async function POST(request: NextRequest) {
     // Get IP and user agent
     const ip = getClientIp(request);
     const userAgent = request.headers.get("user-agent") || "";
-    const referer = request.headers.get("referer") || "";
+    const refererHeader = request.headers.get("referer") || "";
+
+    // Prefer a client-supplied referrer (e.g. document.referrer) if provided.
+    // The browser's Referer header for this API call is typically the current page URL,
+    // not the external referrer we want for attribution.
+    const referrer =
+      typeof metadata?.referrer === "string" && metadata.referrer
+        ? metadata.referrer
+        : refererHeader;
+
+    // Extract UTM parameters
+    const utmParams = extractUTMParameters(request);
+
+    // Detect backlink source
+    const backlinkInfo = detectBacklinkSource(referrer);
 
     // Track the event
     const event = await trackEvent({
@@ -47,7 +69,9 @@ export async function POST(request: NextRequest) {
       metadata: {
         ...metadata,
         userAgent,
-        referrer: referer,
+        referrer,
+        ...utmParams,
+        ...backlinkInfo,
       },
     });
 

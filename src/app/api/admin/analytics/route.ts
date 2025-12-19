@@ -1,11 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db";
-import Product from "@/models/Product";
-import Category from "@/models/Category";
-import User from "@/models/User";
-import HeroBanner from "@/models/HeroBanner";
-import Tag from "@/models/Tag";
 import { AnalyticsEvent } from "@/models/Analytics";
+import Category from "@/models/Category";
+import HeroBanner from "@/models/HeroBanner";
+import Product from "@/models/Product";
+import Tag from "@/models/Tag";
+import User from "@/models/User";
 
 export const dynamic = "force-dynamic";
 
@@ -30,7 +30,6 @@ export async function GET(request: NextRequest) {
       case "90d":
         startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
         break;
-      case "all":
       default:
         startDate = null;
     }
@@ -39,29 +38,62 @@ export async function GET(request: NextRequest) {
     const dateMatch = startDate ? { createdAt: { $gte: startDate } } : {};
 
     // Get overview stats from unified analytics
-    const [totalProducts, totalUsers, analyticsOverview, storedBannerClicks] = await Promise.all([
-      Product.countDocuments(),
-      User.countDocuments(),
-      AnalyticsEvent.aggregate([
-        { $match: dateMatch },
-        {
-          $group: {
-            _id: null,
-            totalViews: {
-              $sum: { $cond: [{ $regexMatch: { input: "$eventType", regex: /view/ } }, 1, 0] },
+    const [totalProducts, totalUsers, analyticsOverview, storedBannerClicks] =
+      await Promise.all([
+        Product.countDocuments(),
+        User.countDocuments(),
+        AnalyticsEvent.aggregate([
+          { $match: dateMatch },
+          {
+            $group: {
+              _id: null,
+              productViews: {
+                $sum: {
+                  $cond: [{ $eq: ["$eventType", "product_view"] }, 1, 0],
+                },
+              },
+              categoryViews: {
+                $sum: {
+                  $cond: [{ $eq: ["$eventType", "category_view"] }, 1, 0],
+                },
+              },
+              pageViews: {
+                $sum: {
+                  $cond: [{ $eq: ["$eventType", "page_view"] }, 1, 0],
+                },
+              },
+              bannerImpressions: {
+                $sum: {
+                  $cond: [{ $eq: ["$eventType", "banner_impression"] }, 1, 0],
+                },
+              },
+              totalViews: {
+                $sum: {
+                  $cond: [
+                    { $regexMatch: { input: "$eventType", regex: /view/ } },
+                    1,
+                    0,
+                  ],
+                },
+              },
+              totalClicks: {
+                $sum: {
+                  $cond: [
+                    { $regexMatch: { input: "$eventType", regex: /click/ } },
+                    1,
+                    0,
+                  ],
+                },
+              },
+              uniqueIps: { $addToSet: "$ip" },
             },
-            totalClicks: {
-              $sum: { $cond: [{ $regexMatch: { input: "$eventType", regex: /click/ } }, 1, 0] },
-            },
-            uniqueIps: { $addToSet: "$ip" },
           },
-        },
-      ]),
-      // Also get stored banner clicks that may not be in analytics events (legacy data)
-      HeroBanner.aggregate([
-        { $group: { _id: null, totalClicks: { $sum: "$clicks" } } },
-      ]),
-    ]);
+        ]),
+        // Also get stored banner clicks that may not be in analytics events (legacy data)
+        HeroBanner.aggregate([
+          { $group: { _id: null, totalClicks: { $sum: "$clicks" } } },
+        ]),
+      ]);
 
     // Use the higher of analytics clicks or stored banner clicks for total
     const analyticsClicks = analyticsOverview[0]?.totalClicks || 0;
@@ -71,6 +103,10 @@ export async function GET(request: NextRequest) {
       totalViews: analyticsOverview[0]?.totalViews || 0,
       totalClicks: Math.max(analyticsClicks, bannerStoredClicks),
       uniqueVisitors: analyticsOverview[0]?.uniqueIps?.length || 0,
+      productViews: analyticsOverview[0]?.productViews || 0,
+      categoryViews: analyticsOverview[0]?.categoryViews || 0,
+      pageViews: analyticsOverview[0]?.pageViews || 0,
+      bannerImpressions: analyticsOverview[0]?.bannerImpressions || 0,
       totalProducts,
       totalUsers,
     };
@@ -97,12 +133,42 @@ export async function GET(request: NextRequest) {
     ]);
 
     const maxViews = topProductsFromAnalytics[0]?.views || 1;
-    const topProductsWithPercentage = topProductsFromAnalytics.map((p: any) => ({
-      id: p._id,
-      name: p.entityName || "Unknown",
+    const topProductsWithPercentage = topProductsFromAnalytics.map(
+      (p: any) => ({
+        id: p._id,
+        name: p.entityName || "Unknown",
+        views: p.views || 0,
+        uniqueVisitors: p.uniqueIps?.length || 0,
+        percentage: Math.round(((p.views || 0) / maxViews) * 100),
+      })
+    );
+
+    // Get top pages by views
+    const topPagesFromAnalytics = await AnalyticsEvent.aggregate([
+      {
+        $match: {
+          entityType: "page",
+          eventType: "page_view",
+          ...dateMatch,
+        },
+      },
+      {
+        $group: {
+          _id: "$entityId",
+          views: { $sum: 1 },
+          uniqueIps: { $addToSet: "$ip" },
+        },
+      },
+      { $sort: { views: -1 } },
+      { $limit: 10 },
+    ]);
+
+    const maxPageViews = topPagesFromAnalytics[0]?.views || 1;
+    const topPages = topPagesFromAnalytics.map((p: any) => ({
+      path: p._id || "unknown",
       views: p.views || 0,
       uniqueVisitors: p.uniqueIps?.length || 0,
-      percentage: Math.round(((p.views || 0) / maxViews) * 100),
+      percentage: Math.round(((p.views || 0) / maxPageViews) * 100),
     }));
 
     // Get all active categories with their product counts and total product views
@@ -113,7 +179,12 @@ export async function GET(request: NextRequest) {
           from: "products",
           let: { categoryId: "$_id" },
           pipeline: [
-            { $match: { $expr: { $eq: ["$category", "$$categoryId"] }, isActive: true } },
+            {
+              $match: {
+                $expr: { $eq: ["$category", "$$categoryId"] },
+                isActive: true,
+              },
+            },
           ],
           as: "products",
         },
@@ -167,7 +238,8 @@ export async function GET(request: NextRequest) {
       .sort((a: any, b: any) => {
         // Sort by views first, then by product count, then by total product views
         if (b.views !== a.views) return b.views - a.views;
-        if (b.productCount !== a.productCount) return b.productCount - a.productCount;
+        if (b.productCount !== a.productCount)
+          return b.productCount - a.productCount;
         return b.totalProductViews - a.totalProductViews;
       })
       .slice(0, 10); // Show top 10 categories
@@ -189,7 +261,9 @@ export async function GET(request: NextRequest) {
           $group: {
             _id: "$entityId",
             impressions: {
-              $sum: { $cond: [{ $eq: ["$eventType", "banner_impression"] }, 1, 0] },
+              $sum: {
+                $cond: [{ $eq: ["$eventType", "banner_impression"] }, 1, 0],
+              },
             },
             clicks: {
               $sum: { $cond: [{ $eq: ["$eventType", "banner_click"] }, 1, 0] },
@@ -230,7 +304,10 @@ export async function GET(request: NextRequest) {
     });
 
     // Calculate total banner clicks for consistency check
-    const totalBannerClicks = bannerStatsWithCTR.reduce((sum, b) => sum + b.clicks, 0);
+    const totalBannerClicks = bannerStatsWithCTR.reduce(
+      (sum, b) => sum + b.clicks,
+      0
+    );
 
     // Get tag stats with analytics data
     const [tagStats, tagAnalytics] = await Promise.all([
@@ -281,7 +358,10 @@ export async function GET(request: NextRequest) {
 
     // Sort by clicks descending
     tagStatsWithAnalytics.sort((a, b) => b.clicks - a.clicks);
-    const totalTagClicks = tagStatsWithAnalytics.reduce((sum, t) => sum + t.clicks, 0);
+    const totalTagClicks = tagStatsWithAnalytics.reduce(
+      (sum, t) => sum + t.clicks,
+      0
+    );
 
     // Get daily trends for charts - aggregate from AnalyticsEvent directly
     // Now with separate counts for each event type
@@ -299,9 +379,14 @@ export async function GET(request: NextRequest) {
           categoryViews: {
             $sum: { $cond: [{ $eq: ["$eventType", "category_view"] }, 1, 0] },
           },
+          pageViews: {
+            $sum: { $cond: [{ $eq: ["$eventType", "page_view"] }, 1, 0] },
+          },
           // Banner stats
           bannerImpressions: {
-            $sum: { $cond: [{ $eq: ["$eventType", "banner_impression"] }, 1, 0] },
+            $sum: {
+              $cond: [{ $eq: ["$eventType", "banner_impression"] }, 1, 0],
+            },
           },
           bannerClicks: {
             $sum: { $cond: [{ $eq: ["$eventType", "banner_click"] }, 1, 0] },
@@ -312,10 +397,22 @@ export async function GET(request: NextRequest) {
           },
           // Legacy totals for backwards compatibility
           views: {
-            $sum: { $cond: [{ $regexMatch: { input: "$eventType", regex: /view/ } }, 1, 0] },
+            $sum: {
+              $cond: [
+                { $regexMatch: { input: "$eventType", regex: /view/ } },
+                1,
+                0,
+              ],
+            },
           },
           clicks: {
-            $sum: { $cond: [{ $regexMatch: { input: "$eventType", regex: /click/ } }, 1, 0] },
+            $sum: {
+              $cond: [
+                { $regexMatch: { input: "$eventType", regex: /click/ } },
+                1,
+                0,
+              ],
+            },
           },
         },
       },
@@ -334,40 +431,136 @@ export async function GET(request: NextRequest) {
       },
     ]);
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        overview: {
-          ...overview,
-          totalBannerClicks,
-          totalTagClicks,
+    // Get UTM source breakdown
+    const utmSources = await AnalyticsEvent.aggregate([
+      {
+        $match: {
+          ...dateMatch,
+          "metadata.utm_source": { $exists: true, $ne: null },
         },
-        topProducts: topProductsWithPercentage,
-        topCategories,
-        bannerStats: bannerStatsWithCTR,
-        tagStats: tagStatsWithAnalytics,
-        dailyTrends: dailyTrends.map((d: any) => ({
-          date: d._id,
-          productViews: d.productViews || 0,
-          categoryViews: d.categoryViews || 0,
-          bannerImpressions: d.bannerImpressions || 0,
-          bannerClicks: d.bannerClicks || 0,
-          tagClicks: d.tagClicks || 0,
-          // Legacy totals
-          views: d.views || 0,
-          clicks: d.clicks || 0,
-        })),
-        entityBreakdown: entityBreakdown.map((e: any) => ({
-          name: e._id,
-          value: e.count,
-        })),
       },
-    });
+      {
+        $group: {
+          _id: "$metadata.utm_source",
+          visits: { $sum: 1 },
+          uniqueIps: { $addToSet: "$ip" },
+        },
+      },
+      { $sort: { visits: -1 } },
+      { $limit: 10 },
+    ]);
+
+    // Get UTM campaign breakdown
+    const utmCampaigns = await AnalyticsEvent.aggregate([
+      {
+        $match: {
+          ...dateMatch,
+          "metadata.utm_campaign": { $exists: true, $ne: null },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            campaign: "$metadata.utm_campaign",
+            source: "$metadata.utm_source",
+            medium: "$metadata.utm_medium",
+          },
+          visits: { $sum: 1 },
+          uniqueIps: { $addToSet: "$ip" },
+        },
+      },
+      { $sort: { visits: -1 } },
+      { $limit: 10 },
+    ]);
+
+    // Get backlink source breakdown (Dev.to, Hashnode, etc.)
+    const backlinkSources = await AnalyticsEvent.aggregate([
+      {
+        $match: {
+          ...dateMatch,
+          "metadata.backlink_source": { $exists: true, $ne: null },
+        },
+      },
+      {
+        $group: {
+          _id: "$metadata.backlink_source",
+          visits: { $sum: 1 },
+          uniqueIps: { $addToSet: "$ip" },
+          posts: { $addToSet: "$metadata.backlink_post" },
+        },
+      },
+      { $sort: { visits: -1 } },
+    ]);
+
+    const response = NextResponse.json(
+      {
+        success: true,
+        data: {
+          overview: {
+            ...overview,
+            totalBannerClicks,
+            totalTagClicks,
+          },
+          topProducts: topProductsWithPercentage,
+          topPages,
+          topCategories,
+          bannerStats: bannerStatsWithCTR,
+          tagStats: tagStatsWithAnalytics,
+          dailyTrends: dailyTrends.map((d: any) => ({
+            date: d._id,
+            productViews: d.productViews || 0,
+            categoryViews: d.categoryViews || 0,
+            pageViews: d.pageViews || 0,
+            bannerImpressions: d.bannerImpressions || 0,
+            bannerClicks: d.bannerClicks || 0,
+            tagClicks: d.tagClicks || 0,
+            // Legacy totals
+            views: d.views || 0,
+            clicks: d.clicks || 0,
+          })),
+          entityBreakdown: entityBreakdown.map((e: any) => ({
+            name: e._id,
+            value: e.count,
+          })),
+          // UTM & Backlink tracking
+          utmSources: utmSources.map((u: any) => ({
+            source: u._id || "direct",
+            visits: u.visits || 0,
+            uniqueVisitors: u.uniqueIps?.length || 0,
+          })),
+          utmCampaigns: utmCampaigns.map((c: any) => ({
+            campaign: c._id?.campaign || "unknown",
+            source: c._id?.source || "unknown",
+            medium: c._id?.medium || "unknown",
+            visits: c.visits || 0,
+            uniqueVisitors: c.uniqueIps?.length || 0,
+          })),
+          backlinkSources: backlinkSources.map((b: any) => ({
+            source: b._id || "unknown",
+            visits: b.visits || 0,
+            uniqueVisitors: b.uniqueIps?.length || 0,
+            posts: (b.posts || []).filter((p: any) => p != null),
+          })),
+        },
+      },
+      {
+        headers: {
+          "Cache-Control": "no-store, max-age=0",
+        },
+      }
+    );
+
+    return response;
   } catch (error) {
     console.error("Admin Analytics GET error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to fetch analytics" },
-      { status: 500 }
+      {
+        status: 500,
+        headers: {
+          "Cache-Control": "no-store, max-age=0",
+        },
+      }
     );
   }
 }
