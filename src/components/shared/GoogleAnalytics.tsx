@@ -57,23 +57,6 @@ export default function GoogleAnalytics() {
   );
 }
 
-// GTM Noscript component - should be placed right after <body> tag
-export function GoogleTagManagerNoscript() {
-  if (!GTM_ID) return null;
-
-  return (
-    <noscript>
-      <iframe
-        src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
-        title="Google Tag Manager"
-        height="0"
-        width="0"
-        style={{ display: "none", visibility: "hidden" }}
-      />
-    </noscript>
-  );
-}
-
 // Helper to push events to dataLayer (used by GTM path)
 const pushToDataLayer = (event: DataLayerEvent) => {
   if (typeof window !== "undefined") {
