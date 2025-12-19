@@ -57,6 +57,33 @@ async function processAutoBanner(banner: IHeroBanner): Promise<any | null> {
   let autoSubtitle = banner.content?.subtitle;
 
   switch (banner.contentType) {
+    case "product": {
+      // Hydrate the product so transformBanner can emit slug/prices/thumbnail.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const rawProductId: any = banner.content?.productId;
+      const productId = rawProductId?._id || rawProductId?.id || rawProductId;
+
+      if (!productId) return null;
+
+      const product = await Product.findById(productId)
+        .select("name slug prices images category")
+        .populate("category", "name slug")
+        .lean();
+
+      if (!product) return null;
+
+      return {
+        ...banner,
+        content: {
+          ...banner.content,
+          title: banner.content?.title || product.name,
+          productId: product,
+        },
+      };
+    }
+    case "custom":
+      // Custom banners don't need auto-enrichment; return as-is.
+      return banner;
     case "trending": {
       const dateRange = getDateRange(period);
 
@@ -216,7 +243,6 @@ async function fetchHeroBanners() {
     sourceType: "manual",
   })
     .sort({ order: 1 })
-    .limit(limit)
     .populate("content.productId", "name slug prices images")
     .populate("content.categoryId", "name slug image")
     .lean();
@@ -235,7 +261,7 @@ async function fetchHeroBanners() {
   }
 
   allBanners.sort((a, b) => a.order - b.order);
-  allBanners = allBanners.slice(0, limit);
+  console.log({ allBanners });
 
   return allBanners.map((b) => transformBanner(b, false));
 }
@@ -362,12 +388,14 @@ async function getLandingData() {
 
     // Serialize to plain objects to avoid "Only plain objects can be passed to Client Components" error
     // MongoDB documents may contain _id buffers, Date objects, etc. that can't be passed to client
-    return JSON.parse(JSON.stringify({
-      categories: transformedCategories,
-      products: transformedProducts,
-      tags: transformedTags,
-      heroBanners,
-    }));
+    return JSON.parse(
+      JSON.stringify({
+        categories: transformedCategories,
+        products: transformedProducts,
+        tags: transformedTags,
+        heroBanners,
+      })
+    );
   } catch (error) {
     console.error("Failed to fetch landing data:", error);
     return null;

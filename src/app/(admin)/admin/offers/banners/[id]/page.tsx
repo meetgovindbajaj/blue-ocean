@@ -17,7 +17,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SearchableSelect } from "@/components/ui/searchable-select";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, Save } from "lucide-react";
 import ImagePicker, { ImageData } from "@/components/admin/ImagePicker";
@@ -86,13 +92,21 @@ export default function EditBannerPage({
   });
 
   // Helper to generate CTA link based on content type and selection
-  const generateCtaLink = (contentType: string, productId: string, categoryId: string, prods: Product[], cats: Category[]): string => {
+  const generateCtaLink = (
+    contentType: string,
+    productId: string,
+    categoryId: string,
+    prods: Product[],
+    cats: Category[]
+  ): string => {
     switch (contentType) {
+      case "custom":
+        return "";
       case "product":
-        const product = prods.find(p => p.id === productId);
+        const product = prods.find((p) => p.id === productId);
         return product ? `/products/${product.slug}` : "/products";
       case "category":
-        const category = cats.find(c => c.id === categoryId);
+        const category = cats.find((c) => c.id === categoryId);
         return category ? `/category/${category.slug}` : "/categories";
       case "trending":
         return "/products?sort=trending";
@@ -119,12 +133,14 @@ export default function EditBannerPage({
         const prodData = await prodRes.json();
 
         const loadedCategories = catData.success ? catData.categories : [];
-        const loadedProducts = prodData.success ? prodData.products.map((p: any) => ({
-          id: p.id,
-          name: p.name,
-          slug: p.slug,
-          prices: p.prices,
-        })) : [];
+        const loadedProducts = prodData.success
+          ? prodData.products.map((p: any) => ({
+              id: p.id,
+              name: p.name,
+              slug: p.slug,
+              prices: p.prices,
+            }))
+          : [];
 
         if (catData.success) setCategories(loadedCategories);
         setProducts(loadedProducts);
@@ -133,14 +149,28 @@ export default function EditBannerPage({
           const b = bannerData.banner;
           // The API transformer flattens content fields to top level
           // product/category are objects at top level with id property
-          const productId = b.product?.id || b.content?.productId?.id || b.content?.productId || "";
-          const categoryId = b.category?.id || b.content?.categoryId?.id || b.content?.categoryId || "";
+          const productId =
+            b.product?.id ||
+            b.content?.productId?.id ||
+            b.content?.productId ||
+            "";
+          const categoryId =
+            b.category?.id ||
+            b.content?.categoryId?.id ||
+            b.content?.categoryId ||
+            "";
           const contentType = b.contentType || "custom";
 
           // Generate CTA link if not already set (use top-level ctaLink from transformer)
           let ctaLink = b.ctaLink || b.content?.ctaLink || "";
           if (!ctaLink && contentType !== "custom") {
-            ctaLink = generateCtaLink(contentType, productId, categoryId, loadedProducts, loadedCategories);
+            ctaLink = generateCtaLink(
+              contentType,
+              productId,
+              categoryId,
+              loadedProducts,
+              loadedCategories
+            );
           }
 
           // Format dates for datetime-local input
@@ -163,31 +193,42 @@ export default function EditBannerPage({
               description: b.description || b.content?.description || "",
               ctaText: b.ctaText || b.content?.ctaText || "Shop Now",
               ctaLink: ctaLink,
-              discountPercent: b.discountPercent || b.content?.discountPercent || 0,
+              discountPercent:
+                b.discountPercent || b.content?.discountPercent || 0,
               offerCode: b.offerCode || b.content?.offerCode || "",
-              offerValidUntil: formatDateForInput(b.offerValidUntil || b.content?.offerValidUntil),
+              offerValidUntil: formatDateForInput(
+                b.offerValidUntil || b.content?.offerValidUntil
+              ),
             },
-            image: b.image?.id ? {
-              id: b.image.id,
-              name: b.image.name || "",
-              url: b.image.url || "",
-              thumbnailUrl: b.image.thumbnailUrl || "",
-              downloadUrl: b.image.downloadUrl || "",
-              size: b.image.size || 0,
-              width: b.image.width || 0,
-              height: b.image.height || 0,
-            } : null,
+            image: b.image?.id
+              ? {
+                  id: b.image.id,
+                  name: b.image.name || "",
+                  url: b.image.url || "",
+                  thumbnailUrl: b.image.thumbnailUrl || "",
+                  downloadUrl: b.image.downloadUrl || "",
+                  size: b.image.size || 0,
+                  width: b.image.width || 0,
+                  height: b.image.height || 0,
+                }
+              : null,
             imageAlt: b.image?.alt || "Hero Banner",
-            mobileImage: (b.mobileImage?.url || b.image?.mobileUrl) ? {
-              id: b.mobileImage?.id || `mobile-${b.image?.id || ""}`,
-              name: b.mobileImage?.name || "Mobile Banner",
-              url: b.mobileImage?.url || b.image?.mobileUrl,
-              thumbnailUrl: b.mobileImage?.thumbnailUrl || b.mobileImage?.url || b.image?.mobileUrl,
-              downloadUrl: b.mobileImage?.downloadUrl || "",
-              size: b.mobileImage?.size || 0,
-              width: b.mobileImage?.width || 0,
-              height: b.mobileImage?.height || 0,
-            } : null,
+            mobileImage:
+              b.mobileImage?.url || b.image?.mobileUrl
+                ? {
+                    id: b.mobileImage?.id || `mobile-${b.image?.id || ""}`,
+                    name: b.mobileImage?.name || "Mobile Banner",
+                    url: b.mobileImage?.url || b.image?.mobileUrl,
+                    thumbnailUrl:
+                      b.mobileImage?.thumbnailUrl ||
+                      b.mobileImage?.url ||
+                      b.image?.mobileUrl,
+                    downloadUrl: b.mobileImage?.downloadUrl || "",
+                    size: b.mobileImage?.size || 0,
+                    width: b.mobileImage?.width || 0,
+                    height: b.mobileImage?.height || 0,
+                  }
+                : null,
             order: b.order || 0,
             isActive: b.isActive ?? true,
             startDate: formatDateForInput(b.startDate),
@@ -217,20 +258,24 @@ export default function EditBannerPage({
       categories
     );
     if (newCtaLink && formData.content.ctaLink !== newCtaLink) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        content: { ...prev.content, ctaLink: newCtaLink }
+        content: { ...prev.content, ctaLink: newCtaLink },
       }));
     }
-  }, [formData.contentType, formData.content.productId, formData.content.categoryId]);
+  }, [
+    formData.contentType,
+    formData.content.productId,
+    formData.content.categoryId,
+  ]);
 
   // Auto-fill discount when product is selected (for product type banners)
   const handleProductSelect = (productId: string) => {
-    const product = products.find(p => p.id === productId);
+    const product = products.find((p) => p.id === productId);
     const discount = product?.prices?.discount || 0;
     const title = product?.name || "";
 
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       content: {
         ...prev.content,
@@ -272,12 +317,15 @@ export default function EditBannerPage({
             thumbnailUrl: formData.image.thumbnailUrl,
             name: formData.image.name,
           },
-          mobileImage: formData.mobileImage ? {
-            id: formData.mobileImage.id,
-            url: formData.mobileImage.url,
-            thumbnailUrl: formData.mobileImage.thumbnailUrl || formData.mobileImage.url,
-            name: formData.mobileImage.name || "Mobile Banner",
-          } : null,
+          mobileImage: formData.mobileImage
+            ? {
+                id: formData.mobileImage.id,
+                url: formData.mobileImage.url,
+                thumbnailUrl:
+                  formData.mobileImage.thumbnailUrl || formData.mobileImage.url,
+                name: formData.mobileImage.name || "Mobile Banner",
+              }
+            : null,
           order: formData.order,
           isActive: formData.isActive,
           startDate: formData.startDate || null,
@@ -399,7 +447,10 @@ export default function EditBannerPage({
                   min="0"
                   value={formData.order}
                   onChange={(e) =>
-                    setFormData({ ...formData, order: parseInt(e.target.value) || 0 })
+                    setFormData({
+                      ...formData,
+                      order: parseInt(e.target.value) || 0,
+                    })
                   }
                 />
                 <p className="text-xs text-muted-foreground">
@@ -429,7 +480,9 @@ export default function EditBannerPage({
           <Card>
             <CardHeader>
               <CardTitle>Banner Image</CardTitle>
-              <CardDescription>Select or upload your banner image</CardDescription>
+              <CardDescription>
+                Select or upload your banner image
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
@@ -482,11 +535,13 @@ export default function EditBannerPage({
           <Card className="lg:col-span-2">
             <CardHeader>
               <CardTitle>Banner Content</CardTitle>
-              <CardDescription>Text and links displayed on the banner</CardDescription>
+              <CardDescription>
+                Text and links displayed on the banner
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
-                {(formData.contentType === "product") && (
+                {formData.contentType === "product" && (
                   <div className="space-y-2">
                     <Label htmlFor="productId">Select Product</Label>
                     <SearchableSelect
@@ -506,7 +561,7 @@ export default function EditBannerPage({
                   </div>
                 )}
 
-                {(formData.contentType === "category") && (
+                {formData.contentType === "category" && (
                   <div className="space-y-2">
                     <Label htmlFor="categoryId">Select Category</Label>
                     <Select
@@ -555,7 +610,10 @@ export default function EditBannerPage({
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        content: { ...formData.content, subtitle: e.target.value },
+                        content: {
+                          ...formData.content,
+                          subtitle: e.target.value,
+                        },
                       })
                     }
                     placeholder="Secondary text"
@@ -571,7 +629,10 @@ export default function EditBannerPage({
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      content: { ...formData.content, description: e.target.value },
+                      content: {
+                        ...formData.content,
+                        description: e.target.value,
+                      },
                     })
                   }
                   rows={2}
@@ -588,7 +649,10 @@ export default function EditBannerPage({
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        content: { ...formData.content, ctaText: e.target.value },
+                        content: {
+                          ...formData.content,
+                          ctaText: e.target.value,
+                        },
                       })
                     }
                     placeholder="Shop Now"
@@ -603,7 +667,10 @@ export default function EditBannerPage({
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        content: { ...formData.content, ctaLink: e.target.value },
+                        content: {
+                          ...formData.content,
+                          ctaLink: e.target.value,
+                        },
                       })
                     }
                     placeholder="/products or /categories/living-room"
@@ -611,7 +678,8 @@ export default function EditBannerPage({
                 </div>
               </div>
 
-              {(formData.contentType === "offer" || formData.contentType === "product") && (
+              {(formData.contentType === "offer" ||
+                formData.contentType === "product") && (
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="discountPercent">Discount %</Label>
@@ -647,7 +715,10 @@ export default function EditBannerPage({
                         onChange={(e) =>
                           setFormData({
                             ...formData,
-                            content: { ...formData.content, offerCode: e.target.value },
+                            content: {
+                              ...formData.content,
+                              offerCode: e.target.value,
+                            },
                           })
                         }
                         placeholder="SUMMER20"
@@ -667,7 +738,10 @@ export default function EditBannerPage({
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        content: { ...formData.content, offerValidUntil: e.target.value },
+                        content: {
+                          ...formData.content,
+                          offerValidUntil: e.target.value,
+                        },
                       })
                     }
                   />
@@ -683,7 +757,9 @@ export default function EditBannerPage({
           <Card className="lg:col-span-2">
             <CardHeader>
               <CardTitle>Schedule</CardTitle>
-              <CardDescription>Control when this banner is shown</CardDescription>
+              <CardDescription>
+                Control when this banner is shown
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid gap-4 md:grid-cols-2">

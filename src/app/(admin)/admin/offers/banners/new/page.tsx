@@ -17,7 +17,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SearchableSelect } from "@/components/ui/searchable-select";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { ArrowLeft, Save } from "lucide-react";
 import ImagePicker, { ImageData } from "@/components/admin/ImagePicker";
 import { toast } from "sonner";
@@ -76,13 +82,19 @@ export default function NewBannerPage() {
   });
 
   // Helper to generate CTA link based on content type and selection
-  const generateCtaLink = (contentType: string, productId: string, categoryId: string): string => {
+  const generateCtaLink = (
+    contentType: string,
+    productId: string,
+    categoryId: string
+  ): string => {
     switch (contentType) {
+      case "custom":
+        return "";
       case "product":
-        const product = products.find(p => p.id === productId);
+        const product = products.find((p) => p.id === productId);
         return product ? `/products/${product.slug}` : "/products";
       case "category":
-        const category = categories.find(c => c.id === categoryId);
+        const category = categories.find((c) => c.id === categoryId);
         return category ? `/category/${category.slug}` : "/categories";
       case "trending":
         return "/products?sort=trending";
@@ -103,20 +115,26 @@ export default function NewBannerPage() {
       formData.content.categoryId
     );
     if (newCtaLink && formData.content.ctaLink !== newCtaLink) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        content: { ...prev.content, ctaLink: newCtaLink }
+        content: { ...prev.content, ctaLink: newCtaLink },
       }));
     }
-  }, [formData.contentType, formData.content.productId, formData.content.categoryId, products, categories]);
+  }, [
+    formData.contentType,
+    formData.content.productId,
+    formData.content.categoryId,
+    products,
+    categories,
+  ]);
 
   // Auto-fill discount when product is selected (for product type banners)
   const handleProductSelect = (productId: string) => {
-    const product = products.find(p => p.id === productId);
+    const product = products.find((p) => p.id === productId);
     const discount = product?.prices?.discount || 0;
     const title = product?.name || "";
 
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       content: {
         ...prev.content,
@@ -141,12 +159,14 @@ export default function NewBannerPage() {
         if (catData.success) setCategories(catData.categories);
         if (prodData.success) {
           // Ensure prices are included
-          setProducts(prodData.products.map((p: any) => ({
-            id: p.id,
-            name: p.name,
-            slug: p.slug,
-            prices: p.prices,
-          })));
+          setProducts(
+            prodData.products.map((p: any) => ({
+              id: p.id,
+              name: p.name,
+              slug: p.slug,
+              prices: p.prices,
+            }))
+          );
         }
       } catch (error) {
         console.error("Failed to fetch data:", error);
@@ -273,7 +293,10 @@ export default function NewBannerPage() {
                   min="0"
                   value={formData.order}
                   onChange={(e) =>
-                    setFormData({ ...formData, order: parseInt(e.target.value) || 0 })
+                    setFormData({
+                      ...formData,
+                      order: parseInt(e.target.value) || 0,
+                    })
                   }
                 />
                 <p className="text-xs text-muted-foreground">
@@ -303,7 +326,9 @@ export default function NewBannerPage() {
           <Card>
             <CardHeader>
               <CardTitle>Banner Image</CardTitle>
-              <CardDescription>Select or upload your banner image</CardDescription>
+              <CardDescription>
+                Select or upload your banner image
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
@@ -356,11 +381,13 @@ export default function NewBannerPage() {
           <Card className="lg:col-span-2">
             <CardHeader>
               <CardTitle>Banner Content</CardTitle>
-              <CardDescription>Text and links displayed on the banner</CardDescription>
+              <CardDescription>
+                Text and links displayed on the banner
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
-                {(formData.contentType === "product") && (
+                {formData.contentType === "product" && (
                   <div className="space-y-2">
                     <Label htmlFor="productId">Select Product</Label>
                     <SearchableSelect
@@ -380,7 +407,7 @@ export default function NewBannerPage() {
                   </div>
                 )}
 
-                {(formData.contentType === "category") && (
+                {formData.contentType === "category" && (
                   <div className="space-y-2">
                     <Label htmlFor="categoryId">Select Category</Label>
                     <Select
@@ -429,7 +456,10 @@ export default function NewBannerPage() {
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        content: { ...formData.content, subtitle: e.target.value },
+                        content: {
+                          ...formData.content,
+                          subtitle: e.target.value,
+                        },
                       })
                     }
                     placeholder="Secondary text"
@@ -445,7 +475,10 @@ export default function NewBannerPage() {
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      content: { ...formData.content, description: e.target.value },
+                      content: {
+                        ...formData.content,
+                        description: e.target.value,
+                      },
                     })
                   }
                   rows={2}
@@ -462,7 +495,10 @@ export default function NewBannerPage() {
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        content: { ...formData.content, ctaText: e.target.value },
+                        content: {
+                          ...formData.content,
+                          ctaText: e.target.value,
+                        },
                       })
                     }
                     placeholder="Shop Now"
@@ -477,7 +513,10 @@ export default function NewBannerPage() {
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        content: { ...formData.content, ctaLink: e.target.value },
+                        content: {
+                          ...formData.content,
+                          ctaLink: e.target.value,
+                        },
                       })
                     }
                     placeholder="/products or /categories/living-room"
@@ -485,7 +524,8 @@ export default function NewBannerPage() {
                 </div>
               </div>
 
-              {(formData.contentType === "offer" || formData.contentType === "product") && (
+              {(formData.contentType === "offer" ||
+                formData.contentType === "product") && (
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="discountPercent">Discount %</Label>
@@ -521,7 +561,10 @@ export default function NewBannerPage() {
                         onChange={(e) =>
                           setFormData({
                             ...formData,
-                            content: { ...formData.content, offerCode: e.target.value },
+                            content: {
+                              ...formData.content,
+                              offerCode: e.target.value,
+                            },
                           })
                         }
                         placeholder="SUMMER20"

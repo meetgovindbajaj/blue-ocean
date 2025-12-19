@@ -38,7 +38,10 @@ export async function GET(request: NextRequest) {
     };
 
     // Manual banners
-    const manualBanners = await HeroBanner.find({ ...query, sourceType: "manual" })
+    const manualBanners = await HeroBanner.find({
+      ...query,
+      sourceType: "manual",
+    })
       .sort({ order: 1 })
       .limit(limit)
       .populate("content.productId", "name slug prices images")
@@ -49,7 +52,10 @@ export async function GET(request: NextRequest) {
 
     // Auto banners
     if (includeAuto) {
-      const autoBanners = await HeroBanner.find({ ...query, sourceType: "auto" })
+      const autoBanners = await HeroBanner.find({
+        ...query,
+        sourceType: "auto",
+      })
         .sort({ order: 1 })
         .lean();
 
@@ -71,7 +77,9 @@ export async function GET(request: NextRequest) {
     const userId = request.headers.get("x-user-id") || undefined;
 
     // Fire-and-forget: track impressions
-    trackImpressions(allBanners, ip, userAgent, sessionId, userId).catch(() => {});
+    trackImpressions(allBanners, ip, userAgent, sessionId, userId).catch(
+      () => {}
+    );
 
     return NextResponse.json(
       { success: true, banners: responseData },
@@ -130,6 +138,31 @@ async function processAutoBanner(banner: IHeroBanner): Promise<any | null> {
   let autoSubtitle = banner.content?.subtitle;
 
   switch (banner.contentType) {
+    case "product": {
+      const rawProductId: any = banner.content?.productId;
+      const productId = rawProductId?._id || rawProductId?.id || rawProductId;
+
+      if (!productId) return null;
+
+      const product = await Product.findById(productId)
+        .select("name slug prices images category")
+        .populate("category", "name slug")
+        .lean();
+
+      if (!product) return null;
+
+      return {
+        ...banner,
+        content: {
+          ...banner.content,
+          title: banner.content?.title || product.name,
+          productId: product,
+        },
+      };
+    }
+    case "custom":
+      // Custom banners don't need auto-enrichment; return as-is.
+      return banner;
     case "trending": {
       const dateRange = getDateRange(period);
 

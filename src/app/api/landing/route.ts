@@ -212,6 +212,31 @@ async function processAutoBanner(banner: IHeroBanner): Promise<any | null> {
   let autoSubtitle = banner.content?.subtitle;
 
   switch (banner.contentType) {
+    case "product": {
+      const rawProductId: any = banner.content?.productId;
+      const productId = rawProductId?._id || rawProductId?.id || rawProductId;
+
+      if (!productId) return null;
+
+      const product = await Product.findById(productId)
+        .select("name slug prices images category")
+        .populate("category", "name slug")
+        .lean();
+
+      if (!product) return null;
+
+      return {
+        ...banner,
+        content: {
+          ...banner.content,
+          title: banner.content?.title || product.name,
+          productId: product,
+        },
+      };
+    }
+    case "custom":
+      // Custom banners don't need auto-enrichment; return as-is.
+      return banner;
     case "trending": {
       const dateRange = getDateRange(period);
 
