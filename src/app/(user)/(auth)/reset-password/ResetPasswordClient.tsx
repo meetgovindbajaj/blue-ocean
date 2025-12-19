@@ -4,14 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import styles from "../auth.module.css";
-import {
-  CheckCircle,
-  Eye,
-  EyeOff,
-  Loader2,
-  Lock,
-  XCircle,
-} from "lucide-react";
+import { CheckCircle, Eye, EyeOff, Loader2, Lock, XCircle } from "lucide-react";
 import { toast } from "sonner";
 
 export default function ResetPasswordClient() {
@@ -39,7 +32,7 @@ export default function ResetPasswordClient() {
 
       try {
         const response = await fetch(
-          `/api/auth/verify-token?token=${token}&type=reset_password`,
+          `/api/auth/verify-token?token=${token}&type=reset_password`
         );
         const data = await response.json();
         setTokenValid(data.valid);
@@ -247,7 +240,11 @@ export default function ResetPasswordClient() {
               </div>
             </div>
 
-            <button type="submit" className={styles.submitButton} disabled={loading}>
+            <button
+              type="submit"
+              className={styles.submitButton}
+              disabled={loading}
+            >
               {loading ? (
                 <>
                   <Loader2 size={18} className={styles.spinner} />
