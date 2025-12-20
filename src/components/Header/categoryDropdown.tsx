@@ -245,11 +245,11 @@ const CategoryDropdown = ({ id }: { id: string }) => {
                   ? styles.categoryItemActive
                   : ""
               }`}
-              onMouseEnter={() => handleParentCategoryHover(category)}
             >
               <Link
                 href={`/categories/${category.slug}` as any}
                 className={styles.categoryLink}
+                onMouseEnter={() => handleParentCategoryHover(category)}
               >
                 <span className={styles.categoryName}>{category.name}</span>
               </Link>
@@ -277,11 +277,11 @@ const CategoryDropdown = ({ id }: { id: string }) => {
                       ? styles.subCategoryItemActive
                       : ""
                   }`}
-                  onMouseEnter={() => handleSubCategoryHover(subCategory)}
                 >
                   <Link
                     href={`/categories/${subCategory.slug}` as any}
                     className={styles.subCategoryLink}
+                    onMouseEnter={() => handleSubCategoryHover(subCategory)}
                   >
                     <span className={styles.subCategoryName}>
                       {subCategory.name}
