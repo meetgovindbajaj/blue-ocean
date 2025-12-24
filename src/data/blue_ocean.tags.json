@@ -1,0 +1,133 @@
+[{
+  "_id": {
+    "$oid": "6945331adcb6e86c017a8cd2"
+  },
+  "name": "follow ups",
+  "slug": "follow-ups",
+  "logo": null,
+  "isActive": true,
+  "order": 5,
+  "clicks": 0,
+  "createdAt": {
+    "$date": "2025-12-19T11:12:26.879Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-19T11:12:26.879Z"
+  },
+  "id": "6945331adcb6e86c017a8cd2",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69453324dcb6e86c017a8cd8"
+  },
+  "name": "best quality",
+  "slug": "best-quality",
+  "logo": null,
+  "isActive": true,
+  "order": 6,
+  "clicks": 0,
+  "createdAt": {
+    "$date": "2025-12-19T11:12:36.435Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-19T11:12:36.435Z"
+  },
+  "id": "69453324dcb6e86c017a8cd8",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6945335adcb6e86c017a8cde"
+  },
+  "name": "Best packaging",
+  "slug": "best-packaging",
+  "logo": null,
+  "isActive": true,
+  "order": 7,
+  "clicks": 1,
+  "createdAt": {
+    "$date": "2025-12-19T11:13:30.789Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-19T19:55:57.825Z"
+  },
+  "id": "6945335adcb6e86c017a8cde",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "694533d0fa6b3baa21958370"
+  },
+  "name": "Genuine leather",
+  "slug": "genuine-leather",
+  "logo": null,
+  "isActive": true,
+  "order": 8,
+  "clicks": 1,
+  "createdAt": {
+    "$date": "2025-12-19T11:15:28.210Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-20T15:22:04.172Z"
+  },
+  "id": "694533d0fa6b3baa21958370",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "694533e1fa6b3baa2195837e"
+  },
+  "name": "Solid wood",
+  "slug": "solid-wood",
+  "logo": null,
+  "isActive": true,
+  "order": 9,
+  "clicks": 1,
+  "createdAt": {
+    "$date": "2025-12-19T11:15:45.864Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-19T19:55:53.930Z"
+  },
+  "id": "694533e1fa6b3baa2195837e",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "694533f1fa6b3baa21958387"
+  },
+  "name": "Best iron used",
+  "slug": "best-iron-used",
+  "logo": null,
+  "isActive": true,
+  "order": 10,
+  "clicks": 1,
+  "createdAt": {
+    "$date": "2025-12-19T11:16:01.963Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-19T17:26:03.314Z"
+  },
+  "id": "694533f1fa6b3baa21958387",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69453401fa6b3baa21958390"
+  },
+  "name": "Timely delivery",
+  "slug": "timely-delivery",
+  "logo": null,
+  "isActive": true,
+  "order": 11,
+  "clicks": 0,
+  "createdAt": {
+    "$date": "2025-12-19T11:16:17.102Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-19T11:16:17.102Z"
+  },
+  "id": "69453401fa6b3baa21958390",
+  "__v": 0
+}]

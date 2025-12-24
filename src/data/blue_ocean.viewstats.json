@@ -1,0 +1,537 @@
+[{
+  "_id": {
+    "$oid": "68a0fd1f8c6ff940817b731f"
+  },
+  "type": "category",
+  "refId": {
+    "$oid": "684b7bbfb5de2e36b67cd3fa"
+  },
+  "viewedAt": {
+    "$date": "2025-08-16T21:50:23.391Z"
+  },
+  "ip": "::1",
+  "count": 1,
+  "createdAt": {
+    "$date": "2025-08-16T21:50:23.400Z"
+  },
+  "updatedAt": {
+    "$date": "2025-08-16T21:50:23.400Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68a0fd1f8c6ff940817b7321"
+  },
+  "type": "category",
+  "refId": {
+    "$oid": "684b7bbfb5de2e36b67cd3fa"
+  },
+  "viewedAt": {
+    "$date": "2025-08-16T21:50:23.405Z"
+  },
+  "ip": "::1",
+  "count": 1,
+  "createdAt": {
+    "$date": "2025-08-16T21:50:23.406Z"
+  },
+  "updatedAt": {
+    "$date": "2025-08-16T21:50:23.406Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68a100a68c6ff940817b73b1"
+  },
+  "type": "category",
+  "refId": {
+    "$oid": "684b762db5de2e36b67cd3d1"
+  },
+  "viewedAt": {
+    "$date": "2025-08-26T01:15:17.739Z"
+  },
+  "ip": "::1",
+  "count": 4,
+  "createdAt": {
+    "$date": "2025-08-16T22:05:26.820Z"
+  },
+  "updatedAt": {
+    "$date": "2025-08-26T01:15:17.739Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68a100d58c6ff940817b74dc"
+  },
+  "type": "category",
+  "refId": {
+    "$oid": "684b7a12b5de2e36b67cd3f3"
+  },
+  "viewedAt": {
+    "$date": "2025-08-16T22:06:13.625Z"
+  },
+  "ip": "::1",
+  "count": 1,
+  "createdAt": {
+    "$date": "2025-08-16T22:06:13.627Z"
+  },
+  "updatedAt": {
+    "$date": "2025-08-16T22:06:13.627Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68a10322f50e2526ace6959f"
+  },
+  "type": "category",
+  "refId": {
+    "$oid": "684b7902b5de2e36b67cd3eb"
+  },
+  "viewedAt": {
+    "$date": "2025-10-30T10:48:59.284Z"
+  },
+  "ip": "::1",
+  "count": 8,
+  "createdAt": {
+    "$date": "2025-08-16T22:16:02.409Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-30T10:48:59.284Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68ad06fc3f78727c397efe38"
+  },
+  "type": "category",
+  "refId": {
+    "$oid": "684b7976b5de2e36b67cd3f1"
+  },
+  "viewedAt": {
+    "$date": "2025-08-26T03:00:04.580Z"
+  },
+  "ip": "::1",
+  "count": 5,
+  "createdAt": {
+    "$date": "2025-08-26T00:59:40.078Z"
+  },
+  "updatedAt": {
+    "$date": "2025-08-26T03:00:04.589Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68ad3785d0dee17d2f412662"
+  },
+  "type": "category",
+  "refId": {
+    "$oid": "684b7902b5de2e36b67cd3eb"
+  },
+  "viewedAt": {
+    "$date": "2025-08-26T04:26:45.653Z"
+  },
+  "ip": "3.237.47.20",
+  "count": 1,
+  "createdAt": {
+    "$date": "2025-08-26T04:26:45.664Z"
+  },
+  "updatedAt": {
+    "$date": "2025-08-26T04:26:45.664Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68b1ac8aa2db9486754bccea"
+  },
+  "type": "category",
+  "refId": {
+    "$oid": "684b7902b5de2e36b67cd3eb"
+  },
+  "viewedAt": {
+    "$date": "2025-08-29T13:35:06.083Z"
+  },
+  "ip": "34.204.70.121",
+  "count": 1,
+  "createdAt": {
+    "$date": "2025-08-29T13:35:06.085Z"
+  },
+  "updatedAt": {
+    "$date": "2025-08-29T13:35:06.085Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68b1ac9aa2db9486754bccf8"
+  },
+  "type": "category",
+  "refId": {
+    "$oid": "684b7976b5de2e36b67cd3f1"
+  },
+  "viewedAt": {
+    "$date": "2025-08-29T13:35:22.525Z"
+  },
+  "ip": "34.204.70.121",
+  "count": 1,
+  "createdAt": {
+    "$date": "2025-08-29T13:35:22.526Z"
+  },
+  "updatedAt": {
+    "$date": "2025-08-29T13:35:22.526Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68b1ac9fa2db9486754bcd01"
+  },
+  "type": "category",
+  "refId": {
+    "$oid": "684b762db5de2e36b67cd3d1"
+  },
+  "viewedAt": {
+    "$date": "2025-08-29T13:35:27.503Z"
+  },
+  "ip": "34.204.70.121",
+  "count": 1,
+  "createdAt": {
+    "$date": "2025-08-29T13:35:27.504Z"
+  },
+  "updatedAt": {
+    "$date": "2025-08-29T13:35:27.504Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68bda1710e85376eae80caeb"
+  },
+  "type": "category",
+  "refId": {
+    "$oid": "684b7976b5de2e36b67cd3f1"
+  },
+  "viewedAt": {
+    "$date": "2025-09-07T15:14:57.024Z"
+  },
+  "ip": "54.90.198.14",
+  "count": 1,
+  "createdAt": {
+    "$date": "2025-09-07T15:14:57.035Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-07T15:14:57.035Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68c97f6cc68b6caccd7bcbaa"
+  },
+  "type": "category",
+  "refId": {
+    "$oid": "684b7976b5de2e36b67cd3f1"
+  },
+  "viewedAt": {
+    "$date": "2025-09-16T15:17:00.158Z"
+  },
+  "ip": "44.200.204.211",
+  "count": 1,
+  "createdAt": {
+    "$date": "2025-09-16T15:17:00.161Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-16T15:17:00.161Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68c97f6c04f6be23382bf68f"
+  },
+  "type": "category",
+  "refId": {
+    "$oid": "684b7976b5de2e36b67cd3f1"
+  },
+  "viewedAt": {
+    "$date": "2025-09-16T15:17:00.268Z"
+  },
+  "ip": "98.80.76.98",
+  "count": 1,
+  "createdAt": {
+    "$date": "2025-09-16T15:17:00.283Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-16T15:17:00.283Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68cfd19d5a49f786f403ac0a"
+  },
+  "type": "category",
+  "refId": {
+    "$oid": "684b7976b5de2e36b67cd3f1"
+  },
+  "viewedAt": {
+    "$date": "2025-09-21T10:21:17.478Z"
+  },
+  "ip": "3.238.84.19",
+  "count": 1,
+  "createdAt": {
+    "$date": "2025-09-21T10:21:17.481Z"
+  },
+  "updatedAt": {
+    "$date": "2025-09-21T10:21:17.481Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "691da81dab1c8dcec291ee7f"
+  },
+  "type": "category",
+  "refId": {
+    "$oid": "684b7902b5de2e36b67cd3eb"
+  },
+  "viewedAt": {
+    "$date": "2025-11-19T11:21:01.178Z"
+  },
+  "ip": "44.222.96.40",
+  "count": 1,
+  "createdAt": {
+    "$date": "2025-11-19T11:21:01.188Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-19T11:21:01.188Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6920201e9d1edadb338e8618"
+  },
+  "type": "category",
+  "refId": {
+    "$oid": "684b7902b5de2e36b67cd3eb"
+  },
+  "viewedAt": {
+    "$date": "2025-11-21T08:17:34.256Z"
+  },
+  "ip": "98.81.72.253",
+  "count": 1,
+  "createdAt": {
+    "$date": "2025-11-21T08:17:34.270Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-21T08:17:34.270Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6925a0db68f38e42360ae634"
+  },
+  "day": {
+    "$date": "2025-11-25T00:00:00.000Z"
+  },
+  "ip": "::1",
+  "type": "product",
+  "userId": null,
+  "refId": {
+    "$oid": "6876be6d6fa5e421b8526f93"
+  },
+  "__v": 0,
+  "count": 18,
+  "createdAt": {
+    "$date": "2025-11-25T12:28:10.922Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-25T14:10:18.249Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6925a22968f38e42360ae65d"
+  },
+  "refId": {
+    "$oid": "6876be6d6fa5e421b8526f93"
+  },
+  "day": {
+    "$date": "2025-11-25T00:00:00.000Z"
+  },
+  "userId": {
+    "$oid": "689bcde9bf745a5316468e4e"
+  },
+  "type": "product",
+  "ip": null,
+  "__v": 0,
+  "count": 8,
+  "createdAt": {
+    "$date": "2025-11-25T12:33:45.645Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-25T14:25:22.951Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6925b08168f38e42360ae6f8"
+  },
+  "userId": null,
+  "type": "product",
+  "day": {
+    "$date": "2025-11-25T00:00:00.000Z"
+  },
+  "ip": "::1",
+  "refId": {
+    "$oid": "6876bc6a6fa5e421b8526f82"
+  },
+  "__v": 0,
+  "count": 1,
+  "createdAt": {
+    "$date": "2025-11-25T13:34:57.535Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-25T13:34:57.535Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6925babf68f38e42360ae766"
+  },
+  "type": "product",
+  "ip": null,
+  "refId": {
+    "$oid": "6876bc6a6fa5e421b8526f82"
+  },
+  "day": {
+    "$date": "2025-11-25T00:00:00.000Z"
+  },
+  "userId": {
+    "$oid": "689bcde9bf745a5316468e4e"
+  },
+  "__v": 0,
+  "count": 2,
+  "createdAt": {
+    "$date": "2025-11-25T14:18:39.511Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-25T14:20:56.043Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "692986cf529d024c766bd2d6"
+  },
+  "type": "category",
+  "refId": {
+    "$oid": "684b7902b5de2e36b67cd3eb"
+  },
+  "viewedAt": {
+    "$date": "2025-11-28T11:26:07.206Z"
+  },
+  "ip": "3.86.82.197",
+  "count": 1,
+  "createdAt": {
+    "$date": "2025-11-28T11:26:07.212Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-28T11:26:07.212Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692eb67168f38e42360ce5cc"
+  },
+  "type": "product",
+  "day": {
+    "$date": "2025-12-02T00:00:00.000Z"
+  },
+  "ip": "::ffff:127.0.0.1",
+  "refId": {
+    "$oid": "6876be6d6fa5e421b8526f93"
+  },
+  "userId": null,
+  "__v": 0,
+  "count": 2,
+  "createdAt": {
+    "$date": "2025-12-02T09:50:39.766Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-02T10:44:16.737Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "692ee18868f38e42360ce7df"
+  },
+  "userId": null,
+  "type": "category",
+  "day": {
+    "$date": "2025-12-02T00:00:00.000Z"
+  },
+  "ip": "::1",
+  "refId": {
+    "$oid": "684b7902b5de2e36b67cd3eb"
+  },
+  "__v": 0,
+  "count": 2,
+  "createdAt": {
+    "$date": "2025-12-02T12:54:32.390Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-02T12:56:32.961Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "692ee20c68f38e42360ce7e5"
+  },
+  "type": "category",
+  "userId": null,
+  "refId": {
+    "$oid": "684b762db5de2e36b67cd3d1"
+  },
+  "ip": "::1",
+  "day": {
+    "$date": "2025-12-02T00:00:00.000Z"
+  },
+  "__v": 0,
+  "count": 1,
+  "createdAt": {
+    "$date": "2025-12-02T12:56:44.606Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-02T12:56:44.606Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "692ee21168f38e42360ce7e6"
+  },
+  "type": "category",
+  "userId": null,
+  "refId": {
+    "$oid": "684b7976b5de2e36b67cd3f1"
+  },
+  "day": {
+    "$date": "2025-12-02T00:00:00.000Z"
+  },
+  "ip": "::1",
+  "__v": 0,
+  "count": 1,
+  "createdAt": {
+    "$date": "2025-12-02T12:56:49.484Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-02T12:56:49.484Z"
+  }
+}]

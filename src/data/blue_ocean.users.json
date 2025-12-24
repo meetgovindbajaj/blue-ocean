@@ -1,0 +1,351 @@
+[{
+  "_id": {
+    "$oid": "689bcde9bf745a5316468e4e"
+  },
+  "email": "govindb277@gmail.com",
+  "name": "Govind Bajaj",
+  "passwordHash": "$2b$12$2RndSIzdtJrecsAwZ/toxegn5bE2PmpCDVkfN85k.wEwcsXUYuhCC",
+  "authType": "google",
+  "isVerified": true,
+  "role": "super_admin",
+  "status": "active",
+  "permissions": [
+    "users.read",
+    "users.write",
+    "users.delete",
+    "products.read",
+    "products.write",
+    "products.delete",
+    "categories.read",
+    "categories.write",
+    "categories.delete",
+    "orders.read",
+    "orders.write",
+    "orders.delete",
+    "analytics.read",
+    "settings.read",
+    "settings.write"
+  ],
+  "createdAt": {
+    "$date": "2025-08-12T23:27:37.873Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T06:49:24.344Z"
+  },
+  "id": "689bcde9bf745a5316468e4e",
+  "profile": {
+    "$oid": "689bcde9bf745a5316468e50"
+  },
+  "__v": 0,
+  "lastLogin": {
+    "$date": "2025-12-21T06:49:24.343Z"
+  },
+  "googleId": "115065305142173391434",
+  "twoFactorEnabled": false
+},
+{
+  "_id": {
+    "$oid": "69313205a56d5f45ff012853"
+  },
+  "email": "gagandeep.deep04@gmail.com",
+  "name": "Gagandeep kalla",
+  "authType": "google",
+  "isVerified": true,
+  "emailVerifiedAt": {
+    "$date": "2025-12-04T07:02:29.353Z"
+  },
+  "googleId": "106860929551794648009",
+  "role": "admin",
+  "status": "active",
+  "loginAttempts": 0,
+  "permissions": [],
+  "twoFactorEnabled": false,
+  "createdAt": {
+    "$date": "2025-12-04T07:02:29.355Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-19T10:45:41.881Z"
+  },
+  "id": "69313205a56d5f45ff012853",
+  "profile": {
+    "$oid": "69313205a56d5f45ff012855"
+  },
+  "__v": 0,
+  "lastLogin": {
+    "$date": "2025-12-19T10:45:41.881Z"
+  },
+  "lastPasswordChange": {
+    "$date": "2025-12-05T07:16:19.709Z"
+  },
+  "passwordHash": "$2b$12$qZ79j67wNC/yd5YUxBWdresWQs97eZ7IIdNX0YfmMLD1KayFed/qS"
+},
+{
+  "_id": {
+    "$oid": "69353b7494c7622f900e9e68"
+  },
+  "email": "muskanrumi1100@gmail.com",
+  "name": "Muskan rumi",
+  "passwordHash": "$2b$12$G2L8Ho8WozPLuEkLJgtOIuGtdp5QsW/iwqDIhbw8VF5eeL8Y7qF8a",
+  "authType": "manual",
+  "isVerified": true,
+  "role": "customer",
+  "status": "active",
+  "loginAttempts": 0,
+  "permissions": [],
+  "twoFactorEnabled": false,
+  "createdAt": {
+    "$date": "2025-12-07T08:31:48.230Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-07T08:32:20.595Z"
+  },
+  "id": "69353b7494c7622f900e9e68",
+  "profile": {
+    "$oid": "69353b7494c7622f900e9e6a"
+  },
+  "__v": 0,
+  "emailVerifiedAt": {
+    "$date": "2025-12-07T08:32:07.531Z"
+  },
+  "lastLogin": {
+    "$date": "2025-12-07T08:32:20.594Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "693beaa4c07f48c16bfd31d9"
+  },
+  "email": "nomogav943@discounp.com",
+  "name": "Dining Room Furniture",
+  "passwordHash": "$2b$12$hg8p0wFgyjfOYAj96tHJr.jE2/bdEMq5Ii/WVQ1jr.Y6G2bI/C.au",
+  "authType": "manual",
+  "isVerified": false,
+  "role": "customer",
+  "status": "pending",
+  "loginAttempts": 2,
+  "permissions": [],
+  "twoFactorEnabled": false,
+  "createdAt": {
+    "$date": "2025-12-12T10:12:52.454Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T07:04:49.115Z"
+  },
+  "id": "693beaa4c07f48c16bfd31d9",
+  "profile": {
+    "$oid": "693beaa4c07f48c16bfd31db"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693c04e81b02080ea5c6dac7"
+  },
+  "email": "evilsoulhunter@duck.com",
+  "name": "Evil soul",
+  "passwordHash": "$2b$12$R4BFJPfKR5/Bu6sxw2CGR.sYKUlNjHk7XUwwOnOSjgEZiceYzWG0y",
+  "authType": "manual",
+  "isVerified": true,
+  "role": "customer",
+  "status": "active",
+  "loginAttempts": 0,
+  "permissions": [],
+  "twoFactorEnabled": false,
+  "createdAt": {
+    "$date": "2025-12-12T12:04:56.671Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-12T12:05:58.781Z"
+  },
+  "id": "693c04e81b02080ea5c6dac7",
+  "profile": {
+    "$oid": "693c04e81b02080ea5c6dac9"
+  },
+  "__v": 0,
+  "emailVerifiedAt": {
+    "$date": "2025-12-12T12:05:48.501Z"
+  },
+  "lastLogin": {
+    "$date": "2025-12-12T12:05:58.781Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "693c205c77a074d4786f02fa"
+  },
+  "email": "bestmr717@gmail.com",
+  "name": "Mr Best",
+  "authType": "google",
+  "isVerified": true,
+  "emailVerifiedAt": {
+    "$date": "2025-12-12T14:02:04.746Z"
+  },
+  "googleId": "115270714560694666914",
+  "role": "customer",
+  "status": "active",
+  "loginAttempts": 0,
+  "permissions": [],
+  "twoFactorEnabled": false,
+  "createdAt": {
+    "$date": "2025-12-12T14:02:04.758Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-12T14:02:04.758Z"
+  },
+  "id": "693c205c77a074d4786f02fa",
+  "profile": {
+    "$oid": "693c205c77a074d4786f02fc"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693c209576e14a17b7c39fcf"
+  },
+  "email": "aadityajodhpur@gmail.com",
+  "name": "AADITYA KAUSHIK",
+  "authType": "google",
+  "isVerified": true,
+  "emailVerifiedAt": {
+    "$date": "2025-12-12T14:03:01.287Z"
+  },
+  "googleId": "105269079414526575250",
+  "role": "admin",
+  "status": "active",
+  "loginAttempts": 0,
+  "permissions": [],
+  "twoFactorEnabled": false,
+  "createdAt": {
+    "$date": "2025-12-12T14:03:01.289Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-12T14:08:04.165Z"
+  },
+  "id": "693c209576e14a17b7c39fcf",
+  "profile": {
+    "$oid": "693c209576e14a17b7c39fd1"
+  },
+  "__v": 0,
+  "lastLogin": {
+    "$date": "2025-12-12T14:08:04.165Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "693c2e787e9b78df0e16107d"
+  },
+  "email": "meetgovindbajaj@gmail.com",
+  "name": "Govind Bajaj",
+  "authType": "google",
+  "isVerified": true,
+  "emailVerifiedAt": {
+    "$date": "2025-12-12T15:02:16.915Z"
+  },
+  "googleId": "112060575429964104638",
+  "role": "customer",
+  "status": "active",
+  "loginAttempts": 0,
+  "permissions": [],
+  "twoFactorEnabled": false,
+  "createdAt": {
+    "$date": "2025-12-12T15:02:16.918Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-12T15:02:16.918Z"
+  },
+  "id": "693c2e787e9b78df0e16107d",
+  "profile": {
+    "$oid": "693c2e787e9b78df0e16107f"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69411de10585c5f998572c88"
+  },
+  "email": "harshitjain374@gmail.com",
+  "name": "Harshit Jain",
+  "passwordHash": "$2b$12$2b7OeQH17hTnx3mCBJah4OorCg80K7Jr73UFBw2WCY5ApNNjHb4Xe",
+  "authType": "manual",
+  "isVerified": true,
+  "role": "customer",
+  "status": "active",
+  "loginAttempts": 0,
+  "permissions": [],
+  "twoFactorEnabled": false,
+  "createdAt": {
+    "$date": "2025-12-16T08:52:49.898Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-16T08:53:13.107Z"
+  },
+  "id": "69411de10585c5f998572c88",
+  "profile": {
+    "$oid": "69411de10585c5f998572c8a"
+  },
+  "__v": 0,
+  "lastLogin": {
+    "$date": "2025-12-16T08:53:13.107Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "69458beb9273edcf2e95b852"
+  },
+  "email": "swatisahu13209@gmail.com",
+  "name": "Swati",
+  "passwordHash": "$2b$12$pI72Hcq4Al468.DiA2zT7.DTUEEGNGpb./YVzSQKQ2mMKacGNuzy6",
+  "authType": "manual",
+  "isVerified": true,
+  "role": "customer",
+  "status": "active",
+  "loginAttempts": 0,
+  "permissions": [],
+  "twoFactorEnabled": false,
+  "createdAt": {
+    "$date": "2025-12-19T17:31:23.534Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-19T17:35:58.334Z"
+  },
+  "id": "69458beb9273edcf2e95b852",
+  "profile": {
+    "$oid": "69458beb9273edcf2e95b854"
+  },
+  "__v": 0,
+  "emailVerifiedAt": {
+    "$date": "2025-12-19T17:35:48.711Z"
+  },
+  "lastLogin": {
+    "$date": "2025-12-19T17:35:58.334Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "69459359a03b5a045ba0795e"
+  },
+  "email": "sakthivicky41@gmail.com",
+  "name": "Sakthi Vigneshvar",
+  "authType": "google",
+  "isVerified": true,
+  "emailVerifiedAt": {
+    "$date": "2025-12-19T18:03:05.725Z"
+  },
+  "googleId": "110780660975399810056",
+  "role": "customer",
+  "status": "active",
+  "loginAttempts": 0,
+  "permissions": [],
+  "twoFactorEnabled": false,
+  "createdAt": {
+    "$date": "2025-12-19T18:03:05.726Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-19T18:03:05.726Z"
+  },
+  "id": "69459359a03b5a045ba0795e",
+  "profile": {
+    "$oid": "69459359a03b5a045ba07960"
+  },
+  "__v": 0
+}]

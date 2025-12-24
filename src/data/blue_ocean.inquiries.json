@@ -1,0 +1,727 @@
+[{
+  "_id": {
+    "$oid": "692fdb21ebdec1981ba358ad"
+  },
+  "productId": {
+    "$oid": "6876be6d6fa5e421b8526f93"
+  },
+  "userId": {
+    "$oid": "689bcde9bf745a5316468e4e"
+  },
+  "name": "Govind Bajaj",
+  "email": "govindb277@gmail.com",
+  "phone": "2345678909876543",
+  "message": "Hi, I'm interested in \"Chair\".",
+  "status": "pending",
+  "priority": "medium",
+  "notes": [
+    {
+      "adminId": {
+        "$oid": "689bcde9bf745a5316468e4e"
+      },
+      "note": "adding note",
+      "timestamp": {
+        "$date": "2025-12-03T06:46:08.616Z"
+      },
+      "_id": {
+        "$oid": "692fdcb0ebdec1981ba35959"
+      }
+    },
+    {
+      "adminId": {
+        "$oid": "689bcde9bf745a5316468e4e"
+      },
+      "note": "hi",
+      "timestamp": {
+        "$date": "2025-12-03T07:55:09.242Z"
+      },
+      "_id": {
+        "$oid": "692fecddacc79211ad87e21f"
+      }
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-12-03T06:39:29.374Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-03T07:55:09.244Z"
+  },
+  "__v": 2
+},
+{
+  "_id": {
+    "$oid": "692febbc6a5b4c4dce0f0af2"
+  },
+  "productId": {
+    "$oid": "6876be6d6fa5e421b8526f93"
+  },
+  "userId": {
+    "$oid": "689bcde9bf745a5316468e4e"
+  },
+  "name": "Govind Bajaj",
+  "email": "govindb277@gmail.com",
+  "phone": "2345678909876543",
+  "message": "Hi, I'm interested in \"Chair\".",
+  "status": "resolved",
+  "priority": "medium",
+  "notes": [
+    {
+      "adminId": {
+        "$oid": "689bcde9bf745a5316468e4e"
+      },
+      "note": "[Email Response Sent] fixed",
+      "timestamp": {
+        "$date": "2025-12-03T07:54:34.641Z"
+      },
+      "_id": {
+        "$oid": "692fecbaacc79211ad87e216"
+      }
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-12-03T07:50:20.175Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-03T07:54:34.645Z"
+  },
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "693002a0fc78425733d98949"
+  },
+  "productId": {
+    "$oid": "6876bc6a6fa5e421b8526f82"
+  },
+  "userId": {
+    "$oid": "689bcde9bf745a5316468e4e"
+  },
+  "name": "Govind Bajaj",
+  "email": "govindb277@gmail.com",
+  "message": "Hi, I'm interested in \"Chair\".",
+  "status": "resolved",
+  "priority": "medium",
+  "notes": [
+    {
+      "adminId": {
+        "$oid": "689bcde9bf745a5316468e4e"
+      },
+      "note": "[Email Response Sent] Ok good for you",
+      "timestamp": {
+        "$date": "2025-12-03T17:01:42.742Z"
+      },
+      "_id": {
+        "$oid": "69306cf6931b2443ef426215"
+      }
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-12-03T09:28:00.883Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-03T17:01:42.745Z"
+  },
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "693133d9769ddb478cb8e77a"
+  },
+  "productId": {
+    "$oid": "6876be6d6fa5e421b8526f93"
+  },
+  "userId": {
+    "$oid": "69313205a56d5f45ff012853"
+  },
+  "name": "Gagandeep kalla",
+  "email": "gagandeep.deep04@gmail.com",
+  "phone": "8619908415",
+  "message": "Hi, I'm interested in \"Chair\".",
+  "status": "pending",
+  "priority": "medium",
+  "notes": [
+    {
+      "adminId": {
+        "$oid": "68a9bf50cdd78b23ec7d252f"
+      },
+      "note": "gygygygygy",
+      "timestamp": {
+        "$date": "2025-12-04T07:27:43.176Z"
+      },
+      "_id": {
+        "$oid": "693137ef9b2b1a5c21731aa8"
+      }
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-12-04T07:10:17.120Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-04T07:27:43.180Z"
+  },
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "69313939e11ca1d1332ee031"
+  },
+  "productId": {
+    "$oid": "693020775826100ce6184ed9"
+  },
+  "name": "Gagandeep kalla",
+  "email": "gagandeep.deep04@gmail.com",
+  "message": "Hi, I'm interested in \"Vintage Table\".",
+  "status": "in-progress",
+  "priority": "medium",
+  "notes": [],
+  "createdAt": {
+    "$date": "2025-12-04T07:33:13.072Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-04T13:58:55.227Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6931d624052d33eb2a3196a4"
+  },
+  "productId": {
+    "$oid": "6876be6d6fa5e421b8526f93"
+  },
+  "userId": {
+    "$oid": "68a9bf50cdd78b23ec7d252f"
+  },
+  "name": "Govind Bajaj",
+  "email": "meetgovindbajaj@gmail.com",
+  "message": "Hi, I'm interested in \"Chair\".",
+  "status": "pending",
+  "priority": "medium",
+  "notes": [],
+  "createdAt": {
+    "$date": "2025-12-04T18:42:44.669Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-04T18:42:44.669Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6932673385793218d3e0fa43"
+  },
+  "productId": {
+    "$oid": "6876be6d6fa5e421b8526f93"
+  },
+  "userId": {
+    "$oid": "693266c5f2b7b81041ed795c"
+  },
+  "name": "xiwey25397@datehype.com",
+  "email": "xiwey25397@datehype.com",
+  "message": "Hi, I'm interested in \"Chair\".",
+  "status": "in-progress",
+  "priority": "medium",
+  "notes": [
+    {
+      "adminId": {
+        "$oid": "689bcde9bf745a5316468e4e"
+      },
+      "note": "456 ur5hnror",
+      "timestamp": {
+        "$date": "2025-12-05T05:05:07.253Z"
+      },
+      "_id": {
+        "$oid": "693268038b361d4da3d051eb"
+      }
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-12-05T05:01:39.958Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-05T05:05:16.509Z"
+  },
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "6932693c6eb924e4a7ee8eec"
+  },
+  "userId": {
+    "$oid": "689bcde9bf745a5316468e4e"
+  },
+  "name": "Govind Bajaj",
+  "email": "govindb277@gmail.com",
+  "phone": "+917688974744",
+  "message": "fgdty df jhgujg jlkhiuhgghiuh oiuhiuhnkjnjknljknkbjguyghj vghbv hgb jgv. hgf hgf hvghybvbibjnijjkbhj bgjvjvhgvjhgg iug ijhgijnbhjb jb jhbh jnb jbnbjb. hbjbh jvhjgv jgvgjvjnbbvghv v hv vhvh c gfcgcghv hbj hjh jjhbk.",
+  "status": "pending",
+  "priority": "medium",
+  "notes": [
+    {
+      "adminId": {
+        "$oid": "689bcde9bf745a5316468e4e"
+      },
+      "note": "fgdty df jhgujg jlkhiuhgghiuh oiuhiuhnkjnjknljknkbjguyghj vghbv hgb jgv. hgf hgf hvghybvbibjnijjkbhj bgjvjvhgvjhgg iug ijhgijnbhjb jb jhbh jnb jbnbjb. hbjbh jvhjgv jgvgjvjnbbvghv v hv vhvh c gfcgcghv hbj hjh jjhbkfgdty df jhgujg jlkhiuhgghiuh oiuhiuhnkjnjknljknkbjguyghj vghbv hgb jgv. hgf hgf hvghybvbibjnijjkbhj bgjvjvhgvjhgg iug ijhgijnbhjb jb jhbh jnb jbnbjb. hbjbh jvhjgv jgvgjvjnbbvghv v hv vhvh c gfcgcghv hbj hjh jjhbkfgdty df jhgujg jlkhiuhgghiuh oiuhiuhnkjnjknljknkbjguyghj vghbv hgb jgv. hgf hgf hvghybvbibjnijjkbhj bgjvjvhgvjhgg iug ijhgijnbhjb jb jhbh jnb jbnbjb. hbjbh jvhjgv jgvgjvjnbbvghv v hv vhvh c gfcgcghv hbj hjh jjhbk.",
+      "timestamp": {
+        "$date": "2025-12-05T05:11:08.583Z"
+      },
+      "_id": {
+        "$oid": "6932696c6eb924e4a7ee8ef9"
+      }
+    },
+    {
+      "adminId": {
+        "$oid": "689bcde9bf745a5316468e4e"
+      },
+      "note": "fgdty df jhgujg jlkhiuhgghiuh oiuhiuhnkjnjknljknkbjguyghj vghbv hgb jgv. hgf hgf hvghybvbibjnijjkbhj bgjvjvhgvjhgg iug ijhgijnbhjb jb jhbh jnb jbnbjb. hbjbh jvhjgv jgvgjvjnbbvghv v hv vhvh c gfcgcghv hbj hjh jjhbkfgdty df jhgujg jlkhiuhgghiuh oiuhiuhnkjnjknljknkbjguyghj vghbv hgb jgv. hgf hgf hvghybvbibjnijjkbhj bgjvjvhgvjhgg iug ijhgijnbhjb jb jhbh jnb jbnbjb. hbjbh jvhjgv jgvgjvjnbbvghv v hv vhvh c gfcgcghv hbj hjh jjhbk.",
+      "timestamp": {
+        "$date": "2025-12-05T05:11:19.760Z"
+      },
+      "_id": {
+        "$oid": "693269776eb924e4a7ee8f03"
+      }
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-12-05T05:10:20.836Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-05T05:11:19.762Z"
+  },
+  "__v": 2
+},
+{
+  "_id": {
+    "$oid": "69326ca35ee5c084ff1a4dcc"
+  },
+  "userId": {
+    "$oid": "689bcde9bf745a5316468e4e"
+  },
+  "name": "Govind Bajaj",
+  "email": "govindb277@gmail.com",
+  "phone": "+917688974744",
+  "message": "something is going on",
+  "status": "pending",
+  "priority": "medium",
+  "notes": [],
+  "createdAt": {
+    "$date": "2025-12-05T05:24:51.356Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-05T05:24:51.356Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69326cd25ee5c084ff1a4dd1"
+  },
+  "productId": {
+    "$oid": "6876be6d6fa5e421b8526f93"
+  },
+  "userId": {
+    "$oid": "689bcde9bf745a5316468e4e"
+  },
+  "name": "Govind Bajaj",
+  "email": "govindb277@gmail.com",
+  "phone": "+917688974744",
+  "message": "Hi, I'm interested in \"Chair\".",
+  "status": "pending",
+  "priority": "medium",
+  "notes": [],
+  "createdAt": {
+    "$date": "2025-12-05T05:25:38.341Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-05T05:25:38.341Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69326f2d08dcefb17a54aeb0"
+  },
+  "userId": {
+    "$oid": "68a9bf50cdd78b23ec7d252f"
+  },
+  "name": "Govind Bajaj",
+  "email": "meetgovindbajaj@gmail.com",
+  "phone": "+917688974744",
+  "message": "baseline-browser-mapping@latestbaseline-browser-mapping@latestbaseline-browser-mapping@latestbaseline-browser-mapping@latestbaseline-browser-mapping@latestbaseline-browser-mapping@latestbaseline-browser-mapping@latestbaseline-browser-mapping@latestbaseline-browser-mapping@latest",
+  "status": "pending",
+  "priority": "medium",
+  "notes": [
+    {
+      "adminId": {
+        "$oid": "689bcde9bf745a5316468e4e"
+      },
+      "note": "Hello",
+      "timestamp": {
+        "$date": "2025-12-05T18:18:41.523Z"
+      },
+      "_id": {
+        "$oid": "69332201611298a752d1ed22"
+      }
+    },
+    {
+      "adminId": {
+        "$oid": "689bcde9bf745a5316468e4e"
+      },
+      "note": "Jiii",
+      "timestamp": {
+        "$date": "2025-12-05T18:18:47.804Z"
+      },
+      "_id": {
+        "$oid": "69332207611298a752d1ed2b"
+      }
+    },
+    {
+      "adminId": {
+        "$oid": "689bcde9bf745a5316468e4e"
+      },
+      "note": "Kkrh",
+      "timestamp": {
+        "$date": "2025-12-05T18:18:57.056Z"
+      },
+      "_id": {
+        "$oid": "693322114b0f48e538741811"
+      }
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-12-05T05:35:41.440Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-05T18:18:57.060Z"
+  },
+  "__v": 3
+},
+{
+  "_id": {
+    "$oid": "69327432e303f475eae7e76b"
+  },
+  "userId": {
+    "$oid": "689bcde9bf745a5316468e4e"
+  },
+  "name": "Govind Bajaj",
+  "email": "govindb277@gmail.com",
+  "phone": "+917688974744",
+  "message": "hello from over here",
+  "status": "resolved",
+  "priority": "medium",
+  "notes": [
+    {
+      "adminId": {
+        "$oid": "689bcde9bf745a5316468e4e"
+      },
+      "note": "[Email Response Sent] resolved the situation",
+      "timestamp": {
+        "$date": "2025-12-05T05:57:50.689Z"
+      },
+      "_id": {
+        "$oid": "6932745ee303f475eae7e7af"
+      }
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-12-05T05:57:06.761Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-05T05:57:50.692Z"
+  },
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "6932867b1a0515c52f69016b"
+  },
+  "productId": {
+    "$oid": "693020775826100ce6184ed9"
+  },
+  "userId": {
+    "$oid": "69313205a56d5f45ff012853"
+  },
+  "name": "Gagandeep kalla",
+  "email": "gagandeep.deep04@gmail.com",
+  "phone": "8619908415",
+  "message": "govind chutiya hai",
+  "status": "pending",
+  "priority": "medium",
+  "notes": [],
+  "createdAt": {
+    "$date": "2025-12-05T07:15:07.385Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-05T07:15:07.385Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69328d273201849c602a924b"
+  },
+  "productId": {
+    "$oid": "6876bc6a6fa5e421b8526f82"
+  },
+  "userId": {
+    "$oid": "689bcde9bf745a5316468e4e"
+  },
+  "name": "Govind Bajaj",
+  "email": "govindb277@gmail.com",
+  "phone": "+917688974744",
+  "message": "Hi, I'm interested in \"Table\".",
+  "status": "pending",
+  "priority": "medium",
+  "notes": [],
+  "createdAt": {
+    "$date": "2025-12-05T07:43:35.951Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-05T07:43:35.951Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69328e9ac44cb84675e734f7"
+  },
+  "productId": {
+    "$oid": "693020775826100ce6184ed9"
+  },
+  "userId": {
+    "$oid": "689bcde9bf745a5316468e4e"
+  },
+  "name": "Govind Bajaj",
+  "email": "govindb277@gmail.com",
+  "phone": "+917688974744",
+  "message": "Hi, I'm interested in \"Vintage Table\".",
+  "status": "pending",
+  "priority": "medium",
+  "notes": [],
+  "createdAt": {
+    "$date": "2025-12-05T07:49:46.141Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-05T07:49:46.141Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69353d3c1c2125e0f3872610"
+  },
+  "productId": {
+    "$oid": "6876bc6a6fa5e421b8526f82"
+  },
+  "userId": {
+    "$oid": "69353b7494c7622f900e9e68"
+  },
+  "name": "Muskan rumi",
+  "email": "muskanrumi1100@gmail.com",
+  "phone": "7013876080",
+  "message": "Hi, I'm interested in \"Table\".",
+  "status": "resolved",
+  "priority": "medium",
+  "notes": [
+    {
+      "adminId": {
+        "$oid": "689bcde9bf745a5316468e4e"
+      },
+      "note": "Hi testing",
+      "timestamp": {
+        "$date": "2025-12-07T08:39:41.643Z"
+      },
+      "_id": {
+        "$oid": "69353d4d1c2125e0f387261b"
+      }
+    },
+    {
+      "adminId": {
+        "$oid": "689bcde9bf745a5316468e4e"
+      },
+      "note": "[Email Response Sent] Hello",
+      "timestamp": {
+        "$date": "2025-12-07T08:40:27.469Z"
+      },
+      "_id": {
+        "$oid": "69353d7b1c2125e0f387262c"
+      }
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-12-07T08:39:24.127Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-07T08:40:27.470Z"
+  },
+  "__v": 2
+},
+{
+  "_id": {
+    "$oid": "693811a72d7f99b518ef1be8"
+  },
+  "name": "Govind Bajaj",
+  "email": "govindb277@gmail.com",
+  "phone": "07688974744",
+  "message": "Orders should be delivered",
+  "status": "pending",
+  "priority": "medium",
+  "notes": [],
+  "createdAt": {
+    "$date": "2025-12-09T12:10:15.809Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-09T12:10:15.809Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693acc85b9dd6363c2cacbf2"
+  },
+  "productId": {
+    "$oid": "693a852f3bbbb2993e62c969"
+  },
+  "userId": {
+    "$oid": "689bcde9bf745a5316468e4e"
+  },
+  "name": "Govind Bajaj",
+  "email": "govindb277@gmail.com",
+  "phone": "+917688974744",
+  "message": "Hi, I'm interested in \"Bar Cabinets\".",
+  "status": "customer-feedback",
+  "priority": "medium",
+  "notes": [
+    {
+      "adminId": {
+        "$oid": "689bcde9bf745a5316468e4e"
+      },
+      "note": "hi",
+      "timestamp": {
+        "$date": "2025-12-12T13:21:22.308Z"
+      },
+      "_id": {
+        "$oid": "693c16d2f6a8d34e0910a0d8"
+      }
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-12-11T13:52:05.869Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-12T15:43:35.663Z"
+  },
+  "__v": 5,
+  "userComments": [
+    {
+      "comment": "hello",
+      "timestamp": {
+        "$date": "2025-12-12T13:20:46.296Z"
+      },
+      "_id": {
+        "$oid": "693c16aef6a8d34e0910a0c8"
+      }
+    },
+    {
+      "comment": "lol",
+      "timestamp": {
+        "$date": "2025-12-12T13:22:00.169Z"
+      },
+      "_id": {
+        "$oid": "693c16f8f6a8d34e0910a0f7"
+      }
+    },
+    {
+      "comment": "hello",
+      "timestamp": {
+        "$date": "2025-12-12T14:21:14.570Z"
+      },
+      "_id": {
+        "$oid": "693c24dab6dbee2ecee88b87"
+      }
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "693c308774799def6b9c5241"
+  },
+  "userId": {
+    "$oid": "693c2e787e9b78df0e16107d"
+  },
+  "name": "Govind Bajaj",
+  "email": "meetgovindbajaj@gmail.com",
+  "message": "hi whats app dude",
+  "status": "customer-feedback",
+  "priority": "medium",
+  "notes": [
+    {
+      "adminId": {
+        "$oid": "689bcde9bf745a5316468e4e"
+      },
+      "note": "[Email Response Sent] yo... hello",
+      "timestamp": {
+        "$date": "2025-12-12T15:11:57.359Z"
+      },
+      "_id": {
+        "$oid": "693c30bdf6a8d34e0910a6d4"
+      }
+    }
+  ],
+  "userComments": [],
+  "createdAt": {
+    "$date": "2025-12-12T15:11:03.266Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-12T15:41:59.875Z"
+  },
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "69400bc38fd16c17350b96c0"
+  },
+  "productId": {
+    "$oid": "693d56bdf62195b4f65b7821"
+  },
+  "userId": {
+    "$oid": "693c2e787e9b78df0e16107d"
+  },
+  "name": "Govind Bajaj",
+  "email": "meetgovindbajaj@gmail.com",
+  "message": "Hi, I'm interested in \"Cozy Pouffs\". freee me dedo janab",
+  "status": "pending",
+  "priority": "medium",
+  "notes": [],
+  "userComments": [],
+  "createdAt": {
+    "$date": "2025-12-15T13:23:15.766Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-15T13:23:15.766Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "694589fd79ab2c8ee0bb246f"
+  },
+  "userId": {
+    "$oid": "689bcde9bf745a5316468e4e"
+  },
+  "name": "Govind Bajaj",
+  "email": "govindb277@gmail.com",
+  "phone": "+917688974744",
+  "message": "kj hkjfbkjslhfjma'l;fa .",
+  "status": "pending",
+  "priority": "medium",
+  "notes": [],
+  "userComments": [],
+  "createdAt": {
+    "$date": "2025-12-19T17:23:09.230Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-19T17:23:09.230Z"
+  },
+  "__v": 0
+}]

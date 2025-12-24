@@ -1,0 +1,486 @@
+[{
+  "_id": {
+    "$oid": "689bcde9bf745a5316468e50"
+  },
+  "name": "Govind Bajaj",
+  "email": "govindb277@gmail.com",
+  "preferences": {
+    "newsletter": true,
+    "promotions": true,
+    "currency": "USD",
+    "language": "en",
+    "notifications": {
+      "email": true,
+      "sms": true,
+      "push": true
+    },
+    "_id": {
+      "$oid": "689bcde9bf745a5316468e4f"
+    }
+  },
+  "wishlist": [],
+  "recentlyViewed": [
+    {
+      "$oid": "6946b9adb81edd9cd2a4e4cd"
+    },
+    {
+      "$oid": "6945321da85f74aba3a41097"
+    },
+    {
+      "$oid": "69453160dcb6e86c017a8c0c"
+    },
+    {
+      "$oid": "693d579ff62195b4f65b79a3"
+    },
+    {
+      "$oid": "693be5fe60b1b34afe7d97e0"
+    },
+    {
+      "$oid": "693a8908b7bfa201f551cd25"
+    },
+    {
+      "$oid": "693be4aa6133127661cad00d"
+    },
+    {
+      "$oid": "693be4aa6133127661cad00d"
+    },
+    {
+      "$oid": "693d53bdf62195b4f65b7755"
+    },
+    {
+      "$oid": "693a83ff3bbbb2993e62c918"
+    },
+    {
+      "$oid": "69394608cb133616f8236723"
+    },
+    {
+      "$oid": "693d5577f62195b4f65b77c3"
+    },
+    {
+      "$oid": "693d56bdf62195b4f65b7821"
+    },
+    {
+      "$oid": "693d3fbaff95a04bcf5a93e5"
+    },
+    {
+      "$oid": "693d549df62195b4f65b778c"
+    },
+    {
+      "$oid": "693d43f0bc6b8b115258c2e6"
+    },
+    {
+      "$oid": "693d49bb76b8251642efb62d"
+    },
+    {
+      "$oid": "693d43f0bc6b8b115258c2e6"
+    },
+    {
+      "$oid": "6876be6d6fa5e421b8526f93"
+    },
+    {
+      "$oid": "6876bc6a6fa5e421b8526f82"
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-08-12T23:27:37.877Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-20T14:59:57.192Z"
+  },
+  "id": "689bcde9bf745a5316468e50",
+  "__v": 0,
+  "dateOfBirth": {
+    "$date": "2000-10-10T00:00:00.000Z"
+  },
+  "gender": "male",
+  "avatar": "https://res.cloudinary.com/govindb277/image/upload/v1764699152/avatars/n66gayndcjqxg63cvess.png",
+  "phone": "+917688974744"
+},
+{
+  "_id": {
+    "$oid": "69313205a56d5f45ff012855"
+  },
+  "name": "Gagandeep kalla",
+  "email": "gagandeep.deep04@gmail.com",
+  "address": {
+    "country": "India"
+  },
+  "preferences": {
+    "newsletter": true,
+    "promotions": true,
+    "currency": "INR",
+    "language": "en",
+    "notifications": {
+      "email": false,
+      "sms": false,
+      "push": false
+    },
+    "_id": {
+      "$oid": "69313205a56d5f45ff012854"
+    }
+  },
+  "wishlist": [],
+  "recentlyViewed": [
+    {
+      "$oid": "69453160dcb6e86c017a8c0c"
+    },
+    {
+      "$oid": "69453160dcb6e86c017a8c0c"
+    },
+    {
+      "$oid": "693a852f3bbbb2993e62c969"
+    },
+    {
+      "$oid": "693a8908b7bfa201f551cd25"
+    },
+    {
+      "$oid": "693a8908b7bfa201f551cd25"
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-12-04T07:02:29.357Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-19T12:34:43.167Z"
+  },
+  "id": "69313205a56d5f45ff012855",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69353b7494c7622f900e9e6a"
+  },
+  "name": "Muskan rumi",
+  "email": "muskanrumi1100@gmail.com",
+  "address": {
+    "country": "India"
+  },
+  "preferences": {
+    "newsletter": true,
+    "promotions": true,
+    "currency": "INR",
+    "language": "en",
+    "notifications": {
+      "email": false,
+      "sms": false,
+      "push": false
+    },
+    "_id": {
+      "$oid": "69353b7494c7622f900e9e69"
+    }
+  },
+  "wishlist": [],
+  "recentlyViewed": [],
+  "createdAt": {
+    "$date": "2025-12-07T08:31:48.232Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-07T08:35:16.942Z"
+  },
+  "id": "69353b7494c7622f900e9e6a",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693beaa4c07f48c16bfd31db"
+  },
+  "name": "Dining Room Furniture",
+  "email": "nomogav943@discounp.com",
+  "address": {
+    "country": "India"
+  },
+  "preferences": {
+    "newsletter": true,
+    "promotions": true,
+    "currency": "",
+    "language": "en",
+    "notifications": {
+      "email": false,
+      "sms": false,
+      "push": false
+    },
+    "_id": {
+      "$oid": "693beaa4c07f48c16bfd31da"
+    }
+  },
+  "wishlist": [],
+  "recentlyViewed": [],
+  "createdAt": {
+    "$date": "2025-12-12T10:12:52.456Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-12T10:12:52.456Z"
+  },
+  "id": "693beaa4c07f48c16bfd31db",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693c04e81b02080ea5c6dac9"
+  },
+  "name": "Evil soul",
+  "email": "evilsoulhunter@duck.com",
+  "address": {
+    "country": "India"
+  },
+  "preferences": {
+    "newsletter": true,
+    "promotions": true,
+    "currency": "",
+    "language": "en",
+    "notifications": {
+      "email": true,
+      "sms": false,
+      "push": false
+    },
+    "_id": {
+      "$oid": "693c04e81b02080ea5c6dac8"
+    }
+  },
+  "wishlist": [],
+  "recentlyViewed": [
+    {
+      "$oid": "693be5fe60b1b34afe7d97e0"
+    },
+    {
+      "$oid": "693be5fe60b1b34afe7d97e0"
+    },
+    {
+      "$oid": "693d53bdf62195b4f65b7755"
+    },
+    {
+      "$oid": "69394608cb133616f8236723"
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-12-12T12:04:56.673Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-15T13:56:16.843Z"
+  },
+  "id": "693c04e81b02080ea5c6dac9",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693c205c77a074d4786f02fc"
+  },
+  "name": "Mr Best",
+  "email": "bestmr717@gmail.com",
+  "address": {
+    "country": "India"
+  },
+  "preferences": {
+    "newsletter": true,
+    "promotions": true,
+    "currency": "",
+    "language": "en",
+    "notifications": {
+      "email": false,
+      "sms": false,
+      "push": false
+    },
+    "_id": {
+      "$oid": "693c205c77a074d4786f02fb"
+    }
+  },
+  "wishlist": [],
+  "recentlyViewed": [],
+  "createdAt": {
+    "$date": "2025-12-12T14:02:04.761Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-12T14:02:04.761Z"
+  },
+  "id": "693c205c77a074d4786f02fc",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693c209576e14a17b7c39fd1"
+  },
+  "name": "AADITYA KAUSHIK",
+  "email": "aadityajodhpur@gmail.com",
+  "address": {
+    "country": "India"
+  },
+  "preferences": {
+    "newsletter": true,
+    "promotions": true,
+    "currency": "INR",
+    "language": "en",
+    "notifications": {
+      "email": false,
+      "sms": false,
+      "push": false
+    },
+    "_id": {
+      "$oid": "693c209576e14a17b7c39fd0"
+    }
+  },
+  "wishlist": [],
+  "recentlyViewed": [],
+  "createdAt": {
+    "$date": "2025-12-12T14:03:01.291Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-12T14:05:31.609Z"
+  },
+  "id": "693c209576e14a17b7c39fd1",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693c2e787e9b78df0e16107f"
+  },
+  "name": "Govind Bajaj",
+  "email": "meetgovindbajaj@gmail.com",
+  "address": {
+    "country": "India"
+  },
+  "preferences": {
+    "newsletter": false,
+    "promotions": true,
+    "currency": "",
+    "language": "en",
+    "notifications": {
+      "email": true,
+      "sms": false,
+      "push": false
+    },
+    "_id": {
+      "$oid": "693c2e787e9b78df0e16107e"
+    }
+  },
+  "wishlist": [],
+  "recentlyViewed": [
+    {
+      "$oid": "693be5fe60b1b34afe7d97e0"
+    },
+    {
+      "$oid": "693d56bdf62195b4f65b7821"
+    },
+    {
+      "$oid": "693d56bdf62195b4f65b7821"
+    },
+    {
+      "$oid": "693d549df62195b4f65b778c"
+    },
+    {
+      "$oid": "693a8908b7bfa201f551cd25"
+    },
+    {
+      "$oid": "693d579ff62195b4f65b79a3"
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-12-12T15:02:16.921Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-19T07:38:11.394Z"
+  },
+  "id": "693c2e787e9b78df0e16107f",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69411de10585c5f998572c8a"
+  },
+  "name": "Harshit Jain",
+  "email": "harshitjain374@gmail.com",
+  "address": {
+    "country": "India"
+  },
+  "preferences": {
+    "newsletter": true,
+    "promotions": true,
+    "currency": "",
+    "language": "en",
+    "notifications": {
+      "email": false,
+      "sms": false,
+      "push": false
+    },
+    "_id": {
+      "$oid": "69411de10585c5f998572c89"
+    }
+  },
+  "wishlist": [],
+  "recentlyViewed": [],
+  "createdAt": {
+    "$date": "2025-12-16T08:52:49.900Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-16T08:52:49.900Z"
+  },
+  "id": "69411de10585c5f998572c8a",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69458beb9273edcf2e95b854"
+  },
+  "name": "Swati",
+  "email": "swatisahu13209@gmail.com",
+  "address": {
+    "country": "India"
+  },
+  "preferences": {
+    "newsletter": true,
+    "promotions": true,
+    "currency": "",
+    "language": "en",
+    "notifications": {
+      "email": false,
+      "sms": false,
+      "push": false
+    },
+    "_id": {
+      "$oid": "69458beb9273edcf2e95b853"
+    }
+  },
+  "wishlist": [],
+  "recentlyViewed": [],
+  "createdAt": {
+    "$date": "2025-12-19T17:31:23.535Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-19T17:31:23.535Z"
+  },
+  "id": "69458beb9273edcf2e95b854",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69459359a03b5a045ba07960"
+  },
+  "name": "Sakthi Vigneshvar",
+  "email": "sakthivicky41@gmail.com",
+  "address": {
+    "country": "India"
+  },
+  "preferences": {
+    "newsletter": true,
+    "promotions": true,
+    "currency": "",
+    "language": "en",
+    "notifications": {
+      "email": false,
+      "sms": false,
+      "push": false
+    },
+    "_id": {
+      "$oid": "69459359a03b5a045ba0795f"
+    }
+  },
+  "wishlist": [],
+  "recentlyViewed": [],
+  "createdAt": {
+    "$date": "2025-12-19T18:03:05.728Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-19T18:03:05.728Z"
+  },
+  "id": "69459359a03b5a045ba07960",
+  "__v": 0
+}]

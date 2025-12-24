@@ -1,0 +1,911 @@
+[{
+  "_id": {
+    "$oid": "69393690e20dd75c819b1360"
+  },
+  "name": "Furniture",
+  "slug": "furniture",
+  "description": "\"Discover handcrafted furniture designed for modern living. Each piece blends premium materials, functional design, and timeless style to elevate every corner of your home.\"",
+  "image": {
+    "id": "blue_ocean/z7sirrsjw3uoltmcb6oy",
+    "name": "z7sirrsjw3uoltmcb6oy",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1765357270/blue_ocean/z7sirrsjw3uoltmcb6oy.jpg",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765357270/blue_ocean/z7sirrsjw3uoltmcb6oy.jpg",
+    "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/z7sirrsjw3uoltmcb6oy?_a=BAMAAAfm0",
+    "size": 440517,
+    "width": 1000,
+    "height": 1000,
+    "isThumbnail": false
+  },
+  "parent": null,
+  "isActive": true,
+  "children": [
+    {
+      "$oid": "6939388a8883470e0db6b300"
+    },
+    {
+      "$oid": "693939029ae5f9bc8ea6f854"
+    },
+    {
+      "$oid": "693939749ae5f9bc8ea6f865"
+    },
+    {
+      "$oid": "69393ad79ae5f9bc8ea6f89b"
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-12-10T09:00:00.649Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T07:10:31.039Z"
+  },
+  "id": "69393690e20dd75c819b1360",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6939388a8883470e0db6b300"
+  },
+  "name": "Living Room Cabinets",
+  "slug": "living-room-cabinets",
+  "description": "\"Stylish and spacious living room cabinets designed to keep your home organized. Crafted for durability with a modern look that blends seamlessly into any décor.\"",
+  "image": {
+    "id": "blue_ocean/cgzxmvkvzvbo04q6dcc1",
+    "name": "cgzxmvkvzvbo04q6dcc1",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1765440783/blue_ocean/cgzxmvkvzvbo04q6dcc1.jpg",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765440783/blue_ocean/cgzxmvkvzvbo04q6dcc1.jpg",
+    "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/cgzxmvkvzvbo04q6dcc1?_a=BAMAAAfm0",
+    "size": 349563,
+    "width": 1000,
+    "height": 1000,
+    "isThumbnail": false
+  },
+  "parent": {
+    "$oid": "69393690e20dd75c819b1360"
+  },
+  "isActive": true,
+  "children": [],
+  "createdAt": {
+    "$date": "2025-12-10T09:08:26.626Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-20T15:01:27.657Z"
+  },
+  "id": "6939388a8883470e0db6b300",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693939029ae5f9bc8ea6f854"
+  },
+  "name": "Tv Cabinets",
+  "slug": "tv-cabinets",
+  "description": "\"Space-saving TV cabinets with practical shelves and a contemporary design—perfect for keeping your media essentials organized.\"",
+  "image": {
+    "id": "blue_ocean/z7sirrsjw3uoltmcb6oy",
+    "name": "z7sirrsjw3uoltmcb6oy",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1765357270/blue_ocean/z7sirrsjw3uoltmcb6oy.jpg",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765357270/blue_ocean/z7sirrsjw3uoltmcb6oy.jpg",
+    "isThumbnail": false,
+    "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/z7sirrsjw3uoltmcb6oy?_a=BAMAAAfm0",
+    "size": 440517,
+    "width": 1000,
+    "height": 1000
+  },
+  "parent": {
+    "$oid": "69393690e20dd75c819b1360"
+  },
+  "isActive": true,
+  "children": [],
+  "createdAt": {
+    "$date": "2025-12-10T09:10:26.744Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-20T15:01:27.639Z"
+  },
+  "id": "693939029ae5f9bc8ea6f854",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693939749ae5f9bc8ea6f865"
+  },
+  "name": "Chest Of Drawer And Console",
+  "slug": "chest-of-drawer-and-console",
+  "description": "\"Stylish and spacious chest of drawers designed to keep your essentials organized. Crafted with quality materials and a modern finish to complement any room.\"",
+  "image": {
+    "id": "blue_ocean/oot1idokc2sxhsl8nblx",
+    "name": "oot1idokc2sxhsl8nblx",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1765357933/blue_ocean/oot1idokc2sxhsl8nblx.jpg",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765357933/blue_ocean/oot1idokc2sxhsl8nblx.jpg",
+    "isThumbnail": false,
+    "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/oot1idokc2sxhsl8nblx?_a=BAMAAAfm0",
+    "size": 602024,
+    "width": 1000,
+    "height": 1000
+  },
+  "parent": {
+    "$oid": "69393690e20dd75c819b1360"
+  },
+  "isActive": true,
+  "children": [],
+  "createdAt": {
+    "$date": "2025-12-10T09:12:20.135Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-20T15:00:59.390Z"
+  },
+  "id": "693939749ae5f9bc8ea6f865",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69393ad79ae5f9bc8ea6f89b"
+  },
+  "name": "Bookcases and Shelves",
+  "slug": "bookcases-and-shelves",
+  "description": "\"Modern bookcases designed to showcase your collection with style. Strong, elegant, and perfectly crafted to elevate any room.\"",
+  "image": {
+    "id": "blue_ocean/wqqndkhs12sk4ljiamoa",
+    "name": "wqqndkhs12sk4ljiamoa",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1765358227/blue_ocean/wqqndkhs12sk4ljiamoa.jpg",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765358227/blue_ocean/wqqndkhs12sk4ljiamoa.jpg",
+    "isThumbnail": false,
+    "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/wqqndkhs12sk4ljiamoa?_a=BAMAAAfm0",
+    "size": 311922,
+    "width": 1000,
+    "height": 1000
+  },
+  "parent": {
+    "$oid": "69393690e20dd75c819b1360"
+  },
+  "isActive": true,
+  "children": [],
+  "createdAt": {
+    "$date": "2025-12-10T09:18:15.488Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-20T15:00:59.146Z"
+  },
+  "id": "69393ad79ae5f9bc8ea6f89b",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69393b3d8883470e0db6b321"
+  },
+  "name": "Tables",
+  "slug": "tables",
+  "description": "\"Modern tables crafted for everyday use, featuring clean lines and durable finishes that suit any space.\"",
+  "image": {
+    "id": "blue_ocean/zr1y715hrexvcraonka4",
+    "name": "zr1y715hrexvcraonka4",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1765358389/blue_ocean/zr1y715hrexvcraonka4.jpg",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765358389/blue_ocean/zr1y715hrexvcraonka4.jpg",
+    "isThumbnail": false,
+    "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/zr1y715hrexvcraonka4?_a=BAMAAAfm0",
+    "size": 341681,
+    "width": 1000,
+    "height": 1000
+  },
+  "parent": null,
+  "isActive": true,
+  "children": [
+    {
+      "$oid": "69393ba48883470e0db6b330"
+    },
+    {
+      "$oid": "69393cff9ae5f9bc8ea6f8dc"
+    },
+    {
+      "$oid": "69393d719ae5f9bc8ea6f8ed"
+    },
+    {
+      "$oid": "69393df79ae5f9bc8ea6f8fe"
+    },
+    {
+      "$oid": "69393e9b9ae5f9bc8ea6f90f"
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-12-10T09:19:57.903Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T03:24:23.966Z"
+  },
+  "id": "69393b3d8883470e0db6b321",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69393ba48883470e0db6b330"
+  },
+  "name": "Dining Tables",
+  "slug": "dining-tables",
+  "description": "\"Beautifully designed tables made with quality materials, offering a perfect blend of style, strength, and timeless elegance.\"",
+  "image": {
+    "id": "blue_ocean/isxy3m1qjtwzdqafmbbb",
+    "name": "isxy3m1qjtwzdqafmbbb",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1765358491/blue_ocean/isxy3m1qjtwzdqafmbbb.webp",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765358491/blue_ocean/isxy3m1qjtwzdqafmbbb.webp",
+    "isThumbnail": false,
+    "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/isxy3m1qjtwzdqafmbbb?_a=BAMAAAfm0",
+    "size": 73900,
+    "width": 1000,
+    "height": 666
+  },
+  "parent": {
+    "$oid": "69393b3d8883470e0db6b321"
+  },
+  "isActive": true,
+  "children": [],
+  "createdAt": {
+    "$date": "2025-12-10T09:21:40.775Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-20T12:36:06.162Z"
+  },
+  "id": "69393ba48883470e0db6b330",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69393cff9ae5f9bc8ea6f8dc"
+  },
+  "name": "Coffee Tables",
+  "slug": "coffee-tables",
+  "description": "\"Minimalist tables with sleek designs and sturdy construction—ideal for contemporary homes.\"",
+  "image": {
+    "id": "blue_ocean/wafhcgi072he70t7kbme",
+    "name": "wafhcgi072he70t7kbme",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1765358833/blue_ocean/wafhcgi072he70t7kbme.jpg",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765358833/blue_ocean/wafhcgi072he70t7kbme.jpg",
+    "isThumbnail": false,
+    "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/wafhcgi072he70t7kbme?_a=BAMAAAfm0",
+    "size": 402654,
+    "width": 1000,
+    "height": 1000
+  },
+  "parent": {
+    "$oid": "69393b3d8883470e0db6b321"
+  },
+  "isActive": true,
+  "children": [],
+  "createdAt": {
+    "$date": "2025-12-10T09:27:27.282Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-20T12:36:01.827Z"
+  },
+  "id": "69393cff9ae5f9bc8ea6f8dc",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69393d719ae5f9bc8ea6f8ed"
+  },
+  "name": "Night Stand And Bedsides",
+  "slug": "night-stand-and-bedsides",
+  "description": "Modern nightstands designed for convenience and style. Compact, practical, and crafted to keep your bedside essentials within easy reach.\"",
+  "image": {
+    "id": "blue_ocean/rkzo0iiadwworjvuydi8",
+    "name": "rkzo0iiadwworjvuydi8",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1765358952/blue_ocean/rkzo0iiadwworjvuydi8.jpg",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765358952/blue_ocean/rkzo0iiadwworjvuydi8.jpg",
+    "isThumbnail": false,
+    "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/rkzo0iiadwworjvuydi8?_a=BAMAAAfm0",
+    "size": 503079,
+    "width": 1000,
+    "height": 1000
+  },
+  "parent": {
+    "$oid": "69393b3d8883470e0db6b321"
+  },
+  "isActive": true,
+  "children": [],
+  "createdAt": {
+    "$date": "2025-12-10T09:29:21.486Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-20T12:36:03.382Z"
+  },
+  "id": "69393d719ae5f9bc8ea6f8ed",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69393df79ae5f9bc8ea6f8fe"
+  },
+  "name": "Side Table",
+  "slug": "side-table",
+  "description": "\"Stylish side tables crafted for everyday convenience. Compact, sturdy, and perfect for adding a functional touch to any room.\"",
+  "image": {
+    "id": "blue_ocean/qmgkvoiajwptxxfgszvn",
+    "name": "qmgkvoiajwptxxfgszvn",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1765359083/blue_ocean/qmgkvoiajwptxxfgszvn.jpg",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765359083/blue_ocean/qmgkvoiajwptxxfgszvn.jpg",
+    "isThumbnail": false,
+    "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/qmgkvoiajwptxxfgszvn?_a=BAMAAAfm0",
+    "size": 65793,
+    "width": 1000,
+    "height": 1000
+  },
+  "parent": {
+    "$oid": "69393b3d8883470e0db6b321"
+  },
+  "isActive": true,
+  "children": [],
+  "createdAt": {
+    "$date": "2025-12-10T09:31:35.372Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-20T15:00:59.121Z"
+  },
+  "id": "69393df79ae5f9bc8ea6f8fe",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69393e9b9ae5f9bc8ea6f90f"
+  },
+  "name": "Desk",
+  "slug": "desk",
+  "description": "\"Modern desks designed for productivity and comfort. Clean lines, durable materials, and smart space for your work essentials.\"",
+  "image": {
+    "id": "blue_ocean/ygkhvjp9af7qsloumv9t",
+    "name": "ygkhvjp9af7qsloumv9t",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1765359243/blue_ocean/ygkhvjp9af7qsloumv9t.jpg",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765359243/blue_ocean/ygkhvjp9af7qsloumv9t.jpg",
+    "isThumbnail": false,
+    "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/ygkhvjp9af7qsloumv9t?_a=BAMAAAfm0",
+    "size": 419772,
+    "width": 1000,
+    "height": 1000
+  },
+  "parent": {
+    "$oid": "69393b3d8883470e0db6b321"
+  },
+  "isActive": true,
+  "children": [],
+  "createdAt": {
+    "$date": "2025-12-10T09:34:19.634Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-20T15:00:59.129Z"
+  },
+  "id": "69393e9b9ae5f9bc8ea6f90f",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693940a9c8a268d646b6b43b"
+  },
+  "name": "Bar Furniture",
+  "slug": "bar-furniture",
+  "description": "\"Stylish bar furniture crafted for comfort and elegance. Featuring premium finishes and smart designs, perfect for creating a relaxed and inviting entertainment space.\"",
+  "image": {
+    "id": "blue_ocean/nx6tt91rjlp3o14gfzzh",
+    "name": "nx6tt91rjlp3o14gfzzh",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1765359763/blue_ocean/nx6tt91rjlp3o14gfzzh.jpg",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765359763/blue_ocean/nx6tt91rjlp3o14gfzzh.jpg",
+    "isThumbnail": false,
+    "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/nx6tt91rjlp3o14gfzzh?_a=BAMAAAfm0",
+    "size": 439694,
+    "width": 1000,
+    "height": 1000
+  },
+  "parent": null,
+  "isActive": true,
+  "children": [
+    {
+      "$oid": "693940fae67bbefc4ab09290"
+    },
+    {
+      "$oid": "693941d2e67bbefc4ab092cf"
+    },
+    {
+      "$oid": "6939425dcb133616f8236679"
+    },
+    {
+      "$oid": "693942db9163834cbcdad072"
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-12-10T09:43:05.524Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T10:36:38.514Z"
+  },
+  "id": "693940a9c8a268d646b6b43b",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693940fae67bbefc4ab09290"
+  },
+  "name": "Automobile Theme Bar Cabinets",
+  "slug": "automobile-furniture",
+  "description": "\"Unique automobile-inspired furniture that brings creativity and character to your space. Crafted from automotive elements, each piece delivers bold design, durability, and a statement look.\"",
+  "image": {
+    "id": "blue_ocean/iun71ee0v04ix1yiupa7",
+    "name": "iun71ee0v04ix1yiupa7",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1765359854/blue_ocean/iun71ee0v04ix1yiupa7.jpg",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765359854/blue_ocean/iun71ee0v04ix1yiupa7.jpg",
+    "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/iun71ee0v04ix1yiupa7?_a=BAMAAAfm0",
+    "size": 551821,
+    "width": 1000,
+    "height": 1000,
+    "isThumbnail": true
+  },
+  "parent": {
+    "$oid": "693940a9c8a268d646b6b43b"
+  },
+  "isActive": true,
+  "children": [],
+  "createdAt": {
+    "$date": "2025-12-10T09:44:26.297Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-20T15:08:18.208Z"
+  },
+  "id": "693940fae67bbefc4ab09290",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693941d2e67bbefc4ab092cf"
+  },
+  "name": "Bar Cabinets",
+  "slug": "bar-cabinets",
+  "description": "\"Elegant bar cabinets with spacious storage and refined detailing. Perfect for organizing your drinks, glassware, and essentials while adding a touch of sophistication to your home.\"",
+  "image": {
+    "id": "blue_ocean/cv4rfpgbuyn9z3evlidy",
+    "name": "cv4rfpgbuyn9z3evlidy",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1765360064/blue_ocean/cv4rfpgbuyn9z3evlidy.jpg",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765360064/blue_ocean/cv4rfpgbuyn9z3evlidy.jpg",
+    "isThumbnail": false,
+    "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/cv4rfpgbuyn9z3evlidy?_a=BAMAAAfm0",
+    "size": 645408,
+    "width": 1000,
+    "height": 1000
+  },
+  "parent": {
+    "$oid": "693940a9c8a268d646b6b43b"
+  },
+  "isActive": true,
+  "children": [],
+  "createdAt": {
+    "$date": "2025-12-10T09:48:02.200Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-20T15:08:17.139Z"
+  },
+  "id": "693941d2e67bbefc4ab092cf",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6939425dcb133616f8236679"
+  },
+  "name": "Bar Stools",
+  "slug": "bar-stools",
+  "description": "\"Comfortable and stylish bar stools with sturdy frames and refined finishes—perfect for home bars, kitchens, or café setups.\"",
+  "image": {
+    "id": "blue_ocean/dddcrljgs9u5akbkki95",
+    "name": "dddcrljgs9u5akbkki95",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1765360207/blue_ocean/dddcrljgs9u5akbkki95.png",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765360207/blue_ocean/dddcrljgs9u5akbkki95.png",
+    "isThumbnail": false,
+    "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/dddcrljgs9u5akbkki95?_a=BAMAAAfm0",
+    "size": 718952,
+    "width": 770,
+    "height": 737
+  },
+  "parent": {
+    "$oid": "693940a9c8a268d646b6b43b"
+  },
+  "isActive": true,
+  "children": [],
+  "createdAt": {
+    "$date": "2025-12-10T09:50:21.695Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-20T12:35:55.172Z"
+  },
+  "id": "6939425dcb133616f8236679",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693942db9163834cbcdad072"
+  },
+  "name": "Bar Trolleys",
+  "slug": "bar-trolleys",
+  "description": "\"Functional and stylish bar trolleys featuring smooth mobility, ample storage, and a premium finish for effortless serving and entertaining.\"",
+  "image": {
+    "id": "blue_ocean/ns9kjvsdqa4pdfnupyqi",
+    "name": "ns9kjvsdqa4pdfnupyqi",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1765360338/blue_ocean/ns9kjvsdqa4pdfnupyqi.jpg",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765360338/blue_ocean/ns9kjvsdqa4pdfnupyqi.jpg",
+    "isThumbnail": false,
+    "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/ns9kjvsdqa4pdfnupyqi?_a=BAMAAAfm0",
+    "size": 688995,
+    "width": 1000,
+    "height": 1000
+  },
+  "parent": {
+    "$oid": "693940a9c8a268d646b6b43b"
+  },
+  "isActive": true,
+  "children": [],
+  "createdAt": {
+    "$date": "2025-12-10T09:52:27.204Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-20T15:08:17.165Z"
+  },
+  "id": "693942db9163834cbcdad072",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6939480b9163834cbcdad0ce"
+  },
+  "name": "Chairs",
+  "slug": "chairs",
+  "description": "\"Comfortable, stylish chairs crafted for everyday use. Designed with quality materials and clean aesthetics to suit any room.\"",
+  "image": {
+    "id": "blue_ocean/fvbbdqshduyln7uunoy8",
+    "name": "fvbbdqshduyln7uunoy8",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1765361652/blue_ocean/fvbbdqshduyln7uunoy8.avif",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765361652/blue_ocean/fvbbdqshduyln7uunoy8.avif",
+    "isThumbnail": false,
+    "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/fvbbdqshduyln7uunoy8?_a=BAMAAAfm0",
+    "size": 493419,
+    "width": 1500,
+    "height": 1500
+  },
+  "parent": null,
+  "isActive": true,
+  "children": [
+    {
+      "$oid": "6939491a9163834cbcdad114"
+    },
+    {
+      "$oid": "6939498c9163834cbcdad152"
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-12-10T10:14:35.408Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T10:36:40.805Z"
+  },
+  "id": "6939480b9163834cbcdad0ce",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6939491a9163834cbcdad114"
+  },
+  "name": "Wooden Chairs",
+  "slug": "wooden-chairs",
+  "description": "Comfortable, stylish Wooden chairs crafted for everyday use. Designed with quality materials and clean aesthetics to suit any room",
+  "image": {
+    "id": "blue_ocean/nxmw6eovwqzterwegrlc",
+    "name": "nxmw6eovwqzterwegrlc",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1765361752/blue_ocean/nxmw6eovwqzterwegrlc.jpg",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765361752/blue_ocean/nxmw6eovwqzterwegrlc.jpg",
+    "isThumbnail": false,
+    "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/nxmw6eovwqzterwegrlc?_a=BAMAAAfm0",
+    "size": 251067,
+    "width": 1000,
+    "height": 1000
+  },
+  "parent": {
+    "$oid": "6939480b9163834cbcdad0ce"
+  },
+  "isActive": true,
+  "children": [],
+  "createdAt": {
+    "$date": "2025-12-10T10:19:06.633Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T07:10:31.418Z"
+  },
+  "id": "6939491a9163834cbcdad114",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6939498c9163834cbcdad152"
+  },
+  "name": "Leather Chairs",
+  "slug": "leather-chairs",
+  "description": "\"Luxurious leather chairs crafted for comfort and style. Soft, durable, and perfect for adding a touch of sophistication to any space.\"",
+  "image": {
+    "id": "blue_ocean/l0sebvlo4ozlz3b81spu",
+    "name": "l0sebvlo4ozlz3b81spu",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1765362050/blue_ocean/l0sebvlo4ozlz3b81spu.avif",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765362050/blue_ocean/l0sebvlo4ozlz3b81spu.avif",
+    "isThumbnail": false,
+    "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/l0sebvlo4ozlz3b81spu?_a=BAMAAAfm0",
+    "size": 290888,
+    "width": 1500,
+    "height": 1500
+  },
+  "parent": {
+    "$oid": "6939480b9163834cbcdad0ce"
+  },
+  "isActive": true,
+  "children": [],
+  "createdAt": {
+    "$date": "2025-12-10T10:21:00.491Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T07:10:31.051Z"
+  },
+  "id": "6939498c9163834cbcdad152",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69394a209163834cbcdad177"
+  },
+  "name": "Sofas",
+  "slug": "sofas",
+  "description": "\"Cozy and inviting sofas that combine comfort with contemporary design—ideal for lounging and entertaining.\"",
+  "image": {
+    "id": "blue_ocean/ajw8iuqxhexafwbpgkza",
+    "name": "ajw8iuqxhexafwbpgkza",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1765362196/blue_ocean/ajw8iuqxhexafwbpgkza.webp",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765362196/blue_ocean/ajw8iuqxhexafwbpgkza.webp",
+    "isThumbnail": false,
+    "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/ajw8iuqxhexafwbpgkza?_a=BAMAAAfm0",
+    "size": 123430,
+    "width": 1000,
+    "height": 767
+  },
+  "parent": null,
+  "isActive": true,
+  "children": [
+    {
+      "$oid": "69394a8bcb133616f82367a9"
+    },
+    {
+      "$oid": "69394b4ecb133616f82367ba"
+    },
+    {
+      "$oid": "69394bb2cb133616f82367cb"
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-12-10T10:23:28.358Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T03:24:23.396Z"
+  },
+  "id": "69394a209163834cbcdad177",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69394a8bcb133616f82367a9"
+  },
+  "name": "Chesterfield Sofa",
+  "slug": "chesterfield-sofa",
+  "description": "\"Timeless Chesterfield sofa with deep button tufting and luxurious upholstery—bringing classic elegance and comfort to your living space.\"",
+  "image": {
+    "id": "blue_ocean/zqzz6ccattlfbhy4ui6v",
+    "name": "zqzz6ccattlfbhy4ui6v",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1765362294/blue_ocean/zqzz6ccattlfbhy4ui6v.jpg",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765362294/blue_ocean/zqzz6ccattlfbhy4ui6v.jpg",
+    "isThumbnail": false,
+    "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/zqzz6ccattlfbhy4ui6v?_a=BAMAAAfm0",
+    "size": 578614,
+    "width": 1000,
+    "height": 1000
+  },
+  "parent": {
+    "$oid": "69394a209163834cbcdad177"
+  },
+  "isActive": true,
+  "children": [],
+  "createdAt": {
+    "$date": "2025-12-10T10:25:15.072Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-20T15:00:58.019Z"
+  },
+  "id": "69394a8bcb133616f82367a9",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69394b4ecb133616f82367ba"
+  },
+  "name": "Arm Chairs",
+  "slug": "arm-chairs",
+  "description": "\"Stylish armchairs designed for comfort and elegance. Perfect for relaxing while adding a touch of sophistication to any room.\"",
+  "image": {
+    "id": "blue_ocean/lo5fz5sejcw5ajwv0wxm",
+    "name": "lo5fz5sejcw5ajwv0wxm",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1765362386/blue_ocean/lo5fz5sejcw5ajwv0wxm.jpg",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765362386/blue_ocean/lo5fz5sejcw5ajwv0wxm.jpg",
+    "isThumbnail": false,
+    "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/lo5fz5sejcw5ajwv0wxm?_a=BAMAAAfm0",
+    "size": 407361,
+    "width": 1000,
+    "height": 1000
+  },
+  "parent": {
+    "$oid": "69394a209163834cbcdad177"
+  },
+  "isActive": true,
+  "children": [],
+  "createdAt": {
+    "$date": "2025-12-10T10:28:30.685Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-20T15:03:23.319Z"
+  },
+  "id": "69394b4ecb133616f82367ba",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69394bb2cb133616f82367cb"
+  },
+  "name": "Pouffs",
+  "slug": "pouffs",
+  "description": "Versatile poufs designed for comfort and style. Perfect as extra seating, footrests, or accent pieces in any room.\"",
+  "image": {
+    "id": "blue_ocean/lctyjnko2ij6lztnid0b",
+    "name": "lctyjnko2ij6lztnid0b",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1765362600/blue_ocean/lctyjnko2ij6lztnid0b.avif",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765362600/blue_ocean/lctyjnko2ij6lztnid0b.avif",
+    "isThumbnail": false,
+    "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/lctyjnko2ij6lztnid0b?_a=BAMAAAfm0",
+    "size": 497385,
+    "width": 1500,
+    "height": 1500
+  },
+  "parent": {
+    "$oid": "69394a209163834cbcdad177"
+  },
+  "isActive": true,
+  "children": [],
+  "createdAt": {
+    "$date": "2025-12-10T10:30:10.833Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-20T15:00:57.994Z"
+  },
+  "id": "69394bb2cb133616f82367cb",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693a7e5b3ac51ad02771d9b3"
+  },
+  "name": "Bedroom cabinets",
+  "slug": "bedroom-cabinets",
+  "description": "Bedroom cabinets designed to keep your space organized with ease. Stylish, spacious, and built for everyday comfort.",
+  "image": {
+    "id": "blue_ocean/qtgvucvsjltvxpccawrr",
+    "name": "qtgvucvsjltvxpccawrr",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1765441098/blue_ocean/qtgvucvsjltvxpccawrr.jpg",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765441098/blue_ocean/qtgvucvsjltvxpccawrr.jpg",
+    "isThumbnail": false,
+    "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/qtgvucvsjltvxpccawrr?_a=BAMAAAfm0",
+    "size": 303423,
+    "width": 1000,
+    "height": 1000
+  },
+  "parent": null,
+  "isActive": true,
+  "children": [
+    {
+      "$oid": "693d408fff95a04bcf5a9485"
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-12-11T08:18:35.872Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T07:34:16.489Z"
+  },
+  "id": "693a7e5b3ac51ad02771d9b3",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693a80b23ac51ad02771da24"
+  },
+  "name": "Vintage furniture",
+  "slug": "vintage-furniture",
+  "description": "Vintage furniture crafted with timeless charm and character, bringing a classic touch to any space.",
+  "image": {
+    "id": "blue_ocean/zx3hfjzpsvm04awap1v5",
+    "name": "zx3hfjzpsvm04awap1v5",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1765441660/blue_ocean/zx3hfjzpsvm04awap1v5.jpg",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765441660/blue_ocean/zx3hfjzpsvm04awap1v5.jpg",
+    "isThumbnail": false,
+    "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/zx3hfjzpsvm04awap1v5?_a=BAMAAAfm0",
+    "size": 2471676,
+    "width": 1563,
+    "height": 1563
+  },
+  "parent": null,
+  "isActive": true,
+  "children": [],
+  "createdAt": {
+    "$date": "2025-12-11T08:28:34.243Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-20T15:18:25.972Z"
+  },
+  "id": "693a80b23ac51ad02771da24",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693a81733ac51ad02771da8c"
+  },
+  "name": "Legs",
+  "slug": "legs",
+  "description": "Sturdy, well-crafted legs designed to support your furniture with durability and style.",
+  "image": {
+    "id": "blue_ocean/dg3uzmxwhewlkepdqxiq",
+    "name": "dg3uzmxwhewlkepdqxiq",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1765441899/blue_ocean/dg3uzmxwhewlkepdqxiq.png",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765441899/blue_ocean/dg3uzmxwhewlkepdqxiq.png",
+    "isThumbnail": false,
+    "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/dg3uzmxwhewlkepdqxiq?_a=BAMAAAfm0",
+    "size": 28681,
+    "width": 500,
+    "height": 500
+  },
+  "parent": null,
+  "isActive": true,
+  "children": [],
+  "createdAt": {
+    "$date": "2025-12-11T08:31:47.226Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T03:24:18.260Z"
+  },
+  "id": "693a81733ac51ad02771da8c",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693d408fff95a04bcf5a9485"
+  },
+  "name": "Wardrobe",
+  "slug": "wardrobe",
+  "description": "Modern wardrobe built for everyday storage with a clean and stylish look",
+  "image": {
+    "id": "blue_ocean/waiiajjqcqjl7a5rxpxd",
+    "name": "file",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1765621852/blue_ocean/waiiajjqcqjl7a5rxpxd.jpg",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765621852/blue_ocean/waiiajjqcqjl7a5rxpxd.jpg",
+    "isThumbnail": false,
+    "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/waiiajjqcqjl7a5rxpxd?_a=BAMAAAfm0",
+    "size": 1248608,
+    "width": 1000,
+    "height": 1000
+  },
+  "parent": {
+    "$oid": "693a7e5b3ac51ad02771d9b3"
+  },
+  "isActive": true,
+  "children": [],
+  "createdAt": {
+    "$date": "2025-12-13T10:31:43.715Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T07:10:31.493Z"
+  },
+  "id": "693d408fff95a04bcf5a9485",
+  "__v": 0
+}]

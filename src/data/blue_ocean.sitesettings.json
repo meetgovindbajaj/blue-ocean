@@ -1,0 +1,365 @@
+[{
+  "_id": {
+    "$oid": "6942a79b129f6183feae43ec"
+  },
+  "siteName": "Blue Ocean",
+  "about": {
+    "title": "About Blue Ocean Exports",
+    "description": "Founded in 2016, Blue Ocean Export has grown into a globally recognized furniture manufacturer and exporter, specializing in solid wood, iron, vintage, and automobile-inspired furniture. With a team of over 500 skilled professionals, we combine traditional craftsmanship with modern automated machinery to deliver products of unmatched quality. Our expansive 10,000 sq. meter facility operates across 20 production stages, ensuring precision, durability, and consistency in every piece. We pride ourselves on offering customized solutions, bulk order capabilities, and on-time delivery, catering to international markets that demand excellence and innovation. At Blue Ocean Export, quality, reliability, and customer satisfaction remain at the heart of everything we do.",
+    "mission": "At Blue Ocean Export, our mission is to design and deliver exceptional furniture that blends craftsmanship, innovation, and durability. We are committed to providing customized solutions, maintaining the highest quality standards, and ensuring timely delivery for our global clients. Through continuous improvement and dedication, we aim to set benchmarks in the furniture industry while building long-lasting relationships with our customers worldwide.",
+    "vision": "To be a global leader in the furniture industry, recognized for superior craftsmanship, innovative designs, and sustainable practices, while consistently exceeding customer expectations and setting new standards for quality and excellence worldwide.",
+    "history": "Founded in 2016, Blue Ocean Export began with a vision to deliver high-quality, innovative furniture to clients around the world. Starting as a small team, we have grown into a workforce of over 500 skilled professionals, operating from a 10,000 sq. meter state-of-the-art facility. Combining traditional craftsmanship with advanced automated machinery, we produce solid wood, iron, vintage, and automobile-inspired furniture. Over the years, our commitment to quality, customization, and timely delivery has established us as a trusted name in international furniture markets",
+    "team": [
+      {
+        "name": "Govind Bajaj",
+        "role": "Developer",
+        "image": "https://res.cloudinary.com/govindb277/image/upload/v1765969967/blue_ocean/mysoq89x1svcuw5ownhl.jpg",
+        "bio": "Website designer and developer.",
+        "email": "meetgovindbajaj@gmail.com",
+        "phone": "+917688974744",
+        "socialLinks": [
+          {
+            "platform": "LinkedIn",
+            "url": "https://in.linkedin.com/in/meetgovindbajaj",
+            "_id": {
+              "$oid": "6942aa19bf6500193c9221b8"
+            }
+          }
+        ],
+        "_id": {
+          "$oid": "6942aa19bf6500193c9221b7"
+        }
+      },
+      {
+        "name": "Gagandeep kalla ",
+        "role": "MD",
+        "image": "https://res.cloudinary.com/govindb277/image/upload/v1766319513/blue_ocean/d8xbwuqkppqknyfdwsrh.jpg",
+        "bio": "Gagandeep Kalla, the Managing Director of Blue Ocean Export, is a visionary leader driving the company’s growth in the global furniture market. Known for his focus on quality, innovation, and customer satisfaction, he combines strategic insight with hands-on expertise to ensure the company delivers exceptional products and services worldwide.",
+        "email": "gagandeep.deep04@gmail.com",
+        "phone": "8619908415",
+        "socialLinks": [],
+        "_id": {
+          "$oid": "6947e62c82fe1d24d1619503"
+        }
+      },
+      {
+        "name": "Akshay kalla",
+        "role": "Founders",
+        "image": "",
+        "bio": "Akshay Kalla, CEO of Blue Ocean Export, is a dynamic leader with a vision for excellence in global furniture manufacturing. He drives innovation, ensures superior quality, and leads the company in delivering customized, world-class furniture solutions to international markets",
+        "email": "akshay1044@gmail.com",
+        "phone": "8079008372",
+        "socialLinks": [],
+        "_id": {
+          "$oid": "6947e62c82fe1d24d1619504"
+        }
+      }
+    ],
+    "services": {
+      "customDesign": {
+        "description": "Tailored furniture built exactly to your vision with premium materials and professional AutoCAD support.",
+        "features": [
+          "Choose from premium solid woods",
+          "Wide leather palette options",
+          "Full custom dimensions",
+          "Professional AutoCAD designs"
+        ]
+      },
+      "globalShipping": {
+        "description": "Reliable worldwide delivery with trusted logistics partners and seamless customs handling.",
+        "features": [
+          "FCL and LCL shipments",
+          "Seamless customs handling",
+          "Real-time container tracking",
+          "Trusted logistics partners"
+        ]
+      },
+      "expertSupport": {
+        "description": "End-to-end guidance with clear communication and order updates shared at every stage.",
+        "features": [
+          "Timely communication",
+          "Order updates at every stage",
+          "Customer approval process",
+          "Quick query assistance"
+        ]
+      },
+      "qualityControl": {
+        "description": "Strict inspections ensure world-class craftsmanship with internationally aligned QC processes.",
+        "features": [
+          "Strict inspections",
+          "Build quality checks",
+          "Color and finish verification",
+          "Internationally aligned QC"
+        ]
+      }
+    },
+    "factory": {
+      "title": "Our factory",
+      "description": "some random desc if wanted",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/govindb277/image/upload/v1765623587/blue_ocean/a2wuqd70dwehgeqqn4vq.avif",
+          "alt": "a2wuqd70dwehgeqqn4vq",
+          "order": 0,
+          "_id": {
+            "$oid": "6942a8a0129f6183feae4403"
+          }
+        },
+        {
+          "url": "https://res.cloudinary.com/govindb277/image/upload/v1765622166/blue_ocean/abhfer9k3nvdjzsdkmdd.jpg",
+          "alt": "abhfer9k3nvdjzsdkmdd",
+          "order": 1,
+          "_id": {
+            "$oid": "6942a8a0129f6183feae4404"
+          }
+        },
+        {
+          "url": "https://res.cloudinary.com/govindb277/image/upload/v1765627001/blue_ocean/adlwrthlazmynoff3bko.jpg",
+          "alt": "adlwrthlazmynoff3bko",
+          "order": 2,
+          "_id": {
+            "$oid": "6942a8a0129f6183feae4405"
+          }
+        },
+        {
+          "url": "https://res.cloudinary.com/govindb277/image/upload/v1765362196/blue_ocean/ajw8iuqxhexafwbpgkza.webp",
+          "alt": "ajw8iuqxhexafwbpgkza",
+          "order": 3,
+          "_id": {
+            "$oid": "6942a8a0129f6183feae4406"
+          }
+        },
+        {
+          "url": "https://res.cloudinary.com/govindb277/image/upload/v1765622359/blue_ocean/arzpidxmn8g2ysoctg5o.jpg",
+          "alt": "arzpidxmn8g2ysoctg5o",
+          "order": 4,
+          "_id": {
+            "$oid": "6942a8a0129f6183feae4407"
+          }
+        },
+        {
+          "url": "https://res.cloudinary.com/govindb277/image/upload/v1765622194/blue_ocean/axp1gsh9ke2722vtplkf.jpg",
+          "alt": "axp1gsh9ke2722vtplkf",
+          "order": 5,
+          "_id": {
+            "$oid": "6942a8a0129f6183feae4408"
+          }
+        },
+        {
+          "url": "https://res.cloudinary.com/govindb277/image/upload/v1765627215/blue_ocean/b4qozzpim4bks6ah0cs1.jpg",
+          "alt": "b4qozzpim4bks6ah0cs1",
+          "order": 6,
+          "_id": {
+            "$oid": "6942a8a0129f6183feae4409"
+          }
+        },
+        {
+          "url": "https://res.cloudinary.com/govindb277/image/upload/v1765626947/blue_ocean/b5elsbnoscgqloxe0tn0.jpg",
+          "alt": "b5elsbnoscgqloxe0tn0",
+          "order": 7,
+          "_id": {
+            "$oid": "6942a8a0129f6183feae440a"
+          }
+        },
+        {
+          "url": "https://res.cloudinary.com/govindb277/image/upload/v1765622185/blue_ocean/baf1iugbtuzlgy5wmnmu.jpg",
+          "alt": "baf1iugbtuzlgy5wmnmu",
+          "order": 8,
+          "_id": {
+            "$oid": "6942a8a0129f6183feae440b"
+          }
+        },
+        {
+          "url": "https://res.cloudinary.com/govindb277/image/upload/v1765443800/blue_ocean/bfyjdaz0fnsfvae7nwbb.avif",
+          "alt": "bfyjdaz0fnsfvae7nwbb",
+          "order": 9,
+          "_id": {
+            "$oid": "6942a8a0129f6183feae440c"
+          }
+        },
+        {
+          "url": "https://res.cloudinary.com/govindb277/image/upload/v1765622926/blue_ocean/bpiptsrsxtxhjrrgqh03.jpg",
+          "alt": "bpiptsrsxtxhjrrgqh03",
+          "order": 10,
+          "_id": {
+            "$oid": "6942a8a0129f6183feae440d"
+          }
+        },
+        {
+          "url": "https://res.cloudinary.com/govindb277/image/upload/v1765620734/blue_ocean/bpyc2wyxglvvlzee2luu.webp",
+          "alt": "bpyc2wyxglvvlzee2luu",
+          "order": 11,
+          "_id": {
+            "$oid": "6942a8a0129f6183feae440e"
+          }
+        },
+        {
+          "url": "https://res.cloudinary.com/govindb277/image/upload/v1765626994/blue_ocean/bvhsqohbiwfq7e8bxzsx.jpg",
+          "alt": "bvhsqohbiwfq7e8bxzsx",
+          "order": 12,
+          "_id": {
+            "$oid": "6942a8a0129f6183feae440f"
+          }
+        },
+        {
+          "url": "https://res.cloudinary.com/govindb277/image/upload/v1765627538/blue_ocean/bwuwlqksslfyoyhzzr8f.jpg",
+          "alt": "bwuwlqksslfyoyhzzr8f",
+          "order": 13,
+          "_id": {
+            "$oid": "6942a8a0129f6183feae4410"
+          }
+        },
+        {
+          "url": "https://res.cloudinary.com/govindb277/image/upload/v1765441057/blue_ocean/byftd6twsz9ktjzeimim.jpg",
+          "alt": "byftd6twsz9ktjzeimim",
+          "order": 14,
+          "_id": {
+            "$oid": "6942a8a0129f6183feae4411"
+          }
+        },
+        {
+          "url": "https://res.cloudinary.com/govindb277/image/upload/v1765622963/blue_ocean/bypzjjxovgk8magjjv5q.jpg",
+          "alt": "bypzjjxovgk8magjjv5q",
+          "order": 15,
+          "_id": {
+            "$oid": "6942a8a0129f6183feae4412"
+          }
+        },
+        {
+          "url": "https://res.cloudinary.com/govindb277/image/upload/v1765623388/blue_ocean/ccjpglnki78wawluwvhu.avif",
+          "alt": "ccjpglnki78wawluwvhu",
+          "order": 16,
+          "_id": {
+            "$oid": "6942a8a0129f6183feae4413"
+          }
+        },
+        {
+          "url": "https://res.cloudinary.com/govindb277/image/upload/v1764753385/blue_ocean/ccw37hjot4giu23xokog.jpg",
+          "alt": "ccw37hjot4giu23xokog",
+          "order": 17,
+          "_id": {
+            "$oid": "6942a8a0129f6183feae4414"
+          }
+        }
+      ],
+      "videos": []
+    }
+  },
+  "contact": {
+    "email": "contact@example.com"
+  },
+  "footer": {
+    "copyright": " ⓒ 2025 Blue Ocean Exports | All rights are reserved",
+    "description": "Some footer description",
+    "quickLinks": []
+  },
+  "seo": {
+    "metaTitle": "Blue Ocean Exports - Premium quality solid wood furniture crafted with precision and care.",
+    "metaDescription": "Premium quality solid wood furniture crafted with precision and care.",
+    "keywords": [
+      "furniture",
+      "home-decor",
+      "designs"
+    ]
+  },
+  "support": {
+    "whatsappNumber": "+91 7688974744",
+    "whatsappMessage": "Hello! I have a question.",
+    "enableLiveChat": false
+  },
+  "locale": {
+    "currency": "USD",
+    "currencySymbol": "$",
+    "locale": "en-US",
+    "exchangeRates": {
+      "USD": 1,
+      "INR": 89.58,
+      "EUR": 0.853,
+      "GBP": 0.748,
+      "AED": 3.67,
+      "SAR": 3.75,
+      "CAD": 1.38,
+      "AUD": 1.51,
+      "JPY": 157.33,
+      "CNY": 7.05
+    }
+  },
+  "socialLinks": [],
+  "businessHours": [
+    {
+      "day": "Monday",
+      "open": "09:00",
+      "close": "18:00",
+      "isClosed": false,
+      "_id": {
+        "$oid": "6942a902129f6183feae4443"
+      }
+    },
+    {
+      "day": "Tuesday",
+      "open": "09:00",
+      "close": "18:00",
+      "isClosed": false,
+      "_id": {
+        "$oid": "6942a902129f6183feae4444"
+      }
+    },
+    {
+      "day": "Wednesday",
+      "open": "09:00",
+      "close": "18:00",
+      "isClosed": false,
+      "_id": {
+        "$oid": "6942a902129f6183feae4445"
+      }
+    },
+    {
+      "day": "Thursday",
+      "open": "09:00",
+      "close": "18:00",
+      "isClosed": false,
+      "_id": {
+        "$oid": "6942a902129f6183feae4446"
+      }
+    },
+    {
+      "day": "Friday",
+      "open": "09:00",
+      "close": "18:00",
+      "isClosed": false,
+      "_id": {
+        "$oid": "6942a902129f6183feae4447"
+      }
+    },
+    {
+      "day": "Saturday",
+      "open": "09:00",
+      "close": "18:00",
+      "isClosed": false,
+      "_id": {
+        "$oid": "6942a902129f6183feae4448"
+      }
+    },
+    {
+      "day": "Sunday",
+      "open": "09:00",
+      "close": "18:00",
+      "isClosed": false,
+      "_id": {
+        "$oid": "6942a902129f6183feae4449"
+      }
+    }
+  ],
+  "faq": [],
+  "createdAt": {
+    "$date": "2025-12-17T12:52:43.188Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T12:21:35.129Z"
+  },
+  "__v": 16,
+  "logo": {
+    "url": "https://blue--ocean.vercel.app/images/logo.png"
+  },
+  "tagline": "Premium quality solid wood furniture crafted with precision and care."
+}]

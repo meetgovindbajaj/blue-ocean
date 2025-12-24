@@ -1,0 +1,2536 @@
+[{
+  "_id": {
+    "$oid": "69394608cb133616f8236723"
+  },
+  "name": "Wooden Dining Table",
+  "slug": "wooden-dining-table",
+  "description": "High Quality Mango Wood Dining Table",
+  "prices": {
+    "wholesale": 157,
+    "retail": 165,
+    "discount": 5,
+    "effectivePrice": 156.75
+  },
+  "isActive": true,
+  "category": {
+    "$oid": "69393ba48883470e0db6b330"
+  },
+  "size": {
+    "length": 180,
+    "width": 90,
+    "height": 75,
+    "fixedSize": false,
+    "unit": "cm"
+  },
+  "images": [
+    {
+      "id": "blue_ocean/rswj7dv07v8zce38ztha",
+      "name": "rswj7dv07v8zce38ztha",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765361133/blue_ocean/rswj7dv07v8zce38ztha.webp",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765361133/blue_ocean/rswj7dv07v8zce38ztha.webp",
+      "isThumbnail": false,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/rswj7dv07v8zce38ztha?_a=BAMAAAfm0",
+      "size": 51284,
+      "width": 1000,
+      "height": 667,
+      "_id": {
+        "$oid": "693b635d7e8c48233742f4df"
+      }
+    },
+    {
+      "id": "blue_ocean/sazwkv3cv3pwgejedezy",
+      "name": "sazwkv3cv3pwgejedezy",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765361437/blue_ocean/sazwkv3cv3pwgejedezy.webp",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765361437/blue_ocean/sazwkv3cv3pwgejedezy.webp",
+      "isThumbnail": false,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/sazwkv3cv3pwgejedezy?_a=BAMAAAfm0",
+      "size": 52586,
+      "width": 1000,
+      "height": 667,
+      "_id": {
+        "$oid": "693b635d7e8c48233742f4e0"
+      }
+    }
+  ],
+  "totalViews": 280,
+  "score": 808.3,
+  "createdAt": {
+    "$date": "2025-12-10T10:06:00.905Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T13:16:02.265Z"
+  },
+  "id": "69394608cb133616f8236723",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693a83ff3bbbb2993e62c918"
+  },
+  "name": "Tractor table",
+  "slug": "tractor-table",
+  "description": "A unique fusion of vintage charm and modern craftsmanship this tractor table is built from authentic tractor parts and solid wood. Its rustic design bold character and sturdy finish make it a standout centerpiece for cafés homes and display spaces",
+  "prices": {
+    "wholesale": 140,
+    "retail": 144,
+    "discount": 3,
+    "effectivePrice": 139.68
+  },
+  "isActive": true,
+  "category": {
+    "$oid": "693940fae67bbefc4ab09290"
+  },
+  "size": {
+    "length": 49,
+    "width": 32,
+    "height": 183,
+    "fixedSize": true,
+    "unit": "cm"
+  },
+  "images": [
+    {
+      "id": "blue_ocean/qf5cjvrpe7mdwzgem1a1",
+      "name": "qf5cjvrpe7mdwzgem1a1",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765442424/blue_ocean/qf5cjvrpe7mdwzgem1a1.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765442424/blue_ocean/qf5cjvrpe7mdwzgem1a1.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/qf5cjvrpe7mdwzgem1a1?_a=BAMAAAfm0",
+      "size": 173867,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693a83ff3bbbb2993e62c919"
+      }
+    },
+    {
+      "id": "blue_ocean/qjx4stm9eo6wbvhidmrg",
+      "name": "qjx4stm9eo6wbvhidmrg",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765442442/blue_ocean/qjx4stm9eo6wbvhidmrg.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765442442/blue_ocean/qjx4stm9eo6wbvhidmrg.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/qjx4stm9eo6wbvhidmrg?_a=BAMAAAfm0",
+      "size": 191197,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693a83ff3bbbb2993e62c91a"
+      }
+    },
+    {
+      "id": "blue_ocean/rswqz6vbgeq0twf6fn6b",
+      "name": "rswqz6vbgeq0twf6fn6b",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765442456/blue_ocean/rswqz6vbgeq0twf6fn6b.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765442456/blue_ocean/rswqz6vbgeq0twf6fn6b.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/rswqz6vbgeq0twf6fn6b?_a=BAMAAAfm0",
+      "size": 107731,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693a83ff3bbbb2993e62c91b"
+      }
+    },
+    {
+      "id": "blue_ocean/xb81adwns5amo6dnxfjq",
+      "name": "xb81adwns5amo6dnxfjq",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765442467/blue_ocean/xb81adwns5amo6dnxfjq.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765442467/blue_ocean/xb81adwns5amo6dnxfjq.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/xb81adwns5amo6dnxfjq?_a=BAMAAAfm0",
+      "size": 103128,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693a83ff3bbbb2993e62c91c"
+      }
+    },
+    {
+      "id": "blue_ocean/y8jtdetzjykrkbscu3xh",
+      "name": "y8jtdetzjykrkbscu3xh",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765442484/blue_ocean/y8jtdetzjykrkbscu3xh.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765442484/blue_ocean/y8jtdetzjykrkbscu3xh.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/y8jtdetzjykrkbscu3xh?_a=BAMAAAfm0",
+      "size": 188324,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693a83ff3bbbb2993e62c91d"
+      }
+    }
+  ],
+  "totalViews": 250,
+  "score": 743.7,
+  "createdAt": {
+    "$date": "2025-12-11T08:42:39.039Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T10:36:49.376Z"
+  },
+  "id": "693a83ff3bbbb2993e62c918",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693a852f3bbbb2993e62c969"
+  },
+  "name": "Bar Cabinets",
+  "slug": "bar-cabinets",
+  "description": "Stylish and space-efficient bar cabinets designed to organize your bottles glasses and bar essentials while adding a touch of elegance to your living or entertainment area",
+  "prices": {
+    "wholesale": 160,
+    "retail": 170,
+    "discount": 6,
+    "effectivePrice": 159.8
+  },
+  "isActive": true,
+  "category": {
+    "$oid": "693941d2e67bbefc4ab092cf"
+  },
+  "size": {
+    "length": 38,
+    "width": 18,
+    "height": 75,
+    "fixedSize": true,
+    "unit": "cm"
+  },
+  "images": [
+    {
+      "id": "blue_ocean/fxwqdqvymcloftul22t8",
+      "name": "fxwqdqvymcloftul22t8",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765442783/blue_ocean/fxwqdqvymcloftul22t8.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765442783/blue_ocean/fxwqdqvymcloftul22t8.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/fxwqdqvymcloftul22t8?_a=BAMAAAfm0",
+      "size": 80658,
+      "width": 1200,
+      "height": 1200,
+      "_id": {
+        "$oid": "693a852f3bbbb2993e62c96a"
+      }
+    },
+    {
+      "id": "blue_ocean/iomnqrkkqbjthyzuj9o0",
+      "name": "iomnqrkkqbjthyzuj9o0",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765442803/blue_ocean/iomnqrkkqbjthyzuj9o0.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765442803/blue_ocean/iomnqrkkqbjthyzuj9o0.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/iomnqrkkqbjthyzuj9o0?_a=BAMAAAfm0",
+      "size": 68777,
+      "width": 1200,
+      "height": 1200,
+      "_id": {
+        "$oid": "693a852f3bbbb2993e62c96b"
+      }
+    },
+    {
+      "id": "blue_ocean/kumfhguzzsvskdpqcgsv",
+      "name": "kumfhguzzsvskdpqcgsv",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765442819/blue_ocean/kumfhguzzsvskdpqcgsv.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765442819/blue_ocean/kumfhguzzsvskdpqcgsv.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/kumfhguzzsvskdpqcgsv?_a=BAMAAAfm0",
+      "size": 94291,
+      "width": 1200,
+      "height": 1200,
+      "_id": {
+        "$oid": "693a852f3bbbb2993e62c96c"
+      }
+    },
+    {
+      "id": "blue_ocean/xxlzq2ybamz37dxazd6a",
+      "name": "xxlzq2ybamz37dxazd6a",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765442767/blue_ocean/xxlzq2ybamz37dxazd6a.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765442767/blue_ocean/xxlzq2ybamz37dxazd6a.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/xxlzq2ybamz37dxazd6a?_a=BAMAAAfm0",
+      "size": 72380,
+      "width": 1200,
+      "height": 1200,
+      "_id": {
+        "$oid": "693a852f3bbbb2993e62c96d"
+      }
+    },
+    {
+      "id": "blue_ocean/zs3dfwh1ngdkxtft0uer",
+      "name": "zs3dfwh1ngdkxtft0uer",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765442827/blue_ocean/zs3dfwh1ngdkxtft0uer.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765442827/blue_ocean/zs3dfwh1ngdkxtft0uer.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/zs3dfwh1ngdkxtft0uer?_a=BAMAAAfm0",
+      "size": 69833,
+      "width": 1200,
+      "height": 1200,
+      "_id": {
+        "$oid": "693a852f3bbbb2993e62c96e"
+      }
+    }
+  ],
+  "totalViews": 258,
+  "score": 775.7,
+  "createdAt": {
+    "$date": "2025-12-11T08:47:43.696Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T13:15:56.792Z"
+  },
+  "id": "693a852f3bbbb2993e62c969",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693a8908b7bfa201f551cd25"
+  },
+  "name": "Industrial Bar stool",
+  "slug": "industrial-bar-stool",
+  "description": "A sturdy industrial bar stool crafted with a rugged metal frame and a smooth wooden seat offering a bold modern look for kitchens cafes and bars",
+  "prices": {
+    "wholesale": 69,
+    "retail": 76,
+    "discount": 9,
+    "effectivePrice": 69.16
+  },
+  "isActive": true,
+  "category": {
+    "$oid": "6939425dcb133616f8236679"
+  },
+  "size": {
+    "length": 46,
+    "width": 35,
+    "height": 35,
+    "fixedSize": false,
+    "unit": "cm"
+  },
+  "images": [
+    {
+      "id": "blue_ocean/bfyjdaz0fnsfvae7nwbb",
+      "name": "bfyjdaz0fnsfvae7nwbb",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765443800/blue_ocean/bfyjdaz0fnsfvae7nwbb.avif",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765443800/blue_ocean/bfyjdaz0fnsfvae7nwbb.avif",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/bfyjdaz0fnsfvae7nwbb?_a=BAMAAAfm0",
+      "size": 236336,
+      "width": 1500,
+      "height": 1500,
+      "_id": {
+        "$oid": "693a8908b7bfa201f551cd26"
+      }
+    },
+    {
+      "id": "blue_ocean/jswfugsxlkbapdcdssib",
+      "name": "jswfugsxlkbapdcdssib",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765443750/blue_ocean/jswfugsxlkbapdcdssib.avif",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765443750/blue_ocean/jswfugsxlkbapdcdssib.avif",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/jswfugsxlkbapdcdssib?_a=BAMAAAfm0",
+      "size": 446329,
+      "width": 1500,
+      "height": 1500,
+      "_id": {
+        "$oid": "693a8908b7bfa201f551cd27"
+      }
+    },
+    {
+      "id": "blue_ocean/u4qw2uoifprzujpxfxe9",
+      "name": "u4qw2uoifprzujpxfxe9",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765443810/blue_ocean/u4qw2uoifprzujpxfxe9.avif",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765443810/blue_ocean/u4qw2uoifprzujpxfxe9.avif",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/u4qw2uoifprzujpxfxe9?_a=BAMAAAfm0",
+      "size": 149228,
+      "width": 1500,
+      "height": 1500,
+      "_id": {
+        "$oid": "693a8908b7bfa201f551cd28"
+      }
+    },
+    {
+      "id": "blue_ocean/v03grhejpllar8oqztbs",
+      "name": "v03grhejpllar8oqztbs",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765443828/blue_ocean/v03grhejpllar8oqztbs.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765443828/blue_ocean/v03grhejpllar8oqztbs.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/v03grhejpllar8oqztbs?_a=BAMAAAfm0",
+      "size": 194247,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693a8908b7bfa201f551cd29"
+      }
+    }
+  ],
+  "totalViews": 267,
+  "score": 799.4,
+  "createdAt": {
+    "$date": "2025-12-11T09:04:08.357Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T13:15:53.413Z"
+  },
+  "id": "693a8908b7bfa201f551cd25",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693be4aa6133127661cad00d"
+  },
+  "name": "Compact Bar Stool",
+  "slug": "compact-bar-stool",
+  "description": "A sleek and space-saving bar stool designed to fit perfectly in modern kitchens and home bars. Minimal, sturdy, and easy to tuck under any counter",
+  "prices": {
+    "wholesale": 70,
+    "retail": 78,
+    "discount": 10,
+    "effectivePrice": 70.2
+  },
+  "isActive": true,
+  "category": {
+    "$oid": "6939425dcb133616f8236679"
+  },
+  "size": {
+    "length": 92,
+    "width": 50,
+    "height": 42,
+    "fixedSize": false,
+    "unit": "cm"
+  },
+  "images": [
+    {
+      "id": "blue_ocean/rjxof7wiogjrsc5hp3wx",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765532731/blue_ocean/rjxof7wiogjrsc5hp3wx.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765532731/blue_ocean/rjxof7wiogjrsc5hp3wx.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/rjxof7wiogjrsc5hp3wx?_a=BAMAAAfm0",
+      "size": 196916,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693be4da6133127661cad054"
+      }
+    },
+    {
+      "id": "blue_ocean/yskksalt9an5c2dbjy9q",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765532750/blue_ocean/yskksalt9an5c2dbjy9q.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765532750/blue_ocean/yskksalt9an5c2dbjy9q.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/yskksalt9an5c2dbjy9q?_a=BAMAAAfm0",
+      "size": 108254,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693be4da6133127661cad055"
+      }
+    },
+    {
+      "id": "blue_ocean/tseeirmmvqpgpneqokfn",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765532769/blue_ocean/tseeirmmvqpgpneqokfn.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765532769/blue_ocean/tseeirmmvqpgpneqokfn.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/tseeirmmvqpgpneqokfn?_a=BAMAAAfm0",
+      "size": 124932,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693be4da6133127661cad056"
+      }
+    },
+    {
+      "id": "blue_ocean/ec8l9wqh5u0yym2vkwl3",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765532784/blue_ocean/ec8l9wqh5u0yym2vkwl3.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765532784/blue_ocean/ec8l9wqh5u0yym2vkwl3.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/ec8l9wqh5u0yym2vkwl3?_a=BAMAAAfm0",
+      "size": 159357,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693be4da6133127661cad057"
+      }
+    },
+    {
+      "id": "blue_ocean/nd9kxoy32tqynygexejk",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765532803/blue_ocean/nd9kxoy32tqynygexejk.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765532803/blue_ocean/nd9kxoy32tqynygexejk.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/nd9kxoy32tqynygexejk?_a=BAMAAAfm0",
+      "size": 781328,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693be4da6133127661cad058"
+      }
+    }
+  ],
+  "totalViews": 158,
+  "score": 540.6,
+  "createdAt": {
+    "$date": "2025-12-12T09:47:22.923Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T18:01:17.251Z"
+  },
+  "id": "693be4aa6133127661cad00d",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693be5fe60b1b34afe7d97e0"
+  },
+  "name": "Classic Bar Trolley Table",
+  "slug": "classic-bar-trolley-table",
+  "description": "A stylish and functional bar trolley with spacious shelves and smooth wheels—perfect for serving drinks and organizing your bar essentials",
+  "prices": {
+    "wholesale": 160,
+    "retail": 170,
+    "discount": 6,
+    "effectivePrice": 159.8
+  },
+  "isActive": true,
+  "category": {
+    "$oid": "693942db9163834cbcdad072"
+  },
+  "size": {
+    "length": 190,
+    "width": 60,
+    "height": 45,
+    "fixedSize": true,
+    "unit": "cm"
+  },
+  "images": [
+    {
+      "id": "blue_ocean/x3nrg5cznfjh3aqt9p0h",
+      "name": "x3nrg5cznfjh3aqt9p0h",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765533028/blue_ocean/x3nrg5cznfjh3aqt9p0h.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765533028/blue_ocean/x3nrg5cznfjh3aqt9p0h.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/x3nrg5cznfjh3aqt9p0h?_a=BAMAAAfm0",
+      "size": 688995,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693be5fe60b1b34afe7d97e1"
+      }
+    },
+    {
+      "id": "blue_ocean/umfspsumrjnfokpjpdkl",
+      "name": "umfspsumrjnfokpjpdkl",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765533060/blue_ocean/umfspsumrjnfokpjpdkl.webp",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765533060/blue_ocean/umfspsumrjnfokpjpdkl.webp",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/umfspsumrjnfokpjpdkl?_a=BAMAAAfm0",
+      "size": 67628,
+      "width": 1234,
+      "height": 823,
+      "_id": {
+        "$oid": "693be5fe60b1b34afe7d97e2"
+      }
+    },
+    {
+      "id": "blue_ocean/qimnspxip0kkeinepmqa",
+      "name": "qimnspxip0kkeinepmqa",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765533104/blue_ocean/qimnspxip0kkeinepmqa.webp",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765533104/blue_ocean/qimnspxip0kkeinepmqa.webp",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/qimnspxip0kkeinepmqa?_a=BAMAAAfm0",
+      "size": 114010,
+      "width": 823,
+      "height": 1234,
+      "_id": {
+        "$oid": "693be5fe60b1b34afe7d97e3"
+      }
+    },
+    {
+      "id": "blue_ocean/jtg0itl77tm7nyvsvloq",
+      "name": "jtg0itl77tm7nyvsvloq",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765533082/blue_ocean/jtg0itl77tm7nyvsvloq.webp",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765533082/blue_ocean/jtg0itl77tm7nyvsvloq.webp",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/jtg0itl77tm7nyvsvloq?_a=BAMAAAfm0",
+      "size": 63952,
+      "width": 1234,
+      "height": 823,
+      "_id": {
+        "$oid": "693be5fe60b1b34afe7d97e4"
+      }
+    },
+    {
+      "id": "blue_ocean/vgx244njaz1spnscnls1",
+      "name": "vgx244njaz1spnscnls1",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765533123/blue_ocean/vgx244njaz1spnscnls1.webp",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765533123/blue_ocean/vgx244njaz1spnscnls1.webp",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/vgx244njaz1spnscnls1?_a=BAMAAAfm0",
+      "size": 102806,
+      "width": 1234,
+      "height": 823,
+      "_id": {
+        "$oid": "693be5fe60b1b34afe7d97e5"
+      }
+    },
+    {
+      "id": "blue_ocean/rw0mo07vfnfjrmr2armv",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765533138/blue_ocean/rw0mo07vfnfjrmr2armv.webp",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765533138/blue_ocean/rw0mo07vfnfjrmr2armv.webp",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/rw0mo07vfnfjrmr2armv?_a=BAMAAAfm0",
+      "size": 98654,
+      "width": 823,
+      "height": 1234,
+      "_id": {
+        "$oid": "693be5fe60b1b34afe7d97e6"
+      }
+    }
+  ],
+  "totalViews": 167,
+  "score": 578.7,
+  "createdAt": {
+    "$date": "2025-12-12T09:53:02.011Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T18:01:17.933Z"
+  },
+  "id": "693be5fe60b1b34afe7d97e0",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693d3fbaff95a04bcf5a93e5"
+  },
+  "name": "Smart Wardrobe",
+  "slug": "smart-wardrobe",
+  "description": "Spacious wardrobe cabinet designed to organize clothes and essentials with ease",
+  "prices": {
+    "wholesale": 160,
+    "retail": 170,
+    "discount": 6,
+    "effectivePrice": 159.8
+  },
+  "isActive": true,
+  "category": {
+    "$oid": "693a7e5b3ac51ad02771d9b3"
+  },
+  "size": {
+    "length": 140,
+    "width": 200,
+    "height": 45,
+    "fixedSize": false,
+    "unit": "cm"
+  },
+  "images": [
+    {
+      "id": "blue_ocean/bpyc2wyxglvvlzee2luu",
+      "name": "bpyc2wyxglvvlzee2luu",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765620734/blue_ocean/bpyc2wyxglvvlzee2luu.webp",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765620734/blue_ocean/bpyc2wyxglvvlzee2luu.webp",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/bpyc2wyxglvvlzee2luu?_a=BAMAAAfm0",
+      "size": 101930,
+      "width": 678,
+      "height": 678,
+      "_id": {
+        "$oid": "693d3fbaff95a04bcf5a93e6"
+      }
+    },
+    {
+      "id": "blue_ocean/pu7sdzix3nwv2owtjuom",
+      "name": "pu7sdzix3nwv2owtjuom",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765620746/blue_ocean/pu7sdzix3nwv2owtjuom.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765620746/blue_ocean/pu7sdzix3nwv2owtjuom.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/pu7sdzix3nwv2owtjuom?_a=BAMAAAfm0",
+      "size": 694536,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d3fbaff95a04bcf5a93e7"
+      }
+    },
+    {
+      "id": "blue_ocean/fa5mamk8wbxqchedlgo2",
+      "name": "fa5mamk8wbxqchedlgo2",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765620768/blue_ocean/fa5mamk8wbxqchedlgo2.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765620768/blue_ocean/fa5mamk8wbxqchedlgo2.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/fa5mamk8wbxqchedlgo2?_a=BAMAAAfm0",
+      "size": 265448,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d3fbaff95a04bcf5a93e8"
+      }
+    },
+    {
+      "id": "blue_ocean/hjnaz8fio2tyclglne2b",
+      "name": "hjnaz8fio2tyclglne2b",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765620709/blue_ocean/hjnaz8fio2tyclglne2b.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765620709/blue_ocean/hjnaz8fio2tyclglne2b.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/hjnaz8fio2tyclglne2b?_a=BAMAAAfm0",
+      "size": 780703,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d3fbaff95a04bcf5a93e9"
+      }
+    },
+    {
+      "id": "blue_ocean/iosmjygh9dgmgin49x0f",
+      "name": "iosmjygh9dgmgin49x0f",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765620778/blue_ocean/iosmjygh9dgmgin49x0f.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765620778/blue_ocean/iosmjygh9dgmgin49x0f.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/iosmjygh9dgmgin49x0f?_a=BAMAAAfm0",
+      "size": 236113,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d3fbaff95a04bcf5a93ea"
+      }
+    },
+    {
+      "id": "blue_ocean/izbfmxygkdgmvnx314po",
+      "name": "izbfmxygkdgmvnx314po",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765620756/blue_ocean/izbfmxygkdgmvnx314po.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765620756/blue_ocean/izbfmxygkdgmvnx314po.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/izbfmxygkdgmvnx314po?_a=BAMAAAfm0",
+      "size": 216485,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d3fbaff95a04bcf5a93eb"
+      }
+    }
+  ],
+  "totalViews": 109,
+  "score": 402.1,
+  "createdAt": {
+    "$date": "2025-12-13T10:28:10.750Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T18:01:18.931Z"
+  },
+  "id": "693d3fbaff95a04bcf5a93e5",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693d41d6ff95a04bcf5a94de"
+  },
+  "name": "Urban Wood Chair",
+  "slug": "urban-wood-chair",
+  "description": "Strong wooden chair with a timeless design for any space",
+  "prices": {
+    "wholesale": 38,
+    "retail": 45,
+    "discount": 16,
+    "effectivePrice": 37.8
+  },
+  "isActive": true,
+  "category": {
+    "$oid": "6939491a9163834cbcdad114"
+  },
+  "size": {
+    "length": 86,
+    "width": 45,
+    "height": 45,
+    "fixedSize": false,
+    "unit": "cm"
+  },
+  "images": [
+    {
+      "id": "blue_ocean/abhfer9k3nvdjzsdkmdd",
+      "name": "abhfer9k3nvdjzsdkmdd",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765622166/blue_ocean/abhfer9k3nvdjzsdkmdd.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765622166/blue_ocean/abhfer9k3nvdjzsdkmdd.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/abhfer9k3nvdjzsdkmdd?_a=BAMAAAfm0",
+      "size": 281590,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d41d6ff95a04bcf5a94df"
+      }
+    },
+    {
+      "id": "blue_ocean/t46prxesqh1djrd4ja86",
+      "name": "t46prxesqh1djrd4ja86",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765622146/blue_ocean/t46prxesqh1djrd4ja86.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765622146/blue_ocean/t46prxesqh1djrd4ja86.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/t46prxesqh1djrd4ja86?_a=BAMAAAfm0",
+      "size": 281716,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d41d6ff95a04bcf5a94e0"
+      }
+    },
+    {
+      "id": "blue_ocean/tofe041c07twvqs08k5b",
+      "name": "tofe041c07twvqs08k5b",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765622131/blue_ocean/tofe041c07twvqs08k5b.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765622131/blue_ocean/tofe041c07twvqs08k5b.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/tofe041c07twvqs08k5b?_a=BAMAAAfm0",
+      "size": 233442,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d41d6ff95a04bcf5a94e1"
+      }
+    },
+    {
+      "id": "blue_ocean/jlzthloelirpse1byzqz",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765622177/blue_ocean/jlzthloelirpse1byzqz.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765622177/blue_ocean/jlzthloelirpse1byzqz.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/jlzthloelirpse1byzqz?_a=BAMAAAfm0",
+      "size": 534707,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d41d6ff95a04bcf5a94e2"
+      }
+    },
+    {
+      "id": "blue_ocean/baf1iugbtuzlgy5wmnmu",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765622185/blue_ocean/baf1iugbtuzlgy5wmnmu.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765622185/blue_ocean/baf1iugbtuzlgy5wmnmu.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/baf1iugbtuzlgy5wmnmu?_a=BAMAAAfm0",
+      "size": 549354,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d41d6ff95a04bcf5a94e3"
+      }
+    },
+    {
+      "id": "blue_ocean/axp1gsh9ke2722vtplkf",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765622194/blue_ocean/axp1gsh9ke2722vtplkf.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765622194/blue_ocean/axp1gsh9ke2722vtplkf.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/axp1gsh9ke2722vtplkf?_a=BAMAAAfm0",
+      "size": 243190,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d41d6ff95a04bcf5a94e4"
+      }
+    }
+  ],
+  "totalViews": 92,
+  "score": 351.2,
+  "createdAt": {
+    "$date": "2025-12-13T10:37:10.396Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T18:01:17.928Z"
+  },
+  "id": "693d41d6ff95a04bcf5a94de",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693d42c6bc6b8b115258c29f"
+  },
+  "name": "Heritage Leather Chair",
+  "slug": "heritage-leather-chair",
+  "description": "Premium leather chair designed to offer lasting comfort and a refined elegant look for any space",
+  "prices": {
+    "wholesale": 40,
+    "retail": 45,
+    "discount": 11,
+    "effectivePrice": 40.05
+  },
+  "isActive": true,
+  "category": {
+    "$oid": "6939498c9163834cbcdad152"
+  },
+  "size": {
+    "length": 48,
+    "width": 90,
+    "height": 50,
+    "fixedSize": false,
+    "unit": "cm"
+  },
+  "images": [
+    {
+      "id": "blue_ocean/arzpidxmn8g2ysoctg5o",
+      "name": "arzpidxmn8g2ysoctg5o",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765622359/blue_ocean/arzpidxmn8g2ysoctg5o.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765622359/blue_ocean/arzpidxmn8g2ysoctg5o.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/arzpidxmn8g2ysoctg5o?_a=BAMAAAfm0",
+      "size": 508706,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d42c6bc6b8b115258c2a0"
+      }
+    },
+    {
+      "id": "blue_ocean/eshov9muaaeo4kj4qvbo",
+      "name": "eshov9muaaeo4kj4qvbo",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765622387/blue_ocean/eshov9muaaeo4kj4qvbo.webp",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765622387/blue_ocean/eshov9muaaeo4kj4qvbo.webp",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/eshov9muaaeo4kj4qvbo?_a=BAMAAAfm0",
+      "size": 44766,
+      "width": 2000,
+      "height": 2000,
+      "_id": {
+        "$oid": "693d42c6bc6b8b115258c2a1"
+      }
+    },
+    {
+      "id": "blue_ocean/xizlcbcphh4wgnpkrw8u",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765622400/blue_ocean/xizlcbcphh4wgnpkrw8u.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765622400/blue_ocean/xizlcbcphh4wgnpkrw8u.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/xizlcbcphh4wgnpkrw8u?_a=BAMAAAfm0",
+      "size": 425183,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d42c6bc6b8b115258c2a2"
+      }
+    },
+    {
+      "id": "blue_ocean/yrx40orrmi3ocroexmet",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765622414/blue_ocean/yrx40orrmi3ocroexmet.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765622414/blue_ocean/yrx40orrmi3ocroexmet.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/yrx40orrmi3ocroexmet?_a=BAMAAAfm0",
+      "size": 340583,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d42c6bc6b8b115258c2a3"
+      }
+    },
+    {
+      "id": "blue_ocean/ea2hrmocvx8oef10c4ny",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765622421/blue_ocean/ea2hrmocvx8oef10c4ny.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765622421/blue_ocean/ea2hrmocvx8oef10c4ny.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/ea2hrmocvx8oef10c4ny?_a=BAMAAAfm0",
+      "size": 515819,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d42c6bc6b8b115258c2a4"
+      }
+    },
+    {
+      "id": "blue_ocean/ydvrdbxqnotctr5c26eq",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765622428/blue_ocean/ydvrdbxqnotctr5c26eq.webp",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765622428/blue_ocean/ydvrdbxqnotctr5c26eq.webp",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/ydvrdbxqnotctr5c26eq?_a=BAMAAAfm0",
+      "size": 161864,
+      "width": 2000,
+      "height": 2000,
+      "_id": {
+        "$oid": "693d42c6bc6b8b115258c2a5"
+      }
+    }
+  ],
+  "totalViews": 86,
+  "score": 317.3,
+  "createdAt": {
+    "$date": "2025-12-13T10:41:10.690Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T13:15:37.980Z"
+  },
+  "id": "693d42c6bc6b8b115258c29f",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693d43f0bc6b8b115258c2e6"
+  },
+  "name": "Regal Storage Cabinet",
+  "slug": "regal-storage-cabinet",
+  "description": "Compact living room cabinet perfect for organizing accessories and maintaining a neat environment",
+  "prices": {
+    "wholesale": 199,
+    "retail": 209,
+    "discount": 5,
+    "effectivePrice": 198.55
+  },
+  "isActive": true,
+  "category": {
+    "$oid": "6939388a8883470e0db6b300"
+  },
+  "size": {
+    "length": 85,
+    "width": 195,
+    "height": 45,
+    "fixedSize": false,
+    "unit": "cm"
+  },
+  "images": [
+    {
+      "id": "blue_ocean/cuecaokzoz7dwxwdhft5",
+      "name": "cuecaokzoz7dwxwdhft5",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765622687/blue_ocean/cuecaokzoz7dwxwdhft5.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765622687/blue_ocean/cuecaokzoz7dwxwdhft5.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/cuecaokzoz7dwxwdhft5?_a=BAMAAAfm0",
+      "size": 786745,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d43f0bc6b8b115258c2e7"
+      }
+    },
+    {
+      "id": "blue_ocean/ortdc7ezzqnjbzigy4ir",
+      "name": "ortdc7ezzqnjbzigy4ir",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765622703/blue_ocean/ortdc7ezzqnjbzigy4ir.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765622703/blue_ocean/ortdc7ezzqnjbzigy4ir.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/ortdc7ezzqnjbzigy4ir?_a=BAMAAAfm0",
+      "size": 822918,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d43f0bc6b8b115258c2e8"
+      }
+    },
+    {
+      "id": "blue_ocean/spsh7hopbrvacrz3ia7x",
+      "name": "spsh7hopbrvacrz3ia7x",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765622671/blue_ocean/spsh7hopbrvacrz3ia7x.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765622671/blue_ocean/spsh7hopbrvacrz3ia7x.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/spsh7hopbrvacrz3ia7x?_a=BAMAAAfm0",
+      "size": 645448,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d43f0bc6b8b115258c2e9"
+      }
+    },
+    {
+      "id": "blue_ocean/ufv3zsejrirluubwdg40",
+      "name": "ufv3zsejrirluubwdg40",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765622651/blue_ocean/ufv3zsejrirluubwdg40.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765622651/blue_ocean/ufv3zsejrirluubwdg40.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/ufv3zsejrirluubwdg40?_a=BAMAAAfm0",
+      "size": 893071,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d43f0bc6b8b115258c2ea"
+      }
+    },
+    {
+      "id": "blue_ocean/xglmlpkkniiwzei6jqzn",
+      "name": "xglmlpkkniiwzei6jqzn",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765622718/blue_ocean/xglmlpkkniiwzei6jqzn.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765622718/blue_ocean/xglmlpkkniiwzei6jqzn.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/xglmlpkkniiwzei6jqzn?_a=BAMAAAfm0",
+      "size": 822918,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d43f0bc6b8b115258c2eb"
+      }
+    },
+    {
+      "id": "blue_ocean/tdfzldexeukkops8sexg",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765622735/blue_ocean/tdfzldexeukkops8sexg.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765622735/blue_ocean/tdfzldexeukkops8sexg.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/tdfzldexeukkops8sexg?_a=BAMAAAfm0",
+      "size": 831872,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d43f0bc6b8b115258c2ec"
+      }
+    },
+    {
+      "id": "blue_ocean/vfhrks0dih9ccd41dsu2",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765622743/blue_ocean/vfhrks0dih9ccd41dsu2.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765622743/blue_ocean/vfhrks0dih9ccd41dsu2.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/vfhrks0dih9ccd41dsu2?_a=BAMAAAfm0",
+      "size": 445705,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d43f0bc6b8b115258c2ed"
+      }
+    }
+  ],
+  "totalViews": 79,
+  "score": 284.6,
+  "createdAt": {
+    "$date": "2025-12-13T10:46:08.479Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T13:15:35.377Z"
+  },
+  "id": "693d43f0bc6b8b115258c2e6",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693d44d6bc6b8b115258c32c"
+  },
+  "name": "Grand TV Console",
+  "slug": "grand-tv-console",
+  "description": "Grand TV Console crafted to provide a sturdy platform for your television while offering smart storage for media devices and decor items",
+  "prices": {
+    "wholesale": 139,
+    "retail": 149,
+    "discount": 7,
+    "effectivePrice": 138.57
+  },
+  "isActive": true,
+  "category": {
+    "$oid": "693939029ae5f9bc8ea6f854"
+  },
+  "size": {
+    "length": 160,
+    "width": 70,
+    "height": 45,
+    "fixedSize": false,
+    "unit": "cm"
+  },
+  "images": [
+    {
+      "id": "blue_ocean/yktgxor6nhhhw7wtjjev",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765622916/blue_ocean/yktgxor6nhhhw7wtjjev.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765622916/blue_ocean/yktgxor6nhhhw7wtjjev.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/yktgxor6nhhhw7wtjjev?_a=BAMAAAfm0",
+      "size": 526716,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d44d6bc6b8b115258c32d"
+      }
+    },
+    {
+      "id": "blue_ocean/bpiptsrsxtxhjrrgqh03",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765622926/blue_ocean/bpiptsrsxtxhjrrgqh03.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765622926/blue_ocean/bpiptsrsxtxhjrrgqh03.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/bpiptsrsxtxhjrrgqh03?_a=BAMAAAfm0",
+      "size": 494873,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d44d6bc6b8b115258c32e"
+      }
+    },
+    {
+      "id": "blue_ocean/jnari1c8vjvey5q0csxi",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765622942/blue_ocean/jnari1c8vjvey5q0csxi.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765622942/blue_ocean/jnari1c8vjvey5q0csxi.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/jnari1c8vjvey5q0csxi?_a=BAMAAAfm0",
+      "size": 637899,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d44d6bc6b8b115258c32f"
+      }
+    },
+    {
+      "id": "blue_ocean/bypzjjxovgk8magjjv5q",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765622963/blue_ocean/bypzjjxovgk8magjjv5q.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765622963/blue_ocean/bypzjjxovgk8magjjv5q.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/bypzjjxovgk8magjjv5q?_a=BAMAAAfm0",
+      "size": 478677,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d44d6bc6b8b115258c330"
+      }
+    },
+    {
+      "id": "blue_ocean/ism1a0e9zfm7gscygkxp",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765622971/blue_ocean/ism1a0e9zfm7gscygkxp.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765622971/blue_ocean/ism1a0e9zfm7gscygkxp.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/ism1a0e9zfm7gscygkxp?_a=BAMAAAfm0",
+      "size": 565933,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d44d6bc6b8b115258c331"
+      }
+    }
+  ],
+  "totalViews": 88,
+  "score": 323.5,
+  "createdAt": {
+    "$date": "2025-12-13T10:49:58.393Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T13:15:32.822Z"
+  },
+  "id": "693d44d6bc6b8b115258c32c",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693d475cbc6b8b115258c37b"
+  },
+  "name": "Grand Drawer Cabinet",
+  "slug": "grand-drawer-cabinet",
+  "description": "Functional chest of drawers with multiple compartments for clothes accessories and decor",
+  "prices": {
+    "wholesale": 189,
+    "retail": 199,
+    "discount": 5,
+    "effectivePrice": 189.05
+  },
+  "isActive": true,
+  "category": {
+    "$oid": "693939749ae5f9bc8ea6f865"
+  },
+  "size": {
+    "length": 73,
+    "width": 83,
+    "height": 28,
+    "fixedSize": false,
+    "unit": "cm"
+  },
+  "images": [
+    {
+      "id": "blue_ocean/cjywtfkpv557no3mytxn",
+      "name": "cjywtfkpv557no3mytxn",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765623443/blue_ocean/cjywtfkpv557no3mytxn.avif",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765623443/blue_ocean/cjywtfkpv557no3mytxn.avif",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/cjywtfkpv557no3mytxn?_a=BAMAAAfm0",
+      "size": 352345,
+      "width": 1500,
+      "height": 1500,
+      "_id": {
+        "$oid": "693d475cbc6b8b115258c37c"
+      }
+    },
+    {
+      "id": "blue_ocean/dfae8f18ytfasz3doeas",
+      "name": "dfae8f18ytfasz3doeas",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765623264/blue_ocean/dfae8f18ytfasz3doeas.avif",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765623264/blue_ocean/dfae8f18ytfasz3doeas.avif",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/dfae8f18ytfasz3doeas?_a=BAMAAAfm0",
+      "size": 404835,
+      "width": 1500,
+      "height": 1500,
+      "_id": {
+        "$oid": "693d475cbc6b8b115258c37d"
+      }
+    },
+    {
+      "id": "blue_ocean/ppiszgo14rha4i8xqdib",
+      "name": "ppiszgo14rha4i8xqdib",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765623293/blue_ocean/ppiszgo14rha4i8xqdib.avif",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765623293/blue_ocean/ppiszgo14rha4i8xqdib.avif",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/ppiszgo14rha4i8xqdib?_a=BAMAAAfm0",
+      "size": 326538,
+      "width": 1500,
+      "height": 1500,
+      "_id": {
+        "$oid": "693d475cbc6b8b115258c37e"
+      }
+    },
+    {
+      "id": "blue_ocean/pt0sszncq3tihuldixpo",
+      "name": "pt0sszncq3tihuldixpo",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765623571/blue_ocean/pt0sszncq3tihuldixpo.avif",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765623571/blue_ocean/pt0sszncq3tihuldixpo.avif",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/pt0sszncq3tihuldixpo?_a=BAMAAAfm0",
+      "size": 187430,
+      "width": 1500,
+      "height": 1500,
+      "_id": {
+        "$oid": "693d475cbc6b8b115258c37f"
+      }
+    },
+    {
+      "id": "blue_ocean/jsrrxr2ttmqlteqbfnwk",
+      "name": "jsrrxr2ttmqlteqbfnwk",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765623524/blue_ocean/jsrrxr2ttmqlteqbfnwk.avif",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765623524/blue_ocean/jsrrxr2ttmqlteqbfnwk.avif",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/jsrrxr2ttmqlteqbfnwk?_a=BAMAAAfm0",
+      "size": 165809,
+      "width": 1500,
+      "height": 1500,
+      "_id": {
+        "$oid": "693d475cbc6b8b115258c380"
+      }
+    },
+    {
+      "id": "blue_ocean/rxbyyggcrk2fu3idz63r",
+      "name": "rxbyyggcrk2fu3idz63r",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765623551/blue_ocean/rxbyyggcrk2fu3idz63r.avif",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765623551/blue_ocean/rxbyyggcrk2fu3idz63r.avif",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/rxbyyggcrk2fu3idz63r?_a=BAMAAAfm0",
+      "size": 414393,
+      "width": 1500,
+      "height": 1500,
+      "_id": {
+        "$oid": "693d475cbc6b8b115258c381"
+      }
+    },
+    {
+      "id": "blue_ocean/a2wuqd70dwehgeqqn4vq",
+      "name": "a2wuqd70dwehgeqqn4vq",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765623587/blue_ocean/a2wuqd70dwehgeqqn4vq.avif",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765623587/blue_ocean/a2wuqd70dwehgeqqn4vq.avif",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/a2wuqd70dwehgeqqn4vq?_a=BAMAAAfm0",
+      "size": 272464,
+      "width": 1500,
+      "height": 1500,
+      "_id": {
+        "$oid": "693d475cbc6b8b115258c382"
+      }
+    },
+    {
+      "id": "blue_ocean/depgmkaopoawbuc7utwy",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765623604/blue_ocean/depgmkaopoawbuc7utwy.avif",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765623604/blue_ocean/depgmkaopoawbuc7utwy.avif",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/depgmkaopoawbuc7utwy?_a=BAMAAAfm0",
+      "size": 280063,
+      "width": 1500,
+      "height": 1500,
+      "_id": {
+        "$oid": "693d475cbc6b8b115258c383"
+      }
+    }
+  ],
+  "totalViews": 85,
+  "score": 308.8,
+  "createdAt": {
+    "$date": "2025-12-13T11:00:44.911Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T13:15:29.768Z"
+  },
+  "id": "693d475cbc6b8b115258c37b",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693d49bb76b8251642efb62d"
+  },
+  "name": "Classic Bookcase",
+  "slug": "classic-bookcase",
+  "description": "Functional bookcase perfect for homes offices and study spaces",
+  "prices": {
+    "wholesale": 119,
+    "retail": 129,
+    "discount": 8,
+    "effectivePrice": 118.68
+  },
+  "isActive": true,
+  "category": {
+    "$oid": "69393ad79ae5f9bc8ea6f89b"
+  },
+  "size": {
+    "length": 80,
+    "width": 80,
+    "height": 28,
+    "fixedSize": false,
+    "unit": "cm"
+  },
+  "images": [
+    {
+      "id": "blue_ocean/jkj30wjarabm60gzt0tc",
+      "name": "jkj30wjarabm60gzt0tc",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765623776/blue_ocean/jkj30wjarabm60gzt0tc.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765623776/blue_ocean/jkj30wjarabm60gzt0tc.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/jkj30wjarabm60gzt0tc?_a=BAMAAAfm0",
+      "size": 311922,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d49bb76b8251642efb62e"
+      }
+    },
+    {
+      "id": "blue_ocean/txfvvzc8y54tt1zoaqqi",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765623854/blue_ocean/txfvvzc8y54tt1zoaqqi.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765623854/blue_ocean/txfvvzc8y54tt1zoaqqi.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/txfvvzc8y54tt1zoaqqi?_a=BAMAAAfm0",
+      "size": 357421,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d49bb76b8251642efb62f"
+      }
+    },
+    {
+      "id": "blue_ocean/kokwy3c2eqlkxjd8ci4a",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765623869/blue_ocean/kokwy3c2eqlkxjd8ci4a.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765623869/blue_ocean/kokwy3c2eqlkxjd8ci4a.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/kokwy3c2eqlkxjd8ci4a?_a=BAMAAAfm0",
+      "size": 339783,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d49bb76b8251642efb630"
+      }
+    },
+    {
+      "id": "blue_ocean/rd0oxsh2l65x2nkteubc",
+      "name": "rd0oxsh2l65x2nkteubc",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765623795/blue_ocean/rd0oxsh2l65x2nkteubc.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765623795/blue_ocean/rd0oxsh2l65x2nkteubc.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/rd0oxsh2l65x2nkteubc?_a=BAMAAAfm0",
+      "size": 534690,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d49bb76b8251642efb631"
+      }
+    },
+    {
+      "id": "blue_ocean/rokdxcptmmrhirpxr6ze",
+      "name": "rokdxcptmmrhirpxr6ze",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765623817/blue_ocean/rokdxcptmmrhirpxr6ze.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765623817/blue_ocean/rokdxcptmmrhirpxr6ze.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/rokdxcptmmrhirpxr6ze?_a=BAMAAAfm0",
+      "size": 698498,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d49bb76b8251642efb632"
+      }
+    },
+    {
+      "id": "blue_ocean/dqmycfktm4tlvvwuvpef",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765623862/blue_ocean/dqmycfktm4tlvvwuvpef.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765623862/blue_ocean/dqmycfktm4tlvvwuvpef.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/dqmycfktm4tlvvwuvpef?_a=BAMAAAfm0",
+      "size": 408991,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d49bb76b8251642efb633"
+      }
+    },
+    {
+      "id": "blue_ocean/ulyve0avpbavucfyumwk",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765623876/blue_ocean/ulyve0avpbavucfyumwk.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765623876/blue_ocean/ulyve0avpbavucfyumwk.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/ulyve0avpbavucfyumwk?_a=BAMAAAfm0",
+      "size": 294149,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d49bb76b8251642efb634"
+      }
+    }
+  ],
+  "totalViews": 90,
+  "score": 329.7,
+  "createdAt": {
+    "$date": "2025-12-13T11:10:51.406Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T13:15:26.962Z"
+  },
+  "id": "693d49bb76b8251642efb62d",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693d53bdf62195b4f65b7755"
+  },
+  "name": "Signature Legs",
+  "slug": "signature-legs",
+  "description": "Strong and durable legs designed to provide stable support and long lasting performance",
+  "prices": {
+    "wholesale": 20,
+    "retail": 25,
+    "discount": 20,
+    "effectivePrice": 20
+  },
+  "isActive": true,
+  "category": {
+    "$oid": "693a81733ac51ad02771da8c"
+  },
+  "size": {
+    "length": 65,
+    "width": 75,
+    "height": 75,
+    "fixedSize": false,
+    "unit": "cm"
+  },
+  "images": [
+    {
+      "id": "blue_ocean/fp9a7orli0blvxgqjigh",
+      "name": "fp9a7orli0blvxgqjigh",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765626754/blue_ocean/fp9a7orli0blvxgqjigh.webp",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765626754/blue_ocean/fp9a7orli0blvxgqjigh.webp",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/fp9a7orli0blvxgqjigh?_a=BAMAAAfm0",
+      "size": 12130,
+      "width": 794,
+      "height": 447,
+      "_id": {
+        "$oid": "693d53bdf62195b4f65b7756"
+      }
+    },
+    {
+      "id": "blue_ocean/d5kwajqiiqnrmnmox83a",
+      "name": "d5kwajqiiqnrmnmox83a",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765626413/blue_ocean/d5kwajqiiqnrmnmox83a.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765626413/blue_ocean/d5kwajqiiqnrmnmox83a.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/d5kwajqiiqnrmnmox83a?_a=BAMAAAfm0",
+      "size": 110393,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d53bdf62195b4f65b7757"
+      }
+    },
+    {
+      "id": "blue_ocean/ehbenegtixunrja41hhp",
+      "name": "ehbenegtixunrja41hhp",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765626726/blue_ocean/ehbenegtixunrja41hhp.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765626726/blue_ocean/ehbenegtixunrja41hhp.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/ehbenegtixunrja41hhp?_a=BAMAAAfm0",
+      "size": 110393,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d53bdf62195b4f65b7758"
+      }
+    },
+    {
+      "id": "blue_ocean/mslqbenht3ic60hkztnu",
+      "name": "mslqbenht3ic60hkztnu",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765626380/blue_ocean/mslqbenht3ic60hkztnu.webp",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765626380/blue_ocean/mslqbenht3ic60hkztnu.webp",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/mslqbenht3ic60hkztnu?_a=BAMAAAfm0",
+      "size": 12130,
+      "width": 794,
+      "height": 447,
+      "_id": {
+        "$oid": "693d53bdf62195b4f65b7759"
+      }
+    },
+    {
+      "id": "blue_ocean/qsxl7ammxxbufyqhskya",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765626767/blue_ocean/qsxl7ammxxbufyqhskya.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765626767/blue_ocean/qsxl7ammxxbufyqhskya.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/qsxl7ammxxbufyqhskya?_a=BAMAAAfm0",
+      "size": 99998,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d53bdf62195b4f65b775a"
+      }
+    }
+  ],
+  "totalViews": 106,
+  "score": 398.5,
+  "createdAt": {
+    "$date": "2025-12-13T11:53:33.275Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T13:15:21.141Z"
+  },
+  "id": "693d53bdf62195b4f65b7755",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693d549df62195b4f65b778c"
+  },
+  "name": "Signature Classic Sofa",
+  "slug": "signature-classic-sofa",
+  "description": "Elegant Chesterfield style sofa crafted with deep button detailing and rich upholstery for a luxury feel",
+  "prices": {
+    "wholesale": 189,
+    "retail": 199,
+    "discount": 5,
+    "effectivePrice": 189.05
+  },
+  "isActive": true,
+  "category": {
+    "$oid": "69394a8bcb133616f82367a9"
+  },
+  "size": {
+    "length": 95,
+    "width": 38,
+    "height": 29,
+    "fixedSize": false,
+    "unit": "cm"
+  },
+  "images": [
+    {
+      "id": "blue_ocean/b5elsbnoscgqloxe0tn0",
+      "name": "b5elsbnoscgqloxe0tn0",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765626947/blue_ocean/b5elsbnoscgqloxe0tn0.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765626947/blue_ocean/b5elsbnoscgqloxe0tn0.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/b5elsbnoscgqloxe0tn0?_a=BAMAAAfm0",
+      "size": 216378,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d549df62195b4f65b778d"
+      }
+    },
+    {
+      "id": "blue_ocean/daptwljpktghggsix8vr",
+      "name": "daptwljpktghggsix8vr",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765626970/blue_ocean/daptwljpktghggsix8vr.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765626970/blue_ocean/daptwljpktghggsix8vr.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/daptwljpktghggsix8vr?_a=BAMAAAfm0",
+      "size": 246914,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d549df62195b4f65b778e"
+      }
+    },
+    {
+      "id": "blue_ocean/cdsxj5petxeutwubhavg",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765626986/blue_ocean/cdsxj5petxeutwubhavg.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765626986/blue_ocean/cdsxj5petxeutwubhavg.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/cdsxj5petxeutwubhavg?_a=BAMAAAfm0",
+      "size": 457230,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d549df62195b4f65b778f"
+      }
+    },
+    {
+      "id": "blue_ocean/bvhsqohbiwfq7e8bxzsx",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765626994/blue_ocean/bvhsqohbiwfq7e8bxzsx.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765626994/blue_ocean/bvhsqohbiwfq7e8bxzsx.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/bvhsqohbiwfq7e8bxzsx?_a=BAMAAAfm0",
+      "size": 457723,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d549df62195b4f65b7790"
+      }
+    },
+    {
+      "id": "blue_ocean/adlwrthlazmynoff3bko",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765627001/blue_ocean/adlwrthlazmynoff3bko.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765627001/blue_ocean/adlwrthlazmynoff3bko.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/adlwrthlazmynoff3bko?_a=BAMAAAfm0",
+      "size": 156442,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d549df62195b4f65b7791"
+      }
+    },
+    {
+      "id": "blue_ocean/twzekyqvnwesmtuilr2n",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765627010/blue_ocean/twzekyqvnwesmtuilr2n.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765627010/blue_ocean/twzekyqvnwesmtuilr2n.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/twzekyqvnwesmtuilr2n?_a=BAMAAAfm0",
+      "size": 431468,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d549df62195b4f65b7792"
+      }
+    }
+  ],
+  "totalViews": 104,
+  "score": 379.1,
+  "createdAt": {
+    "$date": "2025-12-13T11:57:17.566Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T13:15:19.108Z"
+  },
+  "id": "693d549df62195b4f65b778c",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693d5577f62195b4f65b77c3"
+  },
+  "name": "Heritage Arm Chair",
+  "slug": "heritage-arm-chair",
+  "description": "Comfortable arm chair designed for relaxation and everyday seating",
+  "prices": {
+    "wholesale": 140,
+    "retail": 150,
+    "discount": 7,
+    "effectivePrice": 139.5
+  },
+  "isActive": true,
+  "category": {
+    "$oid": "69394b4ecb133616f82367ba"
+  },
+  "size": {
+    "length": 71,
+    "width": 72,
+    "height": 89,
+    "fixedSize": false,
+    "unit": "cm"
+  },
+  "images": [
+    {
+      "id": "blue_ocean/nireneaa5az2y0flarzc",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765627156/blue_ocean/nireneaa5az2y0flarzc.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765627156/blue_ocean/nireneaa5az2y0flarzc.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/nireneaa5az2y0flarzc?_a=BAMAAAfm0",
+      "size": 23600,
+      "width": 820,
+      "height": 820,
+      "_id": {
+        "$oid": "693d5577f62195b4f65b77c4"
+      }
+    },
+    {
+      "id": "blue_ocean/rfwgvvoxcss438plw1ek",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765627176/blue_ocean/rfwgvvoxcss438plw1ek.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765627176/blue_ocean/rfwgvvoxcss438plw1ek.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/rfwgvvoxcss438plw1ek?_a=BAMAAAfm0",
+      "size": 36981,
+      "width": 820,
+      "height": 820,
+      "_id": {
+        "$oid": "693d5577f62195b4f65b77c5"
+      }
+    },
+    {
+      "id": "blue_ocean/xj3nxggqw6tapmxjxjvc",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765627192/blue_ocean/xj3nxggqw6tapmxjxjvc.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765627192/blue_ocean/xj3nxggqw6tapmxjxjvc.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/xj3nxggqw6tapmxjxjvc?_a=BAMAAAfm0",
+      "size": 35149,
+      "width": 820,
+      "height": 820,
+      "_id": {
+        "$oid": "693d5577f62195b4f65b77c6"
+      }
+    },
+    {
+      "id": "blue_ocean/lp7o7b6xjvebw3avkhe2",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765627209/blue_ocean/lp7o7b6xjvebw3avkhe2.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765627209/blue_ocean/lp7o7b6xjvebw3avkhe2.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/lp7o7b6xjvebw3avkhe2?_a=BAMAAAfm0",
+      "size": 45865,
+      "width": 820,
+      "height": 820,
+      "_id": {
+        "$oid": "693d5577f62195b4f65b77c7"
+      }
+    },
+    {
+      "id": "blue_ocean/b4qozzpim4bks6ah0cs1",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765627215/blue_ocean/b4qozzpim4bks6ah0cs1.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765627215/blue_ocean/b4qozzpim4bks6ah0cs1.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/b4qozzpim4bks6ah0cs1?_a=BAMAAAfm0",
+      "size": 25330,
+      "width": 820,
+      "height": 820,
+      "_id": {
+        "$oid": "693d5577f62195b4f65b77c8"
+      }
+    },
+    {
+      "id": "blue_ocean/w94vvsrdshsgsw7f39ob",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765627224/blue_ocean/w94vvsrdshsgsw7f39ob.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765627224/blue_ocean/w94vvsrdshsgsw7f39ob.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/w94vvsrdshsgsw7f39ob?_a=BAMAAAfm0",
+      "size": 36133,
+      "width": 820,
+      "height": 820,
+      "_id": {
+        "$oid": "693d5577f62195b4f65b77c9"
+      }
+    }
+  ],
+  "totalViews": 129,
+  "score": 473.2,
+  "createdAt": {
+    "$date": "2025-12-13T12:00:55.666Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T13:15:13.880Z"
+  },
+  "id": "693d5577f62195b4f65b77c3",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693d56bdf62195b4f65b7821"
+  },
+  "name": "Cozy Pouffs",
+  "slug": "cozy-pouffs",
+  "description": "Soft and comfortable cozy pouff designed to provide relaxed seating and everyday comfort in any space",
+  "prices": {
+    "wholesale": 42,
+    "retail": 45,
+    "discount": 7,
+    "effectivePrice": 41.85
+  },
+  "isActive": true,
+  "category": {
+    "$oid": "69394bb2cb133616f82367cb"
+  },
+  "size": {
+    "length": 38,
+    "width": 38,
+    "height": 38,
+    "fixedSize": false,
+    "unit": "cm"
+  },
+  "images": [
+    {
+      "id": "blue_ocean/dtcrwtdjeh9gru1iw83f",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765627531/blue_ocean/dtcrwtdjeh9gru1iw83f.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765627531/blue_ocean/dtcrwtdjeh9gru1iw83f.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/dtcrwtdjeh9gru1iw83f?_a=BAMAAAfm0",
+      "size": 47513,
+      "width": 780,
+      "height": 780,
+      "_id": {
+        "$oid": "693d56bdf62195b4f65b7822"
+      }
+    },
+    {
+      "id": "blue_ocean/bwuwlqksslfyoyhzzr8f",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765627538/blue_ocean/bwuwlqksslfyoyhzzr8f.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765627538/blue_ocean/bwuwlqksslfyoyhzzr8f.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/bwuwlqksslfyoyhzzr8f?_a=BAMAAAfm0",
+      "size": 56035,
+      "width": 780,
+      "height": 780,
+      "_id": {
+        "$oid": "693d56bdf62195b4f65b7823"
+      }
+    },
+    {
+      "id": "blue_ocean/z4yogzczsxjmkemwg1cg",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765627546/blue_ocean/z4yogzczsxjmkemwg1cg.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765627546/blue_ocean/z4yogzczsxjmkemwg1cg.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/z4yogzczsxjmkemwg1cg?_a=BAMAAAfm0",
+      "size": 59730,
+      "width": 780,
+      "height": 780,
+      "_id": {
+        "$oid": "693d56bdf62195b4f65b7824"
+      }
+    },
+    {
+      "id": "blue_ocean/wjiqx8bkfzlfq86fqu7f",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765627552/blue_ocean/wjiqx8bkfzlfq86fqu7f.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765627552/blue_ocean/wjiqx8bkfzlfq86fqu7f.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/wjiqx8bkfzlfq86fqu7f?_a=BAMAAAfm0",
+      "size": 56688,
+      "width": 780,
+      "height": 780,
+      "_id": {
+        "$oid": "693d56bdf62195b4f65b7825"
+      }
+    },
+    {
+      "id": "blue_ocean/h9mpu1rwyejfsgyiwefq",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765627558/blue_ocean/h9mpu1rwyejfsgyiwefq.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765627558/blue_ocean/h9mpu1rwyejfsgyiwefq.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/h9mpu1rwyejfsgyiwefq?_a=BAMAAAfm0",
+      "size": 40356,
+      "width": 780,
+      "height": 780,
+      "_id": {
+        "$oid": "693d56bdf62195b4f65b7826"
+      }
+    }
+  ],
+  "totalViews": 119,
+  "score": 440.2,
+  "createdAt": {
+    "$date": "2025-12-13T12:06:21.158Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T13:15:13.630Z"
+  },
+  "id": "693d56bdf62195b4f65b7821",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693d579ff62195b4f65b79a3"
+  },
+  "name": "Forge Coffee Table",
+  "slug": "forge-coffee-table",
+  "description": "Stylish coffee table designed to add functionality and elegance to your living room",
+  "prices": {
+    "wholesale": 72,
+    "retail": 79,
+    "discount": 9,
+    "effectivePrice": 71.89
+  },
+  "isActive": true,
+  "category": {
+    "$oid": "69393cff9ae5f9bc8ea6f8dc"
+  },
+  "size": {
+    "length": 100,
+    "width": 45,
+    "height": 55,
+    "fixedSize": false,
+    "unit": "cm"
+  },
+  "images": [
+    {
+      "id": "blue_ocean/ehtmliwiibrttxdzt29a",
+      "name": "ehtmliwiibrttxdzt29a",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765627708/blue_ocean/ehtmliwiibrttxdzt29a.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765627708/blue_ocean/ehtmliwiibrttxdzt29a.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/ehtmliwiibrttxdzt29a?_a=BAMAAAfm0",
+      "size": 571152,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d579ff62195b4f65b79a4"
+      }
+    },
+    {
+      "id": "blue_ocean/fc7snzg5wrgzz3rvze3d",
+      "name": "fc7snzg5wrgzz3rvze3d",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765627740/blue_ocean/fc7snzg5wrgzz3rvze3d.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765627740/blue_ocean/fc7snzg5wrgzz3rvze3d.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/fc7snzg5wrgzz3rvze3d?_a=BAMAAAfm0",
+      "size": 620018,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d579ff62195b4f65b79a5"
+      }
+    },
+    {
+      "id": "blue_ocean/koki7pybdnxhyuo3qm3u",
+      "name": "koki7pybdnxhyuo3qm3u",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765627758/blue_ocean/koki7pybdnxhyuo3qm3u.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765627758/blue_ocean/koki7pybdnxhyuo3qm3u.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/koki7pybdnxhyuo3qm3u?_a=BAMAAAfm0",
+      "size": 330231,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d579ff62195b4f65b79a6"
+      }
+    },
+    {
+      "id": "blue_ocean/qf3x7xqyhijuqmscdin3",
+      "name": "qf3x7xqyhijuqmscdin3",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765627764/blue_ocean/qf3x7xqyhijuqmscdin3.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765627764/blue_ocean/qf3x7xqyhijuqmscdin3.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/qf3x7xqyhijuqmscdin3?_a=BAMAAAfm0",
+      "size": 325576,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d579ff62195b4f65b79a7"
+      }
+    },
+    {
+      "id": "blue_ocean/norsbef9sivz17ag8onf",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765627774/blue_ocean/norsbef9sivz17ag8onf.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765627774/blue_ocean/norsbef9sivz17ag8onf.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/norsbef9sivz17ag8onf?_a=BAMAAAfm0",
+      "size": 309335,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d579ff62195b4f65b79a8"
+      }
+    },
+    {
+      "id": "blue_ocean/nehmafub7e5burlngzuw",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765627781/blue_ocean/nehmafub7e5burlngzuw.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1765627781/blue_ocean/nehmafub7e5burlngzuw.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/nehmafub7e5burlngzuw?_a=BAMAAAfm0",
+      "size": 325668,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "693d579ff62195b4f65b79a9"
+      }
+    }
+  ],
+  "totalViews": 121,
+  "score": 449.2,
+  "createdAt": {
+    "$date": "2025-12-13T12:10:07.026Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T13:14:58.291Z"
+  },
+  "id": "693d579ff62195b4f65b79a3",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69452efa8fa757c70b3f6609"
+  },
+  "name": "Edge Side Table",
+  "slug": "edge-side-table",
+  "description": "Sleek modern side table with a sturdy build perfect for sofa bed or corner use adds style and everyday convenience to any space",
+  "prices": {
+    "wholesale": 50,
+    "retail": 56,
+    "discount": 11,
+    "effectivePrice": 45
+  },
+  "isActive": true,
+  "category": {
+    "$oid": "69393df79ae5f9bc8ea6f8fe"
+  },
+  "size": {
+    "length": 45,
+    "width": 60,
+    "height": 35,
+    "fixedSize": false,
+    "unit": "cm"
+  },
+  "images": [
+    {
+      "id": "blue_ocean/r0vrfmlqkoatwefnyh6p",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1766141625/blue_ocean/r0vrfmlqkoatwefnyh6p.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1766141625/blue_ocean/r0vrfmlqkoatwefnyh6p.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/r0vrfmlqkoatwefnyh6p?_a=BAMAAAfm0",
+      "size": 339368,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "69452efa8fa757c70b3f660a"
+      }
+    },
+    {
+      "id": "blue_ocean/av6mffpthp8rgip2wqsb",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1766141636/blue_ocean/av6mffpthp8rgip2wqsb.webp",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1766141636/blue_ocean/av6mffpthp8rgip2wqsb.webp",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/av6mffpthp8rgip2wqsb?_a=BAMAAAfm0",
+      "size": 88576,
+      "width": 1000,
+      "height": 667,
+      "_id": {
+        "$oid": "69452efa8fa757c70b3f660b"
+      }
+    },
+    {
+      "id": "blue_ocean/tgxo0bskb5c9kjp0htnx",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1766141651/blue_ocean/tgxo0bskb5c9kjp0htnx.webp",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1766141651/blue_ocean/tgxo0bskb5c9kjp0htnx.webp",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/tgxo0bskb5c9kjp0htnx?_a=BAMAAAfm0",
+      "size": 51124,
+      "width": 1000,
+      "height": 667,
+      "_id": {
+        "$oid": "69452efa8fa757c70b3f660c"
+      }
+    },
+    {
+      "id": "blue_ocean/jeslamteirfgfbnvpqmu",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1766141661/blue_ocean/jeslamteirfgfbnvpqmu.webp",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1766141661/blue_ocean/jeslamteirfgfbnvpqmu.webp",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/jeslamteirfgfbnvpqmu?_a=BAMAAAfm0",
+      "size": 49746,
+      "width": 1000,
+      "height": 667,
+      "_id": {
+        "$oid": "69452efa8fa757c70b3f660d"
+      }
+    },
+    {
+      "id": "blue_ocean/rzohhmitdowljv7i4cmj",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1766141670/blue_ocean/rzohhmitdowljv7i4cmj.webp",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1766141670/blue_ocean/rzohhmitdowljv7i4cmj.webp",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/rzohhmitdowljv7i4cmj?_a=BAMAAAfm0",
+      "size": 69272,
+      "width": 667,
+      "height": 1000,
+      "_id": {
+        "$oid": "69452efa8fa757c70b3f660e"
+      }
+    }
+  ],
+  "totalViews": 20,
+  "score": 85.1,
+  "createdAt": {
+    "$date": "2025-12-19T10:54:50.572Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T13:14:57.013Z"
+  },
+  "id": "69452efa8fa757c70b3f6609",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69452fb3dcb6e86c017a8b8c"
+  },
+  "name": "Urban Side Table",
+  "slug": "urban-side-table",
+  "description": "Compact and sturdy side table ideal for living room bedroom or office use",
+  "prices": {
+    "wholesale": 32,
+    "retail": 35,
+    "discount": 9,
+    "effectivePrice": 26
+  },
+  "isActive": true,
+  "category": {
+    "$oid": "69393df79ae5f9bc8ea6f8fe"
+  },
+  "size": {
+    "length": 36,
+    "width": 56,
+    "height": 56,
+    "fixedSize": false,
+    "unit": "cm"
+  },
+  "images": [
+    {
+      "id": "blue_ocean/bwc4edfczvnvh5yrjdm6",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1766141780/blue_ocean/bwc4edfczvnvh5yrjdm6.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1766141780/blue_ocean/bwc4edfczvnvh5yrjdm6.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/bwc4edfczvnvh5yrjdm6?_a=BAMAAAfm0",
+      "size": 477205,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "69452fb3dcb6e86c017a8b8d"
+      }
+    },
+    {
+      "id": "blue_ocean/pmwbtpxgdmzgoj0imnpl",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1766141815/blue_ocean/pmwbtpxgdmzgoj0imnpl.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1766141815/blue_ocean/pmwbtpxgdmzgoj0imnpl.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/pmwbtpxgdmzgoj0imnpl?_a=BAMAAAfm0",
+      "size": 610784,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "69452fb3dcb6e86c017a8b8e"
+      }
+    },
+    {
+      "id": "blue_ocean/j8j5rc1rsolbpaurcauj",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1766141826/blue_ocean/j8j5rc1rsolbpaurcauj.webp",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1766141826/blue_ocean/j8j5rc1rsolbpaurcauj.webp",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/j8j5rc1rsolbpaurcauj?_a=BAMAAAfm0",
+      "size": 36716,
+      "width": 577,
+      "height": 800,
+      "_id": {
+        "$oid": "69452fb3dcb6e86c017a8b8f"
+      }
+    },
+    {
+      "id": "blue_ocean/hxkfrh3ceorobqsutkw8",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1766141839/blue_ocean/hxkfrh3ceorobqsutkw8.webp",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1766141839/blue_ocean/hxkfrh3ceorobqsutkw8.webp",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/hxkfrh3ceorobqsutkw8?_a=BAMAAAfm0",
+      "size": 19046,
+      "width": 533,
+      "height": 800,
+      "_id": {
+        "$oid": "69452fb3dcb6e86c017a8b90"
+      }
+    },
+    {
+      "id": "blue_ocean/k91gxsvlwkvwojus7ojw",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1766141851/blue_ocean/k91gxsvlwkvwojus7ojw.webp",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1766141851/blue_ocean/k91gxsvlwkvwojus7ojw.webp",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/k91gxsvlwkvwojus7ojw?_a=BAMAAAfm0",
+      "size": 52058,
+      "width": 556,
+      "height": 800,
+      "_id": {
+        "$oid": "69452fb3dcb6e86c017a8b91"
+      }
+    },
+    {
+      "id": "blue_ocean/nd3k7lijeiw9gbx6avec",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1766141860/blue_ocean/nd3k7lijeiw9gbx6avec.webp",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1766141860/blue_ocean/nd3k7lijeiw9gbx6avec.webp",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/nd3k7lijeiw9gbx6avec?_a=BAMAAAfm0",
+      "size": 15406,
+      "width": 533,
+      "height": 800,
+      "_id": {
+        "$oid": "69452fb3dcb6e86c017a8b92"
+      }
+    }
+  ],
+  "totalViews": 22,
+  "score": 90.9,
+  "createdAt": {
+    "$date": "2025-12-19T10:57:55.289Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T13:14:47.731Z"
+  },
+  "id": "69452fb3dcb6e86c017a8b8c",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69453160dcb6e86c017a8c0c"
+  },
+  "name": "Elite Executive Desk",
+  "slug": "elite-executive-desk",
+  "description": "Modern office desk with a strong build designed for focused work and everyday professional use",
+  "prices": {
+    "wholesale": 104,
+    "retail": 154,
+    "discount": 3,
+    "effectivePrice": 149
+  },
+  "isActive": true,
+  "category": {
+    "$oid": "69393e9b9ae5f9bc8ea6f90f"
+  },
+  "size": {
+    "length": 160,
+    "width": 60,
+    "height": 80,
+    "fixedSize": false,
+    "unit": "cm"
+  },
+  "images": [
+    {
+      "id": "blue_ocean/zsypllyzuzn8foxs9iu5",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1766142214/blue_ocean/zsypllyzuzn8foxs9iu5.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1766142214/blue_ocean/zsypllyzuzn8foxs9iu5.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/zsypllyzuzn8foxs9iu5?_a=BAMAAAfm0",
+      "size": 501780,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "69453160dcb6e86c017a8c0d"
+      }
+    },
+    {
+      "id": "blue_ocean/q9fr8x3fjwdfv1oldfh3",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1766142231/blue_ocean/q9fr8x3fjwdfv1oldfh3.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1766142231/blue_ocean/q9fr8x3fjwdfv1oldfh3.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/q9fr8x3fjwdfv1oldfh3?_a=BAMAAAfm0",
+      "size": 210305,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "69453160dcb6e86c017a8c0e"
+      }
+    },
+    {
+      "id": "blue_ocean/pbleo4bht9xfr80vb0iv",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1766142237/blue_ocean/pbleo4bht9xfr80vb0iv.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1766142237/blue_ocean/pbleo4bht9xfr80vb0iv.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/pbleo4bht9xfr80vb0iv?_a=BAMAAAfm0",
+      "size": 401357,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "69453160dcb6e86c017a8c0f"
+      }
+    },
+    {
+      "id": "blue_ocean/rrvnatrgift9bnh165tg",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1766142253/blue_ocean/rrvnatrgift9bnh165tg.webp",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1766142253/blue_ocean/rrvnatrgift9bnh165tg.webp",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/rrvnatrgift9bnh165tg?_a=BAMAAAfm0",
+      "size": 213226,
+      "width": 2000,
+      "height": 2000,
+      "_id": {
+        "$oid": "69453160dcb6e86c017a8c10"
+      }
+    },
+    {
+      "id": "blue_ocean/ibv5rpgzmafiaundsnqi",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1766142259/blue_ocean/ibv5rpgzmafiaundsnqi.webp",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1766142259/blue_ocean/ibv5rpgzmafiaundsnqi.webp",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/ibv5rpgzmafiaundsnqi?_a=BAMAAAfm0",
+      "size": 160802,
+      "width": 2000,
+      "height": 2000,
+      "_id": {
+        "$oid": "69453160dcb6e86c017a8c11"
+      }
+    },
+    {
+      "id": "blue_ocean/axuifrlva8cflkzihrsf",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1766142268/blue_ocean/axuifrlva8cflkzihrsf.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1766142268/blue_ocean/axuifrlva8cflkzihrsf.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/axuifrlva8cflkzihrsf?_a=BAMAAAfm0",
+      "size": 417668,
+      "width": 1000,
+      "height": 1000,
+      "_id": {
+        "$oid": "69453160dcb6e86c017a8c12"
+      }
+    },
+    {
+      "id": "blue_ocean/jqkwmp2fqyfoa8wplgic",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1766142276/blue_ocean/jqkwmp2fqyfoa8wplgic.webp",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1766142276/blue_ocean/jqkwmp2fqyfoa8wplgic.webp",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/jqkwmp2fqyfoa8wplgic?_a=BAMAAAfm0",
+      "size": 51334,
+      "width": 2000,
+      "height": 2000,
+      "_id": {
+        "$oid": "69453160dcb6e86c017a8c13"
+      }
+    }
+  ],
+  "totalViews": 19,
+  "score": 78.7,
+  "createdAt": {
+    "$date": "2025-12-19T11:05:04.799Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T13:14:23.662Z"
+  },
+  "id": "69453160dcb6e86c017a8c0c",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6945321da85f74aba3a41097"
+  },
+  "name": "Rustic Roots",
+  "slug": "rustic-roots",
+  "description": "A heritage-inspired furniture collection crafted with aged textures and natural finishes celebrating old-world charm timeless design and authentic character",
+  "prices": {
+    "wholesale": 230,
+    "retail": 234,
+    "discount": 2,
+    "effectivePrice": 232
+  },
+  "isActive": true,
+  "category": {
+    "$oid": "693a80b23ac51ad02771da24"
+  },
+  "size": {
+    "length": 45,
+    "width": 50,
+    "height": 70,
+    "fixedSize": false,
+    "unit": "cm"
+  },
+  "images": [
+    {
+      "id": "blue_ocean/cqxsezqycmxozgahggwz",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1766142413/blue_ocean/cqxsezqycmxozgahggwz.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1766142413/blue_ocean/cqxsezqycmxozgahggwz.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/cqxsezqycmxozgahggwz?_a=BAMAAAfm0",
+      "size": 2910421,
+      "width": 1800,
+      "height": 4000,
+      "_id": {
+        "$oid": "6945321da85f74aba3a41098"
+      }
+    },
+    {
+      "id": "blue_ocean/zhxyxrh5knu3ej6q3z8n",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1766142424/blue_ocean/zhxyxrh5knu3ej6q3z8n.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1766142424/blue_ocean/zhxyxrh5knu3ej6q3z8n.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/zhxyxrh5knu3ej6q3z8n?_a=BAMAAAfm0",
+      "size": 2532090,
+      "width": 1800,
+      "height": 4000,
+      "_id": {
+        "$oid": "6945321da85f74aba3a41099"
+      }
+    },
+    {
+      "id": "blue_ocean/oxuutckwkrglv8rrs0pe",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1766142435/blue_ocean/oxuutckwkrglv8rrs0pe.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1766142435/blue_ocean/oxuutckwkrglv8rrs0pe.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/oxuutckwkrglv8rrs0pe?_a=BAMAAAfm0",
+      "size": 3108557,
+      "width": 1800,
+      "height": 4000,
+      "_id": {
+        "$oid": "6945321da85f74aba3a4109a"
+      }
+    },
+    {
+      "id": "blue_ocean/r5ifkdrmktjf5dz2oigh",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1766142457/blue_ocean/r5ifkdrmktjf5dz2oigh.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1766142457/blue_ocean/r5ifkdrmktjf5dz2oigh.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/r5ifkdrmktjf5dz2oigh?_a=BAMAAAfm0",
+      "size": 2526280,
+      "width": 1800,
+      "height": 4000,
+      "_id": {
+        "$oid": "6945321da85f74aba3a4109b"
+      }
+    },
+    {
+      "id": "blue_ocean/gwz7ky7nstrq1a3b9fmc",
+      "name": "file",
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1766142470/blue_ocean/gwz7ky7nstrq1a3b9fmc.jpg",
+      "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1766142470/blue_ocean/gwz7ky7nstrq1a3b9fmc.jpg",
+      "isThumbnail": true,
+      "downloadUrl": "https://res.cloudinary.com/govindb277/image/upload/fl_attachment/v1/blue_ocean/gwz7ky7nstrq1a3b9fmc?_a=BAMAAAfm0",
+      "size": 2603483,
+      "width": 1800,
+      "height": 4000,
+      "_id": {
+        "$oid": "6945321da85f74aba3a4109c"
+      }
+    }
+  ],
+  "totalViews": 24,
+  "score": 92.7,
+  "createdAt": {
+    "$date": "2025-12-19T11:08:13.926Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T13:14:32.832Z"
+  },
+  "id": "6945321da85f74aba3a41097",
+  "__v": 0
+}]

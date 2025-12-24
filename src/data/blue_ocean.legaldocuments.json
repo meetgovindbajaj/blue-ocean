@@ -1,0 +1,115 @@
+[{
+  "_id": {
+    "$oid": "693bca44f1cfc73072010e56"
+  },
+  "type": "terms-and-conditions",
+  "title": "Terms & Conditions",
+  "slug": "terms-and-conditions",
+  "format": "rich-text",
+  "content": "tnc mock page",
+  "images": [],
+  "isVisible": true,
+  "order": 0,
+  "lastUpdatedBy": {
+    "$oid": "689bcde9bf745a5316468e4e"
+  },
+  "createdAt": {
+    "$date": "2025-12-12T07:54:44.260Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-12T07:54:44.260Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693bcefbf6a8d34e09109d46"
+  },
+  "type": "privacy-policy",
+  "title": "Privacy Policy",
+  "slug": "privacy-policy",
+  "format": "pdf",
+  "content": "",
+  "file": {
+    "url": "https://res.cloudinary.com/govindb277/raw/upload/v1765527283/blue_ocean/documents/1765527279620_sample",
+    "name": "sample.pdf",
+    "size": 18810,
+    "mimeType": "application/pdf"
+  },
+  "images": [],
+  "isVisible": true,
+  "order": 1,
+  "lastUpdatedBy": {
+    "$oid": "689bcde9bf745a5316468e4e"
+  },
+  "createdAt": {
+    "$date": "2025-12-12T08:14:51.321Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-12T08:14:51.321Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693bd069f6a8d34e09109d86"
+  },
+  "type": "terms-of-service",
+  "title": "Terms of Service",
+  "slug": "terms-of-service",
+  "format": "image",
+  "content": "",
+  "images": [
+    {
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765362196/blue_ocean/ajw8iuqxhexafwbpgkza.webp",
+      "name": "ajw8iuqxhexafwbpgkza",
+      "order": 0,
+      "_id": {
+        "$oid": "693bd069f6a8d34e09109d87"
+      }
+    },
+    {
+      "url": "https://res.cloudinary.com/govindb277/image/upload/v1765443800/blue_ocean/bfyjdaz0fnsfvae7nwbb.avif",
+      "name": "bfyjdaz0fnsfvae7nwbb",
+      "order": 1,
+      "_id": {
+        "$oid": "693bd069f6a8d34e09109d88"
+      }
+    }
+  ],
+  "isVisible": true,
+  "order": 2,
+  "lastUpdatedBy": {
+    "$oid": "689bcde9bf745a5316468e4e"
+  },
+  "createdAt": {
+    "$date": "2025-12-12T08:20:57.920Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-12T08:21:17.812Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "693bdf9418d37c690f195980"
+  },
+  "type": "refund-policy",
+  "title": "Refund Policy",
+  "slug": "refund-policy",
+  "format": "rich-text",
+  "content": "<b>hello worl </b>jlhkjhgj hbkljn",
+  "images": [],
+  "isVisible": true,
+  "order": 3,
+  "lastUpdatedBy": {
+    "$oid": "689bcde9bf745a5316468e4e"
+  },
+  "createdAt": {
+    "$date": "2025-12-12T09:25:40.032Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-12T09:25:40.032Z"
+  },
+  "__v": 0
+}]

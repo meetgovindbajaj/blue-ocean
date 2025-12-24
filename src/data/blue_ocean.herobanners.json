@@ -1,0 +1,321 @@
+[{
+  "_id": {
+    "$oid": "692e8e75b646fda7e23f6a9f"
+  },
+  "name": "Hot Deals on Vintage furniture",
+  "contentType": "custom",
+  "sourceType": "auto",
+  "content": {
+    "title": "Unique old furniture",
+    "subtitle": "Products with History and heritage",
+    "description": "Vintage furniture inspired by timeless designs crafted to bring old-world charm and lasting beauty to your space",
+    "ctaText": "Vintage furniture",
+    "ctaLink": "/products?filter=offers",
+    "discountPercent": 0,
+    "offerCode": ""
+  },
+  "image": {
+    "id": "blue_ocean/yhkd65sbxuza41xjbde8",
+    "name": "file",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1766145249/blue_ocean/yhkd65sbxuza41xjbde8.jpg",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1766145249/blue_ocean/yhkd65sbxuza41xjbde8.jpg",
+    "isThumbnail": false,
+    "downloadUrl": "",
+    "size": 0,
+    "width": 0,
+    "height": 0
+  },
+  "order": 5,
+  "isActive": true,
+  "clicks": 12,
+  "impressions": 237,
+  "createdAt": {
+    "$date": "2025-12-02T07:00:05.424Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T07:01:59.165Z"
+  },
+  "id": "692e8e75b646fda7e23f6a9f",
+  "__v": 0,
+  "endDate": null,
+  "mobileImage": {
+    "id": "blue_ocean/mv0kywhyzhdm08kq8yir",
+    "name": "file",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1766145228/blue_ocean/mv0kywhyzhdm08kq8yir.jpg",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1766145228/blue_ocean/mv0kywhyzhdm08kq8yir.jpg",
+    "isThumbnail": false,
+    "downloadUrl": "",
+    "size": 0,
+    "width": 0,
+    "height": 0
+  },
+  "startDate": null
+},
+{
+  "_id": {
+    "$oid": "692e8f7ab646fda7e23f6aa3"
+  },
+  "name": "Best in solid wood",
+  "contentType": "product",
+  "sourceType": "auto",
+  "content": {
+    "productId": {
+      "$oid": "69453160dcb6e86c017a8c0c"
+    },
+    "title": "Just Arrived",
+    "subtitle": "Fresh new design in furniture",
+    "description": "Solid wood furniture crafted for strength durability and timeless everyday living",
+    "ctaText": "Shop New",
+    "ctaLink": "/products/elite-executive-desk",
+    "discountPercent": 3,
+    "offerCode": ""
+  },
+  "image": {
+    "id": "blue_ocean/so48pkcin0jlogmtwh4k",
+    "name": "file",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1766145486/blue_ocean/so48pkcin0jlogmtwh4k.webp",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1766145486/blue_ocean/so48pkcin0jlogmtwh4k.webp",
+    "isThumbnail": false,
+    "downloadUrl": "",
+    "size": 0,
+    "width": 0,
+    "height": 0
+  },
+  "order": 3,
+  "isActive": true,
+  "clicks": 8,
+  "impressions": 240,
+  "createdAt": {
+    "$date": "2025-12-02T07:04:26.067Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T07:01:59.127Z"
+  },
+  "id": "692e8f7ab646fda7e23f6aa3",
+  "__v": 0,
+  "endDate": null,
+  "mobileImage": {
+    "id": "blue_ocean/jjbqrsh86tvobpalc2by",
+    "name": "file",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1766145553/blue_ocean/jjbqrsh86tvobpalc2by.jpg",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1766145553/blue_ocean/jjbqrsh86tvobpalc2by.jpg",
+    "isThumbnail": false,
+    "downloadUrl": "",
+    "size": 0,
+    "width": 0,
+    "height": 0
+  },
+  "startDate": null
+},
+{
+  "_id": {
+    "$oid": "692e9011b646fda7e23f6aa7"
+  },
+  "name": "Industrial Dining room set",
+  "contentType": "offer",
+  "sourceType": "manual",
+  "content": {
+    "title": "Industrial Dining room set",
+    "subtitle": "21% off on complete dining sets",
+    "description": "Dining room furniture crafted to bring people together with comfort style and timeless design",
+    "ctaText": "new style",
+    "ctaLink": "/products?filter=offers",
+    "discountPercent": 21,
+    "offerCode": "DINE21"
+  },
+  "image": {
+    "id": "blue_ocean/fqhtlvypz90tr3snzltz",
+    "name": "Hero Banner",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1766144695/blue_ocean/fqhtlvypz90tr3snzltz.webp",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/v1766144695/blue_ocean/fqhtlvypz90tr3snzltz.webp",
+    "isThumbnail": false,
+    "downloadUrl": "",
+    "size": 0,
+    "width": 0,
+    "height": 0
+  },
+  "order": 4,
+  "isActive": true,
+  "clicks": 10,
+  "impressions": 248,
+  "createdAt": {
+    "$date": "2025-12-02T07:06:57.728Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T07:01:59.128Z"
+  },
+  "id": "692e9011b646fda7e23f6aa7",
+  "__v": 0,
+  "endDate": null,
+  "mobileImage": {
+    "id": "blue_ocean/ztxzccwobntabm6hm3st",
+    "name": "Mobile Banner",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1766144769/blue_ocean/ztxzccwobntabm6hm3st.webp",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/v1766144769/blue_ocean/ztxzccwobntabm6hm3st.webp",
+    "isThumbnail": false,
+    "downloadUrl": "",
+    "size": 0,
+    "width": 0,
+    "height": 0
+  },
+  "startDate": null
+},
+{
+  "_id": {
+    "$oid": "692e91aab646fda7e23f6aa9"
+  },
+  "name": "Industrial Dining Table",
+  "contentType": "offer",
+  "sourceType": "manual",
+  "content": {
+    "title": "Best Industrial Dining Table",
+    "subtitle": "15% off on 10 tables",
+    "description": "Best Industrial Dining Table crafted with solid materials and raw finishes delivering strength style and timeless character for modern spaces",
+    "ctaText": "Grab the Deal",
+    "ctaLink": "/products?filter=offers",
+    "discountPercent": 15,
+    "offerCode": "DTN15"
+  },
+  "image": {
+    "id": "blue_ocean/kbbosng46xli3rl74k4c",
+    "name": "Hero Banner",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1766143290/blue_ocean/kbbosng46xli3rl74k4c.jpg",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/v1766143290/blue_ocean/kbbosng46xli3rl74k4c.jpg",
+    "isThumbnail": false,
+    "downloadUrl": "",
+    "size": 0,
+    "width": 0,
+    "height": 0
+  },
+  "order": 1,
+  "isActive": true,
+  "startDate": null,
+  "endDate": null,
+  "clicks": 12,
+  "impressions": 250,
+  "createdAt": {
+    "$date": "2025-12-02T07:13:46.789Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T07:02:00.135Z"
+  },
+  "id": "692e91aab646fda7e23f6aa9",
+  "__v": 0,
+  "mobileImage": {
+    "id": "blue_ocean/smr1wdf9nphaguvy3y1h",
+    "name": "Mobile Banner",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1766143342/blue_ocean/smr1wdf9nphaguvy3y1h.jpg",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/v1766143342/blue_ocean/smr1wdf9nphaguvy3y1h.jpg",
+    "isThumbnail": false,
+    "downloadUrl": "",
+    "size": 0,
+    "width": 0,
+    "height": 0
+  }
+},
+{
+  "_id": {
+    "$oid": "692e92bcb646fda7e23f6aaf"
+  },
+  "name": "Trending in Living Room Furniture",
+  "contentType": "trending",
+  "sourceType": "auto",
+  "content": {
+    "title": "Elegant Living room furniture",
+    "subtitle": "Best house furniture",
+    "description": "Thoughtfully designed living room furniture for modern homes and relaxed moments",
+    "ctaText": "Stylish furniture",
+    "ctaLink": "/products?sort=trending",
+    "discountPercent": 0,
+    "offerCode": ""
+  },
+  "image": {
+    "id": "blue_ocean/kzeqsfykcsdbgbmmtcpf",
+    "name": "file",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1766144378/blue_ocean/kzeqsfykcsdbgbmmtcpf.webp",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1766144378/blue_ocean/kzeqsfykcsdbgbmmtcpf.webp",
+    "isThumbnail": false,
+    "downloadUrl": "",
+    "size": 0,
+    "width": 0,
+    "height": 0
+  },
+  "order": 2,
+  "isActive": true,
+  "clicks": 16,
+  "impressions": 239,
+  "createdAt": {
+    "$date": "2025-12-02T07:18:20.312Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T07:02:00.097Z"
+  },
+  "id": "692e92bcb646fda7e23f6aaf",
+  "__v": 0,
+  "endDate": null,
+  "mobileImage": {
+    "id": "blue_ocean/ibgvfcmvm9wxhvelpxhm",
+    "name": "file",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1766144466/blue_ocean/ibgvfcmvm9wxhvelpxhm.jpg",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/c_thumb,w_300,h_300,g_auto/v1766144466/blue_ocean/ibgvfcmvm9wxhvelpxhm.jpg",
+    "isThumbnail": false,
+    "downloadUrl": "",
+    "size": 0,
+    "width": 0,
+    "height": 0
+  },
+  "startDate": null
+},
+{
+  "_id": {
+    "$oid": "69314b9fa873b234e9d864ef"
+  },
+  "name": "Chesterfield leather sofas",
+  "contentType": "offer",
+  "sourceType": "manual",
+  "content": {
+    "title": "Best Sofa on offers",
+    "subtitle": "Great craftmanship",
+    "description": "Chesterfield Sofa crafted with deep button detailing rolled arms and timeless elegance for refined living spaces",
+    "ctaText": "Great Deal",
+    "ctaLink": "/products?filter=offers",
+    "discountPercent": 5,
+    "offerCode": "CS05%"
+  },
+  "image": {
+    "id": "blue_ocean/fedki1xittwcbkp085y5",
+    "name": "Hero Banner",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1766143533/blue_ocean/fedki1xittwcbkp085y5.jpg",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/v1766143533/blue_ocean/fedki1xittwcbkp085y5.jpg",
+    "isThumbnail": false,
+    "downloadUrl": "",
+    "size": 0,
+    "width": 0,
+    "height": 0
+  },
+  "mobileImage": {
+    "id": "blue_ocean/ekmxi4ehaye3p22z4nll",
+    "name": "Mobile Banner",
+    "url": "https://res.cloudinary.com/govindb277/image/upload/v1766143580/blue_ocean/ekmxi4ehaye3p22z4nll.jpg",
+    "thumbnailUrl": "https://res.cloudinary.com/govindb277/image/upload/v1766143580/blue_ocean/ekmxi4ehaye3p22z4nll.jpg",
+    "isThumbnail": false,
+    "downloadUrl": "",
+    "size": 0,
+    "width": 0,
+    "height": 0
+  },
+  "order": 0,
+  "isActive": true,
+  "clicks": 19,
+  "impressions": 209,
+  "createdAt": {
+    "$date": "2025-12-04T08:51:43.237Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-21T07:01:59.121Z"
+  },
+  "id": "69314b9fa873b234e9d864ef",
+  "__v": 0,
+  "endDate": null,
+  "startDate": null
+}]

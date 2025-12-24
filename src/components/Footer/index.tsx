@@ -1,10 +1,7 @@
-"use client";
-
-import { useState, useEffect } from "react";
+"use server";
+import { cache } from "react";
 import Link from "next/link";
 import styles from "./index.module.css";
-import { useSiteSettings } from "@/context/SiteSettingsContext";
-import { useAuth } from "@/context/AuthContext";
 import {
   Facebook,
   Instagram,
@@ -14,17 +11,21 @@ import {
   Mail,
   Phone,
   MapPin,
-  Send,
-  Loader2,
 } from "lucide-react";
-import { toast } from "sonner";
-import { Skeleton } from "@/components/ui/skeleton";
+import connectDB from "@/lib/db";
+import SiteSettings from "@/models/SiteSettings";
+import LegalDocument from "@/models/LegalDocument";
+import FooterNewsletterClient from "./FooterNewsletterClient";
 
-interface LegalDocument {
-  _id: string;
+interface PublicLegalDocument {
   title: string;
   slug: string;
   type: string;
+}
+
+interface SocialLink {
+  platform: string;
+  url: string;
 }
 
 const socialIcons: Record<string, React.ReactNode> = {
@@ -35,109 +36,44 @@ const socialIcons: Record<string, React.ReactNode> = {
   youtube: <Youtube size={20} />,
 };
 
-const Footer = () => {
-  const { settings, loading } = useSiteSettings();
-  const { user } = useAuth();
-  const [email, setEmail] = useState("");
-  const [subscribing, setSubscribing] = useState(false);
-  const [legalDocs, setLegalDocs] = useState<LegalDocument[]>([]);
+const getFooterData = cache(async () => {
+  try {
+    await connectDB();
 
-  // Auto-fill email when user is logged in
-  useEffect(() => {
-    if (user?.email) {
-      setEmail(user.email);
-    }
-  }, [user?.email]);
+    let settings = await SiteSettings.findOne().lean();
 
-  useEffect(() => {
-    const fetchLegalDocs = async () => {
-      try {
-        const response = await fetch("/api/legal-documents");
-        const data = await response.json();
-        if (data.success) {
-          setLegalDocs(data.documents);
-        }
-      } catch (error) {
-        console.error("Failed to fetch legal documents:", error);
-      }
-    };
-
-    fetchLegalDocs();
-  }, []);
-
-  const handleNewsletterSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!email.trim()) {
-      toast.error("Please enter your email address");
-      return;
-    }
-
-    setSubscribing(true);
-
-    try {
-      const response = await fetch("/api/newsletter/subscribe", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
+    if (!settings) {
+      const created = await SiteSettings.create({
+        siteName: "Furniture Store",
+        contact: { email: "contact@example.com" },
       });
-
-      const data = await response.json();
-
-      if (data.success) {
-        if (data.alreadySubscribed) {
-          toast.info(data.message);
-        } else {
-          toast.success(data.message);
-          setEmail("");
-        }
-      } else {
-        toast.error(data.error || "Failed to subscribe");
-      }
-    } catch (error) {
-      toast.error("Something went wrong. Please try again.");
-    } finally {
-      setSubscribing(false);
+      settings = created.toObject();
     }
-  };
 
-  if (loading) {
-    return (
-      <footer className={styles.page}>
-        <div className={styles.container}>
-          <div className={styles.grid}>
-            <div className={styles.section}>
-              <Skeleton className="h-6 w-32 mb-3" />
-              <Skeleton className="h-4 w-full mb-2" />
-              <Skeleton className="h-4 w-3/4" />
-            </div>
-            <div className={styles.section}>
-              <Skeleton className="h-5 w-24 mb-3" />
-              <div className="space-y-2">
-                {[...Array(5)].map((_, i) => (
-                  <Skeleton key={i} className="h-4 w-20" />
-                ))}
-              </div>
-            </div>
-            <div className={styles.section}>
-              <Skeleton className="h-5 w-24 mb-3" />
-              <div className="space-y-2">
-                {[...Array(3)].map((_, i) => (
-                  <Skeleton key={i} className="h-4 w-full" />
-                ))}
-              </div>
-            </div>
-            <div className={styles.section}>
-              <Skeleton className="h-5 w-24 mb-3" />
-              <Skeleton className="h-10 w-full" />
-            </div>
-          </div>
-        </div>
-      </footer>
-    );
+    const legalDocs = await LegalDocument.find({ isVisible: true })
+      .select("type title slug order")
+      .sort({ order: 1 })
+      .lean();
+
+    return {
+      settings: settings as any,
+      legalDocs: (legalDocs as any[]).map((doc) => ({
+        type: doc.type,
+        title: doc.title,
+        slug: doc.slug,
+      })) as PublicLegalDocument[],
+    };
+  } catch (error) {
+    console.error("Failed to fetch footer data:", error);
+    return {
+      settings: null as any,
+      legalDocs: [] as PublicLegalDocument[],
+    };
   }
+});
+
+const Footer = async () => {
+  const { settings, legalDocs } = await getFooterData();
 
   const currentYear = new Date().getFullYear();
   const siteName = settings?.siteName || "Furniture Store";
@@ -207,7 +143,7 @@ const Footer = () => {
               <nav className={styles.links} aria-label="Legal documents">
                 {legalDocs.map((doc, index) => (
                   <Link
-                    key={doc._id || `legal-${index}`}
+                    key={doc.slug || `legal-${index}`}
                     href={`/legal/${doc.slug}`}
                   >
                     {doc.title}
@@ -255,86 +191,33 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Newsletter - Only show when user is logged in */}
-        {user && (
-          <div
-            className={styles.newsletterSection}
-            role="region"
-            aria-labelledby="newsletter-title"
-          >
-            <div className={styles.newsletterContent}>
-              <div className={styles.newsletterInfo}>
-                <h4 id="newsletter-title" className={styles.newsletterTitle}>
-                  Subscribe to Our Newsletter
-                </h4>
-                <p className={styles.newsletterText}>
-                  Get updates on new products, exclusive offers, and more.
-                </p>
-              </div>
-              <form
-                onSubmit={handleNewsletterSubmit}
-                className={styles.newsletterForm}
-                aria-label="Newsletter subscription"
-              >
-                <label htmlFor="newsletter-email" className="sr-only">
-                  Email address for newsletter
-                </label>
-                <input
-                  id="newsletter-email"
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className={styles.newsletterInput}
-                  disabled={subscribing}
-                  aria-describedby="newsletter-description"
-                  required
-                />
-                <span id="newsletter-description" className="sr-only">
-                  Enter your email to receive our newsletter with updates on new
-                  products and exclusive offers
-                </span>
-                <button
-                  type="submit"
-                  className={styles.newsletterButton}
-                  disabled={subscribing}
-                  aria-label={
-                    subscribing ? "Subscribing..." : "Subscribe to newsletter"
-                  }
-                >
-                  {subscribing ? (
-                    <Loader2
-                      size={18}
-                      className={styles.spinner}
-                      aria-hidden="true"
-                    />
-                  ) : (
-                    <Send size={18} aria-hidden="true" />
-                  )}
-                </button>
-              </form>
-            </div>
-          </div>
-        )}
+        {/* Newsletter (client-only interaction, server-rendered markup) */}
+        <FooterNewsletterClient />
 
         {/* Social Links */}
         {settings?.socialLinks && settings.socialLinks.length > 0 && (
           <div className={styles.socialSection}>
             <nav className={styles.socialLinks} aria-label="Social media links">
-              {settings.socialLinks.map((link, index) => (
-                <a
-                  key={index}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.socialLink}
-                  aria-label={`Follow us on ${link.platform} (opens in new tab)`}
-                >
-                  <span aria-hidden="true">
-                    {socialIcons[link.platform.toLowerCase()] || link.platform}
-                  </span>
-                </a>
-              ))}
+              {(settings.socialLinks as SocialLink[]).map(
+                (link, index: number) => (
+                  <a
+                    key={index}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.socialLink}
+                    aria-label={`Follow us on ${link.platform} (opens in new tab)`}
+                  >
+                    <span aria-hidden="true">
+                      {socialIcons[link.platform.toLowerCase()] ||
+                        link.platform}
+                    </span>
+                    <span className="sr-only">
+                      Follow us on {link.platform}
+                    </span>
+                  </a>
+                )
+              )}
             </nav>
           </div>
         )}
