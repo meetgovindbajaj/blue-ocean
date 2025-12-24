@@ -261,7 +261,6 @@ async function fetchHeroBanners() {
   }
 
   allBanners.sort((a, b) => a.order - b.order);
-  console.log({ allBanners });
 
   return allBanners.map((b) => transformBanner(b, false));
 }

@@ -15,6 +15,8 @@ const montserratMono = Montserrat({
 
 // Google Tag Manager ID from environment variable
 const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID;
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://blue--ocean.vercel.app";
 
 // Dynamic metadata generation from database settings
 export async function generateMetadata(): Promise<Metadata> {
@@ -38,6 +40,34 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const logoUrl = `${SITE_URL}/api/images/android-chrome-512x512.png`;
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        name: "Blue Ocean",
+        alternateName: "Blue Ocean Exports",
+        url: SITE_URL,
+        potentialAction: {
+          "@type": "SearchAction",
+          target: `${SITE_URL}/products?search={search_term_string}`,
+          "query-input": "required name=search_term_string",
+        },
+      },
+      {
+        "@type": "Organization",
+        // You can match this to your official registered name
+        name: "Blue Ocean Exports",
+        url: SITE_URL,
+        logo: logoUrl,
+        // sameAs: [
+        //   "https://www.facebook.com/yourpage",
+        //   "https://www.instagram.com/yourpage",
+        // ],
+      },
+    ],
+  };
   return (
     <html lang="en">
       <head>
@@ -59,6 +89,12 @@ export default function RootLayout({
             dangerouslySetInnerHTML={{
               __html: `<iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_ID}" height="0" width="0" style="display:none;visibility:hidden"></iframe>`,
             }}
+          />
+        )}
+        {SITE_URL && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
           />
         )}
         {children}
