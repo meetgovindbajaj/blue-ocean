@@ -60,11 +60,16 @@ export default function RootLayout({
         // You can match this to your official registered name
         name: "Blue Ocean Exports",
         url: SITE_URL,
-        logo: logoUrl,
-        // sameAs: [
-        //   "https://www.facebook.com/yourpage",
-        //   "https://www.instagram.com/yourpage",
-        // ],
+        logo: {
+          "@type": "ImageObject",
+          url: logoUrl,
+          width: 512,
+          height: 512,
+        },
+        sameAs: [
+          //   "https://www.facebook.com/yourpage",
+          //   "https://www.instagram.com/yourpage",
+        ],
       },
     ],
   };

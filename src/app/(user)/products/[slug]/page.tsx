@@ -104,15 +104,23 @@ export async function generateMetadata({
 
   // Create a clean description for social media (strip HTML if any, limit length)
   const rawDescription = product.description || "";
-  const cleanDescription = rawDescription.replace(/<[^>]*>/g, "").substring(0, 200);
+  const cleanDescription = rawDescription
+    .replace(/<[^>]*>/g, "")
+    .substring(0, 200);
   const description = cleanDescription
     ? `${cleanDescription}${cleanDescription.length >= 200 ? "..." : ""}`
-    : `Buy ${product.name} at ${siteName}. ${product.category?.name ? `Category: ${product.category.name}.` : ""} Premium quality solid wood furniture.`;
+    : `Buy ${product.name} at ${siteName}. ${
+        product.category?.name ? `Category: ${product.category.name}.` : ""
+      } Premium quality solid wood furniture.`;
 
   // Get the best image for OG (prefer thumbnail or first image)
   const thumbnailImage = product.images?.find((img: any) => img.isThumbnail);
   const firstImage = product.images?.[0];
-  const ogImage = thumbnailImage?.url || firstImage?.url || settings?.seo?.ogImage || `${siteUrl}/og-image.jpg`;
+  const ogImage =
+    thumbnailImage?.url ||
+    firstImage?.url ||
+    settings?.seo?.ogImage ||
+    `${siteUrl}/og-image.jpg`;
   const productUrl = `${siteUrl}/products/${slug}`;
   const price = product.prices?.effectivePrice || product.prices?.retail || 0;
   const currency = settings?.locale?.currency || "USD";
@@ -130,7 +138,6 @@ export async function generateMetadata({
       width: 1200,
       height: 630,
       alt: product.name,
-      type: "image/jpeg",
     },
   ];
 
@@ -142,7 +149,6 @@ export async function generateMetadata({
         width: img.width || 800,
         height: img.height || 800,
         alt: product.name,
-        type: "image/jpeg",
       });
     });
   }
@@ -157,7 +163,9 @@ export async function generateMetadata({
       url: productUrl,
       siteName,
       locale: "en_US",
-      type: "website",
+      // type: "website",
+      priceBrand: siteName,
+      ...(product.category && { priceCategory: product.category.name }),
       images,
     },
     // Twitter Card
@@ -175,12 +183,14 @@ export async function generateMetadata({
     },
     // Additional meta tags for various platforms
     other: {
+      "og:type": "product",
       // Facebook/Open Graph product tags
       "product:price:amount": String(price),
       "product:price:currency": currency,
-      "product:availability": "in stock",
+      "product:availability": "instock",
       "product:condition": "new",
       "product:brand": siteName,
+      "product:retailer_item_id": product.id,
       ...(product.category && { "product:category": product.category.name }),
       // Image dimensions for WhatsApp/Telegram preview optimization
       "og:image:width": "1200",
@@ -206,10 +216,13 @@ async function generateJsonLd(slug: string) {
   const price = product.prices?.effectivePrice || product.prices?.retail || 0;
   const currency = settings?.locale?.currency || "USD";
   const rawDescription = product.description || "";
-  const cleanDescription = rawDescription.replace(/<[^>]*>/g, "").substring(0, 200);
+  const cleanDescription = rawDescription
+    .replace(/<[^>]*>/g, "")
+    .substring(0, 200);
   const thumbnailImage = product.images?.find((img: any) => img.isThumbnail);
   const firstImage = product.images?.[0];
-  const ogImage = thumbnailImage?.url || firstImage?.url || `${siteUrl}/og-image.jpg`;
+  const ogImage =
+    thumbnailImage?.url || firstImage?.url || `${siteUrl}/og-image.jpg`;
 
   return {
     "@context": "https://schema.org",
