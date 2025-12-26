@@ -234,6 +234,28 @@ async function processAutoBanner(banner: IHeroBanner): Promise<any | null> {
         },
       };
     }
+    case "category": {
+      const rawCategoryId: any = banner.content?.categoryId;
+      const categoryId =
+        rawCategoryId?._id || rawCategoryId?.id || rawCategoryId;
+
+      if (!categoryId) return null;
+
+      const category = await Category.findById(categoryId)
+        .select("name slug image")
+        .lean();
+
+      if (!category) return null;
+
+      return {
+        ...banner,
+        content: {
+          ...banner.content,
+          title: banner.content?.title || category.name,
+          categoryId: category,
+        },
+      };
+    }
     case "custom":
       // Custom banners don't need auto-enrichment; return as-is.
       return banner;

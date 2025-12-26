@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/db";
 import HeroBanner, { IHeroBanner } from "@/models/HeroBanner";
 import Product from "@/models/Product";
-import "@/models/Category";
+import Category from "@/models/Category";
 import { AnalyticsEvent } from "@/models/Analytics";
 import { trackEvent, getClientIp } from "@/lib/analytics";
 import { transformBanner } from "@/lib/transformers/heroBanner";
@@ -157,6 +157,28 @@ async function processAutoBanner(banner: IHeroBanner): Promise<any | null> {
           ...banner.content,
           title: banner.content?.title || product.name,
           productId: product,
+        },
+      };
+    }
+    case "category": {
+      const rawCategoryId: any = banner.content?.categoryId;
+      const categoryId =
+        rawCategoryId?._id || rawCategoryId?.id || rawCategoryId;
+
+      if (!categoryId) return null;
+
+      const category = await Category.findById(categoryId)
+        .select("name slug image")
+        .lean();
+
+      if (!category) return null;
+
+      return {
+        ...banner,
+        content: {
+          ...banner.content,
+          title: banner.content?.title || category.name,
+          categoryId: category,
         },
       };
     }
