@@ -86,10 +86,9 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const [data, settings, jsonLd] = await Promise.all([
+  const [data, settings] = await Promise.all([
     getProduct(slug),
     getSiteSettings(),
-    generateJsonLd(slug),
   ]);
 
   const siteName = settings?.siteName || "Blue Ocean";
@@ -198,7 +197,6 @@ export async function generateMetadata({
       "og:image:width": "1200",
       "og:image:height": "630",
       "og:image:type": "image/jpeg",
-      "script:ld+json": JSON.stringify(jsonLd),
     },
   };
 }
@@ -263,13 +261,22 @@ export default async function ProductDetailPage({ params }: PageProps) {
   }
 
   // Fetch related products, recommended products, and JSON-LD in parallel
-  const [relatedProducts, recommendedProducts] = await Promise.all([
+  const [relatedProducts, recommendedProducts, jsonLd] = await Promise.all([
     getRelatedProducts(slug),
     getRecommendedProducts(data.product.id),
+    generateJsonLd(slug),
   ]);
 
   return (
     <>
+      {jsonLd && (
+        <Script
+          id="product-jsonld"
+          type="application/ld+json"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
       <ProductDetailClient
         product={data.product}
         breadcrumbs={data.breadcrumbs}

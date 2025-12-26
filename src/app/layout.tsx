@@ -30,44 +30,46 @@ export async function generateMetadata(): Promise<Metadata> {
     settings.seo?.metaDescription ||
     "Quality Solid Wood Furniture for Your Home";
 
-  const logoUrl = `${SITE_URL}/api/images/android-chrome-512x512.png`;
   return {
     title: metaTitle,
     description: metaDescription,
-    other: {
-      "script:ld+json": JSON.stringify({
-        "@context": "https://schema.org",
-        "@graph": [
-          {
-            "@type": "WebSite",
-            name: siteName,
-            url: SITE_URL,
-            potentialAction: {
-              "@type": "SearchAction",
-              target: `${SITE_URL}/products?search={search_term_string}`,
-              "query-input": "required name=search_term_string",
-            },
-          },
-          {
-            "@type": "Organization",
-            name: siteName,
-            url: SITE_URL,
-            logo: {
-              "@type": "ImageObject",
-              url: logoUrl,
-            },
-          },
-        ],
-      }),
-    },
   };
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const settings = await getSiteSettings();
+  const siteName = settings.siteName || "Blue Ocean";
+  const logoUrl = `${SITE_URL}/api/images/android-chrome-512x512.png`;
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        name: siteName,
+        url: SITE_URL,
+        potentialAction: {
+          "@type": "SearchAction",
+          target: `${SITE_URL}/products?search={search_term_string}`,
+          "query-input": "required name=search_term_string",
+        },
+      },
+      {
+        "@type": "Organization",
+        name: siteName,
+        url: SITE_URL,
+        logo: {
+          "@type": "ImageObject",
+          url: logoUrl,
+          width: 512,
+          height: 512,
+        },
+      },
+    ],
+  };
   return (
     <html lang="en">
       <body className={`${montserrat.variable} ${montserratMono.variable}`}>
@@ -94,6 +96,12 @@ export default function RootLayout({
             }}
           />
         )}
+        <Script
+          id="site-jsonld"
+          type="application/ld+json"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         {children}
       </body>
     </html>
