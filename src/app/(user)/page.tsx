@@ -527,9 +527,18 @@ export default async function Page() {
       <SEOContainer>
         <h1>{siteName} - Premium Quality Solid Wood Furniture</h1>
         <p>
-          Welcome to {siteName}. Discover our collection of premium quality
-          solid wood furniture crafted with precision and care. Browse our
-          featured products and categories.
+          Founded in 2016, {siteName} has grown into a globally recognized
+          furniture manufacturer and exporter, specializing in solid wood, iron,
+          vintage, and automobile-inspired furniture. With a team of over 500
+          skilled professionals, we combine traditional craftsmanship with
+          modern automated machinery to deliver products of unmatched quality.
+          Our expansive 10,000 sq. meter facility operates across 20 production
+          stages, ensuring precision, durability, and consistency in every
+          piece. We pride ourselves on offering customized solutions, bulk order
+          capabilities, and on-time delivery, catering to international markets
+          that demand excellence and innovation. At {siteName}, quality,
+          reliability, and customer satisfaction remain at the heart of
+          everything we do.
         </p>
 
         {heroBanners.length > 0 && (

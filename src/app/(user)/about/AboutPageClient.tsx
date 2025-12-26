@@ -2,10 +2,34 @@
 
 import styles from "./page.module.css";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
-import { Target, Eye, Building2, PencilRuler, Globe2, Headset, ShieldCheck, History, Users, User, Factory, Play, Mail, Phone, Linkedin, Twitter, Facebook, Instagram, Github, Globe, ExternalLink } from "lucide-react";
+import {
+  Target,
+  Eye,
+  Building2,
+  PencilRuler,
+  Globe2,
+  Headset,
+  ShieldCheck,
+  History,
+  Users,
+  User,
+  Factory,
+  Play,
+  Mail,
+  Phone,
+  Linkedin,
+  Twitter,
+  Facebook,
+  Instagram,
+  Github,
+  Globe,
+  ExternalLink,
+} from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import CarouselWrapper from "@/components/ui/CarouselWrapper";
+import FaqPreview from "@/components/shared/FaqPreview";
 import { useState, useCallback, useMemo } from "react";
 
 // Helper to get icon for social platform
@@ -41,12 +65,20 @@ const TeamMemberLinks = ({ member }: { member: any }) => {
   return (
     <div className={styles.teamLinks}>
       {member.email && (
-        <a href={`mailto:${member.email}`} className={styles.teamContactLink} title="Email">
+        <a
+          href={`mailto:${member.email}`}
+          className={styles.teamContactLink}
+          title="Email"
+        >
           <Mail size={14} />
         </a>
       )}
       {member.phone && (
-        <a href={`tel:${member.phone}`} className={styles.teamContactLink} title="Phone">
+        <a
+          href={`tel:${member.phone}`}
+          className={styles.teamContactLink}
+          title="Phone"
+        >
           <Phone size={14} />
         </a>
       )}
@@ -69,19 +101,23 @@ const TeamMemberLinks = ({ member }: { member: any }) => {
 // Default services data (fallback when no dynamic data exists)
 const DEFAULT_SERVICES = {
   customDesign: {
-    description: "Tailored furniture built exactly to your vision with premium materials and professional AutoCAD support.",
+    description:
+      "Tailored furniture built exactly to your vision with premium materials and professional AutoCAD support.",
     features: [],
   },
   globalShipping: {
-    description: "Reliable worldwide delivery with trusted logistics partners and seamless customs handling.",
+    description:
+      "Reliable worldwide delivery with trusted logistics partners and seamless customs handling.",
     features: [],
   },
   expertSupport: {
-    description: "End-to-end guidance with clear communication and order updates shared at every stage.",
+    description:
+      "End-to-end guidance with clear communication and order updates shared at every stage.",
     features: [],
   },
   qualityControl: {
-    description: "Strict inspections ensure world-class craftsmanship with internationally aligned QC processes.",
+    description:
+      "Strict inspections ensure world-class craftsmanship with internationally aligned QC processes.",
     features: [],
   },
 };
@@ -115,6 +151,12 @@ const AboutPageClient = ({ initialSettings }: AboutPageClientProps) => {
   const settings = initialSettings || contextSettings;
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [playingVideo, setPlayingVideo] = useState<string | null>(null);
+  const [showAllFactoryImages, setShowAllFactoryImages] = useState(false);
+  const [factoryImageAspectRatios, setFactoryImageAspectRatios] = useState<
+    Record<string, number>
+  >({});
+
+  const FACTORY_IMAGE_PREVIEW_COUNT = 9;
 
   const handleImageClick = useCallback((imageUrl: string | undefined) => {
     if (imageUrl) {
@@ -136,6 +178,11 @@ const AboutPageClient = ({ initialSettings }: AboutPageClientProps) => {
       .filter((img) => img?.url)
       .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   }, [settings?.about?.factory?.images]);
+
+  const visibleFactoryImages = useMemo(() => {
+    if (showAllFactoryImages) return sortedFactoryImages;
+    return sortedFactoryImages.slice(0, FACTORY_IMAGE_PREVIEW_COUNT);
+  }, [sortedFactoryImages, showAllFactoryImages]);
 
   // Memoize sorted factory videos to avoid re-sorting on every render
   const sortedFactoryVideos = useMemo(() => {
@@ -177,6 +224,17 @@ const AboutPageClient = ({ initialSettings }: AboutPageClientProps) => {
       <div className={styles.container}>
         {/* Hero Section */}
         <section className={styles.hero}>
+          <div className="grid place-items-center mb-4">
+            <Image
+              src={"/api/images/logo.png"}
+              width={300}
+              height={300}
+              alt=""
+              style={{
+                borderRadius: "50%",
+              }}
+            />
+          </div>
           <h1 className={styles.title}>{about.title || `About ${siteName}`}</h1>
           {settings?.tagline && (
             <p className={styles.tagline}>{settings.tagline}</p>
@@ -218,7 +276,14 @@ const AboutPageClient = ({ initialSettings }: AboutPageClientProps) => {
         {about.history && (
           <section className={styles.historySection}>
             <h2 className={styles.sectionTitle}>
-              <History size={24} style={{ display: "inline", marginRight: "0.5rem", verticalAlign: "middle" }} />
+              <History
+                size={24}
+                style={{
+                  display: "inline",
+                  marginRight: "0.5rem",
+                  verticalAlign: "middle",
+                }}
+              />
               Our Story
             </h2>
             <div className={styles.historyContent}>
@@ -231,7 +296,14 @@ const AboutPageClient = ({ initialSettings }: AboutPageClientProps) => {
         {about.team && about.team.length > 0 && (
           <section className={styles.teamSection}>
             <h2 className={styles.sectionTitle}>
-              <Users size={24} style={{ display: "inline", marginRight: "0.5rem", verticalAlign: "middle" }} />
+              <Users
+                size={24}
+                style={{
+                  display: "inline",
+                  marginRight: "0.5rem",
+                  verticalAlign: "middle",
+                }}
+              />
               Meet Our Team
             </h2>
             {about.team.length > 3 ? (
@@ -254,12 +326,17 @@ const AboutPageClient = ({ initialSettings }: AboutPageClientProps) => {
                               className={styles.teamImage}
                             />
                           ) : (
-                            <User size={40} className={styles.teamPlaceholder} />
+                            <User
+                              size={40}
+                              className={styles.teamPlaceholder}
+                            />
                           )}
                         </div>
                         <h3 className={styles.teamName}>{member.name}</h3>
                         <p className={styles.teamRole}>{member.role}</p>
-                        {member.bio && <p className={styles.teamBio}>{member.bio}</p>}
+                        {member.bio && (
+                          <p className={styles.teamBio}>{member.bio}</p>
+                        )}
                         <TeamMemberLinks member={member} />
                       </div>
                     ),
@@ -299,7 +376,9 @@ const AboutPageClient = ({ initialSettings }: AboutPageClientProps) => {
                     </div>
                     <h3 className={styles.teamName}>{member.name}</h3>
                     <p className={styles.teamRole}>{member.role}</p>
-                    {member.bio && <p className={styles.teamBio}>{member.bio}</p>}
+                    {member.bio && (
+                      <p className={styles.teamBio}>{member.bio}</p>
+                    )}
                     <TeamMemberLinks member={member} />
                   </div>
                 ))}
@@ -309,95 +388,162 @@ const AboutPageClient = ({ initialSettings }: AboutPageClientProps) => {
         )}
 
         {/* Factory Section */}
-        {about?.factory && (sortedFactoryImages.length > 0 || sortedFactoryVideos.length > 0 || about.factory.description) && (
-          <section className={styles.factorySection}>
-            <h2 className={styles.sectionTitle}>
-              <Factory size={24} style={{ display: "inline", marginRight: "0.5rem", verticalAlign: "middle" }} />
-              {about.factory.title || "Our Factory"}
-            </h2>
+        {about?.factory &&
+          (sortedFactoryImages.length > 0 ||
+            sortedFactoryVideos.length > 0 ||
+            about.factory.description) && (
+            <section className={styles.factorySection}>
+              <h2 className={styles.sectionTitle}>
+                <Factory
+                  size={24}
+                  style={{
+                    display: "inline",
+                    marginRight: "0.5rem",
+                    verticalAlign: "middle",
+                  }}
+                />
+                {about.factory.title || "Our Factory"}
+              </h2>
 
-            {about.factory.description && (
-              <p className={styles.factoryDescription}>{about.factory.description}</p>
-            )}
+              {about.factory.description && (
+                <p className={styles.factoryDescription}>
+                  {about.factory.description}
+                </p>
+              )}
 
-            {/* Factory Images - Masonry Grid */}
-            {sortedFactoryImages.length > 0 && (
-              <div className={styles.factoryImagesSection}>
-                <h3 className={styles.factorySubtitle}>Factory Gallery</h3>
-                <div className={styles.masonryGrid}>
-                  {sortedFactoryImages.map((image, index) => (
-                    <div
-                      key={`factory-img-${index}`}
-                      className={styles.masonryItem}
-                      onClick={() => handleImageClick(image.url)}
-                    >
-                      <Image
-                        src={image.url}
-                        alt={image.alt || `Factory image ${index + 1}`}
-                        width={400}
-                        height={300}
-                        className={styles.masonryImage}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+              {/* Factory Images - Masonry Grid */}
+              {sortedFactoryImages.length > 0 && (
+                <div className={styles.factoryImagesSection}>
+                  <h3 className={styles.factorySubtitle}>Factory Gallery</h3>
+                  <div className={styles.masonryGrid}>
+                    {visibleFactoryImages.map((image, index) => (
+                      <div
+                        key={`factory-img-${index}`}
+                        className={styles.masonryItem}
+                        onClick={() => handleImageClick(image.url)}
+                      >
+                        <div
+                          className={styles.masonryImageFrame}
+                          style={{
+                            aspectRatio: `${
+                              factoryImageAspectRatios[image.url] || 4 / 3
+                            } / 1`,
+                          }}
+                        >
+                          <Image
+                            src={image.url}
+                            alt={image.alt || `Factory image ${index + 1}`}
+                            fill
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            className={styles.masonryImage}
+                            onLoadingComplete={(img) => {
+                              const naturalW = img.naturalWidth || 1;
+                              const naturalH = img.naturalHeight || 1;
+                              const rawRatio = naturalW / naturalH;
 
-            {/* Factory Videos */}
-            {sortedFactoryVideos.length > 0 && (
-              <div className={styles.factoryVideosSection}>
-                <h3 className={styles.factorySubtitle}>Factory Videos</h3>
-                <div className={styles.videosGrid}>
-                  {sortedFactoryVideos.map((video, index) => {
-                    const videoId = getYouTubeVideoId(video.url);
-                    if (!videoId) return null;
+                              // Clamp extreme ratios so masonry stays visually balanced.
+                              const clamped = Math.min(
+                                1.8,
+                                Math.max(0.8, rawRatio)
+                              );
 
-                    return (
-                      <div key={`factory-vid-${index}`} className={styles.videoCard}>
-                        {video.title && (
-                          <h4 className={styles.videoTitle}>{video.title}</h4>
-                        )}
-                        <div className={styles.videoWrapper}>
-                          {playingVideo === videoId ? (
-                            <iframe
-                              src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
-                              title={video.title || `Factory video ${index + 1}`}
-                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                              allowFullScreen
-                              className={styles.videoIframe}
-                            />
-                          ) : (
-                            <div
-                              className={styles.videoThumbnail}
-                              onClick={() => setPlayingVideo(videoId)}
-                            >
-                              <Image
-                                src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
-                                alt={video.title || `Factory video ${index + 1}`}
-                                fill
-                                className={styles.thumbnailImage}
-                              />
-                              <div className={styles.playButton}>
-                                <Play size={48} fill="white" />
-                              </div>
-                            </div>
-                          )}
+                              setFactoryImageAspectRatios((prev) => {
+                                if (prev[image.url] === clamped) return prev;
+                                return { ...prev, [image.url]: clamped };
+                              });
+                            }}
+                          />
                         </div>
                       </div>
-                    );
-                  })}
+                    ))}
+                  </div>
+
+                  {sortedFactoryImages.length > FACTORY_IMAGE_PREVIEW_COUNT && (
+                    <div className={styles.viewMoreWrapper}>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setShowAllFactoryImages((prev) => !prev)}
+                      >
+                        {showAllFactoryImages
+                          ? "View Less"
+                          : `View More (${
+                              sortedFactoryImages.length -
+                              FACTORY_IMAGE_PREVIEW_COUNT
+                            } more)`}
+                      </Button>
+                    </div>
+                  )}
                 </div>
-              </div>
-            )}
-          </section>
-        )}
+              )}
+
+              {/* Factory Videos */}
+              {sortedFactoryVideos.length > 0 && (
+                <div className={styles.factoryVideosSection}>
+                  <h3 className={styles.factorySubtitle}>Factory Videos</h3>
+                  <div className={styles.videosGrid}>
+                    {sortedFactoryVideos.map((video, index) => {
+                      const videoId = getYouTubeVideoId(video.url);
+                      if (!videoId) return null;
+
+                      return (
+                        <div
+                          key={`factory-vid-${index}`}
+                          className={styles.videoCard}
+                        >
+                          {video.title && (
+                            <h4 className={styles.videoTitle}>{video.title}</h4>
+                          )}
+                          <div className={styles.videoWrapper}>
+                            {playingVideo === videoId ? (
+                              <iframe
+                                src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
+                                title={
+                                  video.title || `Factory video ${index + 1}`
+                                }
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                                className={styles.videoIframe}
+                              />
+                            ) : (
+                              <div
+                                className={styles.videoThumbnail}
+                                onClick={() => setPlayingVideo(videoId)}
+                              >
+                                <Image
+                                  src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
+                                  alt={
+                                    video.title || `Factory video ${index + 1}`
+                                  }
+                                  fill
+                                  className={styles.thumbnailImage}
+                                />
+                                <div className={styles.playButton}>
+                                  <Play size={48} fill="white" />
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </section>
+          )}
 
         {/* Image Modal for zoom */}
         {selectedImage && (
           <div className={styles.imageModal} onClick={closeImageModal}>
-            <div className={styles.imageModalContent} onClick={(e) => e.stopPropagation()}>
-              <button className={styles.closeModalButton} onClick={closeImageModal}>
+            <div
+              className={styles.imageModalContent}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                className={styles.closeModalButton}
+                onClick={closeImageModal}
+              >
                 &times;
               </button>
               <Image
@@ -428,7 +574,8 @@ const AboutPageClient = ({ initialSettings }: AboutPageClientProps) => {
               </div>
               <h3 className={styles.serviceTitle}>Custom Design</h3>
               <p className={styles.serviceDescription}>
-                {about.services?.customDesign?.description || DEFAULT_SERVICES.customDesign.description}
+                {about.services?.customDesign?.description ||
+                  DEFAULT_SERVICES.customDesign.description}
               </p>
             </div>
 
@@ -442,7 +589,8 @@ const AboutPageClient = ({ initialSettings }: AboutPageClientProps) => {
               </div>
               <h3 className={styles.serviceTitle}>Global Shipping</h3>
               <p className={styles.serviceDescription}>
-                {about.services?.globalShipping?.description || DEFAULT_SERVICES.globalShipping.description}
+                {about.services?.globalShipping?.description ||
+                  DEFAULT_SERVICES.globalShipping.description}
               </p>
             </div>
 
@@ -456,7 +604,8 @@ const AboutPageClient = ({ initialSettings }: AboutPageClientProps) => {
               </div>
               <h3 className={styles.serviceTitle}>Expert Support</h3>
               <p className={styles.serviceDescription}>
-                {about.services?.expertSupport?.description || DEFAULT_SERVICES.expertSupport.description}
+                {about.services?.expertSupport?.description ||
+                  DEFAULT_SERVICES.expertSupport.description}
               </p>
             </div>
 
@@ -470,7 +619,8 @@ const AboutPageClient = ({ initialSettings }: AboutPageClientProps) => {
               </div>
               <h3 className={styles.serviceTitle}>Quality Control</h3>
               <p className={styles.serviceDescription}>
-                {about.services?.qualityControl?.description || DEFAULT_SERVICES.qualityControl.description}
+                {about.services?.qualityControl?.description ||
+                  DEFAULT_SERVICES.qualityControl.description}
               </p>
             </div>
           </div>
@@ -486,6 +636,14 @@ const AboutPageClient = ({ initialSettings }: AboutPageClientProps) => {
           <a href="/contact" className={styles.ctaButton}>
             Contact Us
           </a>
+        </section>
+
+        <section className={styles.faqSection}>
+          <FaqPreview
+            variant="inline"
+            title="Frequently Asked Questions"
+            subtitle="Quick answers before you reach out"
+          />
         </section>
       </div>
     </div>

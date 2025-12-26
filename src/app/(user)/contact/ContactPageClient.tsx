@@ -6,10 +6,31 @@ import Image from "next/image";
 import styles from "./page.module.css";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 import { useAuth } from "@/context/AuthContext";
-import { Mail, Phone, MapPin, Clock, MessageCircle, Send, Loader2, Search, X, ChevronDown, Package, Share2, Facebook, Twitter, Instagram, Linkedin, Youtube, Globe, LogIn } from "lucide-react";
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Clock,
+  MessageCircle,
+  Send,
+  Loader2,
+  Search,
+  X,
+  ChevronDown,
+  Package,
+  Share2,
+  Facebook,
+  Twitter,
+  Instagram,
+  Linkedin,
+  Youtube,
+  Globe,
+  LogIn,
+} from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
+import FaqPreview from "@/components/shared/FaqPreview";
 
 interface ProductOption {
   id: string;
@@ -22,7 +43,8 @@ interface ProductOption {
 const getSocialIcon = (platform: string) => {
   const platformLower = platform.toLowerCase();
   if (platformLower.includes("facebook")) return Facebook;
-  if (platformLower.includes("twitter") || platformLower.includes("x")) return Twitter;
+  if (platformLower.includes("twitter") || platformLower.includes("x"))
+    return Twitter;
   if (platformLower.includes("instagram")) return Instagram;
   if (platformLower.includes("linkedin")) return Linkedin;
   if (platformLower.includes("youtube")) return Youtube;
@@ -53,7 +75,9 @@ const ContactPageInner = () => {
   // Product select state
   const [products, setProducts] = useState<ProductOption[]>([]);
   const [productsLoading, setProductsLoading] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<ProductOption | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<ProductOption | null>(
+    null
+  );
   const [productSearch, setProductSearch] = useState("");
   const [showProductDropdown, setShowProductDropdown] = useState(false);
   const productDropdownRef = useRef<HTMLDivElement>(null);
@@ -88,7 +112,10 @@ const ContactPageInner = () => {
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (productDropdownRef.current && !productDropdownRef.current.contains(event.target as Node)) {
+      if (
+        productDropdownRef.current &&
+        !productDropdownRef.current.contains(event.target as Node)
+      ) {
         setShowProductDropdown(false);
       }
     };
@@ -108,8 +135,14 @@ const ContactPageInner = () => {
     if (productName || productId || urlSubject || urlMessage) {
       setFormData((prev) => ({
         ...prev,
-        subject: urlSubject || (productName || productId ? "Product Question" : prev.subject),
-        message: urlMessage || (productName ? `Hi, I'm interested in "${productName}". ` : prev.message),
+        subject:
+          urlSubject ||
+          (productName || productId ? "Product Question" : prev.subject),
+        message:
+          urlMessage ||
+          (productName
+            ? `Hi, I'm interested in "${productName}". `
+            : prev.message),
         productId: productId || prev.productId,
       }));
 
@@ -124,18 +157,19 @@ const ContactPageInner = () => {
 
   // Auto-scroll to form section when there are search params
   useEffect(() => {
-    const hasScrollParams = searchParams.has("product") ||
-                           searchParams.has("productId") ||
-                           searchParams.has("subject") ||
-                           searchParams.has("message") ||
-                           searchParams.has("scroll");
+    const hasScrollParams =
+      searchParams.has("product") ||
+      searchParams.has("productId") ||
+      searchParams.has("subject") ||
+      searchParams.has("message") ||
+      searchParams.has("scroll");
 
     if (hasScrollParams && !loading && formSectionRef.current) {
       // Small delay to ensure DOM is ready
       setTimeout(() => {
         formSectionRef.current?.scrollIntoView({
           behavior: "smooth",
-          block: "start"
+          block: "start",
         });
       }, 100);
     }
@@ -187,7 +221,10 @@ const ContactPageInner = () => {
     setShowProductDropdown(false);
 
     // Update message if it's empty or is the default template
-    if (!formData.message || formData.message.startsWith("Hi, I'm interested in")) {
+    if (
+      !formData.message ||
+      formData.message.startsWith("Hi, I'm interested in")
+    ) {
       setFormData((prev) => ({
         ...prev,
         message: `Hi, I'm interested in "${product.name}". `,
@@ -202,7 +239,11 @@ const ContactPageInner = () => {
     setProductSearch("");
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -214,7 +255,12 @@ const ContactPageInner = () => {
       return;
     }
 
-    if (!formData.name || !formData.email || !formData.subject || !formData.message) {
+    if (
+      !formData.name ||
+      !formData.email ||
+      !formData.subject ||
+      !formData.message
+    ) {
       toast.error("Please fill in all required fields");
       return;
     }
@@ -287,7 +333,9 @@ const ContactPageInner = () => {
   const getWhatsAppLink = () => {
     if (!support.whatsappNumber) return null;
     const phone = support.whatsappNumber.replace(/\D/g, "");
-    const message = encodeURIComponent(support.whatsappMessage || "Hello! I have a question.");
+    const message = encodeURIComponent(
+      support.whatsappMessage || "Hello! I have a question."
+    );
     return `https://wa.me/${phone}?text=${message}`;
   };
 
@@ -319,7 +367,10 @@ const ContactPageInner = () => {
 
             <div className={styles.contactCards}>
               {contact.email && (
-                <a href={`mailto:${contact.email}`} className={styles.contactCard}>
+                <a
+                  href={`mailto:${contact.email}`}
+                  className={styles.contactCard}
+                >
                   <div className={styles.cardIcon}>
                     <Mail size={24} />
                   </div>
@@ -339,7 +390,9 @@ const ContactPageInner = () => {
                     <h3>Phone</h3>
                     <p>{contact.phone}</p>
                     {contact.alternatePhone && (
-                      <p className={styles.secondary}>{contact.alternatePhone}</p>
+                      <p className={styles.secondary}>
+                        {contact.alternatePhone}
+                      </p>
                     )}
                   </div>
                 </a>
@@ -387,7 +440,9 @@ const ContactPageInner = () => {
                     <div key={index} className={styles.hoursItem}>
                       <span className={styles.day}>{hours.day}</span>
                       <span className={styles.time}>
-                        {hours.isClosed ? "Closed" : `${hours.open} - ${hours.close}`}
+                        {hours.isClosed
+                          ? "Closed"
+                          : `${hours.open} - ${hours.close}`}
                       </span>
                     </div>
                   ))}
@@ -434,16 +489,27 @@ const ContactPageInner = () => {
                   <LogIn size={24} />
                   <div>
                     <h3>Login Required</h3>
-                    <p>Please login to send us a message. This helps us serve you better and track your inquiries.</p>
+                    <p>
+                      Please login to send us a message. This helps us serve you
+                      better and track your inquiries.
+                    </p>
                   </div>
                 </div>
-                <Link href="/login?redirect=/contact" className={styles.loginButton}>
+                <Link
+                  href="/login?redirect=/contact"
+                  className={styles.loginButton}
+                >
                   Login to Continue
                 </Link>
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className={`${styles.form} ${!user && !authLoading ? styles.formDisabled : ''}`}>
+            <form
+              onSubmit={handleSubmit}
+              className={`${styles.form} ${
+                !user && !authLoading ? styles.formDisabled : ""
+              }`}
+            >
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
                   <label htmlFor="name" className={styles.label}>
@@ -519,10 +585,11 @@ const ContactPageInner = () => {
               {/* Product Select - shown when subject is "Product Question" */}
               {formData.subject === "Product Question" && (
                 <div className={styles.formGroup}>
-                  <label className={styles.label}>
-                    Select Product
-                  </label>
-                  <div className={styles.productSelectContainer} ref={productDropdownRef}>
+                  <label className={styles.label}>Select Product</label>
+                  <div
+                    className={styles.productSelectContainer}
+                    ref={productDropdownRef}
+                  >
                     {selectedProduct ? (
                       <div className={styles.selectedProduct}>
                         <div className={styles.selectedProductInfo}>
@@ -539,7 +606,9 @@ const ContactPageInner = () => {
                               <Package size={20} />
                             </div>
                           )}
-                          <span className={styles.selectedProductName}>{selectedProduct.name}</span>
+                          <span className={styles.selectedProductName}>
+                            {selectedProduct.name}
+                          </span>
                         </div>
                         <button
                           type="button"
@@ -558,7 +627,10 @@ const ContactPageInner = () => {
                           productInputRef.current?.focus();
                         }}
                       >
-                        <Search size={18} className={styles.productSearchIcon} />
+                        <Search
+                          size={18}
+                          className={styles.productSearchIcon}
+                        />
                         <input
                           ref={productInputRef}
                           type="text"
@@ -572,7 +644,10 @@ const ContactPageInner = () => {
                           className={styles.productSearchInput}
                           disabled={submitting}
                         />
-                        <ChevronDown size={18} className={styles.productSearchChevron} />
+                        <ChevronDown
+                          size={18}
+                          className={styles.productSearchChevron}
+                        />
                       </div>
                     )}
 
@@ -585,7 +660,9 @@ const ContactPageInner = () => {
                           </div>
                         ) : filteredProducts.length === 0 ? (
                           <div className={styles.productDropdownEmpty}>
-                            {productSearch ? "No products found" : "No products available"}
+                            {productSearch
+                              ? "No products found"
+                              : "No products available"}
                           </div>
                         ) : (
                           <div className={styles.productDropdownList}>
@@ -605,11 +682,19 @@ const ContactPageInner = () => {
                                     className={styles.productDropdownItemImage}
                                   />
                                 ) : (
-                                  <div className={styles.productDropdownItemPlaceholder}>
+                                  <div
+                                    className={
+                                      styles.productDropdownItemPlaceholder
+                                    }
+                                  >
                                     <Package size={18} />
                                   </div>
                                 )}
-                                <span className={styles.productDropdownItemName}>{product.name}</span>
+                                <span
+                                  className={styles.productDropdownItemName}
+                                >
+                                  {product.name}
+                                </span>
                               </button>
                             ))}
                           </div>
@@ -682,6 +767,14 @@ const ContactPageInner = () => {
               </div>
             </section>
           )}
+
+          <section className={styles.faqSection}>
+            <FaqPreview
+              variant="inline"
+              title="Frequently Asked Questions"
+              subtitle="Quick answers before you message us"
+            />
+          </section>
         </div>
       </div>
     </div>

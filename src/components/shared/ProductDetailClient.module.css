@@ -267,6 +267,12 @@
   margin: 0;
 }
 
+.faqSection {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 3rem;
+  margin-top: 3rem;
+}
+
 /* Rich text content styles */
 .description h1 {
   font-size: 1.5rem;

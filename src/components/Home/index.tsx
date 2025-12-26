@@ -9,8 +9,11 @@ import FeaturedProducts from "./FeaturedProducts";
 import FeaturedServices from "./FeaturedServices";
 import FeaturedTags from "./FeaturedTags";
 import HeroSection from "./Hero";
+import AboutSection from "./AboutSection";
+import FaqPreview from "../shared/FaqPreview";
 import styles from "./index.module.css";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Building2 } from "lucide-react";
 
 interface HomeContentProps {
   initialData?: any;
@@ -72,6 +75,20 @@ const HomeContent = ({ initialData }: HomeContentProps) => {
       <FeaturedProducts products={data?.products || []} />
       <FeaturedCategories categories={data?.categories || []} />
       <FeaturedServices />
+      <AboutSection />
+
+      {/* Contact CTA */}
+      <section className={styles.ctaSection}>
+        <Building2 size={48} className={styles.ctaIcon} />
+        <h2 className={styles.ctaTitle}>Get in Touch</h2>
+        <p className={styles.ctaText}>
+          Have questions? We&apos;d love to hear from you.
+        </p>
+        <a href="/contact" className={styles.ctaButton}>
+          Contact Us
+        </a>
+      </section>
+      <FaqPreview title="Frequently Asked Questions" />
     </div>
   );
 };

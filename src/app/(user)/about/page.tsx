@@ -26,9 +26,14 @@ export async function generateMetadata(): Promise<Metadata> {
   const siteName = settings?.siteName || "Blue Ocean";
   const aboutTitle = settings?.about?.title || `About ${siteName}`;
   const title = `${aboutTitle} | ${siteName}`;
-  const description = settings?.about?.description ||
-    `Learn about ${siteName} - ${settings?.tagline || "Premium quality solid wood furniture crafted with precision and care."}`;
-  const ogImage = settings?.seo?.ogImage || settings?.logo?.url || `${siteUrl}/og-image.jpg`;
+  const description =
+    settings?.about?.description ||
+    `Learn about ${siteName} - ${
+      settings?.tagline ||
+      "Premium quality solid wood furniture crafted with precision and care."
+    }`;
+  const ogImage =
+    settings?.seo?.ogImage || settings?.logo?.url || `${siteUrl}/og-image.jpg`;
 
   return {
     title: aboutTitle,
@@ -150,11 +155,15 @@ export default async function AboutPage() {
               <div>
                 <h3>Factory Gallery</h3>
                 <ul>
-                  {about.factory.images.map((image: FactoryImage, index: number) => (
-                    <li key={index}>
-                      <a href={image.url}>{image.alt || `Factory image ${index + 1}`}</a>
-                    </li>
-                  ))}
+                  {about.factory.images.map(
+                    (image: FactoryImage, index: number) => (
+                      <li key={index}>
+                        <a href={image.url}>
+                          {image.alt || `Factory image ${index + 1}`}
+                        </a>
+                      </li>
+                    )
+                  )}
                 </ul>
               </div>
             )}
@@ -163,11 +172,15 @@ export default async function AboutPage() {
               <div>
                 <h3>Factory Videos</h3>
                 <ul>
-                  {about.factory.videos.map((video: FactoryVideo, index: number) => (
-                    <li key={index}>
-                      <a href={video.url}>{video.title || `Factory video ${index + 1}`}</a>
-                    </li>
-                  ))}
+                  {about.factory.videos.map(
+                    (video: FactoryVideo, index: number) => (
+                      <li key={index}>
+                        <a href={video.url}>
+                          {video.title || `Factory video ${index + 1}`}
+                        </a>
+                      </li>
+                    )
+                  )}
                 </ul>
               </div>
             )}
@@ -179,23 +192,34 @@ export default async function AboutPage() {
           <ul>
             <li>
               <h3>Custom Design</h3>
-              <p>{about.services?.customDesign?.description || "Tailored furniture built exactly to your vision with premium materials and professional AutoCAD support."}</p>
+              <p>
+                {about.services?.customDesign?.description ||
+                  "Tailored furniture built exactly to your vision with premium materials and professional AutoCAD support."}
+              </p>
             </li>
             <li>
               <h3>Global Shipping</h3>
-              <p>{about.services?.globalShipping?.description || "Reliable worldwide delivery with trusted logistics partners and seamless customs handling."}</p>
+              <p>
+                {about.services?.globalShipping?.description ||
+                  "Reliable worldwide delivery with trusted logistics partners and seamless customs handling."}
+              </p>
             </li>
             <li>
               <h3>Expert Support</h3>
-              <p>{about.services?.expertSupport?.description || "End-to-end guidance with clear communication and order updates shared at every stage."}</p>
+              <p>
+                {about.services?.expertSupport?.description ||
+                  "End-to-end guidance with clear communication and order updates shared at every stage."}
+              </p>
             </li>
             <li>
               <h3>Quality Control</h3>
-              <p>{about.services?.qualityControl?.description || "Strict inspections ensure world-class craftsmanship with internationally aligned QC processes."}</p>
+              <p>
+                {about.services?.qualityControl?.description ||
+                  "Strict inspections ensure world-class craftsmanship with internationally aligned QC processes."}
+              </p>
             </li>
           </ul>
         </section>
-
         <nav aria-label="Contact">
           <a href="/contact">Contact Us</a>
         </nav>

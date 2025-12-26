@@ -16,4 +16,52 @@
         max-width: 1400px;
         padding: 1rem;
     }
+
+    .ctaSection {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 3rem 2rem;
+        background-color: var(--background-secondary);
+        /* border-radius: 16px; */
+    }
+
+    .ctaIcon {
+        color: var(--primary);
+        margin-bottom: 1rem;
+    }
+
+    .ctaTitle {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0 0 0.5rem 0;
+        color: var(--text-primary);
+    }
+
+    .ctaText {
+        font-size: 1rem;
+        color: var(--text-secondary);
+        margin: 0 0 1.5rem 0;
+    }
+
+    .ctaButton {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.875rem 2rem;
+        background-color: var(--primary);
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 1rem;
+        transition: background-color 0.2s, transform 0.2s;
+    }
+
+    .ctaButton:hover {
+        background-color: var(--primary-dark, var(--primary));
+        transform: translateY(-2px);
+    }
 }

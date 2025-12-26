@@ -1,0 +1,45 @@
+@layer component {
+    .section {
+        width: 100%;
+        padding: 4rem 1rem;
+        background-color: var(--background);
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .card {
+        margin: 0 auto;
+        max-width: 900px;
+        padding: 2rem;
+        border-radius: 16px;
+        background-color: var(--background-secondary);
+    }
+
+    .cardTitle {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0 0 0.5rem 0;
+        text-align: center;
+    }
+
+    .cardText {
+        margin: 0;
+        color: var(--text-secondary);
+        line-height: 1.7;
+        text-align: center;
+    }
+
+    @media (max-width: 768px) {
+        .section {
+            padding: 3rem 1rem;
+        }
+
+        .card {
+            padding: 1.5rem;
+        }
+    }
+}
