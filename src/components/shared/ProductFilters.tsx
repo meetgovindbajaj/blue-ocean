@@ -33,7 +33,8 @@ export type SortOption =
   | "name"
   | "price-low"
   | "price-high"
-  | "trending";
+  | "trending"
+  | "discount";
 
 export interface FilterValues {
   categories: string[];
@@ -67,6 +68,7 @@ const SORT_OPTIONS: { value: SortOption; label: string }[] = [
   { value: "price-low", label: "Price: Low to High" },
   { value: "price-high", label: "Price: High to Low" },
   { value: "trending", label: "Sort by Trending" },
+  { value: "discount", label: "On Sale (Highest Discount)" },
 ];
 
 // Debounce hook

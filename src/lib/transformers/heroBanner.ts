@@ -32,10 +32,10 @@ export function generateCtaLink(banner: any): string {
       return "/products";
     case "category":
       if (content?.categoryId?.slug) {
-        return `/category/${content.categoryId.slug}`;
+        return `/categories/${content.categoryId.slug}`;
       }
       if (content?.categoryId && typeof content.categoryId === "string") {
-        return `/category/${content.categoryId}`;
+        return `/categories/${content.categoryId}`;
       }
       return "/categories";
     case "trending":
@@ -43,7 +43,7 @@ export function generateCtaLink(banner: any): string {
     case "new_arrivals":
       return "/products?sort=newest";
     case "offer":
-      return "/products?filter=offers";
+      return "/products?sort=discount";
     case "custom":
     default:
       return content?.ctaLink || "/";

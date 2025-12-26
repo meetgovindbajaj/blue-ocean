@@ -88,6 +88,11 @@ const sortOptions = [
     icon: DollarSign,
   },
   {
+    title: "On Sale",
+    url: "/products?sort=discount" as Route,
+    icon: Percent,
+  },
+  {
     title: "Trending",
     url: "/products?sort=trending" as Route,
     icon: TrendingUp,

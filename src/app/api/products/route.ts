@@ -12,6 +12,7 @@ interface QueryFilter {
   category?: Types.ObjectId | { $in: Types.ObjectId[] };
   _id?: { $nin: Types.ObjectId[] };
   "prices.retail"?: { $gte?: number; $lte?: number };
+  "prices.discount"?: { $gt?: number };
   $or?: Array<{
     name?: { $regex: string; $options: string };
     description?: { $regex: string; $options: string };
@@ -24,7 +25,13 @@ interface QueryFilter {
   }>;
 }
 
-type SortOption = "name" | "price-low" | "price-high" | "newest" | "trending";
+type SortOption =
+  | "name"
+  | "price-low"
+  | "price-high"
+  | "newest"
+  | "trending"
+  | "discount";
 
 const CACHE_HEADERS = {
   "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
@@ -36,6 +43,7 @@ const VALID_SORTS: SortOption[] = [
   "price-high",
   "newest",
   "trending",
+  "discount",
 ];
 
 const SORT_MAP: Record<SortOption, Record<string, 1 | -1>> = {
@@ -44,6 +52,7 @@ const SORT_MAP: Record<SortOption, Record<string, 1 | -1>> = {
   "price-high": { "prices.retail": -1 },
   trending: { score: -1, createdAt: -1 },
   newest: { createdAt: -1 },
+  discount: { "prices.discount": -1, createdAt: -1 },
 };
 
 // Convert price from user currency to base currency (for filtering)
@@ -81,8 +90,10 @@ export async function GET(request: NextRequest) {
 
     // Additional response options
     const includeRelated = searchParams.get("includeRelated") === "true";
-    const includeLessRelevant = searchParams.get("includeLessRelevant") === "true";
-    const includeRecommended = searchParams.get("includeRecommended") === "true";
+    const includeLessRelevant =
+      searchParams.get("includeLessRelevant") === "true";
+    const includeRecommended =
+      searchParams.get("includeRecommended") === "true";
 
     const limitNum = Math.min(
       Math.max(parseInt(searchParams.get("limit") || "20", 10), 1),
@@ -114,7 +125,10 @@ export async function GET(request: NextRequest) {
 
     // Category filter - support multiple categories (comma-separated) or single legacy category
     const categoryList = categoriesParam
-      ? categoriesParam.split(",").map((c) => c.trim()).filter(Boolean)
+      ? categoriesParam
+          .split(",")
+          .map((c) => c.trim())
+          .filter(Boolean)
       : category?.trim()
       ? [category.trim()]
       : [];
@@ -165,7 +179,13 @@ export async function GET(request: NextRequest) {
               limit: limitNum,
               pages: 0,
             },
-            filters: { categories: categoryList, search, sort: "newest", minPrice, maxPrice },
+            filters: {
+              categories: categoryList,
+              search,
+              sort: "newest",
+              minPrice,
+              maxPrice,
+            },
           },
           { headers: CACHE_HEADERS }
         );
@@ -221,6 +241,12 @@ export async function GET(request: NextRequest) {
       ? (sort as SortOption)
       : "newest";
 
+    // Special case: "On Sale" / offers view
+    // When sorting by discount, only show products that actually have a discount.
+    if (sortOption === "discount") {
+      query["prices.discount"] = { $gt: 0 };
+    }
+
     const [totalCount, products] = await Promise.all([
       Product.countDocuments(query),
       Product.find(query)
@@ -257,9 +283,7 @@ export async function GET(request: NextRequest) {
           .select("parent")
           .lean();
 
-        const parentIds = categories
-          .map((c: any) => c.parent)
-          .filter(Boolean);
+        const parentIds = categories.map((c: any) => c.parent).filter(Boolean);
 
         // Combine with already found parent category IDs
         const allParentIds = [...new Set([...parentIds, ...parentCategoryIds])];
@@ -281,7 +305,9 @@ export async function GET(request: NextRequest) {
             category: { $in: [...siblingCategoryIds, ...allParentIds] },
             _id: { $nin: mainProductIds },
           })
-            .select("id name slug description prices images category size breadcrumbs")
+            .select(
+              "id name slug description prices images category size breadcrumbs"
+            )
             .populate("category", "id name slug")
             .sort({ score: -1 })
             .limit(20)
@@ -295,7 +321,9 @@ export async function GET(request: NextRequest) {
             category: { $in: productCategories },
             _id: { $nin: mainProductIds },
           })
-            .select("id name slug description prices images category size breadcrumbs")
+            .select(
+              "id name slug description prices images category size breadcrumbs"
+            )
             .populate("category", "id name slug")
             .sort({ score: -1 })
             .limit(20)
@@ -316,7 +344,10 @@ export async function GET(request: NextRequest) {
 
         if (search?.trim()) {
           // Split search into words and create partial match patterns
-          const searchTerms = search.trim().split(/\s+/).filter((t) => t.length >= 2);
+          const searchTerms = search
+            .trim()
+            .split(/\s+/)
+            .filter((t) => t.length >= 2);
 
           if (searchTerms.length > 0) {
             // Create partial patterns - match any word in name or description
@@ -335,7 +366,9 @@ export async function GET(request: NextRequest) {
               _id: { $nin: excludeIds },
               $or: orConditions,
             })
-              .select("id name slug description prices images category size breadcrumbs")
+              .select(
+                "id name slug description prices images category size breadcrumbs"
+              )
               .populate("category", "id name slug")
               .sort({ score: -1 })
               .limit(20)
@@ -346,15 +379,24 @@ export async function GET(request: NextRequest) {
         // If no search or no results, get products from similar price range or recent products
         if (lessRelevantProducts.length === 0 && products.length > 0) {
           // Get average price from main results
-          const avgPrice = products.reduce((sum: number, p: any) => sum + (p.prices?.retail || 0), 0) / products.length;
+          const avgPrice =
+            products.reduce(
+              (sum: number, p: any) => sum + (p.prices?.retail || 0),
+              0
+            ) / products.length;
           const priceRange = avgPrice * 0.3; // 30% range
 
           lessRelevantProducts = await Product.find({
             isActive: true,
             _id: { $nin: excludeIds },
-            "prices.retail": { $gte: avgPrice - priceRange, $lte: avgPrice + priceRange },
+            "prices.retail": {
+              $gte: avgPrice - priceRange,
+              $lte: avgPrice + priceRange,
+            },
           })
-            .select("id name slug description prices images category size breadcrumbs")
+            .select(
+              "id name slug description prices images category size breadcrumbs"
+            )
             .populate("category", "id name slug")
             .sort({ score: -1, createdAt: -1 })
             .limit(20)
@@ -379,7 +421,9 @@ export async function GET(request: NextRequest) {
         }
 
         recommendedProducts = await Product.find(recommendedQuery)
-          .select("id name slug description prices images category size breadcrumbs")
+          .select(
+            "id name slug description prices images category size breadcrumbs"
+          )
           .populate("category", "id name slug")
           .sort({ score: -1, totalViews: -1 })
           .limit(20)

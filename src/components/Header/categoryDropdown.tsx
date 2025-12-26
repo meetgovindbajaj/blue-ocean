@@ -389,6 +389,9 @@ const CategoryDropdown = ({ id }: { id: string }) => {
             <Link href={"/products?sort=newest" as any}>New Arrivals</Link>
           </li>
           <li className={styles.featuredItem}>
+            <Link href={"/products?sort=discount" as any}>On Sale</Link>
+          </li>
+          <li className={styles.featuredItem}>
             <Link href={"/products?sort=price-low" as any}>
               Price: Low to High
             </Link>
