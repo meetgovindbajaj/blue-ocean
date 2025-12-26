@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
+import Script from "next/script";
 import ProductDetailClient from "@/components/shared/ProductDetailClient";
 
 interface PageProps {
@@ -85,9 +86,10 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const [data, settings] = await Promise.all([
+  const [data, settings, jsonLd] = await Promise.all([
     getProduct(slug),
     getSiteSettings(),
+    generateJsonLd(slug),
   ]);
 
   const siteName = settings?.siteName || "Blue Ocean";
@@ -196,11 +198,11 @@ export async function generateMetadata({
       "og:image:width": "1200",
       "og:image:height": "630",
       "og:image:type": "image/jpeg",
+      "script:ld+json": JSON.stringify(jsonLd),
     },
   };
 }
 
-// Generate JSON-LD structured data for the product
 async function generateJsonLd(slug: string) {
   const [data, settings] = await Promise.all([
     getProduct(slug),
@@ -261,21 +263,13 @@ export default async function ProductDetailPage({ params }: PageProps) {
   }
 
   // Fetch related products, recommended products, and JSON-LD in parallel
-  const [relatedProducts, recommendedProducts, jsonLd] = await Promise.all([
+  const [relatedProducts, recommendedProducts] = await Promise.all([
     getRelatedProducts(slug),
     getRecommendedProducts(data.product.id),
-    generateJsonLd(slug),
   ]);
 
   return (
     <>
-      {/* JSON-LD Structured Data - rendered in head by Next.js */}
-      {jsonLd && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-      )}
       <ProductDetailClient
         product={data.product}
         breadcrumbs={data.breadcrumbs}
