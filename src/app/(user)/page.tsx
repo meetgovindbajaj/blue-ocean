@@ -17,6 +17,9 @@ import { transformBanner } from "@/lib/transformers/heroBanner";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://blueocean.com";
 
+// Revalidate landing page every 60 seconds to reflect data changes
+export const revalidate = 60;
+
 // Direct database fetch for site settings
 async function getSiteSettings() {
   try {
