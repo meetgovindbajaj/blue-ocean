@@ -82,8 +82,13 @@ export async function generateMetadata(): Promise<Metadata> {
     other: {
       "theme-color": "#ffffff",
       "apple-mobile-web-app-capable": "yes",
-      "apple-mobile-web-app-status-bar-style": "default",
-      "format-detection": "telephone=no",
+      "apple-mobile-web-app-status-bar-style": "white",
+      "format-detection":
+        "telephone=yes, address=yes, email=yes, date=yes, url=yes, social=yes",
+      "application-name": siteName,
+      "msapplication-TileColor": "#ffffff",
+      referrer: "strict-origin-when-cross-origin",
+      "apple-mobile-web-app-title": siteName,
     },
   };
 }

@@ -7,13 +7,44 @@
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "display_override": ["standalone", "minimal-ui"],
+  "display_override": [
+    "standalone",
+    "minimal-ui",
+    "window-controls-overlay",
+    "fullscreen"
+  ],
   "orientation": "portrait-primary",
   "background_color": "#ffffff",
   "lang": "en-US",
   "dir": "ltr",
   "categories": ["shopping", "lifestyle", "business", "furniture"],
   "prefer_related_applications": false,
+  "protocol_handlers": [
+    {
+      "protocol": "web+blueocean",
+      "url": "/open?url=%s"
+    },
+    {
+      "protocol": "mailto",
+      "url": "/contact?email=%s"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/api/images/mobile-view.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Mobile experience"
+    },
+    {
+      "src": "/api/images/desktop-view.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Desktop experience"
+    }
+  ],
   "icons": [
     {
       "src": "/api/images/android-chrome-192x192.png",
@@ -28,8 +59,8 @@
       "purpose": "any"
     },
     {
-      "src": "/api/images/android-chrome-512x512.png",
-      "sizes": "512x512",
+      "src": "/api/images/logo.png",
+      "sizes": "500x500",
       "type": "image/png",
       "purpose": "maskable"
     }
@@ -39,19 +70,43 @@
       "name": "Browse Products",
       "short_name": "Products",
       "description": "View our furniture collection",
-      "url": "/products"
+      "url": "/products",
+      "icons": [
+        {
+          "src": "/api/images/layout-list-icon.png",
+          "sizes": "96x96",
+          "type": "image/png",
+          "purpose": "any"
+        }
+      ]
     },
     {
       "name": "Categories",
       "short_name": "Categories",
       "description": "Browse by category",
-      "url": "/categories"
+      "url": "/categories",
+      "icons": [
+        {
+          "src": "/api/images/chart-bar-stacked.png",
+          "sizes": "96x96",
+          "type": "image/png",
+          "purpose": "any"
+        }
+      ]
     },
     {
       "name": "Contact Us",
       "short_name": "Contact",
       "description": "Get in touch with us",
-      "url": "/contact"
+      "url": "/contact",
+      "icons": [
+        {
+          "src": "/api/images/at-sign.png",
+          "sizes": "96x96",
+          "type": "image/png",
+          "purpose": "any"
+        }
+      ]
     }
   ],
   "handle_links": "preferred",
