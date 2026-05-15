@@ -1,15 +1,14 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
-import Link from "next/link";
-import { Route } from "next";
 import {
+  ArrowLeft,
   BadgePercent,
   Bell,
   ChartArea,
   ChartBarStacked,
   ChevronRight,
   ChevronsUpDown,
+  CloudUpload,
   FileSpreadsheet,
   FileText,
   Home,
@@ -18,13 +17,27 @@ import {
   LogOut,
   MessageSquare,
   Settings,
-  Tags,
-  Users,
   Store,
+  Tags,
   User,
-  ArrowLeft,
+  Users,
 } from "lucide-react";
-
+import type { Route } from "next";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Sidebar,
   SidebarContent,
@@ -41,19 +54,6 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/context/AuthContext";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 
@@ -86,6 +86,11 @@ const contentNavItems = [
     title: "Images",
     url: "/admin/images" as Route,
     icon: ImageIcon,
+  },
+  {
+    title: "Cloudinary Migration",
+    url: "/admin/cloudinary-migration" as Route,
+    icon: CloudUpload,
   },
 ];
 
@@ -155,7 +160,12 @@ interface NavGroupProps {
   onNavigate?: () => void;
 }
 
-const NavGroup = ({ label, items, defaultOpen = true, onNavigate }: NavGroupProps) => {
+const NavGroup = ({
+  label,
+  items,
+  defaultOpen = true,
+  onNavigate,
+}: NavGroupProps) => {
   const pathname = usePathname();
 
   return (
@@ -171,7 +181,8 @@ const NavGroup = ({ label, items, defaultOpen = true, onNavigate }: NavGroupProp
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => {
-                const isActive = pathname === item.url || pathname.startsWith(item.url + "/");
+                const isActive =
+                  pathname === item.url || pathname.startsWith(`${item.url}/`);
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
@@ -324,7 +335,11 @@ const AppSidebar = () => {
                 const isActive = pathname === item.url;
                 return (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={isActive} tooltip={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isActive}
+                      tooltip={item.title}
+                    >
                       <Link href={item.url} onClick={handleNavigate}>
                         <item.icon className="h-4 w-4" />
                         <span>{item.title}</span>
@@ -338,26 +353,47 @@ const AppSidebar = () => {
         </SidebarGroup>
 
         {/* Content Management */}
-        <NavGroup label="Content" items={contentNavItems} onNavigate={handleNavigate} />
+        <NavGroup
+          label="Content"
+          items={contentNavItems}
+          onNavigate={handleNavigate}
+        />
 
         {/* Marketing */}
-        <NavGroup label="Marketing" items={marketingNavItems} onNavigate={handleNavigate} />
+        <NavGroup
+          label="Marketing"
+          items={marketingNavItems}
+          onNavigate={handleNavigate}
+        />
 
         {/* User Management */}
-        <NavGroup label="Management" items={managementNavItems} onNavigate={handleNavigate} />
+        <NavGroup
+          label="Management"
+          items={managementNavItems}
+          onNavigate={handleNavigate}
+        />
 
         {/* Analytics & Reports */}
-        <NavGroup label="Analytics" items={analyticsNavItems} onNavigate={handleNavigate} />
+        <NavGroup
+          label="Analytics"
+          items={analyticsNavItems}
+          onNavigate={handleNavigate}
+        />
 
         {/* Settings */}
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
               {settingsNavItems.map((item) => {
-                const isActive = pathname === item.url || pathname.startsWith(item.url + "/");
+                const isActive =
+                  pathname === item.url || pathname.startsWith(`${item.url}/`);
                 return (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={isActive} tooltip={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isActive}
+                      tooltip={item.title}
+                    >
                       <Link href={item.url} onClick={handleNavigate}>
                         <item.icon className="h-4 w-4" />
                         <span>{item.title}</span>
