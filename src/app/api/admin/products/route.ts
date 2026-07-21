@@ -124,6 +124,7 @@ export async function POST(request: NextRequest) {
     revalidatePath("/categories");
     revalidatePath("/api/products");
     revalidatePath("/api/recommendations");
+    revalidatePath("/sitemap.xml");
 
     return NextResponse.json({
       success: true,

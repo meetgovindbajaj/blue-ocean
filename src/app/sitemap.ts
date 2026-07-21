@@ -9,6 +9,10 @@ const baseUrl =
   `https://${process.env.VERCEL_URL}` ||
   "https://blue--ocean.vercel.app";
 
+// Regenerate hourly as a safety net (on-demand revalidation via
+// revalidatePath("/sitemap.xml") in admin mutation routes handles instant updates)
+export const revalidate = 3600;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   await dbConnect();
 

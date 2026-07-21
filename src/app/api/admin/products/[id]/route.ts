@@ -114,6 +114,7 @@ export async function PUT(
     revalidatePath("/api/products");
     revalidatePath("/api/recommendations");
     revalidatePath("/api/hero-banners");
+    revalidatePath("/sitemap.xml");
 
     return NextResponse.json({
       success: true,
@@ -161,6 +162,7 @@ export async function DELETE(
     revalidatePath("/api/products");
     revalidatePath("/api/recommendations");
     revalidatePath("/api/hero-banners");
+    revalidatePath("/sitemap.xml");
 
     return NextResponse.json({
       success: true,

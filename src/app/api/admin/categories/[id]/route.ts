@@ -9,6 +9,7 @@ const revalidateCategories = () => {
   try {
     revalidatePath("/", "page");
     revalidatePath("/categories", "page");
+    revalidatePath("/sitemap.xml");
   } catch (e) {
     // Ignore revalidation errors in development
   }

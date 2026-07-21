@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import connectDB from "@/lib/db";
 import LegalDocument from "@/models/LegalDocument";
 import { getAuthUser, isAdmin, unauthorizedResponse, forbiddenResponse } from "@/lib/apiAuth";
@@ -79,6 +80,11 @@ export async function POST(request: NextRequest) {
     });
 
     await document.save();
+
+    // Revalidate cached pages
+    revalidatePath("/legal");
+    revalidatePath(`/legal/${slug}`);
+    revalidatePath("/sitemap.xml");
 
     return NextResponse.json({
       success: true,

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import connectDB from "@/lib/db";
 import LegalDocument from "@/models/LegalDocument";
 import { getAuthUser, isAdmin, unauthorizedResponse, forbiddenResponse } from "@/lib/apiAuth";
@@ -76,6 +77,11 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     await document.save();
 
+    // Revalidate cached pages
+    revalidatePath("/legal");
+    revalidatePath(`/legal/${document.slug}`);
+    revalidatePath("/sitemap.xml");
+
     return NextResponse.json({
       success: true,
       document: {
@@ -109,6 +115,11 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
         { status: 404 }
       );
     }
+
+    // Revalidate cached pages
+    revalidatePath("/legal");
+    revalidatePath(`/legal/${document.slug}`);
+    revalidatePath("/sitemap.xml");
 
     return NextResponse.json({
       success: true,
